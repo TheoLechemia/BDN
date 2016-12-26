@@ -8,7 +8,7 @@ L'application BDN-WEB Dom-Tom contient plusieurs sous-modules qui peuvent être 
 
 
 ### Technologies:
-* Base de données: PostgreSQL
+* Base de données: PostgreSQL - PostGIS
 * Back-end: Python Flask
 * Front-End : Angular 1.5, Leaflet
 
