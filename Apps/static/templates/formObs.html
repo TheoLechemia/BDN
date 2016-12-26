@@ -1,0 +1,96 @@
+
+<div class="panel panel-primary" class='container-fluid typeahead-demo'>
+		<div class="panel-heading">
+				<h3 class="panel-title"> <b> Rechercher des observations </b> </h3>
+		</div>
+	<h4>  </h4>
+	<form>
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				 Quoi ?
+			</div>
+ 			 <div class="panel-body">
+ 			 	
+				<div class="form-inline form-group">
+					<div class="radio">
+					  <input class="radiotout" ng-model="$ctrl.regneRadio" class="radio" type="radio" name="optradio" value="Tout"  ng-checked="true" ng-click="$ctrl.changeProtocole('Tout')">
+					  <label>Tout</label>
+					</div>			
+					<div class="radio">
+			  			<input ng-model="$ctrl.regneRadio" class="radio" type="radio" name="optradio" value="FAUNE" ng-click="$ctrl.changeProtocole('FAUNE')">
+			  			<label>Faune</label>
+					</div>
+					<div class="radio">
+					  <input ng-model="$ctrl.regneRadio" class="radio" type="radio" name="optradio" value="FLORE" ng-click="$ctrl.changeProtocole('FLORE')">
+					  <label>Flore</label>
+					</div>
+					
+				</div>
+				
+				<div class="form-group">
+			 	<input placeholder="Nom Latin " type="text" ng-model="$ctrl.form.lb_nom" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.lb_nom for taxon in $ctrl.taxons | filter:{lb_nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults">
+				</div>
+				<div class="form-group">
+				 	<input placeholder="Nom vernaculaire " type="text" ng-model="$ctrl.form.nom_vern" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in $ctrl.taxons | filter:{nom_vern:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults">
+				</div>
+				<button type="button" class="btn btn-default btn-xs"> Ajouter un nouveau taxon </button> <button type="button" class="btn btn-default btn-xs"> Recherche avancée </button>
+
+			</div>
+
+		</div>
+
+
+		 <!-- <button type="submit" type="button" class="btn btn-success" "> <span class="glyphicon glyphicon-plus"> </span> </button> -->
+		
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				 Ou ?
+			</div>
+ 			 <div class="panel-body">
+			   <div class="form-group">
+					<!-- 		 		<input placeholder="Selectionner une commune " type="text" ng-model="$ctrl.form.where" typeahead-editable="false" typeahead-min-length="3" uib-typeahead="commune as commune.nom for commune in $ctrl.communes | filter:{nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults"> -->
+					    <select class="form-control" ng-model="$ctrl.form.where" ng-options="commune.nom for commune in $ctrl.communes">
+					    	<option value=""> - Selectionner une commune - </option>
+					    </select>
+			 	</div>
+
+			 	<div class="form-group">
+			 		<!-- <input placeholder="Selectionner une forêt " type="text" ng-model="$ctrl.form.foret" typeahead-editable="false" typeahead-min-length="0" uib-typeahead="foret as foret.lib_frt for foret in $ctrl.forets | filter:{lib_frt:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults"> -->
+			 			<select class="form-control" ng-model="$ctrl.form.foret" ng-options="foret.lib_frt for foret in $ctrl.forets">
+					    	<option value=""> - Selectionner une forêt - </option>
+					    </select>
+			 	</div>
+			 </div>
+		</div>
+
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				 Quand ?
+			</div>
+ 			 <div class="panel-body">
+				  <div class="form-group">
+				      <div>
+				        <p class="input-group">
+				          <input placeholder="Après le: (Date)" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.form.when.first"" is-open="$ctrl.popup.first.opened" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" />
+				          <span class="input-group-btn">
+				            <button type="button" class="btn btn-default" ng-click="$ctrl.open('first')"><i class="glyphicon glyphicon-calendar"></i></button>
+				          </span>
+				        </p>
+				      </div>
+				  </div>
+			      <div>
+			        <p class="input-group">
+			          <input placeholder="Avant le: (Date)" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.form.when.last"" is-open="$ctrl.popup.last.opened" datepicker-options="dateOptions" close-text="Close" alt-input-formats="altInputFormats" />
+			          <span class="input-group-btn">
+			            <button type="button" class="btn btn-default" ng-click="$ctrl.open('last')"><i class="glyphicon glyphicon-calendar"></i></button>
+			          </span>
+			        </p>
+			      </div>
+			  </div>
+		</div>
+			<!-- <input type="text" placeholder="Quand ?" ng-model="$ctrl.form.when" /> -->
+
+		   <button type="submit" type="button" class="btn btn-primary formbutton" ng-click="$ctrl.submitForm($ctrl.form)"> Rechercher </button>
+	</form>
+</div>
+

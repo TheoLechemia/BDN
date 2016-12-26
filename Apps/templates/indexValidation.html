@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+ <meta charset="UTF-8"> 
+<head>
+
+	<title>Validation BDN</title>
+
+	<!-- Jquery -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+
+<!-- Datatable -->
+
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='lib/datatable/css/dataTables.bootstrap.css') }}">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+
+<!-- Leaflet -->
+<script src="{{url_for('static', filename='lib/leaflet/leaflet.js') }}"></script>
+<link rel="stylesheet" href="{{url_for('static', filename='lib/leaflet/leaflet.css') }}" />	
+
+
+<!-- page css-->
+ <link rel="stylesheet" href="{{url_for('static', filename='css/indexValidation.css') }}">
+
+
+
+
+
+
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand"  href=" {{url_for('main.index')}} "> <span class="glyphicon glyphicon-home"> </span> BDN WEB</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li ><a href="#"> <b> Interface de validation des données </b> </a></li>
+    </ul>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+
+      <ul class="nav navbar-nav navbar-right">
+
+        
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+<div class="container-fluid" id="page">
+
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+		<div class="panel panel-default stat-panel">
+
+			
+
+		<h4> Liste des taxons non validés </h4>
+			<p id=action> </p>
+			<table id="table_id" class="display table">
+			        <thead>
+			            <tr>
+			               <th> </th>
+			                <th>ID</th>
+			                <th>Protocole</th>
+			                <th>Nom Vernaculaire</th>
+			                <th>Nom Scientifique</th>
+			                <th>Date</th>
+			                <th>Observateur</th>
+			                <th>  </th>
+			                <th> </th>
+			                <th> </th>
+			            </tr>
+					</thead>
+					<tbody>
+            		{% for taxon in taxList %}
+						<tr class="taxonRow" idSynthese="{{taxon[0]}}"> 
+							<td> <input class = "check" type="checkbox"> </td>
+							<td> {{taxon[0]}} </td>
+							<td> {{taxon[1]}} </td>
+							<td> {{taxon[2]}} </td>
+							<td> <a target="_blank" href= 'https://inpn.mnhn.fr/espece/cd_nom/{{taxon[6]}}' > {{taxon[3]}} </a> </td>
+							<td> {{taxon[4]}} </td>
+							<td> {{taxon[5]}} </td>
+							<td class="search"> <span class="glyphicon glyphicon-search " style="cursor:pointer;"> </span> </td>
+							<td class="validate"> <span class="glyphicon glyphicon-ok " style="color:green; cursor:pointer;"> </span> </td>
+							<td class="delete" data-toggle="modal" data-target=".bd-example-modal-lg" > <span class="glyphicon glyphicon-remove " style="color:red; cursor:pointer;"> </span> </td>
+						</tr>
+					{% endfor %}
+					</tbody>
+			</table>
+			<button id="lauchValidateModal"  class="btn btn-success disabled" data-toggle="modal" data-target=".validate-modal">  Valider <span class="glyphicon glyphicon-ok "></span> </button>
+		</div>
+	</div>
+
+
+
+		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-lg">
+		    <div class="modal-content" style="width: 50%;margin: 0 auto; text-align: center; ">
+		    	<h3> Confirmation </h3>
+		      	<button  type="button" class="btn btn-primary cancel">Annuler</button>
+				<button id='confirmDelete' type="button" class="btn btn-danger">Oui, supprimer cette observation</button>
+				<div  style="height: 20px"> </div>
+		    </div>
+		  </div>
+		</div>
+
+		<div class="modal fade validate-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-lg">
+		    <div class="modal-content" style="width: 50%;margin: 0 auto; text-align: center; ">
+		    	<h3> Confirmation </h3>
+		    	<p id ="insertHTML"> </p>
+		      	<button  type="button" class="btn btn-danger cancel" >Annuler</button>
+				<button id="globalValidate" type="button" class="btn btn-success">Valider</button>
+				<div  style="height: 20px"> </div>
+		    </div>
+		  </div>
+		</div>
+
+
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+		<div id=map style="height: 800px"> </div>
+
+	</div>
+
+
+
+
+</div>
+
+<script type="text/javascript"> var URL_APPLICATION= {{URL_APPLICATION|tojson}}; 
+								console.log(URL_APPLICATION);
+</script>
+
+<script type="text/javascript" src="{{url_for('static', filename='mainValidation.js') }}"> </script>
+
+</body>
+</html>

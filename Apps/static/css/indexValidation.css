@@ -1,0 +1,25 @@
+.currentRow{
+	background-color: #b6b7ba !important;
+}
+
+.validate_ok{
+	background-color: #00b551;
+}
+
+.delete_ok{
+	background-color: #db0808;
+}
+
+a.paginate_button.current {
+	background-color: white important;
+	margin: 5px;
+	cursor: pointer;
+}
+
+.enable {
+	cursor: : pointer ;
+}
+
+.disable{
+	cursor:not-allowed;
+}

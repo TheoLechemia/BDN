@@ -1,0 +1,20 @@
+<table class=" table table-hover">
+	 <thead>
+	  <tr>
+	  	<th>Date</th>
+	     <th> Nom sc.</th>
+	     <th>Nom commun</th>
+	     <th> Observateur </th>
+	     	 
+	   </tr>
+	 </thead>
+	 <tbody>
+		<tr style="cursor: pointer;" ng-click=$ctrl.update(obs.properties.id_synthese) ng-repeat="obs in $ctrl.geojson.features">
+			<td> {{obs.properties.date}}  </td>
+			<td> {{obs.properties.nom_vern}}  </td>
+			<td>  {{obs.properties.lb_nom}} </td>
+			<td>  {{obs.properties.observateur}} </td>
+		</tr>
+	</tbody>
+</table>
+

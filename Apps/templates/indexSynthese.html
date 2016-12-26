@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title></title>
+
+<!-- Angular -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0-rc.2/angular.min.js"></script>
+
+
+<!-- Jquery -->
+	
+		
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"
+			  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+			  crossorigin="anonymous"></script>
+
+	<!-- Leaflet -->
+  <script src="{{url_for('static', filename='lib/leaflet/leaflet.js') }}"></script>
+  <link rel="stylesheet" href="{{url_for('static', filename='lib/leaflet/leaflet.css')}}"  />
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+
+
+<!-- Angular animate -->
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-animate.js"></script>
+
+<!--  ui bootstrap -->
+<script src="{{url_for('static', filename='lib/uibootstrap.min.js')}}"></script>
+
+
+
+
+<style>
+  .typeahead-demo .custom-popup-wrapper {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    background-color: #f9f9f9;
+  }
+
+  .typeahead-demo .custom-popup-wrapper > .message {
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+    color: #868686;
+  }
+
+  .typeahead-demo .custom-popup-wrapper > .dropdown-menu {
+    position: static;
+    float: none;
+    display: block;
+    min-width: 160px;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .last-obs {
+    height: 700px;
+    overflow: scroll;
+}
+
+ .panel .panel-info{
+  margin: 5px;
+ }
+
+ .formbutton{
+  margin: 10px;
+ }
+
+   .angular-leaflet-map {
+    width: 640px;
+    height: 480px;
+  }
+</style>
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand"  href=" {{url_for('main.index')}} "> <span class="glyphicon glyphicon-home"> </span> BDN WEB </a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li ><a href="#"><b> Interface de visualisation des données </b> </a></li>
+    </ul>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+
+      <ul class="nav navbar-nav navbar-right">
+        <li> <a> </a></li>
+        <li><a href="">Deconnexion</a></li>
+        
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+<div ng-app="app" class="container-fluid">
+        <div ng-controller="headerCtrl">
+
+    <app ></app>
+
+</div>
+
+<!-- Leaflet directive -->
+
+<script type="text/javascript"> var URL_APPLICATION = {{URL_APPLICATION|tojson}} </script>
+
+<script src="{{url_for('static', filename='main.js')}}"></script>
+
+</body>
+</html>
