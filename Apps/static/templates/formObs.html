@@ -33,7 +33,49 @@
 				<div class="form-group">
 				 	<input placeholder="Nom vernaculaire " type="text" ng-model="$ctrl.form.nom_vern" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in $ctrl.taxons | filter:{nom_vern:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults">
 				</div>
-				<button type="button" class="btn btn-default btn-xs"> Ajouter un nouveau taxon </button> <button type="button" class="btn btn-default btn-xs"> Recherche avancée </button>
+				<button type="button" class="btn btn-default btn-xs"> Ajouter un autre taxon à la recherche </button>
+				<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"> Recherche taxonomique avancée </button>.
+				<!-- MODAL research -->
+				<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+				  <div class="modal-dialog modal-lg" role="document">
+				    <div class="modal-content" style="padding-left: 5% padding-right:5%;">
+				    <h4> En constrution... </h4>
+				      <h3> Filtrer par rang taxonomique: </h3>
+				      <div class="form-group">
+					      	<select class="form-control" ng-model="$ctrl.form.regne" ng-options="taxon as taxon for taxon in $ctrl.regne" ng-change="$ctrl.loadTaxonomyHierachy('phylum', 'regne', $ctrl.form.regne)" >
+						    	<option value=""> - Selectionner un règne - </option>
+						    </select>
+					  </div>
+					  <div class="form-group">
+						    <!-- PHYLUM -->
+						    <select class="form-control" ng-model="$ctrl.form.phylum" ng-options="taxon as taxon for taxon in phylum" ng-change="$ctrl.loadTaxonomyHierachy('classe', 'phylum', $ctrl.form.phylum)"> 
+						    	<option value=""> - Selectionner un embranchement - </option>
+						    </select>
+					  </div>
+					   <div class="form-group">
+					    <!-- CLASSE -->
+						    <select class="form-control" ng-model="$ctrl.form.classe" ng-options="taxon as taxon for taxon in classe" ng-change="$ctrl.loadTaxonomyHierachy('ordre', 'classe', $ctrl.form.classe)">
+						    	<option value=""> - Selectionner une classe - </option>
+						     </select>
+						</div>	
+						<div class="form-group">					     
+						    <!-- ORDRE -->
+						    <select class="form-control" ng-model="$ctrl.form.ordre" ng-options="taxon as taxon for taxon in ordre" ng-change="$ctrl.loadTaxonomyHierachy('famille', 'ordre', $ctrl.form.ordre)">
+						    	<option value=""> - Selectionner un ordre - </option>
+						     </select>
+						</div>
+						<div class="form-group">
+						    <!-- FAMILLE -->
+						    <select class="form-control" ng-model="$ctrl.form.famille" ng-options="taxon as taxon for taxon in famille">
+						    <option value=""> - Selectionner une famille - </option>
+						     </select>
+						</div>
+
+					<h3> Autres filtres: </h3>
+
+				    </div>
+				  </div>
+				</div>
 
 			</div>
 
@@ -93,4 +135,14 @@
 		   <button type="submit" type="button" class="btn btn-primary formbutton" ng-click="$ctrl.submitForm($ctrl.form)"> Rechercher </button>
 	</form>
 </div>
+
+
+{{$ctrl.form}}
+
+Phylum = {{phylum}}
+
+{{test}}
+
+
+
 

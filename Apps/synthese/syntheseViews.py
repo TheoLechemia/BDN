@@ -106,6 +106,20 @@ def loadCommunes():
     res = utils.sqltoDict(sql, db.cur)
     return Response(flask.json.dumps(res), mimetype='application/json')
 
+@synthese.route('/loadTaxonomyHierachy/<rang_fils>/<rang_pere>/<value>')
+def loadTaxonHierarchy(rang_fils, rang_pere, value):
+    db = getConnexion()
+    rang_fils = '"'+rang_fils+'"'
+    rang_pere = '"'+rang_pere+'"'
+    sql = " SELECT DISTINCT "+rang_fils+" FROM taxonomie.taxref WHERE "+rang_pere+" = %s"
+    params = [value]
+    db.cur.execute(sql, params)
+    res = db.cur.fetchall()
+    listTaxons = list()
+    for r in res:
+        listTaxons.append(r[0])
+    return Response(flask.json.dumps(listTaxons), mimetype='application/json')
+
 
 @synthese.route('/export', methods=['GET', 'POST'])
 def export():

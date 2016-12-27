@@ -24,7 +24,11 @@ proxy = app.factory('proxy', function proxy($http) {
 
 			exportShapeFile : function(data){
 				return $http.post(URL_APPLICATION+"export", data)
+			},
+			loadTaxonomyHierachy : function(rang_fils, rang_pere, value){
+				return $http.get(URL_APPLICATION +"loadTaxonomyHierachy/"+rang_fils+"/"+rang_pere+"/"+value)
 			}
+			
 		}
 	  });
 
@@ -80,7 +84,7 @@ function appCtrl (proxy){
 
 	ctrl.exportShape = function(form){
 		proxy.exportShapeFile(form).then(function(response){
-			window.location = URL_APPLICATION+'uploads/'+response.data;	     
+			window.location =URL_APPLICATION+'uploads/'+response.data;	     
 		})
 	}
 
@@ -176,6 +180,7 @@ function leafletCtrl($http,$scope){
 	}
 
 
+
     function loadGeojson(geojsonData){
     	if (geojsonFeature != undefined){
     	map.removeLayer(geojsonFeature)
@@ -228,9 +233,6 @@ function leafletCtrl($http,$scope){
       		}
       	}
 
-
-
-
 }
 
 
@@ -252,16 +254,41 @@ app.component('leafletCtrl', {
 templateForm = URL_APPLICATION+'static/templates/formObs.html';
 
 
-function formCtrl(proxy, $http){
+function formCtrl(proxy, $http, $scope){
 	ctrl = this;
 
+	$scope.test = "yahhhhhhhh";
 
 	$('.radiotout').attr("checked");
 
 	$('radio').click(function(){
 		$(this).siblings.removeAttr('checked')
 	})
+
+
+
+	ctrl.regne = ['Animalia', 'Plantae', 'Fungi']
+	$scope.phylum = [];
+	$scope.ordre = [];
+	$scope.classe = [];
+	$scope.famille = [];
+
+
+	function fillList(response){
+		listHierarchyTaxonomy.phylum = response;
+		console.log(listHierarchyTaxonomy)
+	}
 	
+	ctrl.loadTaxonomyHierachy = function(rang_fils,rang_pere, value){
+		proxy.loadTaxonomyHierachy(rang_fils,rang_pere, value).then(function(response){
+			console.log(response.data);
+			//ctrl['list'+'rang_fils'] = response.data;
+			$scope[rang_fils] = response.data;
+
+		})
+		console.log($scope['phylum']);
+	
+	}
 
 	ctrl.form = {
 		who : null,
@@ -269,7 +296,14 @@ function formCtrl(proxy, $http){
 		nom_vern : {'nom_vern': null, 'cd_nom' : null }, 
 		where : {'code_insee': null, 'nom': null},
 		when : {'first': null, 'last': null},
-		foret : {'ccod_frt': null, 'lib_frt': null}
+		foret : {'ccod_frt': null, 'lib_frt': null},
+		taxonomie : {'rang': null, 'value': null},
+		regne : null,
+		phylum : null,
+		classe : null,
+		ordre: null,
+		famille: null,
+		group2_inpn: null,
 	}
 
 	ctrl.regneRadio = 'current';
@@ -298,6 +332,9 @@ function formCtrl(proxy, $http){
   	};
 
 
+
+
+
 }
 
 app.component('formObs', {
@@ -315,27 +352,3 @@ app.component('formObs', {
 
 
 
-
-
-/*	ordre = {
-		'text': record.ordre,
-		'children': []
-	}*/
-
-/*	classe = {
-		'text': record.classe,
-		'children': []
-	}
-
-	embranchement = {
-		'text': record.embranchement,
-		'children': []
-	}
-	regne = {
-		'text': record.regne,
-		'children': []
-	}*/
-
-
-// si la nouvelle famille n'y est pas, alors new famille = true et on cree une nouvelle famille
-// sinon on renvoie l'index de la famille courante dans le tableau superieur, et on y ajoute la feuille
