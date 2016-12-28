@@ -35,6 +35,9 @@
 				</div>
 				<button type="button" class="btn btn-default btn-xs"> Ajouter un autre taxon à la recherche </button>
 				<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"> Recherche taxonomique avancée </button>.
+				
+
+
 				<!-- MODAL research -->
 				<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
 				  <div class="modal-dialog modal-lg" role="document">
@@ -42,37 +45,39 @@
 				    <h4> En constrution... </h4>
 				      <h3> Filtrer par rang taxonomique: </h3>
 				      <div class="form-group">
-					      	<select class="form-control" ng-model="$ctrl.form.regne" ng-options="taxon as taxon for taxon in $ctrl.regne" ng-change="$ctrl.loadTaxonomyHierachy('phylum', 'regne', $ctrl.form.regne)" >
+					      	<select class="form-control" ng-model="$ctrl.form.regne" ng-options="taxon as taxon for taxon in $ctrl.regne" ng-change="$ctrl.loadTaxonomyHierachy('phylum', 'regne', 'null', 'null', $ctrl.form.regne)" >
 						    	<option value=""> - Selectionner un règne - </option>
 						    </select>
 					  </div>
 					  <div class="form-group">
 						    <!-- PHYLUM -->
-						    <select class="form-control" ng-model="$ctrl.form.phylum" ng-options="taxon as taxon for taxon in phylum" ng-change="$ctrl.loadTaxonomyHierachy('classe', 'phylum', $ctrl.form.phylum)"> 
+						    <select class="form-control" ng-model="$ctrl.form.phylum" ng-options="taxon as taxon for taxon in phylum" ng-change="$ctrl.loadTaxonomyHierachy('classe', 'phylum', 'regne', $ctrl.form.regne, $ctrl.form.phylum)"> 
 						    	<option value=""> - Selectionner un embranchement - </option>
 						    </select>
 					  </div>
 					   <div class="form-group">
 					    <!-- CLASSE -->
-						    <select class="form-control" ng-model="$ctrl.form.classe" ng-options="taxon as taxon for taxon in classe" ng-change="$ctrl.loadTaxonomyHierachy('ordre', 'classe', $ctrl.form.classe)">
+						    <select class="form-control" ng-model="$ctrl.form.classe" ng-options="taxon as taxon for taxon in classe" ng-change="$ctrl.loadTaxonomyHierachy('ordre', 'classe', 'phylum', $ctrl.form.phylum, $ctrl.form.classe)">
 						    	<option value=""> - Selectionner une classe - </option>
 						     </select>
 						</div>	
 						<div class="form-group">					     
 						    <!-- ORDRE -->
-						    <select class="form-control" ng-model="$ctrl.form.ordre" ng-options="taxon as taxon for taxon in ordre" ng-change="$ctrl.loadTaxonomyHierachy('famille', 'ordre', $ctrl.form.ordre)">
+						    <select class="form-control" ng-model="$ctrl.form.ordre" ng-options="taxon as taxon for taxon in ordre" ng-change="$ctrl.loadTaxonomyHierachy('famille', 'ordre', 'classe', $ctrl.form.classe, $ctrl.form.ordre)">
 						    	<option value=""> - Selectionner un ordre - </option>
 						     </select>
 						</div>
 						<div class="form-group">
 						    <!-- FAMILLE -->
 						    <select class="form-control" ng-model="$ctrl.form.famille" ng-options="taxon as taxon for taxon in famille">
-						    <option value=""> - Selectionner une famille - </option>
+						    <option value=""> - Selectionner une famille - </option>	
 						     </select>
 						</div>
 
 					<h3> Autres filtres: </h3>
-
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-success" data-dismiss="modal">Valider</button>
+				      </div>
 				    </div>
 				  </div>
 				</div>
@@ -90,16 +95,17 @@
 			</div>
  			 <div class="panel-body">
 			   <div class="form-group">
+			   <label> Selectionner une commune: </label>
 					<!-- 		 		<input placeholder="Selectionner une commune " type="text" ng-model="$ctrl.form.where" typeahead-editable="false" typeahead-min-length="3" uib-typeahead="commune as commune.nom for commune in $ctrl.communes | filter:{nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults"> -->
 					    <select class="form-control" ng-model="$ctrl.form.where" ng-options="commune.nom for commune in $ctrl.communes">
-					    	<option value=""> - Selectionner une commune - </option>
+					    	
 					    </select>
 			 	</div>
 
 			 	<div class="form-group">
+			 		<label> Selectionner une forêt: </label>
 			 		<!-- <input placeholder="Selectionner une forêt " type="text" ng-model="$ctrl.form.foret" typeahead-editable="false" typeahead-min-length="0" uib-typeahead="foret as foret.lib_frt for foret in $ctrl.forets | filter:{lib_frt:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults"> -->
 			 			<select class="form-control" ng-model="$ctrl.form.foret" ng-options="foret.lib_frt for foret in $ctrl.forets">
-					    	<option value=""> - Selectionner une forêt - </option>
 					    </select>
 			 	</div>
 			 </div>
@@ -135,6 +141,14 @@
 		   <button type="submit" type="button" class="btn btn-primary formbutton" ng-click="$ctrl.submitForm($ctrl.form)"> Rechercher </button>
 	</form>
 </div>
+
+
+{{$ctrl.form}}
+
+Phylum = {{phylum}}
+
+{{test}}
+
 
 
 

@@ -25,8 +25,8 @@ proxy = app.factory('proxy', function proxy($http) {
 			exportShapeFile : function(data){
 				return $http.post(URL_APPLICATION+"export", data)
 			},
-			loadTaxonomyHierachy : function(rang_fils, rang_pere, value){
-				return $http.get(URL_APPLICATION +"loadTaxonomyHierachy/"+rang_fils+"/"+rang_pere+"/"+value)
+			loadTaxonomyHierachy : function(rang_fils, rang_pere, rang_grand_pere, value_rang_grand_pere, value){
+				return $http.get(URL_APPLICATION +"loadTaxonomyHierachy/"+rang_fils+"/"+rang_pere+"/"+rang_grand_pere+"/"+value_rang_grand_pere+"/"+value)
 			}
 			
 		}
@@ -279,14 +279,11 @@ function formCtrl(proxy, $http, $scope){
 		console.log(listHierarchyTaxonomy)
 	}
 	
-	ctrl.loadTaxonomyHierachy = function(rang_fils,rang_pere, value){
-		proxy.loadTaxonomyHierachy(rang_fils,rang_pere, value).then(function(response){
-			console.log(response.data);
-			//ctrl['list'+'rang_fils'] = response.data;
+	ctrl.loadTaxonomyHierachy = function(rang_fils,rang_pere, rang_grand_pere,value_rang_grand_pere, value){
+		proxy.loadTaxonomyHierachy(rang_fils,rang_pere,rang_grand_pere,value_rang_grand_pere, value).then(function(response){
 			$scope[rang_fils] = response.data;
 
 		})
-		console.log($scope['phylum']);
 	
 	}
 

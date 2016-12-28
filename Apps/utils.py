@@ -3,7 +3,10 @@ import psycopg2.extras
 import zipfile
 import os
 import flask
+import config
 
+CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
+UPLOAD_FOLDER = CURRENT_DIR+'\uploads'
 
 
 #le champs geometrie doit deja etre formatte grace a ST_toGeojson
@@ -100,29 +103,25 @@ def askFirstParame(sql, firstParam):
     return sql
 
 def buildSQL():
-    cd_nom1= None
-    cd_nom2 = None
-    commune = None
-    foret = None
-    firstDate = None
-    lastDate = None
-    sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.observateur
+    sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date
               FROM bdn.synthese s
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom"""
     params = list()
     firstParam = True
     #recuperation des parametres
-    if flask.request.json['lb_nom'] != None:
-        cd_nom1 = flask.request.json['lb_nom']['cd_nom']
-    if flask.request.json['nom_vern'] != None:
-        cd_nom2 = flask.request.json['nom_vern']['cd_nom']
-    if flask.request.json['when'] != None :
-        firstDate = flask.request.json['when']['first']
-        lastDate = flask.request.json['when']['last']
-    if flask.request.json['where'] != None:
-        commune = flask.request.json['where']['code_insee']
-    if flask.request.json['foret'] != None:
-        foret = flask.request.json['foret']['ccod_frt']
+    cd_nom1 = flask.request.json['lb_nom']['cd_nom']
+    cd_nom2 = flask.request.json['nom_vern']['cd_nom']
+    firstDate = flask.request.json['when']['first']
+    lastDate = flask.request.json['when']['last']
+    commune = flask.request.json['where']['code_insee']
+    foret = flask.request.json['foret']['ccod_frt']
+
+    # recherche taxonomique avancee
+    regne = flask.request.json['regne']
+    phylum = flask.request.json['phylum']
+    classe = flask.request.json['classe']
+    ordre = flask.request.json['ordre']
+    famille = flask.request.json['famille']
 
     if cd_nom1:
         firstParam = False
@@ -132,19 +131,46 @@ def buildSQL():
         firstParam = False
         sql = sql + " WHERE s.cd_nom = %s "
         params.append(cd_nom2)
-    if commune:
+
+    if regne:
+        firstParam = False
+        sql = sql + " WHERE t.regne = %s"
+        params.append(regne)
+    if phylum and phylum != 'Aucun':
         sql = askFirstParame(sql, firstParam)
         firstParam = False
+        sql = sql + " t.phylum = %s"
+        params.append(phylum)
+    if classe and classe !='Aucun':
+        sql = askFirstParame(sql, firstParam)
+        firstParam = False
+        sql = sql + " t.classe = %s"
+        params.append(classe)
+    if ordre and ordre != 'Aucun':
+        sql = askFirstParame(sql, firstParam)
+        firstParam = False
+        sql = sql + " t.ordre = %s"
+        params.append(ordre)
+    if famille and famille != 'Aucun':
+        sql = askFirstParame(sql, firstParam)
+        firstParam = False
+        sql = sql + " t.famille = %s"
+        params.append(famille)
+
+
+
+    if commune:
+        sql = askFirstParame(sql, firstParam)
         sql = sql + " s.insee = %s "
+        firstParam = False
         params.append(str(commune))
     if foret:
         sql = askFirstParame(sql, firstParam)
-        firstParam = False
         sql = sql + " s.ccod_frt = %s "
+        firstParam = False
         params.append(str(foret))
     if firstDate and lastDate :
         sql = askFirstParame(sql, firstParam)
-        firstParam = False
         sql = sql + "( s.date >= %s OR s.date <= %s )"
         params.append(firstDate)
         params.append(lastDate)
@@ -157,37 +183,24 @@ def buildSQL():
         sql = askFirstParame(sql,firstParam)
         sql = sql + " s.date <= %s "
         params.append(lastDate)
-    print sql
     return {'params': params, 'sql' :sql}
 
 
 def buildSQL2OGR():
-    cd_nom1= None
-    cd_nom2 = None
-    commune = None
-    foret = None
-    firstDate = None
-    lastDate = None
     sql = " SELECT * FROM bdn.synthese s JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom"
     params = list()
     firstParam = True
     #recuperation des parametres
-    if flask.request.json['lb_nom'] != None:
-        cd_nom1 = flask.request.json['lb_nom']['cd_nom']
-    if flask.request.json['nom_vern'] != None:
-        cd_nom2 = flask.request.json['nom_vern']['cd_nom']
-    if flask.request.json['when'] != None :
-        firstDate = flask.request.json['when']['first']
-        lastDate = flask.request.json['when']['last']
-    if flask.request.json['where'] != None:
-        commune = flask.request.json['where']['code_insee']
-    if flask.request.json['foret'] != None:
-        foret = flask.request.json['foret']['ccod_frt']
+    cd_nom1 = flask.request.json['lb_nom']['cd_nom']
+    cd_nom2 = flask.request.json['nom_vern']['cd_nom']
+    firstDate = flask.request.json['when']['first']
+    lastDate = flask.request.json['when']['last']
+    commune = flask.request.json['where']['code_insee']
+    foret = flask.request.json['foret']['ccod_frt']
     goodCdnom = None
-
     if cd_nom1:
         goodCdnom = str(cd_nom1)
-    elif cd_nom2:
+    else:
         goodCdnom = str(cd_nom2)
 
 
@@ -197,27 +210,22 @@ def buildSQL2OGR():
     if commune:
         commune = "'" + commune +"'"
         sql = askFirstParame(sql,firstParam)
-        firstParam = False
         sql = sql + " s.insee = " +commune
     if foret:
         foret = "'"+foret+"'"
         sql = askFirstParame(sql, firstParam)
-        firstParam = False
         sql = sql + " s.ccod_frt = "+foret
     if firstDate and lastDate :
         firstDate = "'" + firstDate +"'"
         lastDate = "'" + lastDate +"'"
         sql = askFirstParame(sql,firstParam)
-        firstParam = False
         sql = sql + "( s.date >="+firstDate+" OR s.date <="+lastDate+" )"
     elif firstDate:
         firstDate = "'" + firstDate +"'"
         sql = askFirstParame(sql,firstParam)
-        firstParam = False
         sql = sql +" s.date >="+ firstDate
     elif lastDate:
         lastDate = "'" + lastDate +"'"
         sql = askFirstParame(sql,firstParam)
-        firstParam = False
         sql = sql + " s.date <="+lastDate
     return sql
