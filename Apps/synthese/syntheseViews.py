@@ -118,6 +118,10 @@ def loadTaxonHierarchy(rang_fils, rang_pere, value):
     listTaxons = list()
     for r in res:
         listTaxons.append(r[0])
+    try:
+        listTaxons.remove(None)
+    except ValueError:
+        print 'not in list'
     return Response(flask.json.dumps(listTaxons), mimetype='application/json')
 
 
@@ -129,8 +133,6 @@ def export():
         dirPath = UPLOAD_FOLDER+"/"+filename
         #construction de la requete a partir du formulaire envoye
         sql = utils.buildSQL2OGR()
-        print "SQLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"
-        print sql
 
         cmd = """ ogr2ogr -f "ESRI Shapefile" """+dirPath+""".shp PG:"host="""+config.HOST+""" user="""+config.USER+""" dbname="""+config.DATABASE_NAME+""" password="""+config.PASSWORD+""" " -sql  """
         #cmd = 'ogr2ogr -f "ESRI Shapefile"'+dirname+'.shp PG:"host='+config.HOST+' user='+config.USER+' dbname='+config.DATABASE_NAME+' password='+config.PASSWORD+''
@@ -148,7 +150,7 @@ def export():
 
 @synthese.route('/uploads/<filename>')
 def uploaded_file(filename):
-    filename = filename+".zip"
+    filename = filename+".zip.zip"
     return flask.send_from_directory(app.config['UPLOAD_FOLDER'],filename)
 
 
