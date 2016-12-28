@@ -156,6 +156,7 @@ def buildSQL():
         firstParam = False
         sql = sql + " t.famille = %s"
         params.append(famille)
+        #test
 
 
 
