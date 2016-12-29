@@ -28,14 +28,23 @@
 				</div>
 				
 				<div class="form-group">
-				<label> Renseignez un nom latin ou vernaculaire...</label>
-			 	<input id="input_lbnom" placeholder="Nom Latin " type="text" ng-model="$ctrl.form.lb_nom" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.lb_nom for taxon in $ctrl.taxons | filter:{lb_nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()">
+				
+			 	<input id="input_lbnom" placeholder="Nom Latin " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.lb_nom for taxon in $ctrl.taxons | filter:{lb_nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectlbNom($item, $model, $label)" >
 				</div>
 				<div class="form-group">
-				 	<input id="input_nomvern" placeholder="Nom vernaculaire " type="text" ng-model="$ctrl.form.nom_vern" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in $ctrl.taxons | filter:{nom_vern:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()">
+				 	<input id="input_nomvern" placeholder="Nom vernaculaire " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in $ctrl.taxons | filter:{nom_vern:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectNomVern($item, $model, $label)" >
 				</div>
-				<button type="button" class="btn btn-primary btn-xs"> Ajouter un autre taxon à la recherche </button>
-				<label> ... ou cherchez dans la hierarchie taxonomique </label>
+				<div class="col-sm-offset-11">
+					<button type="button" class="btn btn-success btn-xs" uib-tooltip="Ajouter un autre nouveau taxon à la recherche" ng-click="$ctrl.addTaxonEvent()"> + </button>
+				</div>
+				<div ng-show="$ctrl.showNewTaxons" class="ng-hide">
+					<b> Taxons recherchées: </b>
+						<div ng-repeat="taxon in $ctrl.newTaxons">
+							<span> {{taxon.name}} {{$last ? '' : ', '}}</span>
+						</div>
+				</div>
+				
+
 				<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg" > Recherche taxonomique avancée </button>
 
 				<div ng-show="showTaxonomie" class="ng-hide">
@@ -109,7 +118,6 @@
  			 <div class="panel-body">
 			   <div class="form-group">
 			   <label> Selectionner une commune: </label>
-					<!-- 		 		<input placeholder="Selectionner une commune " type="text" ng-model="$ctrl.form.where" typeahead-editable="false" typeahead-min-length="3" uib-typeahead="commune as commune.nom for commune in $ctrl.communes | filter:{nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults"> -->
 					    <select class="form-control" ng-model="$ctrl.form.where" ng-options="commune.nom for commune in $ctrl.communes">
 					    	
 					    </select>
@@ -117,7 +125,7 @@
 
 			 	<div class="form-group">
 			 		<label> Selectionner une forêt: </label>
-			 		<!-- <input placeholder="Selectionner une forêt " type="text" ng-model="$ctrl.form.foret" typeahead-editable="false" typeahead-min-length="0" uib-typeahead="foret as foret.lib_frt for foret in $ctrl.forets | filter:{lib_frt:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults"> -->
+			 		
 			 			<select class="form-control" ng-model="$ctrl.form.foret" ng-options="foret.lib_frt for foret in $ctrl.forets">
 					    </select>
 			 	</div>
@@ -158,12 +166,21 @@
 
 <button ng-click="$ctrl.changeTest()"> CLick test </button>
 
-TEST : {{$ctrl.test}}
 
 {{$ctrl.form}}
 
-{{showTaxonomie}}
+Nouveau taxons: {{$ctrl.newTaxons}}
 
+
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
+</br>
 
 
 

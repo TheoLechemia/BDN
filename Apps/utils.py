@@ -109,8 +109,7 @@ def buildSQL():
     params = list()
     firstParam = True
     #recuperation des parametres
-    cd_nom1 = flask.request.json['lb_nom']['cd_nom']
-    cd_nom2 = flask.request.json['nom_vern']['cd_nom']
+    listTaxons = flask.request.json['listTaxons']
     firstDate = flask.request.json['when']['first']
     lastDate = flask.request.json['when']['last']
     commune = flask.request.json['where']['code_insee']
@@ -123,15 +122,10 @@ def buildSQL():
     ordre = flask.request.json['ordre']
     famille = flask.request.json['famille']
 
-    if cd_nom1:
+    if listTaxons:
         firstParam = False
-        sql = sql + " WHERE s.cd_nom = %s "
-        params.append(cd_nom1)
-    elif cd_nom2:
-        firstParam = False
-        sql = sql + " WHERE s.cd_nom = %s "
-        params.append(cd_nom2)
-
+        sql = sql + " WHERE s.cd_nom IN %s "
+        params.append(tuple(listTaxons))
     if regne:
         firstParam = False
         sql = sql + " WHERE t.regne = %s"
@@ -157,8 +151,6 @@ def buildSQL():
         sql = sql + " t.famille = %s"
         params.append(famille)
         #test
-
-
 
     if commune:
         sql = askFirstParame(sql, firstParam)
