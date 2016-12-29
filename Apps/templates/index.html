@@ -26,6 +26,11 @@
     .stat-thumbnail h1{
       margin-top: 0px;
     }
+    #logo{
+      padding: 0px !important;
+      margin-right: 10px;
+    }
+
 
 	</style>
 </head>
@@ -34,10 +39,11 @@
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
+      <img id=logo class="navbar-brand" src="{{url_for('static', filename='img/ONF_Logo.png')}}" width="130" height="50">
       <a class="navbar-brand" href=" {{url_for('main.index')}} "> BDN-WEB | Données naturalistes ONF Guadeloupe </a>
     </div>
 
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"> 
 
 
       <ul class="nav navbar-nav navbar-right">
@@ -48,19 +54,7 @@
   </div>
 </nav>
 
-<!--  <nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href=" {{url_for('main.index')}} ">BDN-WEB | Données naturalistes ONF Guadeloupe </a>
-    </div>
-    <ul class="nav navbar-nav">
 
-    </ul>
-    <ul class="nav navbar-nav navbar-right">
-      <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Déconnexion</a></li>
-    </ul>
-  </div>
-</nav> -->
 <div class="container presentation">
               <div class="row" style="height: 100px;"> </div>
 

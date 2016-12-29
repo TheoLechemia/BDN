@@ -302,12 +302,11 @@ function formCtrl(proxy, $http, $scope){
 	
 
 	// UI event for taxonomie
-	$scope.showTaxonomie = false;
+	ctrl.showTaxonomie = false;
 	// si on fait la recherche taxonomique: on affiche les truc selectionné, et on met à null la recherche par nom de taxon
 	ctrl.onTaxonomieChange = function(){
-		console.log("hophop")
-		if ($scope.showTaxonomie == false){
-			$scope.showTaxonomie = !$scope.showTaxonomie;
+		if (this.showTaxonomie == false){
+			this.showTaxonomie = !$scope.showTaxonomie;
 		}
 		// on met à null les cd_nom et vide le tableau de cd_nom du formulaire
 		this.form.taxon.cd_nom = null;
@@ -324,8 +323,8 @@ function formCtrl(proxy, $http, $scope){
 	}
 	// si on rempli  un nom de taxon apres avoir faire une recherche par taxonomie, on reinitialise la hierarchie taxo à null;
 	ctrl.fillTaxonEvent = function(){
-		if($scope.showTaxonomie){
-			$scope.showTaxonomie = !$scope.showTaxonomie;
+		if(this.showTaxonomie){
+			this.showTaxonomie = !$scope.showTaxonomie;
 			this.form.regne = null;
 			this.form.phylum = null;
 			this.form.classe = null;
@@ -361,6 +360,26 @@ function formCtrl(proxy, $http, $scope){
 			 $("#input_lbnom").val('');
 			 $("#input_nomvern").val('');
 		}
+
+		ctrl.testClick = function(){
+			console.log('click')
+		}
+
+	// refresh select
+	ctrl.onRefreshEvent = function(){
+		console.log('refresh');
+		this.newTaxons = [];
+		this.showNewTaxons = false;
+		this.showTaxonomie = false;
+		this.form.listTaxons = [];
+		this.form.taxon.cd_nom = null;
+		this.form.taxon.lb_nom = null;
+		this.form.taxon.nom_vern = null;
+		$('#firstDate').val('');
+		$('#lastDate').val('');
+		$('#inputCommune').val('');
+		$('#inputForet').val('');
+	}
 
   	// UI event for date picker
   		ctrl.popup = {

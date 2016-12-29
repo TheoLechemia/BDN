@@ -37,9 +37,9 @@
 				<div class="col-sm-offset-11">
 					<button type="button" class="btn btn-success btn-xs" uib-tooltip="Ajouter un autre nouveau taxon à la recherche" ng-click="$ctrl.addTaxonEvent()"> + </button>
 				</div>
-				<div ng-show="$ctrl.showNewTaxons" class="ng-hide">
-					<b> Taxons recherchées: </b>
-						<div ng-repeat="taxon in $ctrl.newTaxons">
+				<div class="alert alert-warning" ng-show="$ctrl.showNewTaxons" class="ng-hide">
+					<b> Taxons recherché(s): </b>
+						<div  ng-repeat="taxon in $ctrl.newTaxons">
 							<span> {{taxon.name}} {{$last ? '' : ', '}}</span>
 						</div>
 				</div>
@@ -47,7 +47,7 @@
 
 				<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg" > Recherche taxonomique avancée </button>
 
-				<div ng-show="showTaxonomie" class="ng-hide">
+				<div ng-show="$ctrl.showTaxonomie" class="ng-hide">
 					<p> <b> Recherche Taxonomique: </b> </p>
 						<ul> <b>Regne</b> : {{$ctrl.form.regne}} </ul>
 						<ul> <b>Phylum</b> : {{$ctrl.form.phylum}} </ul>
@@ -68,31 +68,31 @@
 				      <h3> Filtrer par rang taxonomique: </h3>
 				      <div class="form-group">
 					      	<select class="form-control" ng-model="$ctrl.form.regne" ng-options="taxon as taxon for taxon in $ctrl.regne" ng-change="$ctrl.loadTaxonomyHierachy('phylum', 'regne', 'null', 'null', $ctrl.form.regne)" >
-						    	<option value=""> - Selectionner un règne - </option>
+						    	<option value=""> - Sélectionner un règne - </option>
 						    </select>
 					  </div>
 					  <div class="form-group">
 						    <!-- PHYLUM -->
 						    <select class="form-control" ng-model="$ctrl.form.phylum" ng-options="taxon as taxon for taxon in phylum" ng-change="$ctrl.loadTaxonomyHierachy('classe', 'phylum', 'regne', $ctrl.form.regne, $ctrl.form.phylum)"> 
-						    	<option value=""> - Selectionner un embranchement - </option>
+						    	<option value=""> - Sélectionner un embranchement - </option>
 						    </select>
 					  </div>
 					   <div class="form-group">
 					    <!-- CLASSE -->
 						    <select class="form-control" ng-model="$ctrl.form.classe" ng-options="taxon as taxon for taxon in classe" ng-change="$ctrl.loadTaxonomyHierachy('ordre', 'classe', 'phylum', $ctrl.form.phylum, $ctrl.form.classe)">
-						    	<option value=""> - Selectionner une classe - </option>
+						    	<option value=""> - Sélectionner une classe - </option>
 						     </select>
 						</div>	
 						<div class="form-group">					     
 						    <!-- ORDRE -->
 						    <select class="form-control" ng-model="$ctrl.form.ordre" ng-options="taxon as taxon for taxon in ordre" ng-change="$ctrl.loadTaxonomyHierachy('famille', 'ordre', 'classe', $ctrl.form.classe, $ctrl.form.ordre)">
-						    	<option value=""> - Selectionner un ordre - </option>
+						    	<option value=""> - Sélectionner un ordre - </option>
 						     </select>
 						</div>
 						<div class="form-group">
 						    <!-- FAMILLE -->
 						    <select class="form-control" ng-model="$ctrl.form.famille" ng-options="taxon as taxon for taxon in famille">
-						    <option value=""> - Selectionner une famille - </option>	
+						    <option value=""> - Sélectionner une famille - </option>	
 						     </select>
 						</div>
 
@@ -117,16 +117,16 @@
 			</div>
  			 <div class="panel-body">
 			   <div class="form-group">
-			   <label> Selectionner une commune: </label>
-					    <select class="form-control" ng-model="$ctrl.form.where" ng-options="commune.nom for commune in $ctrl.communes">
+			   <label> Sélectionner une commune: </label>
+					    <select id="inputCommune" class="form-control" ng-model="$ctrl.form.where" ng-options="commune.nom for commune in $ctrl.communes">
 					    	
 					    </select>
 			 	</div>
 
 			 	<div class="form-group">
-			 		<label> Selectionner une forêt: </label>
+			 		<label> Sélectionner une forêt: </label>
 			 		
-			 			<select class="form-control" ng-model="$ctrl.form.foret" ng-options="foret.lib_frt for foret in $ctrl.forets">
+			 			<select id="inputForet" class="form-control" ng-model="$ctrl.form.foret" ng-options="foret.lib_frt for foret in $ctrl.forets">
 					    </select>
 			 	</div>
 			 </div>
@@ -140,7 +140,7 @@
 				  <div class="form-group">
 				      <div>
 				        <p class="input-group">
-				          <input placeholder="Après le: (Date)" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.form.when.first"" is-open="$ctrl.popup.first.opened" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" />
+				          <input id="firstDate" placeholder="Après le: (Date)" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.form.when.first"" is-open="$ctrl.popup.first.opened" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" />
 				          <span class="input-group-btn">
 				            <button type="button" class="btn btn-default" ng-click="$ctrl.open('first')"><i class="glyphicon glyphicon-calendar"></i></button>
 				          </span>
@@ -149,7 +149,7 @@
 				  </div>
 			      <div>
 			        <p class="input-group">
-			          <input placeholder="Avant le: (Date)" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.form.when.last"" is-open="$ctrl.popup.last.opened" datepicker-options="dateOptions" close-text="Close" alt-input-formats="altInputFormats" />
+			          <input id="lastDate" placeholder="Avant le: (Date)" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.form.when.last"" is-open="$ctrl.popup.last.opened" datepicker-options="dateOptions" close-text="Close" alt-input-formats="altInputFormats" />
 			          <span class="input-group-btn">
 			            <button type="button" class="btn btn-default" ng-click="$ctrl.open('last')"><i class="glyphicon glyphicon-calendar"></i></button>
 			          </span>
@@ -158,29 +158,28 @@
 			  </div>
 		</div>
 			<!-- <input type="text" placeholder="Quand ?" ng-model="$ctrl.form.when" /> -->
+			<div class=" row">
+			   	<div class="col-sm-6"> 
+			  	 <button type="button" class="btn btn-danger formbutton " uib-tooltip="Raffraichir la sélection" ng-click="$ctrl.onRefreshEvent()"> <span class="glyphicon glyphicon-remove"> </span>  </button>
+			   </div>
+				<div class="col-sm-1">
+			   		<button type="submit" type="button" class="btn btn-primary formbutton" ng-click="$ctrl.submitForm($ctrl.form)"> Rechercher </button>
+			   	</div>
 
-		   <button type="submit" type="button" class="btn btn-primary formbutton" ng-click="$ctrl.submitForm($ctrl.form)"> Rechercher </button>
+
+			</div>
 	</form>
 </div>
 
 
-<button ng-click="$ctrl.changeTest()"> CLick test </button>
 
 
-{{$ctrl.form}}
 
-Nouveau taxons: {{$ctrl.newTaxons}}
+<!-- {{$ctrl.form}}
 
 
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
-</br>
+Nouveau taxons: {{$ctrl.newTaxons}} -->
+
 
 
 
