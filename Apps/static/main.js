@@ -148,18 +148,6 @@ function leafletCtrl($http,$scope){
 	ctrl.setCurrentObs = function(obs){
 			ctrl.childCurrentObs = obs;
 	}
-	ctrl.test = "hop";
-
-/*	$scope.$watch(function(){
-		return ctrl.test;
-	}, function(newVal){
-		alert('value change: '+newVal)
-	});*/
-
-
-	ctrl.testclick = function(){
-		console.log(ctrl.test);
-	}
 
 
 	
@@ -173,7 +161,7 @@ function leafletCtrl($http,$scope){
 		if (features.properties.nom_vern != null){
 			nom_vern = features.properties.nom_vern
 		}
-		layer.bindPopup ("<b>Nom Latin:</b> <a href= 'https://inpn.mnhn.fr/espece/cd_nom/"+features.properties.cd_nom+"'>"+features.properties.lb_nom+ "<br> </a>\
+		layer.bindPopup ("<b>Nom Latin:</b> <a target='_blank' href= 'https://inpn.mnhn.fr/espece/cd_nom/"+features.properties.cd_nom+"'>"+features.properties.lb_nom+ "<br> </a>\
 						  <b> Nom commun: </b>"+ nom_vern +"<br> \
 						  <b> Date: </b> " + features.properties.date+" <br>\
 						  <b> Observateur: </b>"+ features.properties.observateur)
@@ -277,13 +265,6 @@ function formCtrl(proxy, $http, $scope){
 	}
 
 
-	ctrl.test = {'myboolean' : true };
-	ctrl.changeTest = function(){
-		console.log('test');
-		ctrl.test.myboolean = !ctrl.test.myboolean;
-		console.log(ctrl.test)
-	};
-
 	$('.radiotout').attr("checked");
 
 	$('radio').click(function(){
@@ -296,23 +277,27 @@ function formCtrl(proxy, $http, $scope){
 	ctrl.fillTaxonEvent = function(){
 		if($scope.showTaxonomie){
 			$scope.showTaxonomie = !$scope.showTaxonomie;
-			ctrl.form.regne = null;
-			ctrl.form.phylum = null;
-			ctrl.form.classe = null;
-			ctrl.form.ordre = null;
-			ctrl.form.famille = null;
+			this.form.regne = null;
+			this.form.phylum = null;
+			this.form.classe = null;
+			this.form.ordre = null;
+			this.form.famille = null;
 		}
 	}
 
 	// si on fait la recherche taxonomique: on affiche les truc selectionné, et on met à null la recherche par nom de taxon
 	ctrl.onTaxonomieChange = function(){
+		console.log("hophop");
 		if ($scope.showTaxonomie == false){
 			$scope.showTaxonomie = !$scope.showTaxonomie;
 		}
-		ctrl.form.lb_nom.cd_nom = null;
-		ctrl.form.lb_nom.lb_nom = null;
-		ctrl.form.nom_vern.cd_nom = null;
-		ctrl.form.nom_vern.nom_vern = null;
+		// on met à null les cd_nom
+		this.form.lb_nom.cd_nom = null;
+		this.form.lb_nom.lb_nom = null;
+		this.form.nom_vern.cd_nom = null;
+		// on vide les input de la recherche des taxons
+		$("#input_lbnom").val('');
+		$("#input_nomvern").val('');
 		
 	}
 

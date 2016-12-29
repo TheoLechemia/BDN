@@ -29,10 +29,10 @@
 				
 				<div class="form-group">
 				<label> Renseignez un nom latin ou vernaculaire...</label>
-			 	<input placeholder="Nom Latin " type="text" ng-model="$ctrl.form.lb_nom" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.lb_nom for taxon in $ctrl.taxons | filter:{lb_nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()">
+			 	<input id="input_lbnom" placeholder="Nom Latin " type="text" ng-model="$ctrl.form.lb_nom" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.lb_nom for taxon in $ctrl.taxons | filter:{lb_nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()">
 				</div>
 				<div class="form-group">
-				 	<input placeholder="Nom vernaculaire " type="text" ng-model="$ctrl.form.nom_vern" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in $ctrl.taxons | filter:{nom_vern:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()">
+				 	<input id="input_nomvern" placeholder="Nom vernaculaire " type="text" ng-model="$ctrl.form.nom_vern" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in $ctrl.taxons | filter:{nom_vern:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()">
 				</div>
 				<button type="button" class="btn btn-primary btn-xs"> Ajouter un autre taxon à la recherche </button>
 				<label> ... ou cherchez dans la hierarchie taxonomique </label>
