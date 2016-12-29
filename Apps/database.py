@@ -21,7 +21,3 @@ def getConnexion():
     connexion = DatabaseInterface(conn, cur)
     return connexion
 
-
-# def closeAll(db):
-#     db.cur.close()
-#     db.conn.close()

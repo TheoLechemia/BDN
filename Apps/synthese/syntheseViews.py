@@ -14,7 +14,8 @@ synthese = flask.Blueprint('synthese', __name__)
 
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
-UPLOAD_FOLDER = CURRENT_DIR+'\uploads'
+PARENT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, os.pardir))
+UPLOAD_FOLDER = PARENT_DIR+'/static/uploads'
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = 'Martine50='  # Change this!
@@ -103,6 +104,7 @@ def loadTaxons(protocole):
         curProtocole = "'"+protocole+"'"
         sql = "SELECT * FROM bdn.v_search_taxons WHERE protocole = "+curProtocole
     res = utils.sqltoDict(sql, db.cur)
+    db.closeAll()
     return Response(flask.json.dumps(res), mimetype='application/json')
 
 @synthese.route('/loadForets', methods=['GET', 'POST'])
@@ -110,6 +112,7 @@ def loadForets():
     db = getConnexion()
     sql = "SELECT lib_frt, ccod_frt FROM layers.perimetre_forets ORDER BY lib_frt ASC"
     res = utils.sqltoDict(sql, db.cur)
+    db.closeAll()
     return Response(flask.json.dumps(res), mimetype='application/json')
 
 
@@ -118,6 +121,7 @@ def loadCommunes():
     db = getConnexion()
     sql = """SELECT code_insee, nom FROM layers.commune ORDER BY nom ASC"""
     res = utils.sqltoDict(sql, db.cur)
+    db.closeAll()
     return Response(flask.json.dumps(res), mimetype='application/json')
 
 @synthese.route('/loadTaxonomyHierachy/<rang_fils>/<rang_pere>/<rang_grand_pere>/<value_rang_grand_pere>/<value>')
@@ -142,7 +146,7 @@ def loadTaxonHierarchy(rang_fils, rang_pere, rang_grand_pere, value_rang_grand_p
         listTaxons.insert(0, "Aucun")
     except ValueError:
         print 'not in list'
-
+    db.closeAll()
     return Response(flask.json.dumps(listTaxons), mimetype='application/json')
 
 
@@ -153,20 +157,19 @@ def export():
     if flask.request.method == 'POST':
         time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         filename = "Export_"+time
-        dirPath = UPLOAD_FOLDER+"\\"+filename
+        dirPath = UPLOAD_FOLDER+"/"+filename
         #construction de la requete a partir du formulaire envoye
         sql = utils.buildSQL2OGR()
 
-        cmd = """ogr2ogr -f "ESRI Shapefile" """+dirPath+""".shp PG:"host=localhost user=onfuser dbname=bdn password=Martine50=" -sql  """
+        cmd = """ogr2ogr -f "ESRI Shapefile" """+dirPath+""".shp PG:"host="""+config.HOST+""" user="""+config.USER+""" dbname="""+config.DATABASE_NAME+""" password="""+config.PASSWORD+""" " -sql  """
         cmd = cmd +'"'+sql+'"'
 
         #cree un dossier avec les shapefiles dedans (shp, shx etc..)
         os.system(cmd)
         #on zipe le tout
         utils.zipIt(dirPath)
-        #on retourne le nom du dossier creer, dans la reponse du poste 
+        #on retourne le nom du dossier creer, dans la reponse du poste
         return Response(flask.json.dumps(filename), mimetype='application/json')
-
     return Response(flask.json.dumps("from_get"), mimetype='application/json')
 
 

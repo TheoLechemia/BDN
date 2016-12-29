@@ -257,7 +257,32 @@ templateForm = URL_APPLICATION+'static/templates/formObs.html';
 function formCtrl(proxy, $http, $scope){
 	ctrl = this;
 
-	$scope.test = "yahhhhhhhh";
+
+	// modele du formulaire
+
+		ctrl.form = {
+		'who' : null,
+		'lb_nom' : {'lb_nom': null, 'cd_nom' : null },
+		'nom_vern' : {'nom_vern': null, 'cd_nom' : null }, 
+		'where' : {'code_insee': null, 'nom': null},
+		'when' : {'first': null, 'last': null},
+		'foret' : {'ccod_frt': null, 'lib_frt': null},
+		'taxonomie' : {'rang': null, 'value': null},
+		'regne' : null,
+		'phylum' : null,
+		'classe' : null,
+		'ordre': null,
+		'famille': null,
+		'group2_inpn': null,
+	}
+
+
+	ctrl.test = {'myboolean' : true };
+	ctrl.changeTest = function(){
+		console.log('test');
+		ctrl.test.myboolean = !ctrl.test.myboolean;
+		console.log(ctrl.test)
+	};
 
 	$('.radiotout').attr("checked");
 
@@ -265,6 +290,31 @@ function formCtrl(proxy, $http, $scope){
 		$(this).siblings.removeAttr('checked')
 	})
 
+	$scope.showTaxonomie = false;
+
+	// si on rempli  un nom de taxon apres avoir faire une recherche par taxonomie, on reinitialise la hierarchie taxo à null;
+	ctrl.fillTaxonEvent = function(){
+		if($scope.showTaxonomie){
+			$scope.showTaxonomie = !$scope.showTaxonomie;
+			ctrl.form.regne = null;
+			ctrl.form.phylum = null;
+			ctrl.form.classe = null;
+			ctrl.form.ordre = null;
+			ctrl.form.famille = null;
+		}
+	}
+
+	// si on fait la recherche taxonomique: on affiche les truc selectionné, et on met à null la recherche par nom de taxon
+	ctrl.onTaxonomieChange = function(){
+		if ($scope.showTaxonomie == false){
+			$scope.showTaxonomie = !$scope.showTaxonomie;
+		}
+		ctrl.form.lb_nom.cd_nom = null;
+		ctrl.form.lb_nom.lb_nom = null;
+		ctrl.form.nom_vern.cd_nom = null;
+		ctrl.form.nom_vern.nom_vern = null;
+		
+	}
 
 
 	ctrl.regne = ['Animalia', 'Plantae', 'Fungi']
@@ -287,21 +337,6 @@ function formCtrl(proxy, $http, $scope){
 	
 	}
 
-	ctrl.form = {
-		who : null,
-		lb_nom : {'lb_nom': null, 'cd_nom' : null },
-		nom_vern : {'nom_vern': null, 'cd_nom' : null }, 
-		where : {'code_insee': null, 'nom': null},
-		when : {'first': null, 'last': null},
-		foret : {'ccod_frt': null, 'lib_frt': null},
-		taxonomie : {'rang': null, 'value': null},
-		regne : null,
-		phylum : null,
-		classe : null,
-		ordre: null,
-		famille: null,
-		group2_inpn: null,
-	}
 
 	ctrl.regneRadio = 'current';
 

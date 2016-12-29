@@ -81,7 +81,7 @@ def sqltoDict(sql, cur):
 
 
 def zipIt(dirPath):
-    zf = zipfile.ZipFile(dirPath+'.zip.zip', mode='w')
+    zf = zipfile.ZipFile(dirPath+'.zip', mode='w')
     zf.write(dirPath+".dbf", os.path.basename(dirPath+".dbf") )
     zf.write(dirPath+".prj", os.path.basename(dirPath+".prj"))
     zf.write(dirPath+".shx", os.path.basename(dirPath+".shx"))
