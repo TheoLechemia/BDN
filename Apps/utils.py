@@ -117,9 +117,10 @@ def getFormParameters():
     classe = flask.request.json['classe']
     ordre = flask.request.json['ordre']
     famille = flask.request.json['famille']
+    group2_inpn = flask.request.json['group2_inpn']
 
 
-    return {'listTaxons':listTaxons, 'firstDate':firstDate, 'lastDate':lastDate, 'commune':commune, 'foret':foret, 'regne':regne, 'phylum': phylum, 'classe':classe, 'ordre':ordre, 'famille': famille  }
+    return {'listTaxons':listTaxons, 'firstDate':firstDate, 'lastDate':lastDate, 'commune':commune, 'foret':foret, 'regne':regne, 'phylum': phylum, 'classe':classe, 'ordre':ordre, 'famille': famille, 'group2_inpn':group2_inpn }
 
 def buildSQL():
     sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date
@@ -134,6 +135,7 @@ def buildSQL():
         firstParam = False
         sql = sql + " WHERE s.cd_nom IN %s "
         params.append(tuple(formParameters['listTaxons']))
+    #recherche taxonomique avance
     if formParameters['regne']:
         firstParam = False
         sql = sql + " WHERE t.regne = %s"
@@ -150,7 +152,14 @@ def buildSQL():
     if formParameters['famille'] and formParameters['famille'] != 'Aucun':
         sql = sql + " AND t.famille = %s"
         params.append(formParameters['famille'])
+    if formParameters['group2_inpn']:
+        sql = askFirstParame(sql, firstParam)
+        firstParam = False
+        sql += " t.group2_inpn = %s"
+        params.append(formParameters['group2_inpn'])
 
+
+    #recherche geographique
     if formParameters['commune']:
         sql = askFirstParame(sql, firstParam)
         sql = sql + " s.insee = %s "
@@ -161,6 +170,7 @@ def buildSQL():
         sql = sql + " s.ccod_frt = %s "
         firstParam = False
         params.append(str(formParameters['foret']))
+    #date
     if formParameters['firstDate'] and formParameters['lastDate'] :
         sql = askFirstParame(sql, firstParam)
         sql = sql + "( s.date >= %s OR s.date <= %s )"
@@ -193,7 +203,6 @@ def buildSQL2OGR():
         stringCdNom= stringCdNom[:-1]
         stringCdNom += " )"
         sql = sql + " WHERE s.cd_nom IN "+ stringCdNom
-        print "PASSE PAR LAAAAAAAAAAAAAAAAAAAAAAAA"
 
     #recherche taxonomique avancée
     if formParameters['regne']:
@@ -216,6 +225,13 @@ def buildSQL2OGR():
         sql += " AND t.famille = "+famille
         params.append(formParameters['famille'])
 
+    if formParameters['group2_inpn']:
+        sql = askFirstParame(sql, firstParam)
+        firstParam = False
+        group2_inpn = "'"+formParameters['group2_inpn']+"'"
+        sql += " t.group2_inpn = "+ group2_inpn
+
+    #recherche geographique
     if formParameters['commune']:
         commune = "'" + formParameters['commune'] +"'"
         sql = askFirstParame(sql,firstParam)
@@ -228,6 +244,7 @@ def buildSQL2OGR():
         firstParam = False
         sql = sql + " s.ccod_frt = "+foret
 
+    #recherche date
     if formParameters['firstDate'] and formParameters['lastDate'] :
         firstDate = "'" + formParameters['firstDate'] +"'"
         lastDate = "'" + formParameters['lastDate'] +"'"

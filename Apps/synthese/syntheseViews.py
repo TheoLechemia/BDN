@@ -67,10 +67,7 @@ def lastObs():
 
 @synthese.route('/getObs', methods=['GET', 'POST'])
 def getObs():
-    db = getConnexion()
-    sqlBase = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date
-              FROM bdn.synthese s
-              JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom"""    
+    db = getConnexion()   
     if flask.request.method == 'POST':
         geojson ={ "type": "FeatureCollection",  "features" : list() } 
         sqlAndParams = utils.buildSQL()
@@ -85,6 +82,7 @@ def getObs():
     return Response(flask.json.dumps(geojson), mimetype='application/json')
 
 ######FORM#########
+#charge le bons taxons pour la recherche par nom latin et vernaculaire en fonction du protocole choisi
 @synthese.route('/loadTaxons/<protocole>', methods=['GET', 'POST'])
 def loadTaxons(protocole):
     db = getConnexion()
@@ -97,6 +95,7 @@ def loadTaxons(protocole):
     db.closeAll()
     return Response(flask.json.dumps(res), mimetype='application/json')
 
+#charge la liste des foret
 @synthese.route('/loadForets', methods=['GET', 'POST'])
 def loadForets():
     db = getConnexion()
@@ -105,7 +104,7 @@ def loadForets():
     db.closeAll()
     return Response(flask.json.dumps(res), mimetype='application/json')
 
-
+#charge la liste des communes
 @synthese.route('/loadCommunes', methods=['GET', 'POST'])
 def loadCommunes():
     db = getConnexion()
@@ -113,6 +112,19 @@ def loadCommunes():
     res = utils.sqltoDict(sql, db.cur)
     db.closeAll()
     return Response(flask.json.dumps(res), mimetype='application/json')
+
+#charge la liste des group2_inpn
+@synthese.route('/loadGroup2_inpn', methods = ['GET'])
+def loadGroup2_inpn():
+    db = getConnexion()
+    listGroup = []
+    sql = "SELECT DISTINCT group2_inpn FROM taxonomie.taxref ORDER BY group2_inpn ASC"
+    db.cur.execute(sql)
+    res = db.cur.fetchall()
+    for r in res:
+        listGroup.append(r[0])
+    db.closeAll()
+    return Response(flask.json.dumps(listGroup), mimetype='application/json')
 
 @synthese.route('/loadTaxonomyHierachy/<rang_fils>/<rang_pere>/<rang_grand_pere>/<value_rang_grand_pere>/<value>')
 def loadTaxonHierarchy(rang_fils, rang_pere, rang_grand_pere, value_rang_grand_pere, value):

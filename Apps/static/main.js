@@ -21,6 +21,9 @@ proxy = app.factory('proxy', function proxy($http) {
 			loadForets: function(){
 				return $http.get(URL_APPLICATION+"loadForets")
 			},
+			loadGroup2_inpn : function(){
+				return $http.get(URL_APPLICATION+"loadGroup2_inpn")
+			},
 
 			exportShapeFile : function(data){
 				return $http.post(URL_APPLICATION+"export", data)
@@ -245,8 +248,12 @@ templateForm = URL_APPLICATION+'static/templates/formObs.html';
 function formCtrl(proxy, $http, $scope){
 	ctrl = this;
 
-
-	ctrl = this;
+	ctrl.group2_inpn = []
+	// load group2INPN
+	proxy.loadGroup2_inpn().then(function(response){
+		ctrl.group2_inpn = response.data;
+		console.log(response.data);
+	}) 
 
 	// Modele du formulaire
 	ctrl.form = {
@@ -375,6 +382,8 @@ function formCtrl(proxy, $http, $scope){
 		this.form.taxon.cd_nom = null;
 		this.form.taxon.lb_nom = null;
 		this.form.taxon.nom_vern = null;
+		$("#input_lbnom").val('');
+		$("#input_nomvern").val('');
 		$('#firstDate').val('');
 		$('#lastDate').val('');
 		$('#inputCommune').val('');

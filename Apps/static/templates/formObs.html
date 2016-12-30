@@ -97,6 +97,7 @@
 						</div>
 
 					<h3> Autres filtres: </h3>
+						<select id="inputCommune" class="form-control" ng-model="$ctrl.form.group2_inpn" ng-options="group as group for group in $ctrl.group2_inpn"></select>
 				      <div class="modal-footer">
 				        <button type="button" class="btn btn-success" data-dismiss="modal" ng-click="$ctrl.onTaxonomieChange()">Valider</button>
 				      </div>
@@ -118,7 +119,7 @@
  			 <div class="panel-body">
 			   <div class="form-group">
 			   <label> Sélectionner une commune: </label>
-					    <select id="inputCommune" class="form-control" ng-model="$ctrl.form.where" ng-options="commune.nom for commune in $ctrl.communes">
+					    <select id="inputCommune" class="form-control" ng-model="$ctrl.form.where" ng-options="commune.nom for commune in $ctrl.group2INPN">
 					    	
 					    </select>
 			 	</div>
@@ -180,6 +181,7 @@
 
 Nouveau taxons: {{$ctrl.newTaxons}}
 
+groupe {{$ctrl.group2_inpn}}
 
 
 
