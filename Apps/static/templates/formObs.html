@@ -35,7 +35,7 @@
 				 	<input id="input_nomvern" placeholder="Nom vernaculaire " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in $ctrl.taxons | filter:{nom_vern:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectNomVern($item, $model, $label)" >
 				</div>
 				<div class="col-sm-offset-11">
-					<button type="button" class="btn btn-success btn-xs" uib-tooltip="Ajouter un autre nouveau taxon à la recherche" ng-click="$ctrl.addTaxonEvent()"> + </button>
+					<button type="button" class="btn btn-success btn-xs" uib-tooltip="Ajouter un autre taxon à la recherche" ng-click="$ctrl.addTaxonEvent()"> + </button>
 				</div>
 				<div class="alert alert-warning" ng-show="$ctrl.showNewTaxons" class="ng-hide">
 					<b> Taxons recherché(s): </b>
@@ -45,17 +45,19 @@
 				</div>
 				
 
-				<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg" > Recherche taxonomique avancée </button>
+				<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg" ng-click="$ctrl.advancedSearch()" > Recherche taxonomique avancée </button>
 
-				<div ng-show="$ctrl.showTaxonomie" class="ng-hide">
-					<p> <b> Recherche Taxonomique: </b> </p>
+				<div ng-show ="$ctrl.form.regne != null " class="ng-hide">
+					<p> <b> Hierachie Taxonomique: </b> </p>
 						<ul> <b>Regne</b> : {{$ctrl.form.regne}} </ul>
 						<ul> <b>Phylum</b> : {{$ctrl.form.phylum}} </ul>
 						<ul> <b>Classe </b> : {{$ctrl.form.classe}} </ul>
 						<ul> <b>Ordre</b> : {{$ctrl.form.ordre}} </ul>
 						<ul> <b> Famille </b> : {{$ctrl.form.famille}} </ul>
-					
-
+				</div>
+				<div ng-show ="$ctrl.form.group2_inpn != null " class="ng-hide">
+					<p> <b> Autres filtres:  </b> </p>
+					<ul> <b>Groupe</b> : {{$ctrl.form.group2_inpn}} </ul>
 				</div>
 				
 
@@ -97,7 +99,7 @@
 						</div>
 
 					<h3> Autres filtres: </h3>
-						<select id="inputCommune" class="form-control" ng-model="$ctrl.form.group2_inpn" ng-options="group as group for group in $ctrl.group2_inpn"></select>
+						<select id="inputGroupINPN" class="form-control" ng-model="$ctrl.form.group2_inpn" ng-options="group as group for group in $ctrl.group2_inpn"></select>
 				      <div class="modal-footer">
 				        <button type="button" class="btn btn-success" data-dismiss="modal" ng-click="$ctrl.onTaxonomieChange()">Valider</button>
 				      </div>

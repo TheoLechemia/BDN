@@ -248,13 +248,7 @@ templateForm = URL_APPLICATION+'static/templates/formObs.html';
 function formCtrl(proxy, $http, $scope){
 	ctrl = this;
 
-	ctrl.group2_inpn = []
-	// load group2INPN
-	proxy.loadGroup2_inpn().then(function(response){
-		ctrl.group2_inpn = response.data;
-		console.log(response.data);
-	}) 
-
+	
 	// Modele du formulaire
 	ctrl.form = {
 		'who' : null,
@@ -276,6 +270,7 @@ function formCtrl(proxy, $http, $scope){
 	this.submitForm = function(form){
 		this.onFormSubmit({$event: {form: form}})
 	}
+
 
 
 	//RADIO REGNE
@@ -310,6 +305,17 @@ function formCtrl(proxy, $http, $scope){
 
 	// UI event for taxonomie
 	ctrl.showTaxonomie = false;
+
+	// si on fait une recherche taxonomique avancé: on charge les groupes:
+		ctrl.group2_inpn = [];
+		ctrl.advancedSearch = function(){
+			proxy.loadGroup2_inpn().then(function(response){
+				ctrl.group2_inpn = response.data;
+				console.log(response.data);
+			}) 
+		}
+
+
 	// si on fait la recherche taxonomique: on affiche les truc selectionné, et on met à null la recherche par nom de taxon
 	ctrl.onTaxonomieChange = function(){
 		if (this.showTaxonomie == false){
@@ -382,12 +388,15 @@ function formCtrl(proxy, $http, $scope){
 		this.form.taxon.cd_nom = null;
 		this.form.taxon.lb_nom = null;
 		this.form.taxon.nom_vern = null;
+		this.form.group2_inpn = null;
+
 		$("#input_lbnom").val('');
 		$("#input_nomvern").val('');
 		$('#firstDate').val('');
 		$('#lastDate').val('');
 		$('#inputCommune').val('');
 		$('#inputForet').val('');
+		$('#inputGroupINPN').val('');
 	}
 
   	// UI event for date picker
