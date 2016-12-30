@@ -8,7 +8,8 @@ $(document).ready( function () {
 	$(".check").prop('checked', false);
 
 	// dataTable
-    		$('#table_id').DataTable({
+    	$('#table_id').DataTable({
+    			responsive: true,
     			"lengthChange": false,
 		    	"pageLength": 50,
 		        "oLanguage": {
@@ -20,7 +21,7 @@ $(document).ready( function () {
 			        "oPaginate": {
 			           "sPrevious": "Précedent",
 			           "sNext" : "Suivant"
-					}
+					} 
 				}
 			})
     	});

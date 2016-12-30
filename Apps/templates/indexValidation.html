@@ -17,10 +17,12 @@
 
 
 
+
 <!-- Datatable -->
 
-<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='lib/datatable/css/dataTables.bootstrap.css') }}">
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.13/r-2.1.0/datatables.min.css"/>
+ 
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.13/r-2.1.0/datatables.min.js"></script>
 
 <!-- Leaflet -->
 <script src="{{url_for('static', filename='lib/leaflet/leaflet.js') }}"></script>
@@ -49,30 +51,30 @@
 			        <thead>
 			            <tr>
 			               <th> </th>
-			                <th>ID</th>
+			                <th>  </th>
+			                <th> </th>
+			                <th> </th>
 			                <th>Protocole</th>
 			                <th>Nom Vernaculaire</th>
 			                <th>Nom Scientifique</th>
 			                <th>Date</th>
 			                <th>Observateur</th>
-			                <th>  </th>
-			                <th> </th>
-			                <th> </th>
+
 			            </tr>
 					</thead>
 					<tbody>
             		{% for taxon in taxList %}
 						<tr class="taxonRow" idSynthese="{{taxon[0]}}"> 
 							<td> <input class = "check" type="checkbox"> </td>
-							<td> {{taxon[0]}} </td>
+							<td class="search"> <span class="glyphicon glyphicon-search " style="cursor:pointer;"> </span> </td>
+							<td class="validate"> <span class="glyphicon glyphicon-ok " style="color:green; cursor:pointer;"> </span> </td>
+							<td class="delete" data-toggle="modal" data-target=".bd-example-modal-lg" > <span class="glyphicon glyphicon-remove " style="color:red; cursor:pointer;"> </span> </td>
 							<td> {{taxon[1]}} </td>
 							<td> {{taxon[2]}} </td>
 							<td> <a target="_blank" href= 'https://inpn.mnhn.fr/espece/cd_nom/{{taxon[6]}}' > {{taxon[3]}} </a> </td>
 							<td> {{taxon[4]}} </td>
 							<td> {{taxon[5]}} </td>
-							<td class="search"> <span class="glyphicon glyphicon-search " style="cursor:pointer;"> </span> </td>
-							<td class="validate"> <span class="glyphicon glyphicon-ok " style="color:green; cursor:pointer;"> </span> </td>
-							<td class="delete" data-toggle="modal" data-target=".bd-example-modal-lg" > <span class="glyphicon glyphicon-remove " style="color:red; cursor:pointer;"> </span> </td>
+
 						</tr>
 					{% endfor %}
 					</tbody>
