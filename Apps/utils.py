@@ -102,13 +102,8 @@ def askFirstParame(sql, firstParam):
         sql = sql + " AND "
     return sql
 
-def buildSQL():
-    sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date
-              FROM bdn.synthese s
-              JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom"""
-    params = list()
-    firstParam = True
-    #recuperation des parametres
+
+def getFormParameters():
     listTaxons = flask.request.json['listTaxons']
     firstDate = flask.request.json['when']['first']
     lastDate = flask.request.json['when']['last']
@@ -122,57 +117,67 @@ def buildSQL():
     ordre = flask.request.json['ordre']
     famille = flask.request.json['famille']
 
-    if listTaxons:
+    return {'listTaxons':listTaxons, 'firstDate':firstDate, 'lastDate':lastDate, 'commune':commune, 'foret':foret, 'regne':regne, 'phylum': phylum, 'classe':classe, 'ordre':ordre, 'famille': famille  }
+
+def buildSQL():
+    sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date
+              FROM bdn.synthese s
+              JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom"""
+    params = list()
+    firstParam = True
+    #recuperation des parametres
+    formParameters = getFormParameters()
+
+    if formParameters['listTaxons']:
         firstParam = False
         sql = sql + " WHERE s.cd_nom IN %s "
-        params.append(tuple(listTaxons))
-    if regne:
+        params.append(tuple(formParameters['listTaxons']))
+    if formParameters['regne']:
         firstParam = False
         sql = sql + " WHERE t.regne = %s"
-        params.append(regne)
-    if phylum and phylum != 'Aucun':
+        params.append(formParameters['regne'])
+    if formParameters['phylum'] and formParameters['phylum'] != 'Aucun':
         sql = askFirstParame(sql, firstParam)
         firstParam = False
         sql = sql + " t.phylum = %s"
-        params.append(phylum)
-    if classe and classe !='Aucun':
+        params.append(formParameters['phylum'])
+    if formParameters['classe'] and formParameters['classe'] !='Aucun':
         sql = askFirstParame(sql, firstParam)
         firstParam = False
         sql = sql + " t.classe = %s"
-        params.append(classe)
-    if ordre and ordre != 'Aucun':
+        params.append(formParameters['classe'])
+    if formParameters['ordre'] and formParameters['ordre'] != 'Aucun':
         sql = askFirstParame(sql, firstParam)
         firstParam = False
         sql = sql + " t.ordre = %s"
-        params.append(ordre)
-    if famille and famille != 'Aucun':
+        params.append(formParameters['ordre'])
+    if formParameters['famille'] and formParameters['famille'] != 'Aucun':
         sql = askFirstParame(sql, firstParam)
         firstParam = False
         sql = sql + " t.famille = %s"
-        params.append(famille)
-        #test
+        params.append(formParameters['famille'])
 
-    if commune:
+    if formParameters['commune']:
         sql = askFirstParame(sql, firstParam)
         sql = sql + " s.insee = %s "
         firstParam = False
-        params.append(str(commune))
-    if foret:
+        params.append(str(formParameters['commune']))
+    if formParameters['foret']:
         sql = askFirstParame(sql, firstParam)
         sql = sql + " s.ccod_frt = %s "
         firstParam = False
-        params.append(str(foret))
-    if firstDate and lastDate :
+        params.append(str(formParameters['foret']))
+    if formParameters['firstDate'] and formParameters['lastDate'] :
         sql = askFirstParame(sql, firstParam)
         sql = sql + "( s.date >= %s OR s.date <= %s )"
-        params.append(firstDate)
-        params.append(lastDate)
-    elif firstDate:
+        params.append(formParameters['firstDate'])
+        params.append(formParameters['lastDate'])
+    elif formParameters['firstDate']:
         if firstParam:
             sql = askFirstParame(sql,firstParam)
         sql = sql +" s.date >= %s"
         params.append(firstDate)
-    elif lastDate:
+    elif formParameters['lastDate']:
         sql = askFirstParame(sql,firstParam)
         sql = sql + " s.date <= %s "
         params.append(lastDate)
@@ -184,41 +189,45 @@ def buildSQL2OGR():
     params = list()
     firstParam = True
     #recuperation des parametres
-    cd_nom1 = flask.request.json['lb_nom']['cd_nom']
-    cd_nom2 = flask.request.json['nom_vern']['cd_nom']
-    firstDate = flask.request.json['when']['first']
-    lastDate = flask.request.json['when']['last']
-    commune = flask.request.json['where']['code_insee']
-    foret = flask.request.json['foret']['ccod_frt']
-    goodCdnom = None
-    if cd_nom1:
-        goodCdnom = str(cd_nom1)
-    else:
-        goodCdnom = str(cd_nom2)
+    formParameters = getFormParameters()
 
 
-    if goodCdnom:
+    if formParameters['listTaxons']:
         firstParam = False
-        sql = sql + " WHERE s.cd_nom = "+ goodCdnom
-    if commune:
-        commune = "'" + commune +"'"
+        stringCdNom = "("
+        for cd_nom in formParameters['listTaxons']:
+            stringCdNom += str(cd_nom)+","
+        stringCdNom= stringCdNom[:-1]
+        stringCdNom += " )"
+        print 'OHHHHHHHHHHHHHH'
+        print stringCdNom
+        sql = sql + " WHERE s.cd_nom IN "+ stringCdNom
+
+    if formParameters['commune']:
+        commune = "'" + formParameters['commune'] +"'"
         sql = askFirstParame(sql,firstParam)
+        firstParam = False
         sql = sql + " s.insee = " +commune
-    if foret:
-        foret = "'"+foret+"'"
+
+    if formParameters['foret']:
+        foret = "'"+formParameters['foret']+"'"
         sql = askFirstParame(sql, firstParam)
+        firstParam = False
         sql = sql + " s.ccod_frt = "+foret
-    if firstDate and lastDate :
-        firstDate = "'" + firstDate +"'"
-        lastDate = "'" + lastDate +"'"
+
+    if formParameters['firstDate'] and formParameters['lastDate'] :
+        firstDate = "'" + formParameters['firstDate'] +"'"
+        lastDate = "'" + formParameters['lastDate'] +"'"
         sql = askFirstParame(sql,firstParam)
+        firstParam = False
         sql = sql + "( s.date >="+firstDate+" OR s.date <="+lastDate+" )"
-    elif firstDate:
-        firstDate = "'" + firstDate +"'"
+
+    elif formParameters['firstDate']:
+        firstDate = "'" + formParameters['firstDate'] +"'"
         sql = askFirstParame(sql,firstParam)
         sql = sql +" s.date >="+ firstDate
-    elif lastDate:
-        lastDate = "'" + lastDate +"'"
+    elif formParameters['lastDate']:
+        lastDate = "'" + formParameters['lastDate'] +"'"
         sql = askFirstParame(sql,firstParam)
         sql = sql + " s.date <="+lastDate
     return sql

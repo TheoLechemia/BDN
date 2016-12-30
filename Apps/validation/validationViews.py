@@ -30,7 +30,7 @@ def indexValidation():
         temp = [t[0], t[2], nom_vern.decode('utf-8'), t[5], t[6], t[1], t[3]]
         taxList.append(temp)
     db.closeAll()
-    return render_template('indexValidation.html', URL_APPLICATION=config.URL_APPLICATION, taxList=taxList)
+    return render_template('indexValidation.html', URL_APPLICATION=config.URL_APPLICATION, taxList=taxList, page_title=u"Interface de validation des données")
 
 
 @validation.route('/geojson')

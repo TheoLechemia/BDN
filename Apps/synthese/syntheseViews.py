@@ -24,19 +24,7 @@ from flask import make_response
 from functools import wraps, update_wrapper
 from datetime import datetime
 
-# @synthese.after_request
-# def add_header(r):    
-#     r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-#     r.headers["Pragma"] = "no-cache"
-#     r.headers["Expires"] = "0"
-#     r.headers['Cache-Control'] = 'public, max-age=0'
-#     return r
-# @synthese.after_request
-# def add_header(response):    
-#   flask.response.headers['X-UA-Compatible'] = 'IE=Edge,chrome=1'
-#   if ('Cache-Control' not in response.headers):
-#     flask.response.headers['Cache-Control'] = 'public, max-age=600'
-#   return response
+
 def nocache(view):
     @wraps(view)
     def no_cache(*args, **kwargs):
@@ -51,7 +39,7 @@ def nocache(view):
 
 @synthese.route("/bdn-synthese")
 def synthese_index():
-    return flask.render_template('indexSynthese.html', URL_APPLICATION=config.URL_APPLICATION)
+    return flask.render_template('indexSynthese.html', URL_APPLICATION=config.URL_APPLICATION, page_title=u"Interface de visualisation des données")
 
 
 
@@ -79,12 +67,14 @@ def lastObs():
 
 @synthese.route('/getObs', methods=['GET', 'POST'])
 def getObs():
-    db = getConnexion()    
+    db = getConnexion()
+    sqlBase = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date
+              FROM bdn.synthese s
+              JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom"""    
     if flask.request.method == 'POST':
         geojson ={ "type": "FeatureCollection",  "features" : list() } 
-        print utils.buildSQL()['sql']
-        print utils.buildSQL()['params']
-        db.cur.execute(utils.buildSQL()['sql'], utils.buildSQL()['params'])
+        sqlAndParams = utils.buildSQL()
+        db.cur.execute(sqlAndParams['sql'],sqlAndParams['params'])
         res = db.cur.fetchall()
         myproperties = dict()
         for r in res:
@@ -154,6 +144,7 @@ def loadTaxonHierarchy(rang_fils, rang_pere, rang_grand_pere, value_rang_grand_p
 
 @synthese.route('/export', methods=['GET', 'POST'])
 def export():
+    sqlBase = " SELECT * FROM bdn.synthese s JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom"
     if flask.request.method == 'POST':
         time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         filename = "Export_"+time
@@ -163,6 +154,7 @@ def export():
 
         cmd = """ogr2ogr -f "ESRI Shapefile" """+dirPath+""".shp PG:"host="""+config.HOST+""" user="""+config.USER+""" dbname="""+config.DATABASE_NAME+""" password="""+config.PASSWORD+""" " -sql  """
         cmd = cmd +'"'+sql+'"'
+        print cmd
 
         #cree un dossier avec les shapefiles dedans (shp, shx etc..)
         os.system(cmd)

@@ -29,7 +29,7 @@ def allowed_file(filename):
 @importCSV.route('/', methods=['GET', 'POST'])
 def indexImport():
     if request.method == 'GET':
-        return render_template('importCSV.html')
+        return render_template('importCSV.html', page_title=u"Import des données naturalistes ")
     if request.method == 'POST':
         if 'file' not in request.files:
             return redirect(request.url)
