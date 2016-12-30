@@ -1,3 +1,4 @@
+# coding: utf-8
 import psycopg2
 import psycopg2.extras
 import zipfile
@@ -117,6 +118,7 @@ def getFormParameters():
     ordre = flask.request.json['ordre']
     famille = flask.request.json['famille']
 
+
     return {'listTaxons':listTaxons, 'firstDate':firstDate, 'lastDate':lastDate, 'commune':commune, 'foret':foret, 'regne':regne, 'phylum': phylum, 'classe':classe, 'ordre':ordre, 'famille': famille  }
 
 def buildSQL():
@@ -128,7 +130,7 @@ def buildSQL():
     #recuperation des parametres
     formParameters = getFormParameters()
 
-    if formParameters['listTaxons']:
+    if len(formParameters['listTaxons']) > 0:
         firstParam = False
         sql = sql + " WHERE s.cd_nom IN %s "
         params.append(tuple(formParameters['listTaxons']))
@@ -137,24 +139,16 @@ def buildSQL():
         sql = sql + " WHERE t.regne = %s"
         params.append(formParameters['regne'])
     if formParameters['phylum'] and formParameters['phylum'] != 'Aucun':
-        sql = askFirstParame(sql, firstParam)
-        firstParam = False
-        sql = sql + " t.phylum = %s"
+        sql = sql + " AND t.phylum = %s"
         params.append(formParameters['phylum'])
     if formParameters['classe'] and formParameters['classe'] !='Aucun':
-        sql = askFirstParame(sql, firstParam)
-        firstParam = False
-        sql = sql + " t.classe = %s"
+        sql = sql + " AND t.classe = %s"
         params.append(formParameters['classe'])
     if formParameters['ordre'] and formParameters['ordre'] != 'Aucun':
-        sql = askFirstParame(sql, firstParam)
-        firstParam = False
-        sql = sql + " t.ordre = %s"
+        sql = sql + " AND t.ordre = %s"
         params.append(formParameters['ordre'])
     if formParameters['famille'] and formParameters['famille'] != 'Aucun':
-        sql = askFirstParame(sql, firstParam)
-        firstParam = False
-        sql = sql + " t.famille = %s"
+        sql = sql + " AND t.famille = %s"
         params.append(formParameters['famille'])
 
     if formParameters['commune']:
@@ -186,22 +180,41 @@ def buildSQL():
 
 def buildSQL2OGR():
     sql = " SELECT * FROM bdn.synthese s JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom"
-    params = list()
     firstParam = True
     #recuperation des parametres
     formParameters = getFormParameters()
 
 
-    if formParameters['listTaxons']:
+    if len(formParameters['listTaxons']) > 0:
         firstParam = False
         stringCdNom = "("
         for cd_nom in formParameters['listTaxons']:
             stringCdNom += str(cd_nom)+","
         stringCdNom= stringCdNom[:-1]
         stringCdNom += " )"
-        print 'OHHHHHHHHHHHHHH'
-        print stringCdNom
         sql = sql + " WHERE s.cd_nom IN "+ stringCdNom
+        print "PASSE PAR LAAAAAAAAAAAAAAAAAAAAAAAA"
+
+    #recherche taxonomique avancée
+    if formParameters['regne']:
+        sql = askFirstParame(sql,firstParam)
+        firstParam = False
+        regne = "'"+formParameters['regne']+"'"
+        sql += " t.regne = "+regne
+    if formParameters['phylum'] and formParameters['phylum'] != 'Aucun':
+        phylum = "'"+formParameters['phylum']+"'"
+        sql += " AND t.phylum = "+ phylum
+    if formParameters['classe'] and formParameters['classe'] !='Aucun':
+        classe = "'"+formParameters['classe']+"'"
+        sql += " AND t.classe = "+classe
+        params.append(formParameters['classe'])
+    if formParameters['ordre'] and formParameters['ordre'] != 'Aucun':
+        ordre ="'"+formParameters['ordre']+"'"
+        sql += " AND t.ordre = "+ordre
+    if formParameters['famille'] and formParameters['famille'] != 'Aucun':
+        famille = "'"+formParameters['famille']+"'"
+        sql += " AND t.famille = "+famille
+        params.append(formParameters['famille'])
 
     if formParameters['commune']:
         commune = "'" + formParameters['commune'] +"'"
