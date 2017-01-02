@@ -1,6 +1,13 @@
 
 /*DATATABLE*/
 
+$(window).resize(function() {
+  console.log($(window).height());
+  // change datatable height
+  $('.dataTables_scrollBody').css('height', ($(window).height() - 300));
+  // change map height
+  $('#map').css('height', ($(window).height() - 100));  
+});
 
 $(document).ready( function () {
 
@@ -11,6 +18,7 @@ $(document).ready( function () {
     	$('#table_id').DataTable({
     			responsive: true,
     			"lengthChange": false,
+    			"sScrollY": ($(window).height() - 300),
 		    	"pageLength": 50,
 		        "oLanguage": {
 		           "sSearch": "Rechercher",
@@ -31,7 +39,7 @@ $(document).ready( function () {
   /*LEAFLET*/
 
  var selectLayer;
-
+ 
  function generateLayerFromGeojson(observations){
  	currentGeojsonLayer = L.geoJson(observations, {
           pointToLayer: function (feature, latlng) {
