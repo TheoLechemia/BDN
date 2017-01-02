@@ -19,6 +19,10 @@
 			
 		</div>
 		<button ng-click="$ctrl.exportShape($ctrl.form)" type="button" class="btn btn-primary">Exportez en shapefile <span class="glyphicon glyphicon-download-alt"> </span> </button>
+		<div ng-show="$ctrl.exportAlert" class="alert alert-warning alert-dismissable">
+		  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		  Attention: les données exportées ne sont que les données qui ont été validées
+		</div>
 	</div>	
 </div>
 

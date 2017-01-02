@@ -259,4 +259,8 @@ def buildSQL2OGR():
         lastDate = "'" + formParameters['lastDate'] +"'"
         sql = askFirstParame(sql,firstParam)
         sql = sql + " s.date <="+lastDate
+
+    sql = askFirstParame(sql, firstParam)
+    sql += " s.valide = true"
+    print sql
     return sql

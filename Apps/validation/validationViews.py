@@ -1,5 +1,5 @@
 # coding: utf-8
-from flask import render_template, json, Blueprint
+from flask import render_template, json, Blueprint, request
 #from ..initApp import app
 from .. import config
 from ..database import *
@@ -49,14 +49,21 @@ def deleteRow(id_synt):
 def validate():
     db = getConnexion()
     #id_synt = str(id_synt)
-    id_synt = None
+    tab = list()
+    id_synt = tuple()
     if request.method == 'POST':
         id_synt = request.json['validate']
-        id_synt = tuple(id_synt)
+        if type(id_synt) != str:
+            tab.append(id_synt)
+            tupleSynth = tuple(tab)
+        else:
+            tupleSynth = tuple(id_synt)
+        print "OHHH"
+        print id_synt
         sql = """UPDATE bdn.synthese
                  SET valide = TRUE
                  WHERE id_synthese IN %s;"""
-        param = [id_synt]
+        param = [tupleSynth]
         db.cur.execute(sql,param) 
         db.conn.commit()
     db.closeAll()
