@@ -8,7 +8,12 @@ $(window).resize(function() {
   $('#map').css('height', ($(window).height() - 100));  
 });
 
+
 $(document).ready( function () {
+
+	// tooltip initialization
+	  $('[data-toggle="tooltip"]').tooltip();
+	  console.log('tooltip it')
 
 	// uncheck all checkbox
 	$(".check").prop('checked', false);

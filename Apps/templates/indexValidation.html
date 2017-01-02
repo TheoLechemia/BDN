@@ -50,7 +50,7 @@
 			<table id="table_id" class="display table">
 			        <thead>
 			            <tr>
-			               <th> </th>
+			                <th> </th>
 			                <th>  </th>
 			                <th> </th>
 			                <th> </th>
@@ -66,9 +66,9 @@
             		{% for taxon in taxList %}
 						<tr class="taxonRow" idSynthese="{{taxon[0]}}"> 
 							<td> <input class = "check" type="checkbox"> </td>
-							<td class="search"> <span class="glyphicon glyphicon-search " style="cursor:pointer;"> </span> </td>
-							<td class="validate"> <span class="glyphicon glyphicon-ok " style="color:green; cursor:pointer;"> </span> </td>
-							<td class="delete" data-toggle="modal" data-target=".bd-example-modal-lg" > <span class="glyphicon glyphicon-remove " style="color:red; cursor:pointer;"> </span> </td>
+							<td class="search" data-container="body" data-toggle="tooltip" data-placement="right" title="Zoomer sur l'observation"> <span class="glyphicon glyphicon-search " style="cursor:pointer;"> </span> </td>
+							<td class="validate"> <span class="glyphicon glyphicon-ok " style="color:green; cursor:pointer;" data-toggle="tooltip" title="Valider l'observation" data-placement="right"> </span> </td>
+							<td class="delete" data-toggle="modal" data-target=".bd-example-modal-lg" > <span class="glyphicon glyphicon-remove " style="color:red; cursor:pointer;" data-toggle="tooltip" title="Supprimer l'observation" data-placement="right">  </span> </td>
 							<td> {{taxon[1]}} </td>
 							<td> {{taxon[2]}} </td>
 							<td> <a target="_blank" href= 'https://inpn.mnhn.fr/espece/cd_nom/{{taxon[6]}}' > {{taxon[3]}} </a> </td>
