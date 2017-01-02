@@ -2,7 +2,6 @@
 /*DATATABLE*/
 
 $(window).resize(function() {
-  console.log($(window).height());
   // change datatable height
   $('.dataTables_scrollBody').css('height', ($(window).height() - 300));
   // change map height

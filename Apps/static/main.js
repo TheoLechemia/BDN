@@ -53,16 +53,6 @@ function appCtrl (proxy){
 	proxy.lastObs().then(function(response){
 		ctrl.geojson = response.data;
 	});
-	proxy.loadTaxons('Tout').then(function(response){
-	  	ctrl.taxonslist = response.data;
-  	})
-
-	proxy.loadCommunes().then(function(response){
-  		ctrl.communesList = response.data;
-	})
-	proxy.loadForets().then(function(response){
-  		ctrl.foretsList = response.data;
-	})
 
 	ctrl.formSubmit = function(form){
 		ctrl.form = form;
@@ -72,11 +62,7 @@ function appCtrl (proxy){
 		});
 	}
 
-	ctrl.changeProtocole = function(protocole){
-		proxy.loadTaxons(protocole).then(function(response){
-			ctrl.taxonslist = response.data;
-		})
-	}
+
 
 
 	ctrl.updateCurrentObs = function(obs){
@@ -248,7 +234,23 @@ templateForm = URL_APPLICATION+'static/templates/formObs.html';
 function formCtrl(proxy, $http, $scope){
 	ctrl = this;
 
-	
+	// load data on component Init
+	ctrl.$onInit = function(){
+		proxy.loadTaxons('Tout').then(function(response){
+		  	ctrl.taxonslist = response.data;
+	  	})
+
+		proxy.loadCommunes().then(function(response){
+	  		ctrl.communesList = response.data;
+		})
+		proxy.loadForets().then(function(response){
+	  		ctrl.foretsList = response.data;
+
+		})
+
+	} 
+
+
 	// Modele du formulaire
 	ctrl.form = {
 		'who' : null,
@@ -281,8 +283,10 @@ function formCtrl(proxy, $http, $scope){
 		$(this).siblings.removeAttr('checked')
 	})
 	// changement de protocole, change les données de recherche des taxons (faune, flore)
-	this.changeProtocole = function(protocole){
-		this.onProtocoleChange({$event:{protocole:protocole}})
+	ctrl.changeProtocole = function(protocole){
+		proxy.loadTaxons(protocole).then(function(response){
+			ctrl.taxonslist = response.data;
+		})
 	}
 
 
@@ -420,11 +424,7 @@ app.component('formObs', {
   controller : formCtrl,
   templateUrl : templateForm,
   bindings: {
-  	taxons : '<',
-  	communes : '<',
-  	forets: '<',
   	onFormSubmit : '&',
-  	onProtocoleChange : '&',
   }
 });
 
