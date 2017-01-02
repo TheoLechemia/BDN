@@ -53,6 +53,23 @@ function appCtrl (proxy){
 	proxy.lastObs().then(function(response){
 		ctrl.geojson = response.data;
 	});
+	proxy.loadTaxons('Tout').then(function(response){
+	  	ctrl.taxonslist = response.data;
+  	})
+
+	proxy.loadCommunes().then(function(response){
+  		ctrl.communesList = response.data;
+	})
+	proxy.loadForets().then(function(response){
+  		ctrl.foretsList = response.data;
+
+	})
+
+	ctrl.changeProtocole = function(protocole){
+		proxy.loadTaxons(protocole).then(function(response){
+			ctrl.taxonslist = response.data;
+		})
+	}
 
 	ctrl.formSubmit = function(form){
 		ctrl.form = form;
@@ -119,7 +136,7 @@ templateLeafletMap = URL_APPLICATION+'static/templates/leafletMap.html';
 
 function leafletCtrl($http,$scope){
 	ctrl = this;
-
+  
 
 	ctrl.center = {
 		lat: 16.2412500, 
@@ -234,21 +251,16 @@ templateForm = URL_APPLICATION+'static/templates/formObs.html';
 function formCtrl(proxy, $http, $scope){
 	ctrl = this;
 
+	this.$onInit = function() {
+      console.log("init");
+    };
 	// load data on component Init
-	ctrl.$onInit = function(){
-		proxy.loadTaxons('Tout').then(function(response){
-		  	ctrl.taxonslist = response.data;
-	  	})
 
-		proxy.loadCommunes().then(function(response){
-	  		ctrl.communesList = response.data;
-		})
-		proxy.loadForets().then(function(response){
-	  		ctrl.foretsList = response.data;
 
-		})
+	
 
-	} 
+
+	
 
 
 	// Modele du formulaire
@@ -283,11 +295,8 @@ function formCtrl(proxy, $http, $scope){
 		$(this).siblings.removeAttr('checked')
 	})
 	// changement de protocole, change les données de recherche des taxons (faune, flore)
-	ctrl.changeProtocole = function(protocole){
-		proxy.loadTaxons(protocole).then(function(response){
-			ctrl.taxonslist = response.data;
-		})
-	}
+	this.changeProtocole = function(protocole){
+		this.onProtocoleChange({$event:{protocole:protocole}})}
 
 
 	// Liste des rang taxonomique de la recherche avancée
@@ -303,7 +312,6 @@ function formCtrl(proxy, $http, $scope){
 			$scope[rang_fils] = response.data;
 
 		})
-	
 	}
 	
 
@@ -368,18 +376,22 @@ function formCtrl(proxy, $http, $scope){
 		ctrl.newTaxons = []
 
 		ctrl.addTaxonEvent = function(){
-			console.log("event");
 			if (this.showNewTaxons == false){
 				this.showNewTaxons = !this.showNewTaxons;
 			}
-			this.newTaxons.push({'name':this.form.taxon.lb_nom});
+			this.newTaxons.push({'name':this.form.taxon.lb_nom, 'cd_nom': this.form.taxon.cd_nom});
 			// on vide les inputs
 			 $("#input_lbnom").val('');
 			 $("#input_nomvern").val('');
 		}
 
-		ctrl.testClick = function(){
-			console.log('click')
+		ctrl.removeTaxonEvent = function(cd_nom){
+			console.log("remove");	
+			this.newTaxons.splice(this.newTaxons.indexOf(cd_nom), 1 );
+			this.form.listTaxons.splice(this.newTaxons.indexOf(cd_nom), 1 );
+			if (this.newTaxons.length == 0){
+				this.showNewTaxons = false;
+			}
 		}
 
 	// refresh select
@@ -387,7 +399,7 @@ function formCtrl(proxy, $http, $scope){
 		console.log('refresh');
 		this.newTaxons = [];
 		this.showNewTaxons = false;
-		this.showTaxonomie = false;
+		this.form.regne = null;
 		this.form.listTaxons = [];
 		this.form.taxon.cd_nom = null;
 		this.form.taxon.lb_nom = null;
@@ -400,14 +412,20 @@ function formCtrl(proxy, $http, $scope){
 		$('#lastDate').val('');
 		$('#inputCommune').val('');
 		$('#inputForet').val('');
-		$('#inputGroupINPN').val('');
-	}
+		// supprime tout les values des select de la modal
+
+		$('#formContent select').toArray().forEach(function(select){
+			$(select).val('')
+		})
+
+	} 
 
   	// UI event for date picker
   		ctrl.popup = {
     	first:{ opened : false},
     	last:{opened:false} 
-  	};
+  		};
+
 	ctrl.open = function(prop) {
 		if (prop == "first"){
     		this.popup.first.opened = true;
@@ -417,6 +435,7 @@ function formCtrl(proxy, $http, $scope){
     	}
   	};
 
+
 }
 
 app.component('formObs', {
@@ -425,6 +444,10 @@ app.component('formObs', {
   templateUrl : templateForm,
   bindings: {
   	onFormSubmit : '&',
+  	taxons : '<',
+	communes : '<',
+	forets: '<',
+	onProtocoleChange : '&'
   }
 });
 

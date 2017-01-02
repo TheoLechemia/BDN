@@ -13,7 +13,7 @@
  			 	
 				<div class="form-inline form-group">
 					<div class="radio">
-					  <input class="radiotout" ng-model="$ctrl.regneRadio" class="radio" type="radio" name="optradio" value="Tout"  ng-checked="true" ng-click="$ctrl.changeProtocole('Tout')">
+					  <input class="radiotout" ng-model="$ctrl.regneRadio" class="radio" type="radio" name="optradio" value="Tout"  ng-checked="true" ng-click="$ctrl.changeProtocole('Tout')" >
 					  <label>Tout</label>
 					</div>			
 					<div class="radio">
@@ -29,18 +29,18 @@
 				
 				<div class="form-group">
 				
-			 	<input id="input_lbnom" placeholder="Nom Latin " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.lb_nom for taxon in $ctrl.taxonslist | filter:{lb_nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectlbNom($item, $model, $label)" >
+			 	<input id="input_lbnom" autocomplete="off" placeholder="Nom Latin " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.lb_nom for taxon in $ctrl.taxons | filter:{lb_nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectlbNom($item, $model, $label)" >
 				</div>
 				<div class="form-group">
-				 	<input id="input_nomvern" placeholder="Nom vernaculaire " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in $ctrl.taxonslist | filter:{nom_vern:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectNomVern($item, $model, $label)" >
+				 	<input id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in $ctrl.taxons | filter:{nom_vern:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectNomVern($item, $model, $label)" >
 				</div>
 				<div class="col-sm-offset-11">
 					<button type="button" class="btn btn-success btn-xs" uib-tooltip="Ajouter un autre taxon à la recherche" ng-click="$ctrl.addTaxonEvent()"> + </button>
 				</div>
-				<div class="alert alert-warning" ng-show="$ctrl.showNewTaxons" class="ng-hide">
-					<b> Taxons recherché(s): </b>
+				<div class="alert alert-warning" ng-show="$ctrl.showNewTaxons" class="ng-hide"> 
+					<b> Taxon(s) recherché(s): </b>
 						<div  ng-repeat="taxon in $ctrl.newTaxons">
-							<span> {{taxon.name}} {{$last ? '' : ', '}}</span>
+							<span> {{taxon.name}} </span> <span style="cursor: pointer;" class="glyphicon glyphicon-remove" ng-click="$ctrl.removeTaxonEvent(taxon.cd_nom)"> </span>
 						</div>
 				</div>
 				
@@ -57,7 +57,7 @@
 				</div>
 				<div ng-show ="$ctrl.form.group2_inpn != null " class="ng-hide">
 					<p> <b> Autres filtres:  </b> </p>
-					<ul> <b>Groupe</b> : {{$ctrl.form.group2_inpn}} </ul>
+					<ul> <b>Groupe</b> : {{$ctrl.form.group2_inpn}} </ul> 
 				</div>
 				
 
@@ -65,11 +65,11 @@
 				<!-- MODAL research -->
 				<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
 				  <div class="modal-dialog modal-lg" role="document">
-				    <div class="modal-content" style="padding-left: 5% padding-right:5%;">
+				    <div id="formContent" class="modal-content" style="padding-left: 5% padding-right:5%;">
 				    <h4> En constrution... </h4>
-				      <h3> Filtrer par rang taxonomique: </h3>
+				      <label> Hierarchie taxonomique :  </label>
 				      <div class="form-group">
-					      	<select class="form-control" ng-model="$ctrl.form.regne" ng-options="taxon as taxon for taxon in $ctrl.regne" ng-change="$ctrl.loadTaxonomyHierachy('phylum', 'regne', 'null', 'null', $ctrl.form.regne)" >
+					      	<select id="inputRegne" class="form-control" ng-model="$ctrl.form.regne" ng-options="taxon as taxon for taxon in $ctrl.regne" ng-change="$ctrl.loadTaxonomyHierachy('phylum', 'regne', 'null', 'null', $ctrl.form.regne)" >
 						    	<option value=""> - Sélectionner un règne - </option>
 						    </select>
 					  </div>
@@ -99,6 +99,7 @@
 						</div>
 
 					<h3> Autres filtres: </h3>
+						<label> Groupe d'espèces:  </label>
 						<select id="inputGroupINPN" class="form-control" ng-model="$ctrl.form.group2_inpn" ng-options="group as group for group in $ctrl.group2_inpn"></select>
 				      <div class="modal-footer">
 				        <button type="button" class="btn btn-success" data-dismiss="modal" ng-click="$ctrl.onTaxonomieChange()">Valider</button>
@@ -112,7 +113,6 @@
 		</div>
 
 
-		 <!-- <button type="submit" type="button" class="btn btn-success" "> <span class="glyphicon glyphicon-plus"> </span> </button> -->
 		
 		<div class="panel panel-info">
 			<div class="panel-heading">
@@ -120,16 +120,16 @@
 			</div>
  			 <div class="panel-body">
 			   <div class="form-group">
-			   <label> Sélectionner une commune: </label>
-					    <select id="inputCommune" class="form-control" ng-model="$ctrl.form.where" ng-options="commune.nom for commune in $ctrl.communesList">
+					    <select id="inputCommune" class="form-control" ng-model="$ctrl.form.where" ng-options="commune.nom for commune in $ctrl.communes">
+					    	<option value=""> - Sélectionner une commune - </option>
 					    	
 					    </select>
 			 	</div>
 
 			 	<div class="form-group">
-			 		<label> Sélectionner une forêt: </label>
 			 		
-			 			<select id="inputForet" class="form-control" ng-model="$ctrl.form.foret" ng-options="foret.lib_frt for foret in $ctrl.foretsList">
+			 			<select id="inputForet" class="form-control" ng-model="$ctrl.form.foret" ng-options="foret.lib_frt for foret in $ctrl.forets">
+			 				<option value=""> - Sélectionner une forêt - </option>
 					    </select>
 			 	</div>
 			 </div>
@@ -175,15 +175,9 @@
 </div>
 
 
+Liste de taxons: {{$ctrl.taxons}}
 
 
 
-{{$ctrl.form}}
 
-
-Nouveau taxons: {{$ctrl.newTaxons}}
-
-foret : {{ctrl.foretsList}}
-
-
-
+  

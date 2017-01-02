@@ -103,8 +103,12 @@ def getFormParameters():
     listTaxons = flask.request.json['listTaxons']
     firstDate = flask.request.json['when']['first']
     lastDate = flask.request.json['when']['last']
-    commune = flask.request.json['where']['code_insee']
-    foret = flask.request.json['foret']['ccod_frt']
+    foret = None
+    commune = None
+    if flask.request.json['where'] != None:
+        commune = flask.request.json['where']['code_insee']    
+    if flask.request.json['foret'] != None: 
+        foret = flask.request.json['foret']['ccod_frt']
 
     # recherche taxonomique avancee
     regne = flask.request.json['regne']
