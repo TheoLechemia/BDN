@@ -86,22 +86,16 @@ var currentGeoJson;
 var map = L.map('map').setView([16.2412500, -61.5361400],11 );
 L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGhlb2xlY2hlbWlhIiwiYSI6ImNpa29lODhvejAwYTl3MGxzZGY0aHc0NXIifQ.fEujW2fUlRuUk9PHfPdKIg').addTo(map);
 
-$.ajax({
-  url: URL_APPLICATION+'validation/geojson', 
-  dataType: "json",
-  }).done(function(observations) {
+
   	// display geojson
   	  currentGeoJson = observations;
   	  currentGeoJsonLayer = generateLayerFromGeojson(currentGeoJson);
   	  currentGeoJsonLayer.addTo(map);
-	})
-  .fail(function(){
-  	console.log("error");
-  });
-
+	
 
      // interaction list - map 
       $('.search').click(function(){
+      	console.log('click')
       	// back to origin style
       	if (selectLayer != undefined){
 	      	 selectLayer.setStyle({

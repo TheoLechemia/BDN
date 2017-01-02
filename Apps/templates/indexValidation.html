@@ -64,16 +64,16 @@
 					</thead>
 					<tbody>
             		{% for taxon in taxList %}
-						<tr class="taxonRow" idSynthese="{{taxon[0]}}"> 
+						<tr class="taxonRow" idSynthese="{{taxon.id_synthese}}"> 
 							<td> <input class = "check" type="checkbox"> </td>
 							<td class="search" data-container="body" data-toggle="tooltip" data-placement="right" title="Zoomer sur l'observation"> <span class="glyphicon glyphicon-search " style="cursor:pointer;"> </span> </td>
 							<td class="validate"> <span class="glyphicon glyphicon-ok " style="color:green; cursor:pointer;" data-toggle="tooltip" title="Valider l'observation" data-placement="right"> </span> </td>
 							<td class="delete" data-toggle="modal" data-target=".bd-example-modal-lg" > <span class="glyphicon glyphicon-remove " style="color:red; cursor:pointer;" data-toggle="tooltip" title="Supprimer l'observation" data-placement="right">  </span> </td>
-							<td> {{taxon[1]}} </td>
-							<td> {{taxon[2]}} </td>
-							<td> <a target="_blank" href= 'https://inpn.mnhn.fr/espece/cd_nom/{{taxon[6]}}' > {{taxon[3]}} </a> </td>
-							<td> {{taxon[4]}} </td>
-							<td> {{taxon[5]}} </td>
+							<td>{{taxon.protocole}}  </td>
+							<td> {{taxon.nom_vern}} </td>
+							<td> <a target="_blank" href= 'https://inpn.mnhn.fr/espece/cd_nom/{{taxon[6]}}' > {{taxon.lb_nom}} </a> </td>
+							<td> {{taxon.date}} </td>
+							<td> {{taxon.observateur}} </td>
 
 						</tr>
 					{% endfor %}
@@ -119,11 +119,13 @@
 
 </div> 
 
-<script type="text/javascript"> var URL_APPLICATION= {{URL_APPLICATION|tojson}}; 
+<script type="text/javascript"> var URL_APPLICATION= {{URL_APPLICATION|tojson}},
+									observations = {{geojson|tojson}} 
 								console.log(URL_APPLICATION);
 </script>
 
 <script type="text/javascript" src="{{url_for('static', filename='mainValidation.js') }}"> </script>
+
 
 </body>
 </html>

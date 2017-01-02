@@ -5,6 +5,7 @@ import zipfile
 import os
 import flask
 import config
+import ast
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 UPLOAD_FOLDER = CURRENT_DIR+'\uploads'
@@ -54,20 +55,18 @@ def toGeoJson(sql, geom, properties, cur):
     return myGeoJson
 
 def simpleGeoJson(tab, geom, properties):
-    res = list()
     myGeoJson = {"type": "FeatureCollection",
              "features" : list()
             }
-    for row in tab:
-        res.append(dict(row))
-    
-    for r in res:
+    for r in tab:
         myGeom = r[geom]
+        print myGeom
         myproperties = dict()
         #build properties dict
         for p in properties:
             myproperties[p] = r[p]
         myGeoJson['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval(myGeom)})
+    return myGeoJson
 
 
 
@@ -88,10 +87,6 @@ def zipIt(dirPath):
     zf.write(dirPath+".shx", os.path.basename(dirPath+".shx"))
     zf.write(dirPath+".shp", os.path.basename(dirPath+".shp"))
 
-    # for (archiveDirPath, dirNames, fileNames) in os.walk(dirPath):
-    #         for fileName in fileNames:
-    #             filePath = os.path.join(archiveDirPath, fileName)
-    #             zf.write(filePath, os.path.basename(filePath))
     zf.close()
 
 
