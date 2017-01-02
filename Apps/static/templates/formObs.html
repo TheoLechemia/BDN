@@ -70,7 +70,7 @@
 				      <label> Hierarchie taxonomique :  </label>
 				      <div class="form-group">
 					      	<select id="inputRegne" class="form-control" ng-model="$ctrl.form.regne" ng-options="taxon as taxon for taxon in $ctrl.regne" ng-change="$ctrl.loadTaxonomyHierachy('phylum', 'regne', 'null', 'null', $ctrl.form.regne)" >
-						    	<option value=""> - Sélectionner un règne - </option>
+						    	<option value=""> - Sélectionner un règne - </option> 
 						    </select>
 					  </div>
 					  <div class="form-group">
@@ -100,7 +100,7 @@
 
 					<h3> Autres filtres: </h3>
 						<label> Groupe d'espèces:  </label>
-						<select id="inputGroupINPN" class="form-control" ng-model="$ctrl.form.group2_inpn" ng-options="group as group for group in $ctrl.group2_inpn"></select>
+						<select id="inputGroupINPN" class="form-control" ng-model="$ctrl.form.group2_inpn" ng-options="group as group for group in $ctrl.group2inpn"></select>
 				      <div class="modal-footer">
 				        <button type="button" class="btn btn-success" data-dismiss="modal" ng-click="$ctrl.onTaxonomieChange()">Valider</button>
 				      </div>
@@ -175,9 +175,8 @@
 </div>
 
 
-Liste de taxons: {{$ctrl.taxons}}
 
 
 
 
-  
+
