@@ -3,11 +3,11 @@
 }
 
 .validate_ok{
-	background-color: #00b551;
+	background-color: #00b551 !important;
 }
 
 .delete_ok{
-	background-color: #db0808;
+	background-color: #db0808 !important;
 }
 
 a.paginate_button.current {

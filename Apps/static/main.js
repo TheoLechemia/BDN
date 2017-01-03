@@ -176,7 +176,8 @@ function leafletCtrl($http,$scope){
 		layer.bindPopup ("<b>Nom Latin:</b> <a target='_blank' href= 'https://inpn.mnhn.fr/espece/cd_nom/"+features.properties.cd_nom+"'>"+features.properties.lb_nom+ "<br> </a>\
 						  <b> Nom commun: </b>"+ nom_vern +"<br> \
 						  <b> Date: </b> " + features.properties.date+" <br>\
-						  <b> Observateur: </b>"+ features.properties.observateur)
+						  <b> Observateur: </b>"+ features.properties.observateur+ "<br>\
+						  <b> Validé : </b>"+ features.properties.valide )
 	}
 
 

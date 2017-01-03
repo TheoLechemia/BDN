@@ -47,7 +47,7 @@ def synthese_index():
 @nocache
 def lastObs():
     db = getConnexion()
-    sql = """SELECT s.cd_nom, s.observateur, s.id_synthese, t.lb_nom, t.nom_vern, s.date, ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326))
+    sql = """SELECT s.cd_nom, s.observateur, s.id_synthese, t.lb_nom, t.nom_vern, s.date, ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.valide
             FROM bdn.synthese s
             JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
             ORDER BY date DESC
@@ -57,7 +57,7 @@ def lastObs():
     data = { "type": "FeatureCollection",  "features" : list()}
     for r in res:
         date = r[5].strftime("%Y/%m/%d")
-        myproperties = {'cd_nom': r[0], 'obsevateur': r[1],'id_synthese': r[2], 'lb_nom': r[3], 'nom_vern':r[4], 'date':date }
+        myproperties = {'cd_nom': r[0], 'observateur': r[1],'id_synthese': r[2], 'lb_nom': r[3], 'nom_vern':r[4], 'date':date, 'valide': r[7] }
         data['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[6]) })
     db.closeAll()
 
@@ -76,7 +76,7 @@ def getObs():
         myproperties = dict()
         for r in res:
             date = r[5].strftime("%Y/%m/%d")
-            myproperties = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date}
+            myproperties = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'valide': r[6], 'observateur': r[7]}
             geojson['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[0]) })
     db.closeAll()
     return Response(flask.json.dumps(geojson), mimetype='application/json')
