@@ -1,0 +1,7 @@
+drop_apps_db=true
+
+db_name=dbname
+
+user_bdn=myuser
+
+user_bdn_pass=mypass
