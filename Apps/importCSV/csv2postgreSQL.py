@@ -1,6 +1,7 @@
 #coding: utf-8
 import psycopg2
 import csv
+from datetime import datetime
 
 
 from .. import config
@@ -154,6 +155,7 @@ def csv2PG(file):
                 #on enleve l'heure de la date
                 listDate = row['date'].split(' ')
                 date = listDate[0]
+                dateObject = datetime.strptime(date, "%Y/%M/%d")
                 lon = row['loc_x']
                 lat = row['loc_y']
                 cd_nom = row['taxon_id']
@@ -161,12 +163,15 @@ def csv2PG(file):
                 point = 'POINT('+lon+' '+lat+')'
                 print 'OOOOOOOOOOOOOOOOOOOOOOOOOOH'
                 print point
-                print date
+                print dateObject
                 valide = "FALSE"
                 sql_insee = """ SELECT code_insee FROM layers.commune WHERE ST_INTERSECTS(geom,(ST_Transform(ST_PointFromText(%s, 4326),32620)))"""
                 param = [point]
                 cur.execute(sql_insee, param)
-                insee = cur.fetchone()[0]
+                resinsee = cur.fetchone()
+                insee = None
+                if resinsee != None:
+                	insee = resinsee[0]
 
                 sql_foret = """ SELECT ccod_frt FROM layers.perimetre_forets WHERE ST_INTERSECTS(geom,(ST_Transform(ST_PointFromText(%s, 4326),32620))) """
                 cur.execute(sql_foret, param)
@@ -183,8 +188,8 @@ def csv2PG(file):
                     nb_pied_approx = getSpec('spec_3', protocole, row)
                     stade_dev = getSpec('spec_4', protocole, row)
                     sql = '''INSERT INTO bdn.flore (protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, geom_point, valide  )
-                           VALUES (%s, %s, to_date(%s, 'YYYY MM DD'), %s, %s,%s,%s,%s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s )'''
-                    params = [protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, point, valide]
+                           VALUES (%s, %s, %s, %s, %s,%s,%s,%s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s )'''
+                    params = [protocole, observateur, dateObject, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, point, valide]
                     cur.execute(sql, params)
                     conn.commit()
 
@@ -200,8 +205,8 @@ def csv2PG(file):
                     nb_jeune = getSpec_without_dict('spec_7', row)
                     trace = getSpec('spec_8', protocole, row)
                     sql = '''INSERT INTO bdn.faune (protocole, observateur, date, cd_nom, insee, ccod_frt, type_obs, nb_individu_approx, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, geom_point, valide )
-                           VALUES (%s, %s, to_date(%s, 'YYYY MM DD'), %s, %s,%s,%s, %s, %s, %s, %s, %s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s )'''
-                    params = [protocole, observateur, date, cd_nom, insee, ccod_frt, type_obs, nb_individu_approx, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, point, valide]
+                           VALUES (%s, %s, %s, %s, %s,%s,%s, %s, %s, %s, %s, %s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s )'''
+                    params = [protocole, observateur, dateObject, cd_nom, insee, ccod_frt, type_obs, nb_individu_approx, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, point, valide]
                     cur.execute(sql, params)
                     conn.commit()
 

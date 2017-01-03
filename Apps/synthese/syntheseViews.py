@@ -9,6 +9,7 @@ from .. import utils
 from ..database import *
 from datetime import datetime
 from ..initApp import app
+from werkzeug.exceptions import HTTPException, NotFound 
 
 synthese = flask.Blueprint('synthese', __name__)
 
@@ -35,6 +36,7 @@ def nocache(view):
         response.headers['Expires'] = '-1'
         return response
     return update_wrapper(no_cache, view)
+
 
 
 @synthese.route("/bdn-synthese")

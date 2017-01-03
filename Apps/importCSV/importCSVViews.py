@@ -1,10 +1,13 @@
 #coding: utf-8
-from flask import Flask, request, render_template, url_for, redirect, send_from_directory, flash, session, Blueprint
+from flask import Flask, request, render_template, url_for, redirect, send_from_directory, flash, session, Blueprint, json
 import csv2postgreSQL
 
 from werkzeug.utils import secure_filename
+from werkzeug.wrappers import Response 
+
 import os
 from ..initApp import app
+import sys
 
 importCSV = Blueprint('importCSV', __name__)
 
@@ -35,11 +38,12 @@ def indexImport():
             return redirect(request.url)
         file = request.files['file']
         if file.filename == '':
-            #flash('Aucun fichier selectionne') 
+            flash('Aucun fichier selectionne') 
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            print "OHHHHHHHHHHHHHHHHHHH"
             #write in postgres
             csv2postgreSQL.csv2PG(UPLOAD_FOLDER+'/'+filename)
             flash('Fichier ajoute avec succes')
@@ -47,11 +51,17 @@ def indexImport():
             #return redirect(url_for('importCSV.uploaded_fileCSV', filename=filename))
         else:
             flash("Le fichier n'est pas au format .CSV")
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect(request.url)
 
 @importCSV.route('/uploads/<filename>')
 def uploaded_fileCSV(filename):
     return 'fichier bien uploade'
     #return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
+
+
+@importCSV.route('/error/<customError>')
+def handle_custom_error(customError):
+        return Response(json.dumps(e), mimetype='application/json')
 
     

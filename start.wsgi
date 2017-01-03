@@ -10,7 +10,7 @@ sys.path.insert(0, APP_DIR)
 
 from werkzeug.debug import DebuggedApplication
 
-from Apps.initApp import app
+from Apps.initApp import app as application
 
 from Apps.synthese.syntheseViews import synthese
 
@@ -20,12 +20,16 @@ from Apps.importCSV.importCSVViews import importCSV
 
 from Apps.validation.validationViews import validation
 
-app.register_blueprint(main)
+from Apps.error.error_views import errorsbp
 
-app.register_blueprint(synthese)
+application.register_blueprint(main)
 
-app.register_blueprint(importCSV, url_prefix='/importCSV')
+application.register_blueprint(synthese)
 
-app.register_blueprint(validation, url_prefix='/validation')
+application.register_blueprint(importCSV, url_prefix='/importCSV')
 
-application = DebuggedApplication(app, evalex=True)
+application.register_blueprint(validation, url_prefix='/validation')
+
+application.register_blueprint(errorsbp)
+
+
