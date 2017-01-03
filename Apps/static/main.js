@@ -347,32 +347,45 @@ function formCtrl(proxy, $http, $scope){
 	} 
 
 	//synchronisation des deux inputs et ajout du cd_nom selectionné dans la liste de cd_nom du formulaire
+	// et ajout à la liste des taxons selectionnés
+		ctrl.showNewTaxons = false;
+		ctrl.newTaxons = []
 	 ctrl.onSelectNomVern = function ($item, $model, $label) {
 	 	   $("#input_lbnom").val($item.lb_nom);
 	 	   this.form.listTaxons.push($item.cd_nom);
 
-
-	};
-	 ctrl.onSelectlbNom = function ($item, $model, $label) {
-	 	   $("#input_nomvern").val($item.nom_vern);
-	 	   this.form.listTaxons.push($item.cd_nom);
-	};
-
-
-	// Ajout d'un nouveau taxon
-		ctrl.showNewTaxons = false;
-		ctrl.newTaxons = []
-
-		ctrl.addTaxonEvent = function(){
-			if (this.showNewTaxons == false){
+	 	   	 if (this.showNewTaxons == false){
 				this.showNewTaxons = !this.showNewTaxons;
 			}
 			this.newTaxons.push({'name':this.form.taxon.lb_nom, 'cd_nom': this.form.taxon.cd_nom});
-			// on vide les inputs
-			 $("#input_lbnom").val('');
+
+			setTimeout(function(){
+			$("#input_lbnom").val('');
 			 $("#input_nomvern").val('');
+			}, 1000)
 		}
 
+
+	 ctrl.onSelectlbNom = function ($item, $model, $label) {
+	 	   $("#input_nomvern").val($item.nom_vern);
+	 	   this.form.listTaxons.push($item.cd_nom);
+
+	 	   	if (this.showNewTaxons == false){
+				this.showNewTaxons = !this.showNewTaxons;
+			}
+			this.newTaxons.push({'name':this.form.taxon.lb_nom, 'cd_nom': this.form.taxon.cd_nom});
+
+			// on vide les inputs
+
+			setTimeout(function(){
+			$("#input_lbnom").val('');
+			 $("#input_nomvern").val('');
+			}, 1000)
+
+		}
+	
+
+		// retirer un taxon de la liste des taxons selectionnés
 		ctrl.removeTaxonEvent = function(cd_nom){
 			console.log("remove");	
 			this.newTaxons.splice(this.newTaxons.indexOf(cd_nom), 1 );
@@ -382,7 +395,7 @@ function formCtrl(proxy, $http, $scope){
 			}
 		}
 
-	// refresh select
+	// rafrachir l'ensemble des sélections
 	ctrl.onRefreshEvent = function(){
 		console.log('refresh');
 		this.newTaxons = [];
