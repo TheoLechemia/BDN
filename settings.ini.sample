@@ -1,7 +1,11 @@
 drop_apps_db=true
 
-db_name=dbname
+db_name=mydbname
 
-user_bdn=myuser
+user_bdn=mu_user_name
 
-user_bdn_pass=mypass
+user_bdn_pass=my_pass
+
+taxref_path=./TAXREFv10.0.txt
+
+projection=32620
