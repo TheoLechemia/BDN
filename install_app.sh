@@ -26,3 +26,8 @@ sudo apt-get install -y gdal-bin
 sudo apt-get install -y python-virtualenv
 
 
+#install python packages
+
+virtualenv ./venv
+. ./venv/bin/activate
+pip install -r requirements.txt
