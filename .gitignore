@@ -1,4 +1,5 @@
 Apps/config.py
 Apps/static/uploads/*
 venv/*
-./settings.ini
+settings.ini
+log/*

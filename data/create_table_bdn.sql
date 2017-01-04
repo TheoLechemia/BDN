@@ -47,10 +47,10 @@ CREATE TABLE bdn.faune
       REFERENCES bdn.synthese (id_synthese) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT cd_nom FOREIGN KEY (cd_nom)
-      REFERENCES taxonomie.taxref_v10 (cd_nom) MATCH SIMPLE
+      REFERENCES taxonomie.taxref (cd_nom) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT fa_id_synthese UNIQUE (id_synthese)
-);
+)
 WITH (
   OIDS=FALSE
 );
@@ -85,7 +85,7 @@ ALTER TABLE bdn.faune
       REFERENCES bdn.synthese (id_synthese) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT fl_id_synthese UNIQUE (id_synthese)
-)
+);
 ALTER TABLE bdn.flore
   OWNER TO onfuser;
 
