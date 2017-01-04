@@ -7,7 +7,7 @@ from .. import utils
 from werkzeug.wrappers import Response 
 
 
-validation = Blueprint('validation', __name__)
+validation = Blueprint('validation', __name__, static_url_path="/validation", static_folder="static", template_folder="templates")
 
 
 

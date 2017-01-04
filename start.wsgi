@@ -24,7 +24,7 @@ from Apps.error.error_views import errorsbp
 
 application.register_blueprint(main)
 
-application.register_blueprint(synthese)
+application.register_blueprint(synthese, url_prefix='/synthese')
 
 application.register_blueprint(importCSV, url_prefix='/importCSV')
 

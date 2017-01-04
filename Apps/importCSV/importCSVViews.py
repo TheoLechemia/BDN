@@ -9,7 +9,8 @@ import os
 from ..initApp import app
 import sys
 
-importCSV = Blueprint('importCSV', __name__)
+importCSV = Blueprint('importCSV', __name__, static_url_path="/importCSV", static_folder="static", template_folder="templates")
+
 
 
 

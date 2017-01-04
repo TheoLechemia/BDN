@@ -6,30 +6,30 @@ console.log(URL_APPLICATION)
 proxy = app.factory('proxy', function proxy($http) {
 		return{
 			lastObs: function(){
-	            return $http.get(URL_APPLICATION+"lastObs");
+	            return $http.get(URL_APPLICATION+"synthese/lastObs");
 				},
 			sendData : function(data){
-				return $http.post(URL_APPLICATION+"getObs", data)
+				return $http.post(URL_APPLICATION+"synthese/getObs", data)
 			},
 
 			loadTaxons: function(protocole){
-				return $http.get(URL_APPLICATION+"loadTaxons/"+protocole)
+				return $http.get(URL_APPLICATION+"synthese/loadTaxons/"+protocole)
 			},
 			loadCommunes: function(){
-				return $http.get(URL_APPLICATION+"loadCommunes")
+				return $http.get(URL_APPLICATION+"synthese/loadCommunes")
 			},
 			loadForets: function(){
-				return $http.get(URL_APPLICATION+"loadForets")
+				return $http.get(URL_APPLICATION+"synthese/loadForets")
 			},
 			loadGroup2_inpn : function(){
-				return $http.get(URL_APPLICATION+"loadGroup2_inpn")
+				return $http.get(URL_APPLICATION+"synthese/loadGroup2_inpn")
 			},
 
 			exportShapeFile : function(data){
-				return $http.post(URL_APPLICATION+"export", data)
+				return $http.post(URL_APPLICATION+"synthese/export", data)
 			},
 			loadTaxonomyHierachy : function(rang_fils, rang_pere, rang_grand_pere, value_rang_grand_pere, value){
-				return $http.get(URL_APPLICATION +"loadTaxonomyHierachy/"+rang_fils+"/"+rang_pere+"/"+rang_grand_pere+"/"+value_rang_grand_pere+"/"+value)
+				return $http.get(URL_APPLICATION +"synthese/loadTaxonomyHierachy/"+rang_fils+"/"+rang_pere+"/"+rang_grand_pere+"/"+value_rang_grand_pere+"/"+value)
 			}
 			
 		}
@@ -43,7 +43,11 @@ app.controller("headerCtrl", function($scope){
  })
 
 
-template = URL_APPLICATION+'static/templates/app.html';
+//template = URL_APPLICATION+'static/templates/app.html';
+/*template = URL_APPLICATION+'static/templates/app.html';*/
+/*template = URL_APPLICATION+'/synthese/synthese/templates/app.html'*/
+template = "synthese/templates/app.html";
+console.log(template);
 
 function appCtrl (proxy){
 	var ctrl = this;
@@ -123,7 +127,7 @@ function lastObsCtrl (){
 
 }
 
-templateLastObs = URL_APPLICATION+'static/templates/lastObs.html';
+templateLastObs = 'synthese/templates/lastObs.html';
 
 app.component('lastObs', {
 
@@ -138,7 +142,7 @@ app.component('lastObs', {
 });
 
 
-templateLeafletMap = URL_APPLICATION+'static/templates/leafletMap.html';
+templateLeafletMap = 'synthese/templates/leafletMap.html';
 
 function leafletCtrl($http,$scope){
 	ctrl = this;
@@ -252,7 +256,7 @@ app.component('leafletCtrl', {
 
 
 
-templateForm = URL_APPLICATION+'static/templates/formObs.html';
+templateForm = 'synthese/templates/formObs.html';
 
 
 function formCtrl(proxy, $http, $scope){

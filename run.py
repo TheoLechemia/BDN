@@ -10,7 +10,7 @@ from Apps.validation.validationViews import validation
 
 app.register_blueprint(main)
 
-app.register_blueprint(synthese)
+app.register_blueprint(synthese, url_prefix='/synthese')
 
 app.register_blueprint(importCSV, url_prefix='/importCSV')
 

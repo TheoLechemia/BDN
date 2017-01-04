@@ -11,7 +11,9 @@ from datetime import datetime
 from ..initApp import app
 from werkzeug.exceptions import HTTPException, NotFound 
 
-synthese = flask.Blueprint('synthese', __name__)
+#synthese = flask.Blueprint('synthese', __name__)
+synthese = flask.Blueprint('synthese', __name__, static_url_path="/synthese", static_folder="static", template_folder="templates")
+
 
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -39,7 +41,7 @@ def nocache(view):
 
 
 
-@synthese.route("/bdn-synthese")
+@synthese.route("/")
 def synthese_index():
     return flask.render_template('indexSynthese.html', URL_APPLICATION=config.URL_APPLICATION, page_title=u"Interface de visualisation des données")
 
