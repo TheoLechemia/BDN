@@ -1,5 +1,7 @@
 #!/bin/bash
 
+dos2unix settings.ini
+
 . ./settings.ini
 
 

@@ -25,6 +25,10 @@ sudo apt-get install -y gdal-bin
 
 sudo apt-get install -y python-virtualenv
 
+sudo apt-get install tofrodos
+sudo ln -s /usr/bin/fromdos /usr/bin/dos2unix 
+
+
 
 #install python packages
 
