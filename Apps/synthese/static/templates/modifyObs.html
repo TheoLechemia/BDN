@@ -1,0 +1,19 @@
+<form>
+	<h5> Relevé {{$ctrl.ficheEspece.protocole}} </h5>
+	<label> Observateur  </label>
+	<input type="text" name="" ng-model="$ctrl.form.observateur" value="$ctrl.form.observateur">
+	<label> Espece </label>
+	<input type="text" name="" ng-model="$ctrl.form.taxon.lb_nom" value="$ctrl.form.taxon.lb_nom">
+	<input type="text" name="" ng-model="$ctrl.form.taxon.nom_vern" value="$ctrl.form.taxon.nom_vern">
+	<label> Quand ?</label>
+	   <div>
+        <p class="input-group">
+	          <input  type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.form.date" is-open="$ctrl.opened" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" />
+	          <span class="input-group-btn">
+	            <button type="button" class="btn btn-default" ng-click="$ctrl.open()"> <i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+        </p>
+      </div>
+
+      <button ng-click="$ctrl.submitForm($ctrl.form, $ctrl.ficheEspece)"> submit</button>
+</form>

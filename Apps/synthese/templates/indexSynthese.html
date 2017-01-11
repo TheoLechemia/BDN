@@ -22,75 +22,16 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-  <!-- MY CSS -->
+  <!-- GLOBAL CSS -->
   <link rel="stylesheet" href= " {{url_for('static', filename='css/main.css')}} " >
-
-
+  <!-- SYNTHESE CSS -->
+  <link rel="stylesheet" href= " {{url_for('synthese.static', filename='CSS/synthese.css')}} " >
 <!-- Angular animate -->
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-animate.js"></script>
 
 <!--  ui bootstrap -->
 <script src="{{url_for('static', filename='lib/uibootstrap.min.js')}}"></script>
 
-
-
-
-<style>
-  .typeahead-demo .custom-popup-wrapper {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    z-index: 1000;
-    display: none;
-    background-color: #f9f9f9;
-  }
-
-  .typeahead-demo .custom-popup-wrapper > .message {
-    padding: 10px 20px;
-    border-bottom: 1px solid #ddd;
-    color: #868686;
-  }
-
-  .typeahead-demo .custom-popup-wrapper > .dropdown-menu {
-    position: static;
-    float: none;
-    display: block;
-    min-width: 160px;
-    background-color: transparent;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-  }
-  .last-obs {
-    height: 700px;
-    overflow: scroll;
-}
-
- .panel .panel-info{
-  margin: 5px;
- }
-
- .formbutton{
-  margin: 10px;
- }
-
-   .angular-leaflet-map {
-    width: 640px;
-    height: 480px;
-  }
-
-      .panel-body{
-      padding-bottom: 3px !important;
-    }
-    .form-group{
-      margin-bottom: 5px !important;
-    }
-
-    .modal-content{
-      padding-left: 5%;
-      padding-right: 5%;
-    }
-</style>
 </head>
 <body>
 

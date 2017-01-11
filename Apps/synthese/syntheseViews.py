@@ -51,7 +51,7 @@ def synthese_index():
 @nocache
 def lastObs():
     db = getConnexion()
-    sql = """SELECT s.cd_nom, s.observateur, s.id_synthese, t.lb_nom, t.nom_vern, s.date, ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.valide
+    sql = """SELECT s.cd_nom, s.observateur, s.id_synthese, t.lb_nom, t.nom_vern, s.date, ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), ST_X(ST_Transform(geom_point, 4326)), ST_Y(ST_Transform(geom_point, 4326)), s.protocole
             FROM bdn.synthese s
             JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
             ORDER BY date DESC
@@ -61,7 +61,7 @@ def lastObs():
     data = { "type": "FeatureCollection",  "features" : list()}
     for r in res:
         date = r[5].strftime("%Y/%m/%d")
-        myproperties = {'cd_nom': r[0], 'observateur': r[1],'id_synthese': r[2], 'lb_nom': r[3], 'nom_vern':r[4], 'date':date, 'valide': r[7] }
+        myproperties = {'cd_nom': r[0], 'obsevateur': r[1],'id_synthese': r[2], 'lb_nom': r[3], 'nom_vern':r[4], 'date':date, 'x': r[7], 'y':r[8], 'protocole': r[9] }
         data['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[6]) })
     db.closeAll()
 
@@ -71,16 +71,17 @@ def lastObs():
 
 @synthese.route('/getObs', methods=['GET', 'POST'])
 def getObs():
-    db = getConnexion()   
+    db = getConnexion()    
     if flask.request.method == 'POST':
         geojson ={ "type": "FeatureCollection",  "features" : list() } 
-        sqlAndParams = utils.buildSQL()
-        db.cur.execute(sqlAndParams['sql'],sqlAndParams['params'])
+        print utils.buildSQL()['sql']
+        print utils.buildSQL()['params']
+        db.cur.execute(utils.buildSQL()['sql'], utils.buildSQL()['params'])
         res = db.cur.fetchall()
         myproperties = dict()
         for r in res:
             date = r[5].strftime("%Y/%m/%d")
-            myproperties = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'valide': r[6], 'observateur': r[7]}
+            myproperties = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'x': r[6], 'y':r[7], 'protocole': r[8]}
             geojson['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[0]) })
     db.closeAll()
     return Response(flask.json.dumps(geojson), mimetype='application/json')
@@ -92,6 +93,7 @@ def loadTaxons(protocole):
     db = getConnexion()
     if protocole == "Tout":
         sql = """SELECT * FROM bdn.v_search_taxons"""
+        #sql = " SELECT * FROM taxonomie.test"
     else:
         curProtocole = "'"+protocole+"'"
         sql = "SELECT * FROM bdn.v_search_taxons WHERE regne = "+curProtocole
@@ -185,6 +187,34 @@ def export():
 def uploaded_file(filename):
     filename = filename+".zip"
     return flask.send_from_directory(app.config['UPLOAD_FOLDER'],filename)
+
+
+
+
+@synthese.route('/ficheObs/<protocole>/<id_synthese>')
+def loadFicheObs(protocole, id_synthese):
+    db = getConnexion()
+    if protocole == 'FAUNE':
+        sql = "SELECT p.*, ST_X(ST_Transform(p.geom_point, 4326)) as x, ST_Y(ST_Transform(p.geom_point, 4326)) as y, t.lb_nom, t.nom_vern FROM bdn.faune p JOIN taxonomie.taxref t ON t.cd_nom = p.cd_nom WHERE id_synthese = %s "
+    if protocole == 'FLORE':
+        sql = "SELECT p.*, ST_X(ST_Transform(p.geom_point, 4326)) as x, ST_Y(ST_Transform(p.geom_point, 4326)) as y, t.lb_nom, t.nom_vern FROM bdn.flore p JOIN taxonomie.taxref t ON t.cd_nom = p.cd_nom WHERE id_synthese = %s"
+    params = [id_synthese]
+    res = utils.sqltoDictWithParams(sql, params, db.cur)
+    return Response(flask.json.dumps(res[0]), mimetype='application/json')
+
+@synthese.route('/modifyObs/<protocole>/<id_synthese>', methods=['GET', 'POST'])
+def modifyObs(protocole, id_synthese):
+    db = getConnexion()
+    print protocole
+    observateur = None
+    if flask.request.method == 'POST':
+        observateur = flask.request.json['observateur']
+        sql = "UPDATE bdn."+protocole+" SET observateur = %s WHERE id_synthese = %s"
+        params = [observateur, id_synthese]
+        db.cur.execute(sql, params) 
+        db.conn.commit()
+    return Response(flask.json.dumps(observateur), mimetype='application/json')
+    db.closeAll()
 
 
 

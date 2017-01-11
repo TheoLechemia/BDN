@@ -1,6 +1,8 @@
 var app = angular.module("app", ['ui.bootstrap']);
 
-console.log(URL_APPLICATION)
+//####################################################################
+// ######################## PROXY #######################
+//####################################################################
 
 
 proxy = app.factory('proxy', function proxy($http) {
@@ -37,17 +39,16 @@ proxy = app.factory('proxy', function proxy($http) {
 
 
 
+//####################################################################
+// ######################## APP MAIN #######################
+//####################################################################
 
 app.controller("headerCtrl", function($scope){
 
  })
 
 
-//template = URL_APPLICATION+'static/templates/app.html';
-/*template = URL_APPLICATION+'static/templates/app.html';*/
-/*template = URL_APPLICATION+'/synthese/synthese/templates/app.html'*/
 template = "synthese/templates/app.html";
-console.log(template);
 
 function appCtrl (proxy){
 	var ctrl = this;
@@ -116,34 +117,11 @@ app.component('app', {
 });
 
 
-
-function lastObsCtrl (){
-	ctrl = this;
-
-	this.update = function(currentObs){
-		this.onUpdate({$event: {currentObs: currentObs}});
-	}
-
-
-}
-
-templateLastObs = 'synthese/templates/lastObs.html';
-
-app.component('lastObs', {
-
-  controller : lastObsCtrl,
-  templateUrl : templateLastObs,
-  bindings : {
-  	geojson : '<',
-  	currentObs : '<',
-  	onUpdate :'&',
-  }
-
-});
-
+//####################################################################
+// ######################## LEAFLET MAIN MAP #######################
+//####################################################################
 
 templateLeafletMap = 'synthese/templates/leafletMap.html';
-
 function leafletCtrl($http,$scope){
 	ctrl = this;
   
@@ -256,7 +234,9 @@ app.component('leafletCtrl', {
 
 
 
-templateForm = 'synthese/templates/formObs.html';
+//####################################################################
+// ######################## MAIN FORMULAIRE #######################
+//####################################################################
 
 
 function formCtrl(proxy, $http, $scope){
@@ -446,6 +426,9 @@ function formCtrl(proxy, $http, $scope){
 
 }
 
+var templateForm = 'synthese/templates/formObs.html';
+
+
 app.component('formObs', {
 
   controller : formCtrl,
@@ -459,6 +442,180 @@ app.component('formObs', {
 	onProtocoleChange : '&'
   }
 });
+
+
+
+function lastObsCtrl ($uibModal, $http){
+	ctrl = this;
+
+	ctrl.update = function(currentObs){
+		this.onUpdate({$event: {currentObs: currentObs}});
+	}
+
+	ctrl.open= function(obs){
+		$http.get(URL_APPLICATION+"synthese/ficheObs/"+obs.protocole+"/"+obs.id_synthese).then(function(response){
+		
+		
+
+
+
+			 $uibModal.open({
+	          		component: "modalObs",
+	          		size: 'lg',
+	          		resolve : {
+	          			obs : function(){
+	          				return obs
+	          			},
+	          			ficheEspece : function(){
+	          				return response.data;
+	          			}
+	          		}
+					});
+		})
+
+    };
+
+
+}
+
+templateLastObs = 'synthese/templates/lastObs.html';
+
+app.component('lastObs', {
+
+  controller : lastObsCtrl,
+  templateUrl : templateLastObs,
+  bindings : {
+  	geojson : '<',
+  	currentObs : '<',
+  	onUpdate :'&',
+  }
+
+});
+
+//####################################################################
+// ######################## MODAL ################################
+//####################################################################
+
+
+function modalObsCtrl(proxy){
+	ctrl = this;
+	console.log('init modal')
+	var mapObs = L.map('mapObs').setView([16.2412500, -61.5361400],11);
+	L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGhlb2xlY2hlbWlhIiwiYSI6ImNpa29lODhvejAwYTl3MGxzZGY0aHc0NXIifQ.fEujW2fUlRuUk9PHfPdKIg').addTo(mapObs);
+
+
+
+	ctrl.$onInit = function (){
+		ctrl.closeModal = function(){
+				ctrl.modalInstance.close()
+			}
+
+
+		  setTimeout(function() {
+		    mapObs.invalidateSize();
+		  }, 10);
+
+
+		ctrl.ficheEspece = this.resolve.ficheEspece;
+		console.log(ctrl.ficheEspece);
+
+
+
+		var marker = L.marker([ctrl.ficheEspece.y, ctrl.ficheEspece.x], {draggable: true}).addTo(mapObs);
+		mapObs.panTo([ctrl.ficheEspece.y, ctrl.ficheEspece.x]);
+
+		 marker.on('dragend', function (e) {
+            ctrl.ficheEspece.x = e.target._latlng.lng;
+            ctrl.ficheEspece.y = e.target._latlng.lat
+            console.log(ctrl.ficheEspece.x);
+        }); 
+
+
+	}
+}
+
+
+
+templateModalObs  = URL_APPLICATION+'synthese/synthese/templates/modalObs.html';
+
+app.component('modalObs', {
+
+  controller : modalObsCtrl,
+  templateUrl : templateModalObs,
+  bindings: {
+  	modalInstance: "<",
+  	resolve: "<",
+
+  }
+});
+
+//####################################################################
+// ######################## MODAL MODIF OBS COMMUN ###################
+//####################################################################
+
+
+modifyObsCtrl = function($http){
+	ctrl = this;
+
+	ctrl.$onInit = function(){
+		console.log(ctrl.ficheEspece.date)
+		ctrl.form = {
+		'observateur' : ctrl.ficheEspece.observateur,
+		'taxon' : {'nom_vern': ctrl.ficheEspece.nom_vern, 'lb_nom': ctrl.ficheEspece.lb_nom, 'cd_nom': ctrl.ficheEspece.cd_nom },
+		'date' : new Date(ctrl.ficheEspece.date.replace('GMT', '')),
+		'loc': { 'y': ctrl.ficheEspece.y, 'x': ctrl.ficheEspece.x }
+		}
+
+
+		setTimeout(function() {
+			console.log("from child");
+		    console.log(ctrl.ficheEspece.x);
+		  }, 5000);
+
+		//console.log(this.appCtrl.globalVariable);
+
+	}// end on init
+
+	ctrl.submitForm = function(form, ficheEspece){
+		console.log(form);
+		$http.post(URL_APPLICATION+"synthese/modifyObs/"+ficheEspece.protocole+"/"+ficheEspece.id_synthese, form).then(function(response){
+			console.log(response.data);
+		})
+	}
+
+
+	// date
+
+	ctrl.opened = false;
+
+	ctrl.open = function(){
+		this.opened = !this.opened;
+	}
+
+
+
+
+
+}
+
+
+templateModifyObs  = URL_APPLICATION+'synthese/synthese/templates/modifyObs.html';
+
+app.component('modifyObs', {
+
+  controller : modifyObsCtrl,
+  templateUrl : templateModifyObs,
+  bindings: {
+  	ficheEspece :'<',
+  }
+});
+
+
+
+
+
+
+
 
 
 
