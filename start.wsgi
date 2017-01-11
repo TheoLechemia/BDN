@@ -11,6 +11,9 @@ sys.path.insert(0, APP_DIR)
 from werkzeug.debug import DebuggedApplication
 
 from Apps.initApp import app as application
+from flask.ext.compress import Compress
+compress = Compress()
+compress.init_app(application)
 
 from Apps.synthese.syntheseViews import synthese
 

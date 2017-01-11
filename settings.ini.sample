@@ -2,7 +2,7 @@ drop_apps_db=true
 
 db_name=mydbname
 
-user_bdn=mu_user_name
+user_bdn=my_user_name
 
 user_bdn_pass=my_pass
 
