@@ -61,7 +61,7 @@ def lastObs():
     data = { "type": "FeatureCollection",  "features" : list()}
     for r in res:
         date = r[5].strftime("%Y/%m/%d")
-        myproperties = {'cd_nom': r[0], 'obsevateur': r[1],'id_synthese': r[2], 'lb_nom': r[3], 'nom_vern':r[4], 'date':date, 'x': r[7], 'y':r[8], 'protocole': r[9] }
+        myproperties = {'cd_nom': r[0], 'observateur': r[1],'id_synthese': r[2], 'lb_nom': r[3], 'nom_vern':r[4], 'date':date, 'x': r[7], 'y':r[8], 'protocole': r[9] }
         data['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[6]) })
     db.closeAll()
 
@@ -81,7 +81,7 @@ def getObs():
         myproperties = dict()
         for r in res:
             date = r[5].strftime("%Y/%m/%d")
-            myproperties = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'x': r[6], 'y':r[7], 'protocole': r[8]}
+            myproperties = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'x': r[6], 'y':r[7], 'protocole': r[8], 'observateur': r[9]}
             geojson['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[0]) })
     db.closeAll()
     return Response(flask.json.dumps(geojson), mimetype='application/json')

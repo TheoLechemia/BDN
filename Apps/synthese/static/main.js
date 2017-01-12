@@ -149,7 +149,7 @@ function leafletCtrl($http,$scope){
 	L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGhlb2xlY2hlbWlhIiwiYSI6ImNpa29lODhvejAwYTl3MGxzZGY0aHc0NXIifQ.fEujW2fUlRuUk9PHfPdKIg').addTo(map);
 
 	function onEachFeature(features, layer){
-
+		console.log(features.properties);
 		// bind pop up
 		nom_vern = " - "
 		if (features.properties.nom_vern != null){
