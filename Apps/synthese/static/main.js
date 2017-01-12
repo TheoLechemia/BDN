@@ -203,6 +203,7 @@ function leafletCtrl($http,$scope){
 
 
          this.$onChanges = function(changesObj){
+         	console.log("in leaflet change")
          	console.log(changesObj);
       		if(changesObj.geojson){
       			geojsondData=changesObj.geojson.currentValue;
@@ -449,7 +450,8 @@ function lastObsCtrl ($uibModal, $http){
 	ctrl = this;
 
 	ctrl.update = function(currentObs){
-		this.onUpdate({$event: {currentObs: currentObs}});
+		console.log(currentObs);
+		this.onUpdate({$event: {currentObs: currentObs.id_synthese}});
 	}
 
 	ctrl.open= function(obs){
