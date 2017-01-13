@@ -5,10 +5,14 @@
 		    <button class="btn btn-warning" type="button" ng-click="$ctrl.testModal()">Close Modal</button>
 		 </div>
 		 <div class="col-md-3">
-			<modify-obs fiche-espece='$ctrl.ficheEspece' point="$ctrl.currentPoint" > </modify-obs>
+			<modify-obs fiche-espece='$ctrl.ficheEspece' change="$ctrl.changeTest"> </modify-obs>
 		</div>
 	</div>
 </div>
 
 
+<button ng-click="$ctrl.test()"> test </button>
 
+{{$ctrl.changeTest}}
+
+{{$ctrl.ficheEspece}}

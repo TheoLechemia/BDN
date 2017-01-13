@@ -6256,6 +6256,22 @@ L.Icon.Default = L.Icon.extend({
 		shadowSize:  [41, 41]
 	},
 
+/*// MODIF THEO
+_getIconUrl: function (name) {
+    if (!L.Icon.Default.imagePath) {    // Deprecated, backwards-compatibility only
+        L.Icon.Default.imagePath = this._detectIconPath();
+    }
+
+    // @option imagePath: String
+    // `L.Icon.Default` will try to auto-detect the absolute location of the
+    // blue icon images. If you are placing these images in a non-standard
+    // way, set this option to point to the right absolute path.
+  var url = (this.options.imagePath || L.Icon.Default.imagePath);
+  console.log(url.slice(0, - 0));
+
+  return url
+	},*/
+  // FIN MODIF THEO
 	_getIconUrl: function (name) {
 		if (!L.Icon.Default.imagePath) {	// Deprecated, backwards-compatibility only
 			L.Icon.Default.imagePath = this._detectIconPath();
@@ -6267,6 +6283,8 @@ L.Icon.Default = L.Icon.extend({
 		// way, set this option to point to the right absolute path.
 		return (this.options.imagePath || L.Icon.Default.imagePath) + L.Icon.prototype._getIconUrl.call(this, name);
 	},
+	
+
 
 	_detectIconPath: function () {
 		var el = L.DomUtil.create('div',  'leaflet-default-icon-path', document.body);

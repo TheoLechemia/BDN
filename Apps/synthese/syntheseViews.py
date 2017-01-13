@@ -206,15 +206,31 @@ def loadFicheObs(protocole, id_synthese):
 def modifyObs(protocole, id_synthese):
     db = getConnexion()
     print protocole
+    print id_synthese
     observateur = None
     if flask.request.method == 'POST':
         observateur = flask.request.json['observateur']
-        sql = "UPDATE bdn."+protocole+" SET observateur = %s WHERE id_synthese = %s"
-        params = [observateur, id_synthese]
-        db.cur.execute(sql, params) 
+        sql = """UPDATE bdn."""+protocole+""" SET observateur = %s WHERE id_synthese = %s;
+                 UPDATE bdn.synthese SET observateur = %s WHERE id_synthese = %s"""
+        params = [observateur, id_synthese,observateur, id_synthese]
+        db.cur.execute(sql, params)
+        cd_nom = flask.request.json['taxon']['cd_nom']
+        print cd_nom
+        sql = """UPDATE bdn."""+protocole+""" SET cd_nom = %s WHERE id_synthese = %s;
+                UPDATE bdn.synthese SET cd_nom = %s WHERE id_synthese = %s """
+        params = [cd_nom, id_synthese, cd_nom, id_synthese]
+        db.cur.execute(sql, params)
+        loc = flask.request.json['loc']
+        x = str(loc['x'])
+        y = str(loc['y'])
+        point = 'POINT('+x+' '+y+')'
+        sql = """UPDATE bdn."""+protocole+""" SET geom_point = ST_Transform(ST_PointFromText(%s, 4326),%s) WHERE id_synthese = %s;
+                UPDATE bdn.synthese SET geom_point = ST_Transform(ST_PointFromText(%s, 4326),%s) WHERE id_synthese = %s;"""
+        params = [point, config.PROJECTION, id_synthese, point, config.PROJECTION, id_synthese]
+        db.cur.execute(sql, params)
         db.conn.commit()
-    return Response(flask.json.dumps(observateur), mimetype='application/json')
     db.closeAll()
+    return Response(flask.json.dumps(loc), mimetype='application/json')
 
 
 

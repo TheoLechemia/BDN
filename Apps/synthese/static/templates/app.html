@@ -14,7 +14,7 @@
 				<h3 class="panel-title"> {{$ctrl.nbObs}} </h3>
 			</div>
 			<div class="panel-body">
-			<last-obs geojson="$ctrl.geojson" on-update="$ctrl.updateCurrentObs($event.currentObs)"> </last-obs>
+			<last-obs geojson="$ctrl.geojson" on-update="$ctrl.updateCurrentObs($event.currentObs)" taxons="$ctrl.taxonslist" change="$ctrl.changeTest"> </last-obs>
 			</div>
 			
 		</div>
@@ -26,6 +26,8 @@
 	</div>	
 </div>
 
+<button ng-click="$ctrl.clickTest()"> test</button>
+{{$ctrl.test}}
 
 
 

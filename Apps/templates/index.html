@@ -39,8 +39,8 @@
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
-      <img id=logo class="navbar-brand" src="{{url_for('static', filename='img/ONF_Logo.png')}}" width="130" height="50">
-      <a class="navbar-brand" href=" {{url_for('main.index')}} "> BDN-WEB | Données naturalistes ONF Guadeloupe </a>
+      <img id=logo class="navbar-brand" src="%%url_for('static', filename='img/ONF_Logo.png')%%" width="130" height="50">
+      <a class="navbar-brand" href=" %%url_for('main.index')%% "> BDN-WEB | Données naturalistes ONF Guadeloupe </a>
     </div>
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"> 
@@ -61,23 +61,23 @@
 
               <div class="row">
                 <div class="col-lg-4" style="text-align: center;">  
-                  <a class="btn btn-default fonctionnalites" href="{{url_for('importCSV.indexImport')}}" role="button" > 
-                    <img class="" src="{{url_for('static', filename='img/upload.png') }}" alt="Generic placeholder image" width="140" height="140">
+                  <a class="btn btn-default fonctionnalites" href="%%url_for('importCSV.indexImport')%%" role="button" > 
+                    <img class="" src="%%url_for('static', filename='img/upload.png') %%" alt="Generic placeholder image" width="140" height="140">
                   </a>
                   <h2>Import de données</h2>
                   <p>Importez les données issues du TDS dans la base de données naturalistes centralisée</p>
                 </div><!-- /.col-lg-4 -->
 
                 <div class="col-lg-4 fonctionnalites" style="text-align: center;">
-                  <a class="btn btn-default" href="{{url_for('validation.indexValidation')}}" role="button">
-                    <img class="" src="{{url_for('static', filename='img/verified-text-paper.png') }}"  width="140" height="140">
+                  <a class="btn btn-default" href="%%url_for('validation.indexValidation')%%" role="button">
+                    <img class="" src="%%url_for('static', filename='img/verified-text-paper.png') %%"  width="140" height="140">
                   </a>
                   <h2>Interface de validation de données naturalistes</h2>
                   <p>Sur cette application, les chargés de mission faune-flore valident les observations faites sur le terrain </p>
                 </div><!-- /.col-lg-4 -->
                 <div class="col-lg-4" style="text-align: center;">
-                  <a class="btn btn-default" href="{{url_for('synthese.synthese_index')}}" role="button">
-                    <img class="" src="{{url_for('static', filename='img/loupe.png') }}"  width="140" height="140">
+                  <a class="btn btn-default" href="%%url_for('synthese.synthese_index')%%" role="button">
+                    <img class="" src="%%url_for('static', filename='img/loupe.png') %%"  width="140" height="140">
                   </a>
                   <h2>Synthese des observations faune - flore </h2>
                   <p>Recherchez, visualisez puis téléchargez les données d'observations faune et flore</p>
@@ -90,7 +90,7 @@
             <div class ="col-lg-4 col-md-4 col-sm-12 col-xs-12 stat-object">
               <div class="thumbnail stat-thumbnail">
                 <span class="glyphicon glyphicon-search"></span>
-                <h1> {{stat.nb_tot_obs}} </h1>
+                <h1> %%stat.nb_tot_obs%% </h1>
                 <h4> observations</h4>
                 
               </div>
@@ -98,7 +98,7 @@
             <div class = "col-lg-4 col-md-4 col-sm-12 col-xs-12 stat-object">
               <div class="thumbnail stat-thumbnail">
                 <span class="glyphicon glyphicon-leaf"></span>
-                <h1> {{stat.nb_tot_tax}}</h1>
+                <h1> %%stat.nb_tot_tax%%</h1>
                 <h4> espèces</h4>
 
               </div>
@@ -106,7 +106,7 @@
             <div class ="col-lg-4 col-md-4 col-sm-12 col-xs-12 stat-object">
               <div class="thumbnail stat-thumbnail">
                 <span class="glyphicon glyphicon-user"> </span>
-                <h1>{{stat.nb_tot_observateurs}}</h1>
+                <h1>%%stat.nb_tot_observateurs%%</h1>
                 <h4> observateurs</h4>
 
               </div>

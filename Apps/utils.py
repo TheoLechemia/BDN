@@ -79,6 +79,14 @@ def sqltoDict(sql, cur):
         res.append(dict(row))
     return res
 
+def sqltoDictWithParams(sql, params, cur):
+    cur.execute(sql, params)
+    tabRes = cur.fetchall()
+    res = []
+    for row in tabRes:
+        res.append(dict(row))
+    return res
+
 
 def zipIt(dirPath):
     zf = zipfile.ZipFile(dirPath+'.zip', mode='w')

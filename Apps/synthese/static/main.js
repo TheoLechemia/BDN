@@ -53,14 +53,21 @@ template = "synthese/templates/app.html";
 function appCtrl (proxy){
 	var ctrl = this;
 
+/*	ctrl.test = {'la': 5}
+	ctrl.clickTest = function(){
+		ctrl.test = {'la': 10000}
+	}*/
+
 	ctrl.nbObs = "Les 50 dernieres observations";
 	
 	proxy.lastObs().then(function(response){
 		ctrl.geojson = response.data;
 	});
+
 	proxy.loadTaxons('Tout').then(function(response){
-	  	ctrl.taxonslist = response.data;
-  	})
+		  	ctrl.taxonslist = response.data;
+	  	})
+  	
 
 	proxy.loadCommunes().then(function(response){
   		ctrl.communesList = response.data;
@@ -71,7 +78,6 @@ function appCtrl (proxy){
 	})
 	proxy.loadGroup2_inpn().then(function(response){
 		ctrl.group2_inpn = response.data;
-		console.log(ctrl.group2_inpn);
 	}) 
 
 	ctrl.changeProtocole = function(protocole){
@@ -149,7 +155,6 @@ function leafletCtrl($http,$scope){
 	L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGhlb2xlY2hlbWlhIiwiYSI6ImNpa29lODhvejAwYTl3MGxzZGY0aHc0NXIifQ.fEujW2fUlRuUk9PHfPdKIg').addTo(map);
 
 	function onEachFeature(features, layer){
-		console.log(features.properties);
 		// bind pop up
 		nom_vern = " - "
 		if (features.properties.nom_vern != null){
@@ -203,8 +208,7 @@ function leafletCtrl($http,$scope){
 
 
          this.$onChanges = function(changesObj){
-         	console.log("in leaflet change")
-         	console.log(changesObj);
+
       		if(changesObj.geojson){
       			geojsondData=changesObj.geojson.currentValue;
       			loadGeojson(geojsondData);
@@ -336,7 +340,7 @@ function formCtrl(proxy, $http, $scope){
 		ctrl.showNewTaxons = false;
 		ctrl.newTaxons = []
 	 ctrl.onSelectNomVern = function ($item, $model, $label) {
-	 	   $("#input_lbnom").val($item.lb_nom);
+	 	   //$("#input_lbnom").val($item.lb_nom);
 	 	   this.form.listTaxons.push($item.cd_nom);
 
 	 	   	 if (this.showNewTaxons == false){
@@ -454,26 +458,32 @@ function lastObsCtrl ($uibModal, $http){
 		this.onUpdate({$event: {currentObs: currentObs.id_synthese}});
 	}
 
-	ctrl.open= function(obs){
-		$http.get(URL_APPLICATION+"synthese/ficheObs/"+obs.protocole+"/"+obs.id_synthese).then(function(response){
-		
-		
 
-
-
-			 $uibModal.open({
-	          		component: "modalObs",
-	          		size: 'lg',
-	          		resolve : {
-	          			obs : function(){
-	          				return obs
-	          			},
-	          			ficheEspece : function(){
-	          				return response.data;
-	          			}
-	          		}
-					});
-		})
+	this.state = "Not Loaded";
+	ctrl.$onInit = function(){
+		console.log(ctrl.change);
+		console.log(ctrl.appCtrl);
+		truc = ctrl.appCtrl; 
+	
+		ctrl.open= function(obs){
+			$http.get(URL_APPLICATION+"synthese/ficheObs/"+obs.protocole+"/"+obs.id_synthese).then(function(response){
+				 $uibModal.open({
+		          		component: "modalObs",
+		          		size: 'lg',
+		          		resolve : {
+		          			obs : function(){
+		          				return obs
+		          			},
+		          			ficheEspece : function(){
+		          				return response.data;
+		          			},
+		          			taxonslist : function(){
+		          				return truc;
+		          			}
+		          		}
+						});
+			})
+	}
 
     };
 
@@ -486,6 +496,9 @@ app.component('lastObs', {
 
   controller : lastObsCtrl,
   templateUrl : templateLastObs,
+  require : {
+  	appCtrl : '^app'
+  },
   bindings : {
   	geojson : '<',
   	currentObs : '<',
@@ -495,7 +508,7 @@ app.component('lastObs', {
 });
 
 //####################################################################
-// ######################## MODAL ################################
+// ######################## MODAL ###################################
 //####################################################################
 
 
@@ -505,21 +518,30 @@ function modalObsCtrl(proxy){
 	var mapObs = L.map('mapObs').setView([16.2412500, -61.5361400],11);
 	L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGhlb2xlY2hlbWlhIiwiYSI6ImNpa29lODhvejAwYTl3MGxzZGY0aHc0NXIifQ.fEujW2fUlRuUk9PHfPdKIg').addTo(mapObs);
 
+	ctrl.changeTest = {"foo": 2, "bar": 3}
 
+	ctrl.test = function(){
+		newObj = {"foo": 8, 'bar': 52}
+		ctrl.changeTest = newObj;
+		console.log(ctrl.changeTest);
+		
+		}
 
 	ctrl.$onInit = function (){
+
+
 		ctrl.closeModal = function(){
 				ctrl.modalInstance.close()
 			}
-
 
 		  setTimeout(function() {
 		    mapObs.invalidateSize();
 		  }, 10);
 
+		
 
 		ctrl.ficheEspece = this.resolve.ficheEspece;
-		console.log(ctrl.ficheEspece);
+		ctrl.taxonsListChild = this.resolve.taxonslist.taxonslist;
 
 
 
@@ -527,8 +549,11 @@ function modalObsCtrl(proxy){
 		mapObs.panTo([ctrl.ficheEspece.y, ctrl.ficheEspece.x]);
 
 		 marker.on('dragend', function (e) {
-            ctrl.ficheEspece.x = e.target._latlng.lng;
-            ctrl.ficheEspece.y = e.target._latlng.lat
+		 	var copyModel = angular.copy(ctrl.ficheEspece);
+            copyModel.x = e.target._latlng.lng;
+            copyModel.y = e.target._latlng.lat
+            ctrl.ficheEspece = copyModel;
+
             console.log(ctrl.ficheEspece.x);
         }); 
 
@@ -547,7 +572,6 @@ app.component('modalObs', {
   bindings: {
   	modalInstance: "<",
   	resolve: "<",
-
   }
 });
 
@@ -558,25 +582,41 @@ app.component('modalObs', {
 
 modifyObsCtrl = function($http){
 	ctrl = this;
+		ctrl.changeTest = {"foo": 2, "bar": 3}
 
-	ctrl.$onInit = function(){
-		console.log(ctrl.ficheEspece.date)
+	ctrl.test = function(){
+		newObj = {"foo": 8, 'bar': 52}
+		ctrl.changeTest = newObj;
+		console.log(ctrl.changeTest);
+		
+		}
+
+	ctrl.$onInit = function(bindings){
+		console.log(this.change);
+
+
+		ctrl.taxonsListChild = ctrl.modalCtrl.taxonsListChild;
+		console.log(ctrl.modalCtrl);
+
 		ctrl.form = {
 		'observateur' : ctrl.ficheEspece.observateur,
 		'taxon' : {'nom_vern': ctrl.ficheEspece.nom_vern, 'lb_nom': ctrl.ficheEspece.lb_nom, 'cd_nom': ctrl.ficheEspece.cd_nom },
 		'date' : new Date(ctrl.ficheEspece.date.replace('GMT', '')),
-		'loc': { 'y': ctrl.ficheEspece.y, 'x': ctrl.ficheEspece.x }
+		'loc': { 'y': ctrl.modalCtrl.ficheEspece.y, 'x': ctrl.modalCtrl.ficheEspece.x }
 		}
-
 
 		setTimeout(function() {
 			console.log("from child");
-		    console.log(ctrl.ficheEspece.x);
+		    console.log(ctrl.modalCtrl.ficheEspece.y);
 		  }, 5000);
 
-		//console.log(this.appCtrl.globalVariable);
 
 	}// end on init
+
+	ctrl.$onChanges = function(change){
+		console.log("change form")
+		console.log(change);
+	}
 
 	ctrl.submitForm = function(form, ficheEspece){
 		console.log(form);
@@ -594,10 +634,6 @@ modifyObsCtrl = function($http){
 		this.opened = !this.opened;
 	}
 
-
-
-
-
 }
 
 
@@ -607,8 +643,12 @@ app.component('modifyObs', {
 
   controller : modifyObsCtrl,
   templateUrl : templateModifyObs,
+  require : {
+  	modalCtrl:'^modalObs'
+  },
   bindings: {
   	ficheEspece :'<',
+  	change :'<'
   }
 });
 

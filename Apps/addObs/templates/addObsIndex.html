@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+
+
+
+
+<!-- Angular -->
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.js"></script>
+
+<!-- Leaflet directive CAUTION on utilise pas le meme leaflet ici: J AI MODIFIIE LES SOURCES SUITE AU PB DE MARKER -->
+<script src="%%url_for('static', filename='lib/leaflet/leaflet-src.js')%%"></script> 
+<link rel="stylesheet" href="%%url_for('static', filename='lib/leaflet/leaflet.css')%%" />
+<script src="%%url_for('static', filename='lib/leaflet/angular-leaflet-directive.min.js')%%"></script>
+<!-- Leaflet Marker -->
+<script src="%%url_for('static', filename='lib/leaflet-marker/js/leaflet.awesome-markers.min.js')%%"></script>
+<link rel="stylesheet" href="%%url_for('static', filename='lib/leaflet-marker/css/leaflet.awesome-markers.css')%%" />
+
+
+  <!--  ui bootstrap -->
+<script src="%%url_for('static', filename='lib/uibootstrap.min.js')%%"></script>
+
+
+<!-- Jquery -->
+	
+		
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"
+			  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+			  crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+
+
+</head>
+<body>
+	{% include 'navbar.html' %}
+
+<div ng-app="app" class="container-fluid">
+	<h3> Hello </h3>
+        <div ng-controller="headerCtrl">
+
+		
+			<div class="col-sm-6"> 
+				<form>
+				<div class="form-group">
+				    <div class="btn-group">
+        				<label class="btn btn-success" ng-model="view" uib-btn-radio="'flore'" uncheckable>Flore</label>
+        				<label class="btn btn-success" ng-model="view" uib-btn-radio="'faune'" uncheckable>Faune</label>
+  					</div>
+  				</div>
+
+					<input class="form-control" type="text" name="" placeholder="Observateur: NOM PRENON - en majuscule" ng-model="form.observateur" >
+
+				<input id="input_lbnom" autocomplete="off" placeholder="Nom Latin " type="text" ng-model="form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.lb_nom for taxon in taxons   | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults"  >
+				
+				<div class="form-group">
+				 	<input id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in taxons  | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults"  >
+				</div>
+
+				<div class="form-group">
+				      <div>
+				        <p class="input-group">
+				          <input id="firstDate" placeholder="Date de l'observation" type="text" class="form-control" uib-datepicker-popup="%%format%%" ng-model="form.date"" is-open="isOpen" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" />
+				          <span class="input-group-btn">
+				            <button type="button" class="btn btn-default" ng-click="openDate()"><i class="glyphicon glyphicon-calendar"></i></button>
+				          </span>
+				        </p>
+				      </div>
+				  </div>
+				  <div class="form-group">
+					  <label> Coordonnées
+					  <input class="form-control" type="number" step="0.001" name="" placeholder="X" ng-model="markers.main.lng" ng-change="changeLng()" >
+					  <input class="form-control" type="number" step="0.001" placeholder="Y" ng-model="markers.main.lat" ng-change="changeLat()">
+				  </div>
+
+
+				  <!-- FLORE -->
+				  <div ng-if="view == 'flore' ">
+					  <div class="form-group" >
+					  	<input class="form-control" type="text" placeholder="Nombre de pied exact"  ng-model="formFlore.nb_pied_exact" >
+					  	<select class="form-control" type="text" placeholder="Abondance" ng-model="formFlore.abondance" ng-options="choice as choice for choice in abondance" >
+					  		<option value=""> - Abondance - </option>
+					  	</select>
+					  	
+					  	<select class="form-control" type="text" ng-model="formFlore.nb_pied_approx" ng-options="choice as choice for choice in nb_pied_approx">
+					  		<option value=""> - Nombre de pied approximattif -</option>
+					  	</select>
+					  </div>
+					  <div class="form-group">
+					  	<select class="form-control" type="text" placeholder="Stade de développement" ng-model="formFlore.stade_dev" ng-options="choice as choice for choice in stade_dev">
+					  		<option value=""> - Stade de développement </option>
+					  	</select>
+					  </div>
+				  </div>
+
+				  <!-- FAUNE -->
+				  <div ng-if="view == 'faune'">
+					  <div class="form-group" >
+					  	<input class="form-control" type="text" placeholder="Type d'observation" ng-model="formFaune.type_obs" >
+					  	<input class="form-control" type="text" placeholder="Effectif" ng-model="formFaune.effectif" >
+					  	<input class="form-control" type="text" placeholder="Nombre d'individu" ng-model="formFaune.nb_individu" >
+					  	<input class="form-control" type="text" placeholder="Nombre de mâle adulte" ng-model="formFaune.nb_male" >
+					  	<input class="form-control" type="text" placeholder="Nombre de femelles adulte" ng-model="formFaune.nb_femelle" >
+					  	<input class="form-control" type="text" placeholder="Nombre de mâle adulte" ng-model="formFaune.nb_jeune" >
+					  	<input class="form-control" type="text" placeholder="Traces" ng-model="formFaune.traces" >
+					  	<input class="form-control" type="text" placeholder="Commentaire" ng-model="formFaune.commentaire" >
+					  </div>
+				</div>
+				<button class="btn btn-success" ng-click="onSubmit(view)"> Valider </button>
+				</form>
+
+				
+			</div>
+
+			<div class="col-sm-6">
+					<leaflet lf-center='center' width="640px" height="480px" markers="markers"></leaflet>
+
+			        	
+			</div>
+		</div>
+</div> 
+
+
+
+
+</body>
+
+<script type="text/javascript"> var URL_APPLICATION = %%URL_APPLICATION|tojson%% </script>
+<script src="%%url_for('addObs.static', filename='addObs.js')%%"></script>
+</html>
