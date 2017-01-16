@@ -73,7 +73,7 @@ def sublmitObs(protocole):
 
         sql = '''INSERT INTO bdn.flore (protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, geom_point, valide  )
         VALUES (%s, %s, %s, %s, %s,%s,%s,%s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s )'''
-        params = [protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied_exact, stade_dev, point, False]
+        params = [protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied_exact, stade_dev, point, 'false']
         db.cur.execute(sql, params)
         db.conn.commit()
 

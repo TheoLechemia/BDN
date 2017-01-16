@@ -103,7 +103,7 @@ CREATE OR REPLACE FUNCTION fill_id_synthese_flore() RETURNS TRIGGER AS $fill_id_
 $fill_id_synthese$ LANGUAGE plpgsql;
 
 CREATE TRIGGER tr_id_synthese_fl
-AFTER INSERT ON bdn.faune
+AFTER INSERT ON bdn.flore
     FOR EACH ROW EXECUTE PROCEDURE fill_id_synthese_flore();
 
 
