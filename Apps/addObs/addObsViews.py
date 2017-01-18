@@ -42,14 +42,6 @@ def sublmitObs(protocole):
         y = str(loc['lat'])
         point = 'POINT('+x+' '+y+')'
         date = flask.request.json['general']['date']
-        if protocole == 'flore':
-            abondance = flask.request.json['flore']['abondance']
-            nb_pied_exact = flask.request.json['flore']['nb_pied_exact']
-            nb_pied_approx = flask.request.json['flore']['nb_pied_approx']
-            stade_dev = flask.request.json['flore']['stade_dev']
-        protocole = protocole.upper()
-
-
         #foret
         sql_foret = """ SELECT code_insee FROM layers.commune WHERE ST_INTERSECTS(geom,(ST_Transform(ST_PointFromText(%s, 4326),%s)))"""
         params = [point, config.PROJECTION]
@@ -67,15 +59,34 @@ def sublmitObs(protocole):
         insee = None 
         if res != None:
             insee = res[0]
-
         
+        if protocole == 'flore':
+            abondance = flask.request.json['flore']['abondance']
+            nb_pied_exact = flask.request.json['flore']['nb_pied_exact']
+            nb_pied_approx = flask.request.json['flore']['nb_pied_approx']
+            stade_dev = flask.request.json['flore']['stade_dev']
+            protocole = protocole.upper()
 
+            sql = '''INSERT INTO bdn.flore (protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, geom_point, valide  )
+            VALUES (%s, %s, %s, %s, %s,%s,%s,%s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s )'''
+            params = [protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied_exact, stade_dev, point, 'false']
+            db.cur.execute(sql, params)
+            db.conn.commit()
 
-        sql = '''INSERT INTO bdn.flore (protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, geom_point, valide  )
-        VALUES (%s, %s, %s, %s, %s,%s,%s,%s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s )'''
-        params = [protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied_exact, stade_dev, point, 'false']
-        db.cur.execute(sql, params)
-        db.conn.commit()
+        if protocole == 'faune':
+            type_obs = flask.request.json['flore']['type_obs']
+            effectif = flask.request.json['flore']['effectif']
+            comportement = flask.request.json['flore']['comportement']
+            nb_individu = flask.request.json['flore']['nb_individu']
+            nb_male = flask.request.json['flore']['nb_male']
+            nb_femelle = flask.request.json['flore']['nb_femelle']
+            nb_jeune = flask.request.json['flore']['nb_jeune']
+            protocole = protocole.upper()
+            sql = '''INSERT INTO bdn.faune (protocole, observateur, date, cd_nom, insee, ccod_frt, type_obs, nb_individu_approx, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, geom_point, valide )
+                   VALUES (%s, %s, %s, %s, %s,%s,%s, %s, %s, %s, %s, %s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s )'''
+            params = [protocole, observateur, dateObject, cd_nom, insee, ccod_frt, type_obs, nb_individu_approx, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, point, 'false']
+            cur.execute(sql, params)
+            conn.commit()
 
         print observateur
         print cd_nom

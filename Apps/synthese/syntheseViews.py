@@ -51,7 +51,7 @@ def synthese_index():
 @nocache
 def lastObs():
     db = getConnexion()
-    sql = """SELECT s.cd_nom, s.observateur, s.id_synthese, t.lb_nom, t.nom_vern, s.date, ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), ST_X(ST_Transform(geom_point, 4326)), ST_Y(ST_Transform(geom_point, 4326)), s.protocole
+    sql = """SELECT s.cd_nom, s.observateur, s.id_synthese, t.lb_nom, t.nom_vern, s.date, ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), ST_X(ST_Transform(geom_point, 4326)), ST_Y(ST_Transform(geom_point, 4326)), s.protocole, s.valide
             FROM bdn.synthese s
             JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
             ORDER BY date DESC
@@ -61,7 +61,7 @@ def lastObs():
     data = { "type": "FeatureCollection",  "features" : list()}
     for r in res:
         date = r[5].strftime("%Y/%m/%d")
-        myproperties = {'cd_nom': r[0], 'observateur': r[1],'id_synthese': r[2], 'lb_nom': r[3], 'nom_vern':r[4], 'date':date, 'x': r[7], 'y':r[8], 'protocole': r[9] }
+        myproperties = {'cd_nom': r[0], 'observateur': r[1],'id_synthese': r[2], 'lb_nom': r[3], 'nom_vern':r[4], 'date':date, 'x': r[7], 'y':r[8], 'protocole': r[9], 'valide':r[10] }
         data['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[6]) })
     db.closeAll()
 
@@ -81,7 +81,7 @@ def getObs():
         myproperties = dict()
         for r in res:
             date = r[5].strftime("%Y/%m/%d")
-            myproperties = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'x': r[6], 'y':r[7], 'protocole': r[8], 'observateur': r[9]}
+            myproperties = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'x': r[6], 'y':r[7], 'protocole': r[8], 'observateur': r[9],'valide': r[10] }
             geojson['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[0]) })
     db.closeAll()
     return Response(flask.json.dumps(geojson), mimetype='application/json')

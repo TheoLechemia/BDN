@@ -92,7 +92,7 @@
 					  </div>
 					  <div class="form-group">
 					  	<select class="form-control" type="text" placeholder="Stade de développement" ng-model="formFlore.stade_dev" ng-options="choice as choice for choice in stade_dev">
-					  		<option value=""> - Stade de développement </option>
+					  		<option value=""> - Stade de développement - </option>
 					  	</select>
 					  </div>
 				  </div>
@@ -100,19 +100,30 @@
 				  <!-- FAUNE -->
 				  <div ng-if="view == 'faune'">
 					  <div class="form-group" >
-					  	<input class="form-control" type="text" placeholder="Type d'observation" ng-model="formFaune.type_obs" >
-					  	<input class="form-control" type="text" placeholder="Effectif" ng-model="formFaune.effectif" >
+					  	<select class="form-control" type="text" placeholder="Type d'observation" ng-model="formFaune.type_obs" ng-options="choice as choice for choice in type_obs" >
+					  		<option value=""> - Type d'observation - </option>
+					  	</select>
+					  	<select class="form-control" type="text" placeholder="Traces" ng-model="formFaune.comportement" ng-options="choice as choice for choice in comportement">
+					  		<option value=""> - Comportement - </option> 
+					  	</select>
+					  	<select class="form-control" type="text" placeholder="Traces" ng-model="formFaune.trace" ng-options="choice as choice for choice in trace">
+					  		<option value=""> - Trace - </option> 
+					  	</select>
+					  	<select class="form-control" type="text" placeholder="Effectif" ng-model="formFaune.effectif" ng-options="choice as choice for choice in effectif" >
+					  		<option value=""> - Effectif - </option>
+					  	</select>
+
 					  	<input class="form-control" type="text" placeholder="Nombre d'individu" ng-model="formFaune.nb_individu" >
 					  	<input class="form-control" type="text" placeholder="Nombre de mâle adulte" ng-model="formFaune.nb_male" >
 					  	<input class="form-control" type="text" placeholder="Nombre de femelles adulte" ng-model="formFaune.nb_femelle" >
 					  	<input class="form-control" type="text" placeholder="Nombre de mâle adulte" ng-model="formFaune.nb_jeune" >
-					  	<input class="form-control" type="text" placeholder="Traces" ng-model="formFaune.traces" >
-					  	<input class="form-control" type="text" placeholder="Commentaire" ng-model="formFaune.commentaire" >
+
+					  	<input class="form-control" type="text" placeholder="Commentaire" ng-model="formFaune.commentaire"  >
 					  </div>
 				</div>
 				<button class="btn btn-success" ng-click="onSubmit(view)"> Valider </button>
 				</form>
-
+				{{formFaune}}
 				
 			</div>
 
