@@ -51,21 +51,26 @@ def synthese_index():
 @nocache
 def lastObs():
     db = getConnexion()
-    sql = """SELECT s.cd_nom, s.observateur, s.id_synthese, t.lb_nom, t.nom_vern, s.date, ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), ST_X(ST_Transform(geom_point, 4326)), ST_Y(ST_Transform(geom_point, 4326)), s.protocole, s.valide
-            FROM bdn.synthese s
-            JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
-            ORDER BY date DESC
-            LIMIT 50"""
+    sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, ST_X(ST_Transform(geom_point, 4326)), ST_Y(ST_Transform(geom_point, 4326)), s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact
+              FROM bdn.synthese s
+              JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
+              LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
+              ORDER BY date DESC
+              LIMIT 50"""
     db.cur.execute(sql)
     res = db.cur.fetchall()
-    data = { "type": "FeatureCollection",  "features" : list()}
+    geojsonMaille = { "type": "FeatureCollection",  "features" : list() }
+    geojsonPoint = { "type": "FeatureCollection",  "features" : list() }
     for r in res:
         date = r[5].strftime("%Y/%m/%d")
-        myproperties = {'cd_nom': r[0], 'observateur': r[1],'id_synthese': r[2], 'lb_nom': r[3], 'nom_vern':r[4], 'date':date, 'x': r[7], 'y':r[8], 'protocole': r[9], 'valide':r[10] }
-        data['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[6]) })
+        myproperties = {'id_synthese': [r[1]], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[8], 'code_maille' : r[10]}
+        #r[11] = loc_exact: check if its point or maille
+        if r[11] == True:
+            geojsonPoint['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[0]) })
+        else:
+            geojsonMaille['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[9]) })
     db.closeAll()
-
-    return Response(flask.json.dumps(data), mimetype='application/json')
+    return Response(flask.json.dumps({'point':geojsonPoint,'maille':geojsonMaille}), mimetype='application/json')
 
 
 
@@ -73,18 +78,22 @@ def lastObs():
 def getObs():
     db = getConnexion()    
     if flask.request.method == 'POST':
-        geojson ={ "type": "FeatureCollection",  "features" : list() } 
-        print utils.buildSQL()['sql']
-        print utils.buildSQL()['params']
-        db.cur.execute(utils.buildSQL()['sql'], utils.buildSQL()['params'])
+        geojsonMaille ={ "type": "FeatureCollection",  "features" : list() }
+        geojsonPoint ={ "type": "FeatureCollection",  "features" : list() }
+        sqlAndParams = utils.buildSQL('point')
+        db.cur.execute(sqlAndParams['sql'], sqlAndParams['params'])
         res = db.cur.fetchall()
         myproperties = dict()
         for r in res:
             date = r[5].strftime("%Y/%m/%d")
-            myproperties = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'x': r[6], 'y':r[7], 'protocole': r[8], 'observateur': r[9],'valide': r[10] }
-            geojson['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[0]) })
+            myproperties = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[8],'code_maille' : r[9] }
+            #r[11] = loc_exact: check if its point or maille
+            if r[11]:
+                geojsonPoint['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[0]) })
+            else:
+                geojsonMaille['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[9]) })
     db.closeAll()
-    return Response(flask.json.dumps(geojson), mimetype='application/json')
+    return Response(flask.json.dumps({'point':geojsonPoint,'maille':geojsonMaille}), mimetype='application/json')
 
 ######FORM#########
 #charge le bons taxons pour la recherche par nom latin et vernaculaire en fonction du protocole choisi

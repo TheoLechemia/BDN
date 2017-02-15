@@ -2,3 +2,4 @@ Apps/config.py
 Apps/static/uploads/*
 venv/*
 settings.ini
+node_modules/*

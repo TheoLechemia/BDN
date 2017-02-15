@@ -3,13 +3,8 @@
 	<label> Observateur  </label>
 	<input type="text" name="" ng-model="$ctrl.form.observateur" value="$ctrl.form.observateur">
 	<label> Espece </label>
-
-	<input id="input_lbnom" autocomplete="off" placeholder="Nom Latin " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.lb_nom for taxon in $ctrl.taxonsListChild | filter:{lb_nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectlbNom($item, $model, $label)" >
-
-	<input id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in $ctrl.taxonsListChild | filter:{nom_vern:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" >
-				</div>
-
-
+	<input type="text" name="" ng-model="$ctrl.form.taxon.lb_nom" value="$ctrl.form.taxon.lb_nom">
+	<input type="text" name="" ng-model="$ctrl.form.taxon.nom_vern" value="$ctrl.form.taxon.nom_vern">
 	<label> Quand ?</label>
 	   <div>
         <p class="input-group">
@@ -22,5 +17,3 @@
 
       <button ng-click="$ctrl.submitForm($ctrl.form, $ctrl.ficheEspece)"> submit</button>
 </form>
-
-

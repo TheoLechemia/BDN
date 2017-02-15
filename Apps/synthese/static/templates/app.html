@@ -1,11 +1,11 @@
 
 <div class="row">
 	<div class="col-md-2">
-		<form-obs on-form-submit="$ctrl.formSubmit($event.form)" on-protocole-change="$ctrl.changeProtocole($event.protocole)" taxons="$ctrl.taxonslist" communes="$ctrl.communesList" forets="$ctrl.foretsList", group2inpn="$ctrl.group2_inpn" > </form-obs>	
+		<form-obs on-form-submit="$ctrl.formSubmit($event.form)" on-protocole-change="$ctrl.changeProtocole($event.protocole)" taxons="$ctrl.taxonslist" communes="$ctrl.communesList" forets="$ctrl.foretsList"> </form-obs>	
 	</div>
 
 	<div class="col-md-7">
-		<leaflet-ctrl geojson="$ctrl.geojson" current-obs="$ctrl.currentObs" on-current-obs-change="$event.currentObs" child-current-obs = ""> </leaflet-ctrl>
+		<map geojson='$ctrl.geojson' current-list-obs="$ctrl.currentListObs" current-leaflet-obs = "$ctrl.currentLeafletObs"> </map>
 	</div>
 
 	<div class="col-md-3">
@@ -14,20 +14,10 @@
 				<h3 class="panel-title"> {{$ctrl.nbObs}} </h3>
 			</div>
 			<div class="panel-body">
-			<last-obs geojson="$ctrl.geojson" on-update="$ctrl.updateCurrentObs($event.currentObs)" taxons="$ctrl.taxonslist" change="$ctrl.changeTest"> </last-obs>
+			<list-obs  current-list-obs="$ctrl.currentListObs" current-leaflet-obs = "$ctrl.currentLeafletObs" geojson="$ctrl.geojson"> </list-obs>
 			</div>
 			
 		</div>
 		<button ng-click="$ctrl.exportShape($ctrl.form)" type="button" class="btn btn-primary">Exportez en shapefile <span class="glyphicon glyphicon-download-alt"> </span> </button>
-		<div ng-show="$ctrl.exportAlert" class="alert alert-warning alert-dismissable">
-		  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-		  Attention: les données exportées ne sont que les données qui ont été validées
-		</div>
 	</div>	
 </div>
-
-<button ng-click="$ctrl.clickTest()"> test</button>
-{{$ctrl.test}}
-
-
-

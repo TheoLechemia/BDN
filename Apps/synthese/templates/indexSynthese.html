@@ -5,32 +5,40 @@
 	<title></title>
 
 <!-- Angular -->
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0-rc.2/angular.min.js"></script>
 
 
 <!-- Jquery -->
-	
-		
-	<script src="https://code.jquery.com/jquery-3.1.1.min.js"
-			  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-			  crossorigin="anonymous"></script>
+  
+    
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
 
-	<!-- Leaflet -->
-  <script src="%%url_for('static', filename='lib/leaflet/leaflet.js') %%"></script>
-  <link rel="stylesheet" href="%%url_for('static', filename='lib/leaflet/leaflet.css')%%"  />
+  <!-- Leaflet -->
+  <script src="{{url_for('static', filename='lib/leaflet/leaflet.js') }}"></script>
+  <script src="{{url_for('static', filename='lib/leaflet/angular-leaflet-directive.min.js') }}"></script>
+  <link rel="stylesheet" href="{{url_for('static', filename='lib/leaflet/leaflet.css')}}"  />
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-  <!-- GLOBAL CSS -->
-  <link rel="stylesheet" href= " %%url_for('static', filename='css/main.css')%% " >
-  <!-- SYNTHESE CSS -->
-  <link rel="stylesheet" href= " %%url_for('synthese.static', filename='CSS/synthese.css')%% " >
+
+
+
 <!-- Angular animate -->
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-animate.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.js"></script>
+  
 
 <!--  ui bootstrap -->
-<script src="%%url_for('static', filename='lib/uibootstrap.min.js')%%"></script>
+<script src="{{url_for('static', filename='lib/uibootstrap.min.js')}}"></script>
+
+ <!-- GLOBAL CSS -->
+  <link rel="stylesheet" href= " {{url_for('static', filename='css/main.css')}} " >
+  <!-- SYNTHESE CSS -->
+<link rel="stylesheet" href= " {{url_for('synthese.static', filename='CSS/synthese.css')}} " >
+
 
 
 </head>
@@ -46,9 +54,9 @@
 </div>
 
 
-<script type="text/javascript"> var URL_APPLICATION = %%URL_APPLICATION|tojson%% </script>
+<script type="text/javascript"> var URL_APPLICATION = {{URL_APPLICATION|tojson}} </script>
 
-<script src="%%url_for('synthese.static', filename='main.js')%%"></script>
+<script src="{{url_for('synthese.static', filename='dist/bundle.js')}}"></script>
 
 </body>
 </html>
