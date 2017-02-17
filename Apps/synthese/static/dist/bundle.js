@@ -499,7 +499,6 @@ proxy = angularInstance.factory('proxy', function proxy($http) {
 var angularInstance = angular.module("app", ['ui.bootstrap', 'leaflet-directive', 'ngRoute']);
 
 
-
 __webpack_require__(3)(angularInstance);
 
 angularInstance.controller("headerCtrl", function($scope){
@@ -572,7 +571,7 @@ function appCtrl (proxy){
 
   ctrl.exportShape = function(form){
     proxy.exportShapeFile(form).then(function(response){
-      window.location =URL_APPLICATION+'uploads/'+response.data;       
+      window.location =URL_APPLICATION+'synthese/uploads/'+response.data;       
     })
   }
 }
@@ -583,8 +582,6 @@ angularInstance.component('app', {
   templateUrl : template
 
 });
-
-
 
 
 __webpack_require__(0)(angularInstance);

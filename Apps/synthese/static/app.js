@@ -1,15 +1,15 @@
 var app = angular.module("app", ['ui.bootstrap', 'leaflet-directive', 'ngRoute']);
 
-
+console.log(URL_APPLICATION);
 
 //####################################################################
 // ######################## PROXY #######################
 //####################################################################
 
-proxy = app.factory('proxy', function proxy($http) {
+/*proxy = app.factory('proxy', function proxy($http) {
 		return{
 			lastObs: function(){
-	            return $http.get(URL_APPLICATION+"lastObs");
+	            return $http.get(URL_APPLICATION+"synthese/lastObs");
 				},
 			sendData : function(data){
 				return $http.post(URL_APPLICATION+"getObs", data)
@@ -32,7 +32,7 @@ proxy = app.factory('proxy', function proxy($http) {
 				return $http.get(URL_APPLICATION +"loadTaxonomyHierachy/"+rang_fils+"/"+rang_pere+"/"+rang_grand_pere+"/"+value_rang_grand_pere+"/"+value)
 			}			
 		}
-	  });
+	  });*/
 
 
 //####################################################################
@@ -111,8 +111,8 @@ function appCtrl (proxy){
 
 
 
-	ctrl.exportShape = function(form){
-		proxy.exportShapeFile(form).then(function(response){
+	ctrl.exportShape = function(geojson){
+		proxy.exportShapeFile(geojson).then(function(response){
 			window.location =URL_APPLICATION+'uploads/'+response.data;	     
 		})
 	}

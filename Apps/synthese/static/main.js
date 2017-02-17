@@ -1,7 +1,6 @@
 var angularInstance = angular.module("app", ['ui.bootstrap', 'leaflet-directive', 'ngRoute']);
 
 
-
 require('./services/proxy.js')(angularInstance);
 
 angularInstance.controller("headerCtrl", function($scope){
@@ -74,7 +73,7 @@ function appCtrl (proxy){
 
   ctrl.exportShape = function(form){
     proxy.exportShapeFile(form).then(function(response){
-      window.location =URL_APPLICATION+'uploads/'+response.data;       
+      window.location =URL_APPLICATION+'synthese/uploads/'+response.data;       
     })
   }
 }
@@ -85,8 +84,6 @@ angularInstance.component('app', {
   templateUrl : template
 
 });
-
-
 
 
 require('./formObs.js')(angularInstance);

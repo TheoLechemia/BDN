@@ -89,16 +89,13 @@ def sqltoDictWithParams(sql, params, cur):
 
 
 def zipIt(dirPath):
-    zf = zipfile.ZipFile(dirPath+'.zip.zip', mode='w')
+    dirPath=dirPath.split('.')[0]
+    zf = zipfile.ZipFile(dirPath+'.zip', mode='w')
     zf.write(dirPath+".dbf", os.path.basename(dirPath+".dbf") )
     zf.write(dirPath+".prj", os.path.basename(dirPath+".prj"))
     zf.write(dirPath+".shx", os.path.basename(dirPath+".shx"))
     zf.write(dirPath+".shp", os.path.basename(dirPath+".shp"))
 
-    # for (archiveDirPath, dirNames, fileNames) in os.walk(dirPath):
-    #         for fileName in fileNames:
-    #             filePath = os.path.join(archiveDirPath, fileName)
-    #             zf.write(filePath, os.path.basename(filePath))
     zf.close()
 
 

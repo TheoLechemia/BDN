@@ -10,6 +10,7 @@ from ..database import *
 from datetime import datetime
 from ..initApp import app
 from werkzeug.exceptions import HTTPException, NotFound 
+import geojson2shp
 
 #synthese = flask.Blueprint('synthese', __name__)
 synthese = flask.Blueprint('synthese', __name__, static_url_path="/synthese", static_folder="static", template_folder="templates")
@@ -18,7 +19,7 @@ synthese = flask.Blueprint('synthese', __name__, static_url_path="/synthese", st
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, os.pardir))
-UPLOAD_FOLDER = PARENT_DIR+'/static/uploads'
+UPLOAD_FOLDER = PARENT_DIR+'\\static\\uploads'
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = 'Martine50='  # Change this!
@@ -93,6 +94,7 @@ def getObs():
             else:
                 geojsonMaille['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[9]) })
     db.closeAll()
+    print geojsonPoint
     return Response(flask.json.dumps({'point':geojsonPoint,'maille':geojsonMaille}), mimetype='application/json')
 
 ######FORM#########
@@ -168,34 +170,34 @@ def loadTaxonHierarchy(rang_fils, rang_pere, rang_grand_pere, value_rang_grand_p
 
 
 
-
 @synthese.route('/export', methods=['GET', 'POST'])
 def export():
-    sqlBase = " SELECT * FROM bdn.synthese s JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom"
     if flask.request.method == 'POST':
+        geojsonPoint = flask.request.json['point']
+        geojsonMaille = flask.request.json['maille']
+
         time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         filename = "Export_"+time
-        dirPath = UPLOAD_FOLDER+"/"+filename
-        #construction de la requete a partir du formulaire envoye
-        sql = utils.buildSQL2OGR()
+        completePath = UPLOAD_FOLDER+"\\"+filename+".shp"
+        
+        #construction du shape
+        geojson2shp.export(completePath, geojsonPoint)
 
-        cmd = """ogr2ogr -f "ESRI Shapefile" """+dirPath+""".shp PG:"host="""+config.HOST+""" user="""+config.USER+""" dbname="""+config.DATABASE_NAME+""" password="""+config.PASSWORD+""" " -sql  """
-        cmd = cmd +'"'+sql+'"'
-        print cmd
-
-        #cree un dossier avec les shapefiles dedans (shp, shx etc..)
-        os.system(cmd)
         #on zipe le tout
-        utils.zipIt(dirPath)
+        utils.zipIt(completePath)
         #on retourne le nom du dossier creer, dans la reponse du poste
         return Response(flask.json.dumps(filename), mimetype='application/json')
     return Response(flask.json.dumps("from_get"), mimetype='application/json')
 
 
+
+
 @synthese.route('/uploads/<filename>')
 def uploaded_file(filename):
     filename = filename+".zip"
-    return flask.send_from_directory(app.config['UPLOAD_FOLDER'],filename)
+    print "LAAAAAAAAAA"
+    print filename
+    return flask.send_from_directory(UPLOAD_FOLDER ,filename)
 
 
 
