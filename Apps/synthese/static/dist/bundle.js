@@ -194,9 +194,12 @@ module.exports = function(angularInstance){
 
 module.exports = function(angularInstance){
 
+
 function lastObsCtrl ($uibModal, $http){
 	ctrl = this;
 	ctrl.currentPoint = null;
+
+	var overFlowedList = $('.last-obs');
 
 	ctrl.$onChanges = function(changes){
 		if (changes.geojson){
@@ -204,8 +207,21 @@ function lastObsCtrl ($uibModal, $http){
 				ctrl.currentList = changes.geojson.currentValue.point;
 			}
 		}
+		if(changes.currentListObs){
+			if(changes.currentListObs.currentValue != undefined){
+				    var vpHeight = overFlowedList.height();
+				    var scrollTop = overFlowedList.scrollTop();
+				    var link = $('#'+changes.currentListObs.currentValue);
+				    if (link.length>0){
+				   		var position = link.position();
 
+				        $('.last-obs').animate({
+					        scrollTop: (position.top + scrollTop -100)
+					    }, 500);
+					}
+			}
 
+		}
 	}
 
 	ctrl.zoom = function(id_synthese){
@@ -213,12 +229,8 @@ function lastObsCtrl ($uibModal, $http){
 		ctrl.mainController.updateCurrentListObs(id_synthese);
 	}
 
-	ctrl.isCurrentObs = function(listIdSynthese, row_id_synthese){
-		i = 0;
-		while(i<listIdSynthese.length){
-			return listIdSynthese[i] == row_id_synthese;
-			i++;
-		}
+	ctrl.isCurrentObs = function(id, row_id_synthese){
+			return id == row_id_synthese;	
 	}
 
 	ctrl.selected = 'point';
@@ -235,7 +247,6 @@ function lastObsCtrl ($uibModal, $http){
 
 }
 
-
 templateLastObs = 'synthese/templates/listObs.html';
 
 angularInstance.component('listObs', {
@@ -248,7 +259,7 @@ angularInstance.component('listObs', {
   bindings : {
   	'geojson' : '<',
   	'currentListObs' : '<',
-  	'currentLeafletObs': '<'
+  	'currentLeafletObs': '<',
   }
 
 });
@@ -266,7 +277,6 @@ module.exports = function(angularInstance){
 
 	function mapCtrl($http, $scope, leafletData){
 		ctrl = this;
-
 		ctrl.center = {
 			lat: 16.2412500, 
 			lng: -61.5361400,
@@ -292,37 +302,19 @@ module.exports = function(angularInstance){
 	};
 
 		var selectLayer;
-		function onCurrentObsChange(id_synthese){
-
+		function onCurrentObsChange(id){
+			// get the object which contain all the geojson layer
+			console.log(id)
 			leafletData.getMap()
 		        .then(function(map) {
-		        	// get the object which contain all the geojson layer
-
-		            layerObject = map._layers;
-		            if (selectLayer != undefined){
+		        	if (selectLayer != undefined){
 						selectLayer.setStyle(originStyle)
 					}
-			        for (var key in layerObject) {
-			        	//check if its a point or a maille (could be a map layer)
-			        	if(layerObject[key].feature){
-			        		// check if the properties id_synthese is a array or just a string
+					selectLayer = layersDict[id];
 
-			        			i = 0;
-			        			while(i<layerObject[key].feature.properties.id_synthese.length && layerObject[key].feature.properties.id_synthese[i] != id_synthese ){
-			        				i=i+1
-			        			}
-			        			if (i<layerObject[key].feature.properties.id_synthese.length){
-			        				selectLayer = layerObject[key]
-			        			}
-			      	        		
-			        	}
-			          }
-		        if (selectLayer != undefined){
-			        selectLayer.setStyle(selectedStyle);
+					styleAndPopup(selectLayer);
 
-			        selectLayer.bindPopup("<b>"+selectLayer.feature.properties.nom_vern+"<br> </a> <b> Le: </b> "+selectLayer.feature.properties.date+" <br>").openPopup();
 			        zoom = map.getZoom();
-
 			        // latlng is different between polygons and point
 			        var latlng;
 			        if(selectLayer.feature.geometry.type == "MultiPolygon"){
@@ -339,23 +331,72 @@ module.exports = function(angularInstance){
 		    		else{
 		    			map.setView(latlng, 12);
 		    		}
-			        }
+			        
 		    });
 	}
 
+
+	function styleAndPopup(selectLayer){
+				// set the style
+				selectLayer.setStyle(selectedStyle);
+				//bind the popup
+				if(selectLayer.feature.geometry.type == 'MultiPolygon'){
+					table = "<p>"+selectLayer.feature.properties.nb_observation+" observation(s)</p><table class='table'><thead><tr><th>Nom </th><th>Date</th></tr></thead> <tbody>"
+					selectLayer.feature.properties.listIdSyn.forEach(function(obs, index){
+						table+="<tr> <td> mon nom </td> <td> "+selectLayer.feature.properties.listIdSyn[index]+"</td> </tr>"
+					})
+					table+="</tbody> </table>"
+					selectLayer.bindPopup(table).openPopup();
+
+				}else{
+					selectLayer.bindPopup("<b>"+selectLayer.feature.properties.id_synthese+"<br> </a> <b> Le: </b> "+selectLayer.feature.properties.code_maille+" <br>").openPopup();
+				}
+		      	
+		      	selectLayer.setStyle(selectedStyle);
+	}
+
+
+layersDict = {};
+
+	function onEachFeature(feature, layer){
+		// build the dict of layers
+		layersDict[feature.properties.id] = layer;
+		layer.on({
+			click : function(){
+				console.log("click");
+				// update the propertie in the app controller
+				console.log(feature.properties.id);
+				ctrl.mainController.updateCurrentListObs(feature.properties.id);
+				// set the style and popup
+				if (selectLayer != undefined){
+						selectLayer.setStyle(originStyle)
+					}
+				selectLayer = layer;
+				styleAndPopup(selectLayer);	
+			}
+		});
+	}
+
+
 		 ctrl.loadGeojsonPoint = function(currentGeojson){
 			this.geojsonToDirective = {
-				'point' :{
+				'point' : {
 					'data' : currentGeojson.point,
 					 pointToLayer: function (feature, latlng) {
-			    		return L.circleMarker(latlng)
-					}
+					 	var marker = L.circleMarker(latlng);
+					 	layersDict[feature.properties.id] = marker;
+			    		return marker;
+					},
+					'onEachFeature': onEachFeature,
 				},
 				'maille': {
 					'data': currentGeojson.maille,
-				}
+					'onEachFeature' : onEachFeature,
+					}
 		 	}
 		}
+		 	console.log(layersDict);
+		 	
 
 			
 
@@ -363,6 +404,7 @@ module.exports = function(angularInstance){
 			// charge les geojson à la directive une fois qu'ils sont chargés en AJAX
 			if (changes.geojson){
 				if(changes.geojson.currentValue != undefined){
+					console.log(changes.geojson.currentValue);
 				reduceGeojsonMaille = {'type': 'FeatureCollection',
 						'features' : []
 					}
@@ -371,73 +413,40 @@ module.exports = function(angularInstance){
 
 				while(i<copyGeojson.length){
 					currentFeature= copyGeojson[i];
-					currentIdMaille = currentFeature.properties.code_maille;
+					currentIdMaille = currentFeature.properties.id;
 					geometry = currentFeature.geometry;
-					properties = {'code_maille' : currentIdMaille, 'nb_observation' : 1, 'id_synthese' : [currentFeature.properties.id_synthese[0]]}
+					properties = {'code_maille' : currentIdMaille, 'nb_observation' : 1, 'id' : currentFeature.properties.id, 'listIdSyn': [currentFeature.properties.id_synthese]}
 					var j = 0;
-					while( j < copyGeojson.length  ){
-						if (i != j && copyGeojson[j].properties.code_maille === currentIdMaille){
+					while(j < copyGeojson.length){
+						if (i != j && copyGeojson[j].properties.id === currentIdMaille){
 
 							properties.nb_observation++;
-							properties.id_synthese.push(copyGeojson[j].properties.id_synthese[0]);
+							properties.listIdSyn.push(copyGeojson[j].properties.id_synthese);
 							//si il y etait deja on peut le remover
 							copyGeojson.splice(j,1);
 						}
 						j = j+1;
 					}
-				reduceGeojsonMaille.features.push({
-		          'type' : 'Feature',
-		          'properties' : properties,
-		          'geometry' : geometry   
-				})
-				i = i+1;
+					reduceGeojsonMaille.features.push({
+			          'type' : 'Feature',
+			          'properties' : properties,
+			          'geometry' : geometry   
+					})
+					i = i+1;
 				}
 
 				newGeojson = {'point':changes.geojson.currentValue.point, 'maille': reduceGeojsonMaille}
-
 
 				this.loadGeojsonPoint(newGeojson);
 				}
 			}
 			// if change from the list, zoom on the selected layers
 			if(changes.currentLeafletObs){
-				console.log('changes');
-				onCurrentObsChange(changes.currentLeafletObs.currentValue);
+				if(changes.currentLeafletObs.currentValue != undefined){
+					onCurrentObsChange(changes.currentLeafletObs.currentValue);
+				}
 			}
 		}
-
-
-		//EVENT
-		$scope.$on('leafletDirectiveGeoJson.click', function(e, args) {
-	      	//if its a maille, just open the popup
-
-	      	// Update CurrentList pour hilighter la liste
-	      	ctrl.mainController.updateCurrentListObs(args.model.properties.id_synthese);
-
-	      	// bind les popup + met le style
-	      	console.log(selectLayer);
-	       	if (selectLayer != undefined){
-					selectLayer.setStyle(originStyle)
-				}
-			selectLayer = args.leafletObject;
-
-			if(args.model.geometry.type == 'MultiPolygon'){
-				table = "<p>"+args.model.properties.nb_observation+" observation(s)</p><table class='table'><thead><tr><th>Nom </th><th>Date</th></tr></thead> <tbody>"
-				console.log(args.model)
-				args.model.properties.id_synthese.forEach(function(obs, index){
-					table+="<tr> <td> mon nom </td> <td> "+args.model.properties.id_synthese[index]+"</td> </tr>"
-				})
-				table+="</tbody> </table>"
-				args.leafletObject.bindPopup(table).openPopup();
-
-			}else{
-				args.leafletObject.bindPopup("<b>"+args.model.properties.id_synthese+"<br> </a> <b> Le: </b> "+args.model.properties.code_maille+" <br>").openPopup();
-			}
-	      	
-	      	args.leafletObject.setStyle(selectedStyle);
-	      	
-		});
-
 
 
 	} // END controller
@@ -510,14 +519,8 @@ template = 'synthese/templates/app.html';
 
 function appCtrl (proxy){
   var ctrl = this;
-  ctrl.geojsonToLeaflet = {};
-  ctrl.geojson;
-  // Arrays of id_synthese
-  ctrl.currentListObs = [];
-    ctrl.currentLeafletObs=[];
   
   ctrl.nbObs = "Les 50 dernieres observations";
-
   proxy.lastObs().then(function(response){
       ctrl.geojson = response.data;
 
@@ -574,6 +577,8 @@ function appCtrl (proxy){
       window.location =URL_APPLICATION+'synthese/uploads/'+response.data;       
     })
   }
+
+
 }
 
 angularInstance.component('app', {

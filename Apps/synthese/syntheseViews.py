@@ -64,12 +64,14 @@ def lastObs():
     geojsonPoint = { "type": "FeatureCollection",  "features" : list() }
     for r in res:
         date = r[5].strftime("%Y/%m/%d")
-        myproperties = {'id_synthese': [r[1]], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[8], 'code_maille' : r[10]}
+        mypropertiesPoint = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[8], 'id' : r[1]}
+        myPropertiesMaille = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[8], 'id' : r[10]}
+
         #r[11] = loc_exact: check if its point or maille
         if r[11] == True:
-            geojsonPoint['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[0]) })
+            geojsonPoint['features'].append({"type": "Feature", "properties": mypropertiesPoint, "geometry": ast.literal_eval( r[0]) })
         else:
-            geojsonMaille['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[9]) })
+            geojsonMaille['features'].append({"type": "Feature", "properties": myPropertiesMaille, "geometry": ast.literal_eval( r[9]) })
     db.closeAll()
     return Response(flask.json.dumps({'point':geojsonPoint,'maille':geojsonMaille}), mimetype='application/json')
 
@@ -87,12 +89,14 @@ def getObs():
         myproperties = dict()
         for r in res:
             date = r[5].strftime("%Y/%m/%d")
-            myproperties = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[8],'code_maille' : r[9] }
+            mypropertiesPoint = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[8],'id' : r[1] }
+            myPropertiesMaille = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[8],'id' : r[9] }
+
             #r[11] = loc_exact: check if its point or maille
             if r[11]:
-                geojsonPoint['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[0]) })
+                geojsonPoint['features'].append({"type": "Feature", "properties": mypropertiesPoint, "geometry": ast.literal_eval( r[0]) })
             else:
-                geojsonMaille['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval( r[9]) })
+                geojsonMaille['features'].append({"type": "Feature", "properties": myPropertiesMaille, "geometry": ast.literal_eval( r[9]) })
     db.closeAll()
     print geojsonPoint
     return Response(flask.json.dumps({'point':geojsonPoint,'maille':geojsonMaille}), mimetype='application/json')
@@ -178,10 +182,12 @@ def export():
 
         time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         filename = "Export_"+time
-        completePath = UPLOAD_FOLDER+"\\"+filename+".shp"
+        completePath = UPLOAD_FOLDER+"\\"+filename
         
-        #construction du shape
-        geojson2shp.export(completePath, geojsonPoint)
+        #construction des shapes
+        geojson2shp.export(completePath+"_point.shp", geojsonPoint, 'point')
+        if len(geojsonMaille['features'])> 0:
+            geojson2shp.export(completePath+"_maille.shp", geojsonMaille, 'polygon')
 
         #on zipe le tout
         utils.zipIt(completePath)
@@ -195,8 +201,6 @@ def export():
 @synthese.route('/uploads/<filename>')
 def uploaded_file(filename):
     filename = filename+".zip"
-    print "LAAAAAAAAAA"
-    print filename
     return flask.send_from_directory(UPLOAD_FOLDER ,filename)
 
 
@@ -242,6 +246,8 @@ def modifyObs(protocole, id_synthese):
         db.conn.commit()
     db.closeAll()
     return Response(flask.json.dumps(loc), mimetype='application/json')
+
+
 
 
 

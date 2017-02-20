@@ -1,5 +1,3 @@
- {{$ctrl.currentListObs}}
- {{$ctrl.currentLeafletObs}}
  <div class="btn-group">
   <button type="button" class="btn " ng-click="$ctrl.changeList('point')" ng-class="{ 'btn-primary' : $ctrl.isSelected('point')}" >Point</button>
   <button type="button" class="btn " ng-click="$ctrl.changeList('maille')" ng-class="{'btn-primary' : $ctrl.isSelected('maille')}">Maille</button>
@@ -15,11 +13,11 @@
 	 </thead>
 	 <tbody>
 	 	<div> 
-		<tr ng-repeat="obs in $ctrl.currentList.features" ng-class="{'selected-raw' : $ctrl.isCurrentObs($ctrl.currentListObs, obs.properties.id_synthese)}" >
+		<tr ng-repeat="obs in $ctrl.currentList.features" id="{{obs.properties.id}}" class="anchor" ng-class="{'selected-raw' : $ctrl.isCurrentObs($ctrl.currentListObs, obs.properties.id)}" >
 			<td > {{obs.properties.nom_vern}}  </td>
 			<td>  {{obs.properties.lb_nom}} </td>
 			<td> {{obs.properties.date}}  </td>
-			<td ng-click="$ctrl.zoom(obs.properties.id_synthese)"> <span class="glyphicon glyphicon-search " style="cursor:pointer;"> </span> </td>
+			<td ng-click="$ctrl.zoom(obs.properties.id)"> <span class="glyphicon glyphicon-search " style="cursor:pointer;"> </span> </td>
 		</tr>
 	</tbody>
 </table>

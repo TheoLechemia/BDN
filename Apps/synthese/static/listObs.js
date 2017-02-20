@@ -1,8 +1,11 @@
 module.exports = function(angularInstance){
 
+
 function lastObsCtrl ($uibModal, $http){
 	ctrl = this;
 	ctrl.currentPoint = null;
+
+	var overFlowedList = $('.last-obs');
 
 	ctrl.$onChanges = function(changes){
 		if (changes.geojson){
@@ -10,8 +13,21 @@ function lastObsCtrl ($uibModal, $http){
 				ctrl.currentList = changes.geojson.currentValue.point;
 			}
 		}
+		if(changes.currentListObs){
+			if(changes.currentListObs.currentValue != undefined){
+				    var vpHeight = overFlowedList.height();
+				    var scrollTop = overFlowedList.scrollTop();
+				    var link = $('#'+changes.currentListObs.currentValue);
+				    if (link.length>0){
+				   		var position = link.position();
 
+				        $('.last-obs').animate({
+					        scrollTop: (position.top + scrollTop -100)
+					    }, 500);
+					}
+			}
 
+		}
 	}
 
 	ctrl.zoom = function(id_synthese){
@@ -19,12 +35,8 @@ function lastObsCtrl ($uibModal, $http){
 		ctrl.mainController.updateCurrentListObs(id_synthese);
 	}
 
-	ctrl.isCurrentObs = function(listIdSynthese, row_id_synthese){
-		i = 0;
-		while(i<listIdSynthese.length){
-			return listIdSynthese[i] == row_id_synthese;
-			i++;
-		}
+	ctrl.isCurrentObs = function(id, row_id_synthese){
+			return id == row_id_synthese;	
 	}
 
 	ctrl.selected = 'point';
@@ -41,7 +53,6 @@ function lastObsCtrl ($uibModal, $http){
 
 }
 
-
 templateLastObs = 'synthese/templates/listObs.html';
 
 angularInstance.component('listObs', {
@@ -54,7 +65,7 @@ angularInstance.component('listObs', {
   bindings : {
   	'geojson' : '<',
   	'currentListObs' : '<',
-  	'currentLeafletObs': '<'
+  	'currentLeafletObs': '<',
   }
 
 });

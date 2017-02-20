@@ -3,3 +3,4 @@ Apps/static/uploads/*
 venv/*
 settings.ini
 node_modules/*
+*.pyc

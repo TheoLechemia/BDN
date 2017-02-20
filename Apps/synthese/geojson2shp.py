@@ -1,13 +1,19 @@
 
 from osgeo import ogr, osr
 import os
+from .. import config
 
-def convertUnicodeToString(geometryParam):
-	 return {'type': 'Point', 'coordinates': geometryParam[u'coordinates']}
+def convertUnicodeToString(geometryParam, geomType):
+	if geomType == 'point':
+		return {'type': 'Point', 'coordinates': geometryParam[u'coordinates']}
+	else:
+		return {'type': 'MultiPolygon', 'coordinates': geometryParam[u'coordinates']}
 	
 
 
-def export(FileName, geojson):
+def export(FileName, geojson, geomType):
+	for f in geojson['features']:
+		print f['geometry']
 	DriverName = "ESRI Shapefile"
 	driver = ogr.GetDriverByName(DriverName)
 	if os.path.exists(FileName):
@@ -18,13 +24,15 @@ def export(FileName, geojson):
 	inSpatialRef.ImportFromEPSG(4326)
 
 	outSpatialRef = osr.SpatialReference() 
-	outSpatialRef.ImportFromEPSG(32620)
+	outSpatialRef.ImportFromEPSG(config.PROJECTION)
 
 	coordTransform = osr.CoordinateTransformation(inSpatialRef, outSpatialRef)
-
 	#create the output shape
 	outDataSource = driver.CreateDataSource(FileName)
-	outLayer = outDataSource.CreateLayer(str(FileName), outSpatialRef, geom_type=ogr.wkbPoint)
+	if geomType == "point":
+		outLayer = outDataSource.CreateLayer(str(FileName), outSpatialRef, geom_type=ogr.wkbPoint)
+	else:
+		outLayer = outDataSource.CreateLayer(str(FileName), outSpatialRef, geom_type=ogr.wkbMultiPolygon)
 
 	#build the fieldList from the 'propertie' dict of the geojson
 	fielListName = list()
@@ -55,9 +63,11 @@ def export(FileName, geojson):
 				fieldContent = str(fieldContent[0].encode('utf-8'))
 			feature.SetField(newFieldName, fieldContent)
 		#get the geom
-		geometry = convertUnicodeToString(f['geometry'])
+		geometry = convertUnicodeToString(f['geometry'], geomType)
+		print geometry
 
 		point = ogr.CreateGeometryFromJson(str(geometry))
+		print point
 		point.Transform(coordTransform) 
 		feature.SetGeometry(point)
 		#create the feature in the layer

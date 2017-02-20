@@ -12,14 +12,8 @@ template = 'synthese/templates/app.html';
 
 function appCtrl (proxy){
   var ctrl = this;
-  ctrl.geojsonToLeaflet = {};
-  ctrl.geojson;
-  // Arrays of id_synthese
-  ctrl.currentListObs = [];
-    ctrl.currentLeafletObs=[];
   
   ctrl.nbObs = "Les 50 dernieres observations";
-
   proxy.lastObs().then(function(response){
       ctrl.geojson = response.data;
 
@@ -76,6 +70,8 @@ function appCtrl (proxy){
       window.location =URL_APPLICATION+'synthese/uploads/'+response.data;       
     })
   }
+
+
 }
 
 angularInstance.component('app', {
