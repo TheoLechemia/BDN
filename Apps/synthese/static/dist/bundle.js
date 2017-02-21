@@ -75,8 +75,6 @@ module.exports = function(angularInstance){
 function formCtrl(proxy, $http, $scope){
 	ctrl = this;
 
-
-
 	// Modele du formulaire
 	ctrl.form = {
 		'who' : null,
@@ -92,6 +90,8 @@ function formCtrl(proxy, $http, $scope){
 		'ordre': null,
 		'famille': null,
 		'group2_inpn': null,
+		'habitat': {'code': null, 'valeur': null},
+		'protection':null,
 	}
 
 	// à l'envoie du formulaire, on le passe au module pere: APP qui fait la requete ajax sur les geojson et les passe a toute l'appli
@@ -124,7 +124,6 @@ function formCtrl(proxy, $http, $scope){
 	ctrl.loadTaxonomyHierachy = function(rang_fils,rang_pere, rang_grand_pere,value_rang_grand_pere, value){
 		proxy.loadTaxonomyHierachy(rang_fils,rang_pere,rang_grand_pere,value_rang_grand_pere, value).then(function(response){
 			$scope[rang_fils] = response.data;
-
 		})
 	}
 	
@@ -234,11 +233,11 @@ function formCtrl(proxy, $http, $scope){
 		this.form.foret = null;
 		this.form.when.first = null;
 		this.form.when.last = null;
+		this.form.protection = null;
+		this.form.habitat = null;
 		// supprime tout les values des select de la modal
 
-		$('#formContent select').toArray().forEach(function(select){
-			$(select).val('')
-		})
+
 
 	} 
 
@@ -580,7 +579,9 @@ proxy = angularInstance.factory('proxy', function proxy($http) {
 			loadForets: function(){
 				return $http.get(URL_APPLICATION+"synthese/loadForets")
 			},
-
+			loadGroup2_inpn : function(){
+				return $http.get(URL_APPLICATION+"synthese/loadGroup2_inpn")
+			},
 			exportShapeFile : function(data){
 				return $http.post(URL_APPLICATION+"synthese/export", data)
 			},
@@ -634,12 +635,17 @@ function appCtrl (proxy){
   proxy.loadForets().then(function(response){
       ctrl.foretsList = response.data;
   })
+  proxy.loadGroup2_inpn().then(function(response){
+    ctrl.group2_inpn = response.data;
+  }) 
 
   ctrl.formSubmit = function(form){
     ctrl.form = form;
+    console.log(form);
     proxy.sendData(form).then(function(response){
       ctrl.geojson = response.data;
-      ctrl.nbObs = ctrl.geojson.features.length+' observation(s)'
+      nbObs = ctrl.geojson.point.features.length+ctrl.geojson.maille.features.length
+      ctrl.nbObs = nbObs+' observation(s)'
     });
   }
 

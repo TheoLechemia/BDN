@@ -91,7 +91,7 @@ def getObs():
             date = r[5].strftime("%Y/%m/%d")
             mypropertiesPoint = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[6],'id' : r[1] }
             myPropertiesMaille = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[6],'id' : r[8] }
-            #r[11] = loc_exact: check if its point or maille
+            #r[9] = loc_exact: check if its point or maille
             if r[9]:
                 geojsonPoint['features'].append({"type": "Feature", "properties": mypropertiesPoint, "geometry": ast.literal_eval( r[0]) })
             else:

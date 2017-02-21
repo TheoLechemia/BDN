@@ -18,7 +18,9 @@ proxy = angularInstance.factory('proxy', function proxy($http) {
 			loadForets: function(){
 				return $http.get(URL_APPLICATION+"synthese/loadForets")
 			},
-
+			loadGroup2_inpn : function(){
+				return $http.get(URL_APPLICATION+"synthese/loadGroup2_inpn")
+			},
 			exportShapeFile : function(data){
 				return $http.post(URL_APPLICATION+"synthese/export", data)
 			},

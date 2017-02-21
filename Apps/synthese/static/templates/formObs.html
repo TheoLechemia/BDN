@@ -49,10 +49,13 @@
 						<ul> <b>Classe </b> : {{$ctrl.form.classe}} </ul>
 						<ul> <b>Ordre</b> : {{$ctrl.form.ordre}} </ul>
 						<ul> <b> Famille </b> : {{$ctrl.form.famille}} </ul>
+
 				</div>
 				<div ng-show ="$ctrl.form.group2_inpn != null " class="ng-hide">
 					<p> <b> Autres filtres:  </b> </p>
 					<ul> <b>Groupe</b> : {{$ctrl.form.group2_inpn}} </ul> 
+					<ul> <b> Habitat </b> : {{$ctrl.form.habitat}} </ul>
+					<ul> <b> Protection </b> : {{$ctrl.form.protection.valeur}} </ul>
 				</div>
 				
 
@@ -96,7 +99,28 @@
 
 					<h3> Autres filtres: </h3>
 						<label> Groupe d'espèces:  </label>
-						<select id="inputGroupINPN" class="form-control" ng-model="$ctrl.form.group2_inpn" ng-options="group as group for group in $ctrl.group2inpn"></select>
+						<select id="inputGroupINPN" class="form-control" ng-model="$ctrl.form.group2_inpn" ng-options="group as group for group in $ctrl.group2inpn">
+							<option value="" > - Sélectionner un groupe - </option> 
+						</select>
+						<label> Habitat:  </label>
+						<select id="inputGroupINPN" class="form-control" ng-model="$ctrl.form.habitat">
+							  <option value="" selected="selected"> - Sélectionner un habitat - </option> 
+							  <option value="1">Marin</option> 
+							  <option value="2" >Eau douce</option>
+							  <option value="3">Terrestre</option>
+							  <option value="4">Marin & Eau douce</option> 
+							  <option value="5" >Marin & Terrestre</option>
+							  <option value="6">Eau saumâtre</option>
+							  <option value="7">Continental (terrestre et/ou eau douce)</option>
+							  <option value="8">Continental (terrestre et eau douce)</option>
+						</select>
+						<label> Protection:  </label>
+						<select id="inputGroupINPN" class="form-control" ng-model="$ctrl.form.protection">
+							  <option value=""> Aucune </option> 
+							  <option value="Espèce protégée">Espèce protégée</option> 
+						</select>
+
+
 				      <div class="modal-footer">
 				        <button type="button" class="btn btn-success" data-dismiss="modal" ng-click="$ctrl.onTaxonomieChange()">Valider</button>
 				      </div>
@@ -171,5 +195,6 @@
 	</form>
 
 </div>
+{{$ctrl.group2inpn}}
 
 

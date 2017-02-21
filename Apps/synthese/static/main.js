@@ -37,12 +37,17 @@ function appCtrl (proxy){
   proxy.loadForets().then(function(response){
       ctrl.foretsList = response.data;
   })
+  proxy.loadGroup2_inpn().then(function(response){
+    ctrl.group2_inpn = response.data;
+  }) 
 
   ctrl.formSubmit = function(form){
     ctrl.form = form;
+    console.log(form);
     proxy.sendData(form).then(function(response){
       ctrl.geojson = response.data;
-      ctrl.nbObs = ctrl.geojson.features.length+' observation(s)'
+      nbObs = ctrl.geojson.point.features.length+ctrl.geojson.maille.features.length
+      ctrl.nbObs = nbObs+' observation(s)'
     });
   }
 

@@ -131,15 +131,18 @@ def getFormParameters():
     ordre = flask.request.json['ordre']
     famille = flask.request.json['famille']
     group2_inpn = flask.request.json['group2_inpn']
+    habitat = flask.request.json['habitat']
+    protection = flask.request.json['protection']['code']
 
 
-    return {'listTaxons':listTaxons, 'firstDate':firstDate, 'lastDate':lastDate, 'commune':commune, 'foret':foret, 'regne':regne, 'phylum': phylum, 'classe':classe, 'ordre':ordre, 'famille': famille, 'group2_inpn':group2_inpn }
+
+    return {'listTaxons':listTaxons, 'firstDate':firstDate, 'lastDate':lastDate, 'commune':commune, 'foret':foret, 'regne':regne, 'phylum': phylum, 'classe':classe, 'ordre':ordre, 'famille': famille, 'group2_inpn':group2_inpn,
+            'habitat': habitat, 'protection': protection }
 
 def buildSQL():
     sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact
               FROM bdn.synthese s
-              JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
-              LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km"""
+              JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom"""
     params = list()
     firstParam = True
     #recuperation des parametres
@@ -171,6 +174,15 @@ def buildSQL():
         firstParam = False
         sql += " t.group2_inpn = %s"
         params.append(formParameters['group2_inpn'])
+    if formParameters['habitat']:
+        firstParam = False
+        sql = askFirstParame(sql, firstParam)
+        sql += 't.habitat = %s'
+        params.append(formParameters['habitat'])
+    if formParameters['protection']:
+        firstParam = False
+        sql = askFirstParame(sql, firstParam)
+        sql += 's.cd_nom IN (select cd_nom from taxonomie.protection)'
 
 
     #recherche geographique
@@ -199,4 +211,8 @@ def buildSQL():
         sql = askFirstParame(sql,firstParam)
         sql = sql + " s.date <= %s "
         params.append(formParameters['lastDate'])
+
+    #on join avec les mailles
+    sql = sql + " LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km"
+    print sql
     return {'params': params, 'sql' :sql}

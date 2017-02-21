@@ -3,8 +3,6 @@ module.exports = function(angularInstance){
 function formCtrl(proxy, $http, $scope){
 	ctrl = this;
 
-
-
 	// Modele du formulaire
 	ctrl.form = {
 		'who' : null,
@@ -20,6 +18,8 @@ function formCtrl(proxy, $http, $scope){
 		'ordre': null,
 		'famille': null,
 		'group2_inpn': null,
+		'habitat': {'code': null, 'valeur': null},
+		'protection':null,
 	}
 
 	// à l'envoie du formulaire, on le passe au module pere: APP qui fait la requete ajax sur les geojson et les passe a toute l'appli
@@ -52,7 +52,6 @@ function formCtrl(proxy, $http, $scope){
 	ctrl.loadTaxonomyHierachy = function(rang_fils,rang_pere, rang_grand_pere,value_rang_grand_pere, value){
 		proxy.loadTaxonomyHierachy(rang_fils,rang_pere,rang_grand_pere,value_rang_grand_pere, value).then(function(response){
 			$scope[rang_fils] = response.data;
-
 		})
 	}
 	
@@ -162,11 +161,11 @@ function formCtrl(proxy, $http, $scope){
 		this.form.foret = null;
 		this.form.when.first = null;
 		this.form.when.last = null;
+		this.form.protection = null;
+		this.form.habitat = null;
 		// supprime tout les values des select de la modal
 
-		$('#formContent select').toArray().forEach(function(select){
-			$(select).val('')
-		})
+
 
 	} 
 
