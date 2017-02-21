@@ -28,61 +28,75 @@
 				</div>
 				
 				<div class="form-group">
-			 	<input id="input_lbnom" placeholder="Nom Latin " type="text" ng-model="$ctrl.form.lb_nom" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.lb_nom for taxon in $ctrl.taxons | filter:{lb_nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults">
+				
+			 	<input id="input_lbnom" autocomplete="off" placeholder="Nom Latin " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.lb_nom for taxon in $ctrl.taxons | filter:{lb_nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectlbNom($item, $model, $label)" >
 				</div>
 				<div class="form-group">
-				 	<input id="input_nomvern" placeholder="Nom vernaculaire " type="text" ng-model="$ctrl.form.nom_vern" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in $ctrl.taxons | filter:{nom_vern:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults">
+				 	<input id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in $ctrl.taxons | filter:{nom_vern:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectNomVern($item, $model, $label)" >
 				</div>
-				<button type="button" class="btn btn-default btn-xs" uib-tooltip="Ajouter un autre nouveau taxon à la recherche"> + </button>
-				<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"> Recherche taxonomique avancée </button>.
-				<div ng-show="showTaxonomie" class="ng-hide">
-					<p> <b> Recherche Taxonomique: </b> </p>
+
+				<div class="alert alert-warning" ng-show="$ctrl.showNewTaxons" class="ng-hide"> 
+					<b> Taxon(s) recherché(s): </b>
+						<div  ng-repeat="taxon in $ctrl.newTaxons">
+							<span> {{taxon.name}} </span> <span style="cursor: pointer;" class="glyphicon glyphicon-remove" ng-click="$ctrl.removeTaxonEvent(taxon.cd_nom)"> </span>
+						</div>
+				</div>
+				<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg" ng-click="$ctrl.advancedSearch()" > Recherche taxonomique avancée </button>
+				<div ng-show ="$ctrl.form.regne != null " class="ng-hide">
+					<p> <b> Hierachie Taxonomique: </b> </p>
 						<ul> <b>Regne</b> : {{$ctrl.form.regne}} </ul>
 						<ul> <b>Phylum</b> : {{$ctrl.form.phylum}} </ul>
 						<ul> <b>Classe </b> : {{$ctrl.form.classe}} </ul>
 						<ul> <b>Ordre</b> : {{$ctrl.form.ordre}} </ul>
 						<ul> <b> Famille </b> : {{$ctrl.form.famille}} </ul>
 				</div>
+				<div ng-show ="$ctrl.form.group2_inpn != null " class="ng-hide">
+					<p> <b> Autres filtres:  </b> </p>
+					<ul> <b>Groupe</b> : {{$ctrl.form.group2_inpn}} </ul> 
+				</div>
 				
+
 
 
 				<!-- MODAL research -->
 				<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
 				  <div class="modal-dialog modal-lg" role="document">
-				    <div class="modal-content" style="padding-left: 5% padding-right:5%;">
+				    <div id="formContent" class="modal-content">
 				    <h4> En constrution... </h4>
-				      <h3> Filtrer par rang taxonomique: </h3>
+				      <label> Hierarchie taxonomique :  </label>
 				      <div class="form-group">
-					      	<select class="form-control" ng-model="$ctrl.form.regne" ng-options="taxon as taxon for taxon in $ctrl.regne" ng-change="$ctrl.loadTaxonomyHierachy('phylum', 'regne', 'null', 'null', $ctrl.form.regne)" >
-						    	<option value=""> - Selectionner un règne - </option>
+					      	<select id="inputRegne" class="form-control" ng-model="$ctrl.form.regne" ng-options="taxon as taxon for taxon in $ctrl.regne" ng-change="$ctrl.loadTaxonomyHierachy('phylum', 'regne', 'null', 'null', $ctrl.form.regne)" >
+						    	<option value=""> - Sélectionner un règne - </option> 
 						    </select>
 					  </div>
 					  <div class="form-group">
 						    <!-- PHYLUM -->
 						    <select class="form-control" ng-model="$ctrl.form.phylum" ng-options="taxon as taxon for taxon in phylum" ng-change="$ctrl.loadTaxonomyHierachy('classe', 'phylum', 'regne', $ctrl.form.regne, $ctrl.form.phylum)"> 
-						    	<option value=""> - Selectionner un embranchement - </option>
+						    	<option value=""> - Sélectionner un embranchement - </option>
 						    </select>
 					  </div>
 					   <div class="form-group">
 					    <!-- CLASSE -->
 						    <select class="form-control" ng-model="$ctrl.form.classe" ng-options="taxon as taxon for taxon in classe" ng-change="$ctrl.loadTaxonomyHierachy('ordre', 'classe', 'phylum', $ctrl.form.phylum, $ctrl.form.classe)">
-						    	<option value=""> - Selectionner une classe - </option>
+						    	<option value=""> - Sélectionner une classe - </option>
 						     </select>
 						</div>	
 						<div class="form-group">					     
 						    <!-- ORDRE -->
 						    <select class="form-control" ng-model="$ctrl.form.ordre" ng-options="taxon as taxon for taxon in ordre" ng-change="$ctrl.loadTaxonomyHierachy('famille', 'ordre', 'classe', $ctrl.form.classe, $ctrl.form.ordre)">
-						    	<option value=""> - Selectionner un ordre - </option>
+						    	<option value=""> - Sélectionner un ordre - </option>
 						     </select>
 						</div>
 						<div class="form-group">
 						    <!-- FAMILLE -->
 						    <select class="form-control" ng-model="$ctrl.form.famille" ng-options="taxon as taxon for taxon in famille">
-						    <option value=""> - Selectionner une famille - </option>	
+						    <option value=""> - Sélectionner une famille - </option>	
 						     </select>
 						</div>
 
 					<h3> Autres filtres: </h3>
+						<label> Groupe d'espèces:  </label>
+						<select id="inputGroupINPN" class="form-control" ng-model="$ctrl.form.group2_inpn" ng-options="group as group for group in $ctrl.group2inpn"></select>
 				      <div class="modal-footer">
 				        <button type="button" class="btn btn-success" data-dismiss="modal" ng-click="$ctrl.onTaxonomieChange()">Valider</button>
 				      </div>
@@ -145,8 +159,17 @@
 		</div>
 			<!-- <input type="text" placeholder="Quand ?" ng-model="$ctrl.form.when" /> -->
 
-		   <button type="submit" type="button" class="btn btn-primary formbutton" ng-click="$ctrl.submitForm($ctrl.form)"> Rechercher </button>
+		 <div class=" row">
+			   	<div class="col-sm-6"> 
+			  	 <button type="button" class="btn btn-danger formbutton " uib-tooltip="Raffraichir la sélection" ng-click="$ctrl.onRefreshEvent()"> <span class="glyphicon glyphicon-remove"> </span>  </button>
+			   </div>
+				<div class="col-sm-1">
+			   		<button type="submit" type="button" class="btn btn-primary formbutton" ng-click="$ctrl.submitForm($ctrl.form)"> Rechercher </button>
+			   	</div>
+
+		</div>
 	</form>
+
 </div>
 
 

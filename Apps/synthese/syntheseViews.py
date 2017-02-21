@@ -83,20 +83,19 @@ def getObs():
     if flask.request.method == 'POST':
         geojsonMaille ={ "type": "FeatureCollection",  "features" : list() }
         geojsonPoint ={ "type": "FeatureCollection",  "features" : list() }
-        sqlAndParams = utils.buildSQL('point')
+        sqlAndParams = utils.buildSQL()
         db.cur.execute(sqlAndParams['sql'], sqlAndParams['params'])
         res = db.cur.fetchall()
         myproperties = dict()
         for r in res:
             date = r[5].strftime("%Y/%m/%d")
-            mypropertiesPoint = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[8],'id' : r[1] }
-            myPropertiesMaille = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[8],'id' : r[9] }
-
+            mypropertiesPoint = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[6],'id' : r[1] }
+            myPropertiesMaille = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[6],'id' : r[8] }
             #r[11] = loc_exact: check if its point or maille
-            if r[11]:
+            if r[9]:
                 geojsonPoint['features'].append({"type": "Feature", "properties": mypropertiesPoint, "geometry": ast.literal_eval( r[0]) })
             else:
-                geojsonMaille['features'].append({"type": "Feature", "properties": myPropertiesMaille, "geometry": ast.literal_eval( r[9]) })
+                geojsonMaille['features'].append({"type": "Feature", "properties": myPropertiesMaille, "geometry": ast.literal_eval( r[7]) })
     db.closeAll()
     print geojsonPoint
     return Response(flask.json.dumps({'point':geojsonPoint,'maille':geojsonMaille}), mimetype='application/json')
@@ -146,6 +145,8 @@ def loadGroup2_inpn():
         listGroup.append(r[0])
     db.closeAll()
     return Response(flask.json.dumps(listGroup), mimetype='application/json')
+
+    
 
 @synthese.route('/loadTaxonomyHierachy/<rang_fils>/<rang_pere>/<rang_grand_pere>/<value_rang_grand_pere>/<value>')
 def loadTaxonHierarchy(rang_fils, rang_pere, rang_grand_pere, value_rang_grand_pere, value):

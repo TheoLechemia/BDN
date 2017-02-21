@@ -113,25 +113,16 @@ def askFirstParame(sql, firstParam):
         sql = sql + " AND "
     return sql
 
-def buildSQL(layer):
-    sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, ST_X(ST_Transform(geom_point, 4326)), ST_Y(ST_Transform(geom_point, 4326)), s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact
-              FROM bdn.synthese s
-              JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
-              LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km"""
-    # else:
-    #     sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, s.code_maille
-    #               FROM bdn.synthese s
-    #               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
-    #               JOIN layers.mailles_1k l ON s.code_maille = l.code_1km"""
-    params = list()
-    firstParam = True
-    #recuperation des parametres
-    cd_nom1 = flask.request.json['lb_nom']['cd_nom']
-    cd_nom2 = flask.request.json['nom_vern']['cd_nom']
+def getFormParameters():
+    listTaxons = flask.request.json['listTaxons']
     firstDate = flask.request.json['when']['first']
     lastDate = flask.request.json['when']['last']
-    commune = flask.request.json['where']['code_insee']
-    foret = flask.request.json['foret']['ccod_frt']
+    foret = None
+    commune = None
+    if flask.request.json['where'] != None:
+        commune = flask.request.json['where']['code_insee']    
+    if flask.request.json['foret'] != None: 
+        foret = flask.request.json['foret']['ccod_frt']
 
     # recherche taxonomique avancee
     regne = flask.request.json['regne']
@@ -139,110 +130,73 @@ def buildSQL(layer):
     classe = flask.request.json['classe']
     ordre = flask.request.json['ordre']
     famille = flask.request.json['famille']
-
-    if cd_nom1:
-        firstParam = False
-        sql = sql + " WHERE s.cd_nom = %s "
-        params.append(cd_nom1)
-    elif cd_nom2:
-        firstParam = False
-        sql = sql + " WHERE s.cd_nom = %s "
-        params.append(cd_nom2)
-
-    if regne:
-        firstParam = False
-        sql = sql + " WHERE t.regne = %s"
-        params.append(regne)
-    if phylum and phylum != 'Aucun':
-        sql = askFirstParame(sql, firstParam)
-        firstParam = False
-        sql = sql + " t.phylum = %s"
-        params.append(phylum)
-    if classe and classe !='Aucun':
-        sql = askFirstParame(sql, firstParam)
-        firstParam = False
-        sql = sql + " t.classe = %s"
-        params.append(classe)
-    if ordre and ordre != 'Aucun':
-        sql = askFirstParame(sql, firstParam)
-        firstParam = False
-        sql = sql + " t.ordre = %s"
-        params.append(ordre)
-    if famille and famille != 'Aucun':
-        sql = askFirstParame(sql, firstParam)
-        firstParam = False
-        sql = sql + " t.famille = %s"
-        params.append(famille)
+    group2_inpn = flask.request.json['group2_inpn']
 
 
+    return {'listTaxons':listTaxons, 'firstDate':firstDate, 'lastDate':lastDate, 'commune':commune, 'foret':foret, 'regne':regne, 'phylum': phylum, 'classe':classe, 'ordre':ordre, 'famille': famille, 'group2_inpn':group2_inpn }
 
-    if commune:
-        sql = askFirstParame(sql, firstParam)
-        sql = sql + " s.insee = %s "
-        firstParam = False
-        params.append(str(commune))
-    if foret:
-        sql = askFirstParame(sql, firstParam)
-        sql = sql + " s.ccod_frt = %s "
-        firstParam = False
-        params.append(str(foret))
-    if firstDate and lastDate :
-        sql = askFirstParame(sql, firstParam)
-        sql = sql + "( s.date >= %s OR s.date <= %s )"
-        params.append(firstDate)
-        params.append(lastDate)
-    elif firstDate:
-        if firstParam:
-            sql = askFirstParame(sql,firstParam)
-        sql = sql +" s.date >= %s"
-        params.append(firstDate)
-    elif lastDate:
-        sql = askFirstParame(sql,firstParam)
-        sql = sql + " s.date <= %s "
-        params.append(lastDate)
-    return {'params': params, 'sql' :sql}
-
-
-def buildSQL2OGR():
-    sql = " SELECT * FROM bdn.synthese s JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom"
+def buildSQL():
+    sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact
+              FROM bdn.synthese s
+              JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
+              LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km"""
     params = list()
     firstParam = True
     #recuperation des parametres
-    cd_nom1 = flask.request.json['lb_nom']['cd_nom']
-    cd_nom2 = flask.request.json['nom_vern']['cd_nom']
-    firstDate = flask.request.json['when']['first']
-    lastDate = flask.request.json['when']['last']
-    commune = flask.request.json['where']['code_insee']
-    foret = flask.request.json['foret']['ccod_frt']
-    goodCdnom = None
-    if cd_nom1:
-        goodCdnom = str(cd_nom1)
-    else:
-        goodCdnom = str(cd_nom2)
+    formParameters = getFormParameters()
 
-
-    if goodCdnom:
+    if len(formParameters['listTaxons']) > 0:
         firstParam = False
-        sql = sql + " WHERE s.cd_nom = "+ goodCdnom
-    if commune:
-        commune = "'" + commune +"'"
-        sql = askFirstParame(sql,firstParam)
-        sql = sql + " s.insee = " +commune
-    if foret:
-        foret = "'"+foret+"'"
+        sql = sql + " WHERE s.cd_nom IN %s "
+        params.append(tuple(formParameters['listTaxons']))
+    #recherche taxonomique avance
+    if formParameters['regne']:
+        firstParam = False
+        sql = sql + " WHERE t.regne = %s"
+        params.append(formParameters['regne'])
+    if formParameters['phylum'] and formParameters['phylum'] != 'Aucun':
+        sql = sql + " AND t.phylum = %s"
+        params.append(formParameters['phylum'])
+    if formParameters['classe'] and formParameters['classe'] !='Aucun':
+        sql = sql + " AND t.classe = %s"
+        params.append(formParameters['classe'])
+    if formParameters['ordre'] and formParameters['ordre'] != 'Aucun':
+        sql = sql + " AND t.ordre = %s"
+        params.append(formParameters['ordre'])
+    if formParameters['famille'] and formParameters['famille'] != 'Aucun':
+        sql = sql + " AND t.famille = %s"
+        params.append(formParameters['famille'])
+    if formParameters['group2_inpn']:
         sql = askFirstParame(sql, firstParam)
-        sql = sql + " s.ccod_frt = "+foret
-    if firstDate and lastDate :
-        firstDate = "'" + firstDate +"'"
-        lastDate = "'" + lastDate +"'"
+        firstParam = False
+        sql += " t.group2_inpn = %s"
+        params.append(formParameters['group2_inpn'])
+
+
+    #recherche geographique
+    if formParameters['commune']:
+        sql = askFirstParame(sql, firstParam)
+        sql = sql + " s.insee = %s "
+        firstParam = False
+        params.append(str(formParameters['commune']))
+    if formParameters['foret']:
+        sql = askFirstParame(sql, firstParam)
+        sql = sql + " s.ccod_frt = %s "
+        firstParam = False
+        params.append(str(formParameters['foret']))
+    #date
+    if formParameters['firstDate'] and formParameters['lastDate'] :
+        sql = askFirstParame(sql, firstParam)
+        sql = sql + "( s.date >= %s OR s.date <= %s )"
+        params.append(formParameters['firstDate'])
+        params.append(formParameters['lastDate'])
+    elif formParameters['firstDate']:
+        if firstParam:
+            sql = askFirstParame(sql,firstParam)
+        sql = sql +" s.date >= %s"
+        params.append(formParameters['firstDate'])
+    elif formParameters['lastDate']:
         sql = askFirstParame(sql,firstParam)
-        sql = sql + "( s.date >="+firstDate+" OR s.date <="+lastDate+" )"
-    elif firstDate:
-        firstDate = "'" + firstDate +"'"
-        sql = askFirstParame(sql,firstParam)
-        sql = sql +" s.date >="+ firstDate
-    elif lastDate:
-        lastDate = "'" + lastDate +"'"
-        sql = askFirstParame(sql,firstParam)
-        sql = sql + " s.date <="+lastDate
-    return sql
+        sql = sql + " s.date <= %s "
+        params.append(formParameters['lastDate'])
+    return {'params': params, 'sql' :sql}
