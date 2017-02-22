@@ -132,16 +132,18 @@ def getFormParameters():
     famille = flask.request.json['famille']
     group2_inpn = flask.request.json['group2_inpn']
     habitat = flask.request.json['habitat']
-    protection = flask.request.json['protection']['code']
+    protection = flask.request.json['protection']
+    lr = flask.request.json['lr']
 
 
 
     return {'listTaxons':listTaxons, 'firstDate':firstDate, 'lastDate':lastDate, 'commune':commune, 'foret':foret, 'regne':regne, 'phylum': phylum, 'classe':classe, 'ordre':ordre, 'famille': famille, 'group2_inpn':group2_inpn,
-            'habitat': habitat, 'protection': protection }
+            'habitat': habitat, 'protection': protection, 'lr': lr }
 
 def buildSQL():
     sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact
               FROM bdn.synthese s
+              LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom"""
     params = list()
     firstParam = True
@@ -182,7 +184,12 @@ def buildSQL():
     if formParameters['protection']:
         firstParam = False
         sql = askFirstParame(sql, firstParam)
-        sql += 's.cd_nom IN (select cd_nom from taxonomie.protection)'
+        sql += 's.cd_nom IN (SELECT cd_nom from taxonomie.protection)'
+    if formParameters['lr']:
+        firstParam = False
+        sql = askFirstParame(sql,firstParam)
+        sql += 's.cd_nom IN (SELECT cd_nom from taxonomie.liste_rouge WHERE statut = %s)'
+        params.append(formParameters['lr'])
 
 
     #recherche geographique
@@ -198,21 +205,23 @@ def buildSQL():
         params.append(str(formParameters['foret']))
     #date
     if formParameters['firstDate'] and formParameters['lastDate'] :
+        firstParam = False
         sql = askFirstParame(sql, firstParam)
         sql = sql + "( s.date >= %s OR s.date <= %s )"
         params.append(formParameters['firstDate'])
         params.append(formParameters['lastDate'])
     elif formParameters['firstDate']:
-        if firstParam:
-            sql = askFirstParame(sql,firstParam)
+        firstParam = False
+        sql = askFirstParame(sql,firstParam)
         sql = sql +" s.date >= %s"
         params.append(formParameters['firstDate'])
     elif formParameters['lastDate']:
+        firstParam = False
         sql = askFirstParame(sql,firstParam)
         sql = sql + " s.date <= %s "
         params.append(formParameters['lastDate'])
 
     #on join avec les mailles
-    sql = sql + " LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km"
+    print 'LAAAAAAAAAAAAAAAAAAAAAA'
     print sql
     return {'params': params, 'sql' :sql}

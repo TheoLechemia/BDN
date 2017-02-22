@@ -133,18 +133,19 @@ def loadCommunes():
     db.closeAll()
     return Response(flask.json.dumps(res), mimetype='application/json')
 
-#charge la liste des group2_inpn
-@synthese.route('/loadGroup2_inpn', methods = ['GET'])
-def loadGroup2_inpn():
+#charge la liste des typologie: group inpn, habitat, liste_rouge
+@synthese.route('/loadTypologgie', methods = ['GET'])
+def loadTypologgie():
     db = getConnexion()
-    listGroup = []
     sql = "SELECT DISTINCT group2_inpn FROM taxonomie.taxref ORDER BY group2_inpn ASC"
-    db.cur.execute(sql)
-    res = db.cur.fetchall()
-    for r in res:
-        listGroup.append(r[0])
+    group2_inpn = utils.sqltoDict(sql, db.cur)
+    sql = "SELECT * FROM taxonomie.bib_habitat"
+    habitat = utils.sqltoDict(sql, db.cur)
+    sql = "SELECT * FROM taxonomie.bib_liste_rouge"
+    listeRouge = utils.sqltoDict(sql, db.cur)
+
     db.closeAll()
-    return Response(flask.json.dumps(listGroup), mimetype='application/json')
+    return Response(flask.json.dumps({'group2_inpn':group2_inpn, 'habitat': habitat, 'listeRouge':listeRouge}), mimetype='application/json')
 
     
 

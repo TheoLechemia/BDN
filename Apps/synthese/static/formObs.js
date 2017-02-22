@@ -18,8 +18,9 @@ function formCtrl(proxy, $http, $scope){
 		'ordre': null,
 		'famille': null,
 		'group2_inpn': null,
-		'habitat': {'code': null, 'valeur': null},
+		'habitat': {'id':null, 'type':null},
 		'protection':null,
+		'lr':{'id_statut':null, 'type_statut':null}
 	}
 
 	// à l'envoie du formulaire, on le passe au module pere: APP qui fait la requete ajax sur les geojson et les passe a toute l'appli
@@ -142,31 +143,27 @@ function formCtrl(proxy, $http, $scope){
 	// rafrachir l'ensemble des sélections
 	ctrl.onRefreshEvent = function(){
 		console.log('refresh');
-		this.newTaxons = [];
-		this.showNewTaxons = false;
-		this.form.regne = null;
-		this.form.listTaxons = [];
-		if (this.taxon){
-			this.form.taxon.cd_nom = null;
-			this.form.taxon.lb_nom = null;
+		this.form = {
+		'who' : null,
+		'taxon' : {'lb_nom': null, 'nom_vern': null, 'cd_nom' : null },
+		'listTaxons' : [],
+		'where' : {'code_insee': null, 'nom': null},
+		'when' : {'first': null, 'last': null},
+		'foret' : {'ccod_frt': null, 'lib_frt': null},
+		'taxonomie' : {'rang': null, 'value': null},
+		'regne' : null,
+		'phylum' : null,
+		'classe' : null,
+		'ordre': null,
+		'famille': null,
+		'group2_inpn': null,
+		'habitat': null,
+		'protection':null,
+		'lr':null,
 		}
 
-		this.form.taxon.nom_vern = null;
-		this.form.group2_inpn = null;
-
-
-		$('#firstDate').val('');
-		$('#lastDate').val('');
-		this.form.where = null;
-		this.form.foret = null;
-		this.form.when.first = null;
-		this.form.when.last = null;
-		this.form.protection = null;
-		this.form.habitat = null;
-		// supprime tout les values des select de la modal
-
-
-
+		this.newTaxons = [];
+		this.showNewTaxons = false;
 	} 
 
   	// UI event for date picker
@@ -199,7 +196,7 @@ angularInstance.component('formObs', {
   	taxons : '<',
 	communes : '<',
 	forets: '<',
-	group2inpn : '<',
+	typologie : '<',
 	onProtocoleChange : '&'
   }
 });

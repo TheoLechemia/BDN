@@ -37,8 +37,8 @@ function appCtrl (proxy){
   proxy.loadForets().then(function(response){
       ctrl.foretsList = response.data;
   })
-  proxy.loadGroup2_inpn().then(function(response){
-    ctrl.group2_inpn = response.data;
+  proxy.loadTypologgie().then(function(response){
+    ctrl.typologie = response.data;
   }) 
 
   ctrl.formSubmit = function(form){
