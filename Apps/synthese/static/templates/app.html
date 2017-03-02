@@ -1,5 +1,5 @@
 
-<div class="row">
+
 	<div class="col-md-2">
 		<form-obs on-form-submit="$ctrl.formSubmit($event.form)" on-protocole-change="$ctrl.changeProtocole($event.protocole)" taxons="$ctrl.taxonslist" communes="$ctrl.communesList" forets="$ctrl.foretsList" typologie="$ctrl.typologie"> </form-obs>	
 	</div>
@@ -9,16 +9,9 @@
 	</div>
 
 	<div class="col-md-3">
-		<div class="panel panel-primary last-obs">
-			<div class="panel-heading">
-				<h3 class="panel-title"> {{$ctrl.nbObs}} </h3>
-			</div>
-			<div class="panel-body">
-			<list-obs  current-list-obs="$ctrl.currentListObs" current-leaflet-obs = "$ctrl.currentLeafletObs" geojson="$ctrl.geojson"> </list-obs>
-			</div>
+
+		<list-obs  current-list-obs="$ctrl.currentListObs" current-leaflet-obs = "$ctrl.currentLeafletObs" geojson="$ctrl.geojson"> </list-obs>
 			
-		</div>
+			
 		<button ng-click="$ctrl.exportShape($ctrl.geojson)" type="button" class="btn btn-primary">Exportez en shapefile <span class="glyphicon glyphicon-download-alt"> </span> </button>
 	</div>	
-</div>
-

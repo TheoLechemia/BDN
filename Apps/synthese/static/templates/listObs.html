@@ -1,24 +1,30 @@
- <div class="btn-group">
-  <button type="button" class="btn " ng-click="$ctrl.changeList('point')" ng-class="{ 'btn-primary' : $ctrl.isSelected('point')}" >Point</button>
-  <button type="button" class="btn " ng-click="$ctrl.changeList('maille')" ng-class="{'btn-primary' : $ctrl.isSelected('maille')}">Maille</button>
-</div>
-<table class="table">
-	 <thead>
-	  <tr>
-	     <th>Nom commun</th>
-	     <th>Nom sc.</th>
-	     <th>Date</th>
+<div class="panel panel-default ">
+	<div class="panel-heading ">
+		<h3 class="panel-title align"> <b> {{$ctrl.currentList.features.length}} observations </b> </h3>
+		<div class="btn-group btn-align">
+		  <button type="button" class="btn btn-xs " ng-click="$ctrl.changeList('point')" ng-class="{ 'btn-primary' : $ctrl.isSelected('point')}" >Point</button>
+		  <button type="button" class="btn btn-xs " ng-click="$ctrl.changeList('maille')" ng-class="{'btn-primary' : $ctrl.isSelected('maille')}">Maille</button>
+		</div>
+	</div>
 
-	  </tr>
-	 </thead>
-	 <tbody>
-	 	<div> 
-		<tr ng-repeat="obs in $ctrl.currentList.features" id="{{obs.properties.id}}" class="anchor" ng-class="{'selected-raw' : $ctrl.isCurrentObs($ctrl.currentListObs, obs.properties.id)}" >
-			<td > {{obs.properties.nom_vern}}  </td>
-			<td>  {{obs.properties.lb_nom}} </td>
-			<td> {{obs.properties.date}}  </td>
-			<td ng-click="$ctrl.zoom(obs.properties.id)"> <span class="glyphicon glyphicon-search " style="cursor:pointer;"> </span> </td>
-		</tr>
-	</tbody>
-</table>
+
+
+		<table class="table last-obs">
+			 <thead>
+			  <tr>
+			     <th>Nom commun</th>
+			     <th>Nom sc.</th>
+			     <th>Date</th>
+			  </tr>
+			 </thead>
+			 <tbody >
+				<tr ng-repeat="obs in $ctrl.currentList.features" id="{{obs.properties.id}}"  ng-class="{'selected-raw' : $ctrl.isCurrentObs($ctrl.currentListObs, obs.properties.id)}" >
+					<td > {{obs.properties.nom_vern}}  </td>
+					<td>  {{obs.properties.lb_nom}} </td>
+					<td> {{obs.properties.date}}  </td>
+					<td ng-click="$ctrl.zoom(obs.properties.id)"> <span class="glyphicon glyphicon-search " style="cursor:pointer;"> </span> </td>
+				</tr>
+			</tbody>
+		</table>
+</div>
 
