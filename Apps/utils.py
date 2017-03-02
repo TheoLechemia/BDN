@@ -4,6 +4,7 @@ import zipfile
 import os
 import flask
 import config
+import ast
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 UPLOAD_FOLDER = CURRENT_DIR+'\uploads'

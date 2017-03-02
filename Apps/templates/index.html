@@ -6,21 +6,57 @@
 			  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
 			  crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{url_for('static', filename= 'font-awesome/css/font-awesome.min.css')}}">
+
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<title> BDN-WEB</title>
 
 	<style type="text/css">
+
+  body{
+    background-color: #efefef;
+  }
+  a {
+  color:inherit;
+  text-decoration: none;
+ }
+  
+    .panel-default{
+    margin-right: 10px;
+   /* box-shadow: 1px 1px 3px rgb(136, 136, 136);*/
+    transition: all 0.3s;
+    box-shadow: 0 1px 2px #c8d1d3;
+  }
+  .panel-default:hover  {
+    
+    box-shadow: 0px 1px 5px rgb(136, 136, 136);
+    cursor:pointer;
+  }
+
+
+
+  .panel-default:hover i {
+    transition: all 0.3s;
+  }
+
+  .panel-default:hover .fa-cloud-upload{
+    color:#2172ce;
+  }
+
+  .panel-default:hover .fa-check-circle-o {
+    color:green;
+  }
+  .panel-default:hover .fa-search {
+    color:#843a15;
+  }
+    
 		
-		.fonctionnalites{
-			margin-bottom: 20px;
-			text-align: center;
-		}
     .stat-panel{
       text-align: center;
       border-color: transparent !important;
     }
 
-    .stat-thumbnail{
+    .panel-default span{
       font-size: 40px;
     }
     .stat-thumbnail h1{
@@ -31,6 +67,15 @@
       margin-right: 10px;
     }
 
+    .panel{
+      border-radius: 0px;
+    }
+
+    .navbar {
+
+    padding-bottom: 5px;
+    box-shadow: 0 1px 2px #c8d1d3;
+  }
 
 	</style>
 </head>
@@ -53,69 +98,59 @@
     </div>
   </div>
 </nav>
+<div class="row" style="height: 50px;"> </div>
 
+<div class="row">
+              <div style="width: 70%; margin-left:22%">
 
-<div class="container presentation">
-              <div class="row" style="height: 100px;"> </div>
-
-
-              <div class="row">
-                <div class="col-lg-4" style="text-align: center;">  
-                  <a class="btn btn-default fonctionnalites" href="{{url_for('importCSV.indexImport')}}" role="button" > 
-                    <img class="" src="{{url_for('static', filename='img/upload.png') }}" alt="Generic placeholder image" width="140" height="140">
+                <div class="col-lg-3 panel panel-default" style="text-align: center; height: 211px;">  
+                  <a href="{{url_for('importCSV.indexImport')}}"  > 
+                    <i class="fa fa-cloud-upload " style="font-size: 150px;"> </i>
                   </a>
-                  <h2>Import de données</h2>
-                  <p>Importez les données issues du TDS dans la base de données naturalistes centralisée</p>
+                  <h4>Import de données</h4>
                 </div><!-- /.col-lg-4 -->
 
-                <div class="col-lg-4 fonctionnalites" style="text-align: center;">
-                  <a class="btn btn-default" href="{{url_for('validation.indexValidation')}}" role="button">
-                    <img class="" src="{{url_for('static', filename='img/verified-text-paper.png') }}"  width="140" height="140">
+                <div class="col-lg-3 panel panel-default" style="text-align: center;">
+                  <a  href="{{url_for('validation.indexValidation')}}" >
+                    <i class="fa fa-check-circle-o"  style="font-size: 150px;"> </i>
                   </a>
-                  <h2>Interface de validation de données naturalistes</h2>
-                  <p>Sur cette application, les chargés de mission faune-flore valident les observations faites sur le terrain </p>
+                  <h4>Interface de validation de données naturalistes</h4>
                 </div><!-- /.col-lg-4 -->
-                <div class="col-lg-4" style="text-align: center;">
-                  <a class="btn btn-default" href="{{url_for('synthese.synthese_index')}}" role="button">
-                    <img class="" src="{{url_for('static', filename='img/loupe.png') }}"  width="140" height="140">
+                <div class="col-lg-3 panel panel-default" style="text-align: center; ">
+                  <a  href="{{url_for('synthese.synthese_index')}}">
+                   <i class="fa fa-search "  style="font-size: 150px;"> </i> 
                   </a>
-                  <h2>Synthese des observations faune - flore </h2>
-                  <p>Recherchez, visualisez puis téléchargez les données d'observations faune et flore</p>
+                  <h4>Synthese des observations faune - flore </h4>
                 </div><!-- /.col-lg-4 -->
-			</div><!-- /.row -->
-      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="panel panel-default stat-panel">
-          <div class="row">
-            <div class="panel-heading"><strong><h3>La BDN en quelques chiffres</h3></strong></div>
-            <div class ="col-lg-4 col-md-4 col-sm-12 col-xs-12 stat-object">
-              <div class="thumbnail stat-thumbnail">
+              </div>
+</div><!-- /.row -->
+     
+<div class="row" style="height: 80px;"> </div>
+            
+      <div class="row">
+      <div  style="width: 25%; margin:0 auto; font-family: Lucida Console; text-decoration: underline;"> <strong><h3>La BDN en quelques chiffres</h3></strong> </div>
+        <div style="width: 70%; margin-left:22%; text-align: center; ">
+
+            <div class ="col-lg-3 col-md-3 col-sm-12 col-xs-12 panel panel-default">
                 <span class="glyphicon glyphicon-search"></span>
                 <h1> {{stat.nb_tot_obs}} </h1>
                 <h4> observations</h4>
                 
-              </div>
             </div>
-            <div class = "col-lg-4 col-md-4 col-sm-12 col-xs-12 stat-object">
-              <div class="thumbnail stat-thumbnail">
+            <div class ="col-lg-3 col-md-3 col-sm-12 col-xs-12 panel panel-default">
                 <span class="glyphicon glyphicon-leaf"></span>
                 <h1> {{stat.nb_tot_tax}}</h1>
                 <h4> espèces</h4>
 
-              </div>
             </div>
-            <div class ="col-lg-4 col-md-4 col-sm-12 col-xs-12 stat-object">
-              <div class="thumbnail stat-thumbnail">
+            <div class ="col-lg-3 col-md-3 col-sm-12 col-xs-12 panel panel-default">
                 <span class="glyphicon glyphicon-user"> </span>
                 <h1>{{stat.nb_tot_observateurs}}</h1>
                 <h4> observateurs</h4>
 
-              </div>
             </div>
-            
           </div>
-        </div>
-    </div>
-</div>
+      </div>
 
 
 </body>
