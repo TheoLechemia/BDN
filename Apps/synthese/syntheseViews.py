@@ -84,6 +84,7 @@ def getObs():
         geojsonMaille ={ "type": "FeatureCollection",  "features" : list() }
         geojsonPoint ={ "type": "FeatureCollection",  "features" : list() }
         sqlAndParams = utils.buildSQL()
+
         db.cur.execute(sqlAndParams['sql'], sqlAndParams['params'])
         res = db.cur.fetchall()
         myproperties = dict()

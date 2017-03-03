@@ -229,9 +229,10 @@ function formCtrl(proxy, $http, $scope){
 		'ordre': null,
 		'famille': null,
 		'group2_inpn': null,
-		'habitat': null,
+		'habitat': {'id':null, 'type':null},
 		'protection':null,
-		'lr':null,
+		'lr':{'id_statut':null, 'type_statut':null}
+	
 		}
 
 		this.newTaxons = [];

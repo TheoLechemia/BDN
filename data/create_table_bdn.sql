@@ -149,3 +149,114 @@ CREATE OR REPLACE VIEW bdn.v_search_taxons AS
 
 ALTER TABLE bdn.v_search_taxons
   OWNER TO onfuser;
+
+
+  -- Creation des vues pour les exports en shapefile
+
+CREATE OR REPLACE VIEW bdn.faune_poly AS 
+ SELECT t.nom_vern,
+    t.lb_nom,
+    f.id_obs,
+    f.id_synthese,
+    f.protocole,
+    f.observateur,
+    f.date,
+    f.cd_nom,
+    f.insee,
+    f.altitude,
+    f.type_obs,
+    f.nb_individu_approx,
+    f.comportement,
+    f.nb_non_identife,
+    f.nb_male,
+    f.nb_femelle,
+    f.nb_jeune,
+    f.trace,
+    f.commentaire,
+    f.ccod_frt,
+    m.code_1km,
+    m.geom
+
+   FROM bdn.faune f
+     JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text AND f.valide=true
+     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom;
+
+
+CREATE OR REPLACE VIEW bdn.faune_point AS 
+ SELECT
+    t.nom_vern,
+    t.lb_nom,
+    f.id_obs,
+    f.id_synthese,
+    f.protocole,
+    f.observateur,
+    f.date,
+    f.cd_nom,
+    f.insee,
+    f.altitude,
+    f.type_obs,
+    f.nb_individu_approx,
+    f.comportement,
+    f.nb_non_identife,
+    f.nb_male,
+    f.nb_femelle,
+    f.nb_jeune,
+    f.trace,
+    f.geom_point,
+    f.commentaire,
+    f.ccod_frt,
+
+   FROM bdn.faune f
+   JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
+  WHERE f.loc_exact = true;
+
+  CREATE OR REPLACE VIEW bdn.flore_point AS 
+ SELECT 
+    t.nom_vern,
+    t.lb_nom
+    flore.id_obs,
+    flore.id_synthese,
+    flore.protocole,
+    flore.observateur,
+    flore.date,
+    flore.cd_nom,
+    flore.insee,
+    flore.altitude,
+    flore.abondance,
+    flore.nb_pied_approx,
+    flore.nb_pied,
+    flore.stade_dev,
+    flore.geom_point,
+    flore.commentaire,
+    flore.ccod_frt
+
+   FROM bdn.flore flore
+   JOIN taxonomie.taxref t ON t.cd_nom = flore.cd_nom
+  WHERE flore.loc_exact = true AND flore.valide = true;
+
+  CREATE OR REPLACE VIEW bdn.flore_poly AS 
+ SELECT 
+    t.nom_vern,
+    t.lb_nom
+    f.id_obs,
+    f.id_synthese,
+    f.protocole,
+    f.observateur,
+    f.date,
+    f.cd_nom,
+    f.insee,
+    f.altitude,
+    f.abondance,
+    f.nb_pied_approx,
+    f.nb_pied,
+    f.stade_dev,
+    f.commentaire,
+    f.ccod_frt,
+    f.code_maille,
+    m.code_1km,
+    m.geom
+
+   FROM bdn.flore f
+     JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text AND f.valide = true
+     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom;
+

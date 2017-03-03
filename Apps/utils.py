@@ -132,9 +132,9 @@ def getFormParameters():
     ordre = flask.request.json['ordre']
     famille = flask.request.json['famille']
     group2_inpn = flask.request.json['group2_inpn']
-    habitat = flask.request.json['habitat']
+    habitat = flask.request.json['habitat']['id']
     protection = flask.request.json['protection']
-    lr = flask.request.json['lr']
+    lr = flask.request.json['lr']['id_statut']
 
 
 
@@ -181,7 +181,7 @@ def buildSQL():
         firstParam = False
         sql = askFirstParame(sql, firstParam)
         sql += 't.habitat = %s'
-        params.append(formParameters['habitat'])
+        params.append(str(formParameters['habitat']))
     if formParameters['protection']:
         firstParam = False
         sql = askFirstParame(sql, firstParam)
@@ -223,6 +223,6 @@ def buildSQL():
         params.append(formParameters['lastDate'])
 
     #on join avec les mailles
-    print 'LAAAAAAAAAAAAAAAAAAAAAA'
-    print sql
+    print 'LES PARAMETRESSSSSSSSSSSSSSSSSS'
+    print params
     return {'params': params, 'sql' :sql}
