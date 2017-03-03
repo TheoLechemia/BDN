@@ -10,16 +10,14 @@
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.js"></script>
 
 <!-- Leaflet directive CAUTION on utilise pas le meme leaflet ici: J AI MODIFIIE LES SOURCES SUITE AU PB DE MARKER -->
-<script src="%%url_for('static', filename='lib/leaflet/leaflet-src.js')%%"></script> 
-<link rel="stylesheet" href="%%url_for('static', filename='lib/leaflet/leaflet.css')%%" />
-<script src="%%url_for('static', filename='lib/leaflet/angular-leaflet-directive.min.js')%%"></script>
-<!-- Leaflet Marker -->
-<script src="%%url_for('static', filename='lib/leaflet-marker/js/leaflet.awesome-markers.min.js')%%"></script>
-<link rel="stylesheet" href="%%url_for('static', filename='lib/leaflet-marker/css/leaflet.awesome-markers.css')%%" />
+<script src="{{url_for('static', filename='lib/leaflet/leaflet-src.js')}}"></script> 
+<link rel="stylesheet" href="{{url_for('static', filename='lib/leaflet/leaflet.css')}}" />
+<script src="{{url_for('static', filename='lib/leaflet/angular-leaflet-directive.min.js')}}"></script>
+
 
 
   <!--  ui bootstrap -->
-<script src="%%url_for('static', filename='lib/uibootstrap.min.js')%%"></script>
+<script src="{{url_for('static', filename='lib/uibootstrap.min.js')}}"></script>
 
 
 <!-- Jquery -->
@@ -37,7 +35,6 @@
 
 </head>
 <body>
-	{% include 'navbar.html' %}
 
 <div ng-app="app" class="container-fluid">
 	<h3> Hello </h3>
@@ -64,7 +61,7 @@
 				<div class="form-group">
 				      <div>
 				        <p class="input-group">
-				          <input id="firstDate" placeholder="Date de l'observation" type="text" class="form-control" uib-datepicker-popup="%%format%%" ng-model="form.date"" is-open="isOpen" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" />
+				          <input id="firstDate" placeholder="Date de l'observation" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="form.date"" is-open="isOpen" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" />
 				          <span class="input-group-btn">
 				            <button type="button" class="btn btn-default" ng-click="openDate()"><i class="glyphicon glyphicon-calendar"></i></button>
 				          </span>
@@ -76,8 +73,6 @@
 					  <input class="form-control" type="number" step="0.001" name="" placeholder="X" ng-model="markers.main.lng" ng-change="changeLng()" >
 					  <input class="form-control" type="number" step="0.001" placeholder="Y" ng-model="markers.main.lat" ng-change="changeLat()">
 				  </div>
-
-
 				  <!-- FLORE -->
 				  <div ng-if="view == 'flore' ">
 					  <div class="form-group" >
@@ -96,7 +91,6 @@
 					  	</select>
 					  </div>
 				  </div>
-
 				  <!-- FAUNE -->
 				  <div ng-if="view == 'faune'">
 					  <div class="form-group" >
@@ -128,9 +122,10 @@
 			</div>
 
 			<div class="col-sm-6">
-					<leaflet lf-center='center' width="640px" height="480px" markers="markers"></leaflet>
+					<leaflet lf-center='center' width="640px" height="480px" markers="markers" geojson=geojsonMaille></leaflet>
 
-			        	
+					<button class="btn btn-success" ng-click="switchMaille()" ng-class="{'disabled': geojsonMaille.data != undefined }"> Mode maille</button>
+					 <button ng-click="switchPoint()" class="btn btn-success" ng-class="{'disabled': markers.main != undefined }"> Mode point</button>	
 			</div>
 		</div>
 </div> 
@@ -140,6 +135,6 @@
 
 </body>
 
-<script type="text/javascript"> var URL_APPLICATION = %%URL_APPLICATION|tojson%% </script>
-<script src="%%url_for('addObs.static', filename='addObs.js')%%"></script>
+<script type="text/javascript"> var URL_APPLICATION = {{URL_APPLICATION|tojson}} </script>
+<script src="{{url_for('addObs.static', filename='addObs.js')}}"></script>
 </html>

@@ -1,35 +1,11 @@
 var app = angular.module("app", ['leaflet-directive', 'ui.bootstrap']);
 
 
-app.controller("headerCtrl", function($scope, $http){
+app.controller("headerCtrl", function($scope, $http, leafletData){
 
-  $scope.test = 'tessssssssst';
 
-	$scope.center = { 'lat':16.2412500 , 'lng':-61.5361400 , 'zoom':11 }
-	$scope.markers = {
-    main: {
-        lat: 16.2412500,
-        lng: -61.5361400,
-        draggable: true,
-        icon : { 
-          iconUrl: '/static/lib/leaflet/images/marker-icon.png',
-          shadowUrl: '/static/lib/leaflet/images/marker-shadow.png',
-          iconSize:    [25, 41],
-          iconAnchor:  [12, 41],
-          popupAnchor: [1, -34],
-          tooltipAnchor: [16, -28],
-          shadowSize:  [41, 41]
-        }
-    }
-  }
 
-   $scope.$on('leafletDirectiveMarker.drag', function(e, args) {
-      $scope.markers.main.lat = args.leafletObject._latlng.lat;
-      $scope.markers.main.lng = args.leafletObject._latlng.lng;
-      $scope.form.coord.lat = args.leafletObject._latlng.lat;
-      $scope.form.coord.lng = args.leafletObject._latlng.lng;
-   });
-
+//#######FORMULAIRE ##############
 
    $scope.taxons = [{'lb_nom': 'capra ibex', 'nom_vern': 'bouquetin des alpes', 'cd_nom': 12000}, {'lb_nom': 'Iguana Delicatissima', 'nom_vern': 'Iguane des petites Antilles', 'cd_nom': 350755},
                     {'lb_nom': 'Gaiacum Gaiacum', 'nom_vern': 'Gaiac', 'cd_nom': 629786}]
@@ -39,19 +15,10 @@ app.controller("headerCtrl", function($scope, $http){
     taxon : {'lb_nom': null, 'nom_vern': null, 'cd_nom': null},
     coord : {'lat': null, 'lng':null },
     date : null,
+    loc_exact : true,
+    code_maille: ""
    }
 
-   $scope.view = 'flore'
-
-   $scope.changeViewFlore = function(){
-    console.log("heho")
-    $scope.view.flore = !$scope.view.flore;
-    $scope.view.faune = !$scope.view.faune;
-   }
-  $scope.changeViewFaune = function(){
-    $scope.view.flore = !$scope.view.flore;
-    $scope.view.faune = !$scope.view.faune;
-   }
 
    $scope.formFlore = {
     'abondance' : null,
@@ -60,7 +27,29 @@ app.controller("headerCtrl", function($scope, $http){
     'stade_dev': null,
    }
 
-   $scope.formFaune = {'type_obs': null, 'effectif': null, 'comportement': null, 'trace': null, 'nb_individu':null, 'nb_male': null, 'nb_femelle': null, 'nb_jeune':null }
+   $scope.formFaune = {'type_obs': null,
+    'effectif': null,
+    'comportement': null,
+    'trace': null, 
+    'nb_individu':null, 
+    'nb_male': null,
+    'nb_femelle': null,
+    'nb_jeune':null 
+    }
+
+   $scope.view = 'flore'
+
+   $scope.changeViewFlore = function(){
+    $scope.view.flore = !$scope.view.flore;
+    $scope.view.faune = !$scope.view.faune;
+   }
+
+  $scope.changeViewFaune = function(){
+    $scope.view.flore = !$scope.view.flore;
+    $scope.view.faune = !$scope.view.faune;
+   }
+
+
 
    $scope.isOpen = false;
 
@@ -106,15 +95,111 @@ app.controller("headerCtrl", function($scope, $http){
  var completeForm = {'general': $scope.form, 'faune': $scope.formFaune, 'flore': $scope.formFlore};
 
   $scope.onSubmit = function(protocole){
+    console.log(completeForm);
     $http.post(URL_APPLICATION+'addObs/submit/'+protocole, completeForm).then(function(response){
       console.log(response.data);
     })
   }
 
+
+
+//##########################################################
+//####################### MAP ##############################
+//##########################################################
+
+
+
+var originStyle = {
+    "color": "#000000",
+    "weight": 1,
+    "fillOpacity": 0
+};
+
+var selectedStyle = {
+  'color':'#ff0000',
+   'weight':3
+}
+
+
+
+var saveGeojsonMaille = {};
+$scope.geojsonMaille = {};
+
+// load Mailles
+
+$http.get(URL_APPLICATION+'addObs/loadMailles').success(function(data){
+  console.log(data)
+  saveGeojsonMaille['data'] = data;
+  saveGeojsonMaille['style'] = originStyle;
+})
+
+/*$http.get(URL_APPLICATION+"static/data/mailles_1km.geojson").success(function(data){
+
+  saveGeojsonMaille['data'] = data;
+  saveGeojsonMaille['style'] = originStyle;
+})*/
+
+
+  $scope.center = { 'lat':16.2412500 , 'lng':-61.5361400 , 'zoom':11 }
+  $scope.markers = {
+    main: {
+        lat: 16.2412500,
+        lng: -61.5361400,
+        draggable: true,
+        icon : { 
+          iconUrl: '/static/lib/leaflet/images/marker-icon.png',
+          shadowUrl: '/static/lib/leaflet/images/marker-shadow.png',
+          iconSize:    [25, 41],
+          iconAnchor:  [12, 41],
+          popupAnchor: [1, -34],
+          tooltipAnchor: [16, -28],
+          shadowSize:  [41, 41]
+        }
+    }
+  }
+  var saveMarkers = $scope.markers;
+
+  // EVENT
+
+   $scope.$on('leafletDirectiveMarker.drag', function(e, args) {
+      $scope.markers.main.lat = args.leafletObject._latlng.lat;
+      $scope.markers.main.lng = args.leafletObject._latlng.lng;
+      $scope.form.coord.lat = args.leafletObject._latlng.lat;
+      $scope.form.coord.lng = args.leafletObject._latlng.lng;
+   });
+
+   selectedMaille = null;
+   $scope.$on('leafletDirectiveGeoJson.click', function(e, args) {
+    $scope.form.code_maille = args.model.properties.CODE_1KM;
+      if (!selectedMaille){
+          args.leafletObject.setStyle(selectedStyle)
+          selectedMaille = args.leafletObject;
+      }else{
+        selectedMaille.setStyle(originStyle);
+        args.leafletObject.setStyle(selectedStyle);
+        selectedMaille = args.leafletObject;
+      }
+      
+    });
+   var loc_exact = true;
+  $scope.switchMaille = function(){
+    $scope.form.loc_exact = false;
+    $scope.markers = {};
+    console.log(saveGeojsonMaille);
+    $scope.geojsonMaille = saveGeojsonMaille;
+  }
+
+  $scope.switchPoint = function(){
+    $scope.form.loc_exact = true;
+    $scope.geojsonMaille = {};
+    $scope.markers = saveMarkers;
+  }
+
+
+
+
+
  });
 
-
-
- 
 
 
