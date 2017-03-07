@@ -50,31 +50,29 @@
 			        				<label class="btn btn-success" ng-model="view" uib-btn-radio="'faune'" uncheckable>Faune</label>
 			  					</div>
 			  				</div>
-			  				<div class="form-group" ng-class="{'has-error' : addObsForm.observateur.$invalid }">
+			  				<div class="form-group" ng-class="{'has-error' : addObsForm.observateur.$invalid && !addObsForm.observateur.$pristine  || (validationAttempt && addObsForm.observateur.$invalid)}">
 								<input class="form-control" type="text" name="observateur" placeholder="Observateur: NOM PRENON - en majuscule" ng-model="globalForm.observateur" required>
+								<p ng-show="(addObsForm.observateur.$invalid && !addObsForm.observateur.$pristine) || (validationAttempt && addObsForm.observateur.$invalid) " class="help-block">Le nom de l'observateur est requis</p>
 							</div>
 
 
 							<div class="form-group" >
-						 		<input name = "nom_vern" id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="myform.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.nom_vern for taxon in search_vern_name($viewValue, view)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="noResults" typeahead-loading="isLoading">
+						 		<input name = "nom_vern" id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="globalForm.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.nom_vern for taxon in search_vern_name($viewValue, view)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="noResults" typeahead-loading="isLoading">
 						 	</div>
 						
-							<div class="form-group" ng-class="{'has-error' : addObsForm.lb_nom.$invalid }">
-							 	<input name="lb_nom" autocomplete="off" placeholder="Nom scientifique " type="text" ng-model="myform.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.lb_nom for taxon in search_scientist_name($viewValue, view)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="noResults" typeahead-loading="isLoading" required>
+							<div class="form-group" ng-class="{'has-error' : addObsForm.lb_nom.$invalid && !addObsForm.lb_nom.$pristine  || (validationAttempt && addObsForm.lb_nom.$invalid) }">
+							 	<input name="lb_nom" autocomplete="off" placeholder="Nom scientifique " type="text" ng-model="globalForm.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.lb_nom for taxon in search_scientist_name($viewValue, view)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="noResults" typeahead-loading="isLoading" required>
+							 	<p ng-show="(addObsForm.lb_nom.$invalid && !addObsForm.lb_nom.$pristine) || (validationAttempt && addObsForm.lb_nom.$invalid)" class="help-block">Le nom scientifique est requis</p>
 							</div>
-<!-- 							<div class="form-group" ng-class="{'has-error' : addObsForm.date.$invalid }">
-								<div class="col-sm-12">
-								 	<input  id="firstDate" name="date" placeholder="Date de l'observation" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="myform.date"" is-open="isOpen" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" required="" ng-click="openDate()" />
-								 	 <span class="glyphicon glyphicon-calendar" ></span>
-								</div>
-							</div> -->
-							    <div class="form-group" ng-class="{'has-error' : addObsForm.date.$invalid }">
-					                <div class='input-group date' id='datetimepicker1' ng-class="{'has-error' : addObsForm.date.$invalid }">
-					                    <input  id="firstDate" name="date" placeholder="Date de l'observation" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="myform.date"" is-open="isOpen" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" required="" ng-click="openDate()" />
+
+							    <div class="form-group" >
+					                <div class='input-group date' id='datetimepicker1' ng-class="{'has-error' : addObsForm.date.$invalid && !addObsForm.date.$pristine || (validationAttempt && addObsForm.date.$invalid) }">
+					                    <input  id="firstDate" name="date" placeholder="Date de l'observation" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="globalForm.date"" is-open="isOpen" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" required ng-click="openDate()" />
 					                    <span class="input-group-addon">
 					                        <span style="cursor: pointer;" class="glyphicon glyphicon-calendar" ng-click="openDate()"></span>
 					                    </span>
 					                </div>
+					                <p style="color: #a94442;"  ng-show="addObsForm.date.$invalid && !addObsForm.date.$pristine || (validationAttempt && addObsForm.date.$invalid)" class="help-block" >Le date est requise</p>
 					            </div>
 
 
@@ -135,6 +133,7 @@
 							</div>
 
 							<input class="btn btn-success" type="submit">
+							<div ng-show="formSuccessfullySent" class="alert alert-success">Observation enregistrée avec succès</div>
 						</form>
 
 						<div class="row" style="height: 10px;"></div>
@@ -154,6 +153,10 @@
 					<button class="btn btn-success" ng-click="switchMaille()" ng-class="{'disabled': geojsonMaille.data != undefined }"> Mode maille</button>
 					 <button ng-click="switchPoint()" class="btn btn-success" ng-class="{'disabled': markers.main != undefined }"> Mode point</button>	
 			</div>
+
+			  <div ng-message="required">Ce champs est requis </div>
+
+  </div>
 		</div>
 
 

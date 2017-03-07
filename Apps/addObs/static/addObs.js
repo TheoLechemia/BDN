@@ -29,23 +29,20 @@ $scope.isLoading = true;
 //#######FORMULAIRE ##############
 
 
-/*   $scope.form = {
+   $scope.globalForm = {
     coord : {'lat': null, 'lng':null },
     loc_exact : true,
     code_maille: ""
    }
-*/
-
-
-
-   $scope.formFlore = {
+   var resetFormFlore = {
     'abondance' : null,
     'nb_pied_exact': null,
     'nb_pied_approx': null,
     'stade_dev': null,
    }
-
-   $scope.formFaune = {'type_obs': null,
+   $scope.formFlore = resetFormFlore;
+   var resetFormFaune = {
+    'type_obs': null,
     'effectif': null,
     'comportement': null,
     'trace': null, 
@@ -54,7 +51,9 @@ $scope.isLoading = true;
     'nb_femelle': null,
     'nb_jeune':null,
     'nb_non_identifie': null,
-    }
+  }
+  $scope.formFaune = resetFormFaune;
+
 
    $scope.view = 'flore'
 
@@ -77,10 +76,10 @@ $scope.isLoading = true;
    }
 
    $scope.changeLng = function(){
-    $scope.form.coord.lng = $scope.markers.main.lng;
+    $scope.globalForm.coord.lng = $scope.markers.main.lng;
    }
   $scope.changeLat = function(){
-    $scope.form.coord.lat = $scope.markers.main.lat;
+    $scope.globalForm.coord.lat = $scope.markers.main.lat;
    }
 
 
@@ -110,14 +109,45 @@ $scope.isLoading = true;
 
 
 
- var completeForm = {'general': $scope.form, 'faune': $scope.formFaune, 'flore': $scope.formFlore};
+ var completeForm = {'general': $scope.globalForm, 'faune': $scope.formFaune, 'flore': $scope.formFlore};
+
+ $scope.validationAttempt = false;
 
   $scope.onSubmit = function(protocole, form){
-    console.log(form);
-    console.log(form.observateur)
-/*    $http.post(URL_APPLICATION+'addObs/submit/'+protocole, completeForm).then(function(response){
-      console.log(response.data);
-    })*/
+    $scope.validationAttempt = true;
+    console.log(completeForm)
+    if (form.$valid){
+          $http.post(URL_APPLICATION+'addObs/submit/'+protocole, completeForm).then(function(response){
+          if(response.status == 200){
+            $scope.formSuccessfullySent = true;
+            //angular.copy({},form);
+            // on reset tous les champs
+            $scope.globalForm = {
+                    'coord' : {'lat': null, 'lng':null },
+                    'loc_exact' : true,
+                    'code_maille': "",
+                    'observateur' : null,
+                    'date': null,
+                    'taxon': null
+                   }
+            $scope.formFlore = resetFormFlore;
+            $scope.formFaune = resetFormFaune
+          }
+
+
+          setTimeout(function(){
+            $scope.formSuccessfullySent = false;
+             }, 200);
+          // on reset les actions sur les champs du formulaire pour l'affichage des erreurs
+          form.observateur.$pristine= true;
+          form.lb_nom.$pristine = true;
+          form.date.$pristine = true;
+          $scope.validationAttempt = false;
+
+    })
+    }
+    
+
   }
 
 
@@ -183,13 +213,13 @@ $http.get(URL_APPLICATION+'addObs/loadMailles').success(function(data){
    $scope.$on('leafletDirectiveMarker.drag', function(e, args) {
       $scope.markers.main.lat = args.leafletObject._latlng.lat;
       $scope.markers.main.lng = args.leafletObject._latlng.lng;
-      $scope.form.coord.lat = args.leafletObject._latlng.lat;
-      $scope.form.coord.lng = args.leafletObject._latlng.lng;
+      $scope.globalForm.coord.lat = args.leafletObject._latlng.lat;
+      $scope.globalForm.coord.lng = args.leafletObject._latlng.lng;
    });
 
    selectedMaille = null;
    $scope.$on('leafletDirectiveGeoJson.click', function(e, args) {
-    $scope.form.code_maille = args.model.properties.CODE_1KM;
+    $scope.globalForm.code_maille = args.model.properties.CODE_1KM;
       if (!selectedMaille){
           args.leafletObject.setStyle(selectedStyle)
           selectedMaille = args.leafletObject;
@@ -202,14 +232,14 @@ $http.get(URL_APPLICATION+'addObs/loadMailles').success(function(data){
     });
    var loc_exact = true;
   $scope.switchMaille = function(){
-    $scope.form.loc_exact = false;
+    $scope.globalForm.loc_exact = false;
     $scope.markers = {};
     console.log(saveGeojsonMaille);
     $scope.geojsonMaille = saveGeojsonMaille;
   }
 
   $scope.switchPoint = function(){
-    $scope.form.loc_exact = true;
+    $scope.globalForm.loc_exact = true;
     $scope.geojsonMaille = {};
     $scope.markers = saveMarkers;
   }
