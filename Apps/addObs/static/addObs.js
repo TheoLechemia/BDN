@@ -1,23 +1,41 @@
-var app = angular.module("app", ['leaflet-directive', 'ui.bootstrap']);
+//var app = angular.module("app", ['leaflet-directive', 'ui.bootstrap']);
+
+var app = angular.module("app", ['leaflet-directive', 'ui.bootstrap']).config(function($interpolateProvider){
+    $interpolateProvider.startSymbol('%%').endSymbol('%%');
+});
 
 
 app.controller("headerCtrl", function($scope, $http, leafletData){
 
 
+$scope.search_scientist_name = function(expre, view){
+  return $http.get(URL_APPLICATION+"addObs/search_scientist_name/"+view+"/"+expre).then(function(response){ 
+    return response.data;
+  })
+  }
+
+$scope.search_vern_name = function(expre, view){
+  return $http.get(URL_APPLICATION+"addObs/search_vern_name/"+view+"/"+expre).then(function(response){ 
+    return response.data;
+  })
+  }
+
+
+
+$scope.isLoading = true;
+
+
 
 //#######FORMULAIRE ##############
 
-   $scope.taxons = [{'lb_nom': 'capra ibex', 'nom_vern': 'bouquetin des alpes', 'cd_nom': 12000}, {'lb_nom': 'Iguana Delicatissima', 'nom_vern': 'Iguane des petites Antilles', 'cd_nom': 350755},
-                    {'lb_nom': 'Gaiacum Gaiacum', 'nom_vern': 'Gaiac', 'cd_nom': 629786}]
 
-   $scope.form = {
-    observateur : null,
-    taxon : {'lb_nom': null, 'nom_vern': null, 'cd_nom': null},
+/*   $scope.form = {
     coord : {'lat': null, 'lng':null },
-    date : null,
     loc_exact : true,
     code_maille: ""
    }
+*/
+
 
 
    $scope.formFlore = {
@@ -34,7 +52,8 @@ app.controller("headerCtrl", function($scope, $http, leafletData){
     'nb_individu':null, 
     'nb_male': null,
     'nb_femelle': null,
-    'nb_jeune':null 
+    'nb_jeune':null,
+    'nb_non_identifie': null,
     }
 
    $scope.view = 'flore'
@@ -54,7 +73,6 @@ app.controller("headerCtrl", function($scope, $http, leafletData){
    $scope.isOpen = false;
 
    $scope.openDate = function(){
-      console.log($scope.form.date);
       $scope.isOpen = !$scope.isOpen;
    }
 
@@ -94,11 +112,12 @@ app.controller("headerCtrl", function($scope, $http, leafletData){
 
  var completeForm = {'general': $scope.form, 'faune': $scope.formFaune, 'flore': $scope.formFlore};
 
-  $scope.onSubmit = function(protocole){
-    console.log(completeForm);
-    $http.post(URL_APPLICATION+'addObs/submit/'+protocole, completeForm).then(function(response){
+  $scope.onSubmit = function(protocole, form){
+    console.log(form);
+    console.log(form.observateur)
+/*    $http.post(URL_APPLICATION+'addObs/submit/'+protocole, completeForm).then(function(response){
       console.log(response.data);
-    })
+    })*/
   }
 
 
@@ -194,6 +213,54 @@ $http.get(URL_APPLICATION+'addObs/loadMailles').success(function(data){
     $scope.geojsonMaille = {};
     $scope.markers = saveMarkers;
   }
+
+// google map layer switcher
+leafletData.getMap()
+            .then(function(map) {
+      console.log(map)
+      var LayerControl = L.Control.extend({
+
+      options: {
+        position: 'bottomleft' 
+      },
+
+    onAdd: function (map) {
+        currentTileMap = "topo";
+        var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+     
+        container.style.backgroundColor = 'white';
+       // container.style.backgroundImage = "url("+configuration.URL_APPLICATION+"/static/images/logo_earth_map.PNG)";
+        container.style.width = '50px';
+        container.style.height = '50px';
+        container.style.border = 'solid white 1px';
+        container.style.cursor = 'pointer';
+        $(container).attr("data-placement", "right");
+        $(container).attr("data-toggle", "tooltip");
+        $(container).attr("data-original-title", "Photos aérienne");
+
+
+        container.onclick = function(){
+          if(currentTileMap == "topo"){
+         // container.style.backgroundImage = "url("+configuration.URL_APPLICATION+"/static/images/logo_topo_map.PNG)";
+          $(container).attr("data-original-title", "Plan");
+          map.removeLayer(firstMapTile);
+          orthoMap.addTo(map);
+          currentTileMap = "earth";
+          }
+          else{
+          container.style.backgroundImage = "url("+configuration.URL_APPLICATION+"/static/images/logo_earth_map.PNG)";
+          $(container).attr("data-original-title", "Photos aérienne");
+          map.removeLayer(orthoMap);
+          firstMapTile.addTo(map);
+          currentTileMap = "topo";
+          }
+        }
+        return container;
+      }
+    
+
+});
+    });
 
 
 

@@ -31,6 +31,39 @@ def nocache(view):
 def addObs_index():
     return flask.render_template('addObsIndex.html', URL_APPLICATION=config.URL_APPLICATION, page_title=u"Interface de saisie des données")
 
+
+
+
+
+@addObs.route('/search_scientist_name/<table>/<expr>', methods=['GET'])
+def search_scientist_name(table, expr):
+    db=getConnexion()
+    sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
+                SELECT cd_ref, lb_nom, nom_vern from taxonomie.taxons_"""+table+"""
+                WHERE lb_nom ILIKE %s LIMIT 20) r"""
+    params = [expr+"%"]
+    db.cur.execute(sql, params)
+    res = db.cur.fetchone()[0]
+    db.closeAll()
+    return Response(flask.json.dumps(res), mimetype='application/json')
+
+@addObs.route('/search_vern_name/<table>/<expr>', methods=['GET'])
+def search_vern_name(table, expr):
+    db=getConnexion()
+    sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
+                SELECT cd_ref, lb_nom, nom_vern from taxonomie.taxons_"""+table+"""
+                WHERE nom_vern ILIKE  %s LIMIT 20) r"""
+    params = [expr+"%"]
+    db.cur.execute(sql, params)
+    res = db.cur.fetchone()[0]
+    db.closeAll()
+    return Response(flask.json.dumps(res), mimetype='application/json')
+
+
+
+
+
+
 @addObs.route('/loadMailles', methods=['GET', 'POST'])
 def getMaille():
     db = getConnexion()
@@ -54,7 +87,7 @@ def submitObs(protocole):
     db = getConnexion()
     if flask.request.method == 'POST':
         observateur = flask.request.json['general']['observateur']
-        cd_nom = flask.request.json['general']['taxon']['cd_nom']
+        cd_nom = flask.request.json['general']['taxon']['cd_ref']
         loc_exact = flask.request.json['general']['loc_exact']
         code_maille = str()
         loc = flask.request.json['general']['coord']
@@ -67,7 +100,7 @@ def submitObs(protocole):
 
         date = flask.request.json['general']['date']
 
-        #prend le centroide de maille pou intersecter avec la foret l'insee
+        #prend le centroide de maille pou intersecter avec la foret et l'insee
         centroide = None
         if not loc_exact:
             sql = "SELECT ST_AsText(ST_Centroid(ST_TRANSFORM(geom, 4326))) FROM layers.mailles_1k WHERE code_1km = %s "
@@ -76,9 +109,6 @@ def submitObs(protocole):
             res = db.cur.fetchone()
             if res != None:
                 centroide = res[0]
-
-        print 'LAAAAAA centroide'
-        print centroide
 
 
         #foret
@@ -123,17 +153,18 @@ def submitObs(protocole):
             db.conn.commit()
 
         if protocole == 'faune':
-            type_obs = flask.request.json['flore']['type_obs']
-            effectif = flask.request.json['flore']['effectif']
-            comportement = flask.request.json['flore']['comportement']
-            nb_individu = flask.request.json['flore']['nb_individu']
-            nb_male = flask.request.json['flore']['nb_male']
-            nb_femelle = flask.request.json['flore']['nb_femelle']
-            nb_jeune = flask.request.json['flore']['nb_jeune']
+            type_obs = flask.request.json['faune']['type_obs']
+            effectif = flask.request.json['faune']['effectif']
+            comportement = flask.request.json['faune']['comportement']
+            nb_individu = flask.request.json['faune']['nb_individu']
+            nb_male = flask.request.json['faune']['nb_male']
+            nb_femelle = flask.request.json['faune']['nb_femelle']
+            nb_jeune = flask.request.json['faune']['nb_jeune']
+            nb_non_identife = flask.request.json['faune']['nb_non_identifie']
             protocole = protocole.upper()
             sql = '''INSERT INTO bdn.faune (protocole, observateur, date, cd_nom, insee, ccod_frt, type_obs, nb_individu_approx, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, geom_point, valide )
                    VALUES (%s, %s, %s, %s, %s,%s,%s, %s, %s, %s, %s, %s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s )'''
-            params = [protocole, observateur, dateObject, cd_nom, insee, ccod_frt, type_obs, nb_individu_approx, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, point, 'false']
+            params = [protocole, observateur, date, cd_nom, insee, ccod_frt, type_obs, nb_individu, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, point, 'false']
             cur.execute(sql, params)
             conn.commit()
 

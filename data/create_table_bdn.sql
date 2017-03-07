@@ -121,10 +121,10 @@ AFTER INSERT ON bdn.faune
     FOR EACH ROW EXECUTE PROCEDURE fill_id_synthese_faune();
 
 
-CREATE OR REPLACE FUNCTION tr_protocole_to_synthese() RETURNS TRIGGER AS $tr_protocole_to_synthese$
+CREATE OR REPLACE FUNCTION bdn.tr_protocole_to_synthese() RETURNS TRIGGER AS $tr_protocole_to_synthese$
     BEGIN
-    INSERT INTO bdn.synthese (id_synthese, protocole, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point) 
-    VALUES( concat_ws('', LEFT(new.protocole,2)::text, new.id_obs::text), new.protocole, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point);
+    INSERT INTO bdn.synthese (id_synthese, protocole, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, loc_exact) 
+    VALUES( concat_ws('', LEFT(new.protocole,2)::text, new.id_obs::text), new.protocole, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.loc_exact);
     RETURN NEW;
   
     END;
@@ -132,11 +132,11 @@ $tr_protocole_to_synthese$ LANGUAGE plpgsql;
 
 CREATE TRIGGER tr_fl_to_synthese
 BEFORE INSERT ON bdn.flore
-    FOR EACH ROW EXECUTE PROCEDURE tr_protocole_to_synthese();
+    FOR EACH ROW EXECUTE PROCEDURE bdn.tr_protocole_to_synthese();
 
 CREATE TRIGGER tr_fa_to_synthese
 BEFORE INSERT ON bdn.faune
-    FOR EACH ROW EXECUTE PROCEDURE tr_protocole_to_synthese();
+    FOR EACH ROW EXECUTE PROCEDURE bdn.tr_protocole_to_synthese();
 
 
 CREATE OR REPLACE VIEW bdn.v_search_taxons AS 
@@ -149,6 +149,21 @@ CREATE OR REPLACE VIEW bdn.v_search_taxons AS
 
 ALTER TABLE bdn.v_search_taxons
   OWNER TO onfuser;
+
+
+
+-- Creation des vues de la liste des taxons personnalisée pour la structure: ICI la liste des taxons antillais / faune et flore
+CREATE VIEW taxonomie.taxons_flore AS(
+SELECT taxonomie.find_cdref(cd_nom) AS cd_ref, nom_vern, lb_nom
+FROM taxonomie.taxref
+WHERE (mar != 'A' OR gua != 'A' OR sm != 'A' OR sb != 'A') AND regne = 'Plantae'
+)
+
+CREATE VIEW taxonomie.taxons_faune AS(
+SELECT taxonomie.find_cdref(cd_nom) AS cd_ref, nom_vern, lb_nom
+FROM taxonomie.taxref
+WHERE (mar != 'A' OR gua != 'A' OR sm != 'A' OR sb != 'A') AND regne = 'Animalia'
+)
 
 
   -- Creation des vues pour les exports en shapefile

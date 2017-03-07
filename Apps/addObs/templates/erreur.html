@@ -1,0 +1,9 @@
+<div ng-message="required">Champ requis</div>
+
+<div ng-message="minlength">Valeur trop courte</div>
+
+<div ng-message="maxlength">Valeur trop longue</div>
+
+<div ng-message="email">E-mail non valide</div>
+
+<div ng-message="number">Caractères alphabétiques non autorisés</div>

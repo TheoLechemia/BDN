@@ -31,104 +31,134 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 
-
+<link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}" />
 
 </head>
 <body>
-
+ {% include 'navbar.html' %}
 <div ng-app="app" class="container-fluid">
-	<h3> Hello </h3>
+
         <div ng-controller="headerCtrl">
-
 		
-			<div class="col-sm-6"> 
-				<form>
-				<div class="form-group">
-				    <div class="btn-group">
-        				<label class="btn btn-success" ng-model="view" uib-btn-radio="'flore'" uncheckable>Flore</label>
-        				<label class="btn btn-success" ng-model="view" uib-btn-radio="'faune'" uncheckable>Faune</label>
-  					</div>
-  				</div>
+			<div class="col-sm-3"> 
+				<div class="panel panel-default">
+					<div class="section">
+						<form name="addObsForm" ng-submit="onSubmit(view, addObsForm)" novalidate>
+							<div class="form-group">
+							    <div class="btn-group">
+			        				<label class="btn btn-success" ng-model="view" uib-btn-radio="'flore'" uncheckable>Flore</label>
+			        				<label class="btn btn-success" ng-model="view" uib-btn-radio="'faune'" uncheckable>Faune</label>
+			  					</div>
+			  				</div>
+			  				<div class="form-group" ng-class="{'has-error' : addObsForm.observateur.$invalid }">
+								<input class="form-control" type="text" name="observateur" placeholder="Observateur: NOM PRENON - en majuscule" ng-model="globalForm.observateur" required>
+							</div>
 
-					<input class="form-control" type="text" name="" placeholder="Observateur: NOM PRENON - en majuscule" ng-model="form.observateur" >
 
-				<input id="input_lbnom" autocomplete="off" placeholder="Nom Latin " type="text" ng-model="form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.lb_nom for taxon in taxons   | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults"  >
-				
-				<div class="form-group">
-				 	<input id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in taxons  | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults"  >
+							<div class="form-group" >
+						 		<input name = "nom_vern" id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="myform.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.nom_vern for taxon in search_vern_name($viewValue, view)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="noResults" typeahead-loading="isLoading">
+						 	</div>
+						
+							<div class="form-group" ng-class="{'has-error' : addObsForm.lb_nom.$invalid }">
+							 	<input name="lb_nom" autocomplete="off" placeholder="Nom scientifique " type="text" ng-model="myform.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.lb_nom for taxon in search_scientist_name($viewValue, view)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="noResults" typeahead-loading="isLoading" required>
+							</div>
+<!-- 							<div class="form-group" ng-class="{'has-error' : addObsForm.date.$invalid }">
+								<div class="col-sm-12">
+								 	<input  id="firstDate" name="date" placeholder="Date de l'observation" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="myform.date"" is-open="isOpen" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" required="" ng-click="openDate()" />
+								 	 <span class="glyphicon glyphicon-calendar" ></span>
+								</div>
+							</div> -->
+							    <div class="form-group" ng-class="{'has-error' : addObsForm.date.$invalid }">
+					                <div class='input-group date' id='datetimepicker1' ng-class="{'has-error' : addObsForm.date.$invalid }">
+					                    <input  id="firstDate" name="date" placeholder="Date de l'observation" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="myform.date"" is-open="isOpen" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" required="" ng-click="openDate()" />
+					                    <span class="input-group-addon">
+					                        <span style="cursor: pointer;" class="glyphicon glyphicon-calendar" ng-click="openDate()"></span>
+					                    </span>
+					                </div>
+					            </div>
+
+
+							      
+							  
+							  <div class="form-group">
+								  <label> Coordonnées  </label>
+								  <input class="form-control" type="number" step="0.001" name="" placeholder="X" ng-model="markers.main.lng" ng-change="changeLng()" >
+								  <input class="form-control" type="number" step="0.001" placeholder="Y" ng-model="markers.main.lat" ng-change="changeLat()">
+							  </div>
+
+
+							  <!-- FLORE -->
+
+							  <div ng-if="view == 'flore' ">
+								  <div class="form-group" >
+								  	<input class="form-control" type="text" placeholder="Nombre de pied exact"  ng-model="formFlore.nb_pied_exact" >
+								  	<select class="form-control" type="text" placeholder="Abondance" ng-model="formFlore.abondance" ng-options="choice as choice for choice in abondance" >
+								  		<option value=""> - Abondance - </option>
+								  	</select>
+								  	
+								  	<select class="form-control" type="text" ng-model="formFlore.nb_pied_approx" ng-options="choice as choice for choice in nb_pied_approx">
+								  		<option value=""> - Nombre de pied approximattif -</option>
+								  	</select>
+								  </div>
+								  <div class="form-group">
+								  	<select class="form-control" type="text" placeholder="Stade de développement" ng-model="formFlore.stade_dev" ng-options="choice as choice for choice in stade_dev">
+								  		<option value=""> - Stade de développement - </option>
+								  	</select>
+								  </div>
+							  </div>
+
+
+							  <!-- FAUNE -->
+							  <div ng-if="view == 'faune'">
+								  <div class="form-group" >
+								  	<select class="form-control" type="text" placeholder="Type d'observation" ng-model="formFaune.type_obs" ng-options="choice as choice for choice in type_obs" >
+								  		<option value=""> - Type d'observation - </option>
+								  	</select>
+								  	<select class="form-control" type="text" placeholder="Traces" ng-model="formFaune.comportement" ng-options="choice as choice for choice in comportement">
+								  		<option value=""> - Comportement - </option> 
+								  	</select>
+								  	<select class="form-control" type="text" placeholder="Traces" ng-model="formFaune.trace" ng-options="choice as choice for choice in trace">
+								  		<option value=""> - Trace - </option> 
+								  	</select>
+								  	<select class="form-control" type="text" placeholder="Effectif" ng-model="formFaune.effectif" ng-options="choice as choice for choice in effectif" >
+								  		<option value=""> - Effectif - </option>
+								  	</select>
+
+								  	<input class="form-control" type="text" placeholder="Nombre d'individu" ng-model="formFaune.nb_individu" >
+								  	<input class="form-control" type="text" placeholder="Nombre de mâle adulte" ng-model="formFaune.nb_male" >
+								  	<input class="form-control" type="text" placeholder="Nombre de femelles adulte" ng-model="formFaune.nb_femelle" >
+								  	<input class="form-control" type="text" placeholder="Nombre de jeune" ng-model="formFaune.nb_jeune" >
+								  	<input class="form-control" type="text" placeholder="Nombre non identifié" ng-model="formFaune.nb_non_identifie" >
+
+								  	<input class="form-control" type="text" placeholder="Commentaire" ng-model="formFaune.commentaire"  >
+								  </div>
+							</div>
+
+							<input class="btn btn-success" type="submit">
+						</form>
+
+						<div class="row" style="height: 10px;"></div>
+						
+						
+					
+					</div>
 				</div>
-
-				<div class="form-group">
-				      <div>
-				        <p class="input-group">
-				          <input id="firstDate" placeholder="Date de l'observation" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="form.date"" is-open="isOpen" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" />
-				          <span class="input-group-btn">
-				            <button type="button" class="btn btn-default" ng-click="openDate()"><i class="glyphicon glyphicon-calendar"></i></button>
-				          </span>
-				        </p>
-				      </div>
-				  </div>
-				  <div class="form-group">
-					  <label> Coordonnées
-					  <input class="form-control" type="number" step="0.001" name="" placeholder="X" ng-model="markers.main.lng" ng-change="changeLng()" >
-					  <input class="form-control" type="number" step="0.001" placeholder="Y" ng-model="markers.main.lat" ng-change="changeLat()">
-				  </div>
-				  <!-- FLORE -->
-				  <div ng-if="view == 'flore' ">
-					  <div class="form-group" >
-					  	<input class="form-control" type="text" placeholder="Nombre de pied exact"  ng-model="formFlore.nb_pied_exact" >
-					  	<select class="form-control" type="text" placeholder="Abondance" ng-model="formFlore.abondance" ng-options="choice as choice for choice in abondance" >
-					  		<option value=""> - Abondance - </option>
-					  	</select>
-					  	
-					  	<select class="form-control" type="text" ng-model="formFlore.nb_pied_approx" ng-options="choice as choice for choice in nb_pied_approx">
-					  		<option value=""> - Nombre de pied approximattif -</option>
-					  	</select>
-					  </div>
-					  <div class="form-group">
-					  	<select class="form-control" type="text" placeholder="Stade de développement" ng-model="formFlore.stade_dev" ng-options="choice as choice for choice in stade_dev">
-					  		<option value=""> - Stade de développement - </option>
-					  	</select>
-					  </div>
-				  </div>
-				  <!-- FAUNE -->
-				  <div ng-if="view == 'faune'">
-					  <div class="form-group" >
-					  	<select class="form-control" type="text" placeholder="Type d'observation" ng-model="formFaune.type_obs" ng-options="choice as choice for choice in type_obs" >
-					  		<option value=""> - Type d'observation - </option>
-					  	</select>
-					  	<select class="form-control" type="text" placeholder="Traces" ng-model="formFaune.comportement" ng-options="choice as choice for choice in comportement">
-					  		<option value=""> - Comportement - </option> 
-					  	</select>
-					  	<select class="form-control" type="text" placeholder="Traces" ng-model="formFaune.trace" ng-options="choice as choice for choice in trace">
-					  		<option value=""> - Trace - </option> 
-					  	</select>
-					  	<select class="form-control" type="text" placeholder="Effectif" ng-model="formFaune.effectif" ng-options="choice as choice for choice in effectif" >
-					  		<option value=""> - Effectif - </option>
-					  	</select>
-
-					  	<input class="form-control" type="text" placeholder="Nombre d'individu" ng-model="formFaune.nb_individu" >
-					  	<input class="form-control" type="text" placeholder="Nombre de mâle adulte" ng-model="formFaune.nb_male" >
-					  	<input class="form-control" type="text" placeholder="Nombre de femelles adulte" ng-model="formFaune.nb_femelle" >
-					  	<input class="form-control" type="text" placeholder="Nombre de mâle adulte" ng-model="formFaune.nb_jeune" >
-
-					  	<input class="form-control" type="text" placeholder="Commentaire" ng-model="formFaune.commentaire"  >
-					  </div>
-				</div>
-				<button class="btn btn-success" ng-click="onSubmit(view)"> Valider </button>
-				</form>
-				{{formFaune}}
 				
 			</div>
 
-			<div class="col-sm-6">
-					<leaflet lf-center='center' width="640px" height="480px" markers="markers" geojson=geojsonMaille></leaflet>
+
+
+			<div class="col-sm-9">
+					<leaflet lf-center='center'  height="85vh" markers="markers" geojson=geojsonMaille></leaflet>
 
 					<button class="btn btn-success" ng-click="switchMaille()" ng-class="{'disabled': geojsonMaille.data != undefined }"> Mode maille</button>
 					 <button ng-click="switchPoint()" class="btn btn-success" ng-class="{'disabled': markers.main != undefined }"> Mode point</button>	
 			</div>
 		</div>
+
+
 </div> 
+
 
 
 
