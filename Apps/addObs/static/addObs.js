@@ -23,6 +23,7 @@ $scope.search_vern_name = function(expre, view){
 
 
 $scope.isLoading = true;
+$scope.showCoord = true;
 
 
 
@@ -30,9 +31,10 @@ $scope.isLoading = true;
 
 
    $scope.globalForm = {
-    coord : {'lat': null, 'lng':null },
-    loc_exact : true,
-    code_maille: ""
+    'coord' : {'lat': null, 'lng':null },
+    'loc_exact' : true,
+    'code_maille': null,
+    'commentaire': null,
    }
    var resetFormFlore = {
     'abondance' : null,
@@ -57,15 +59,6 @@ $scope.isLoading = true;
 
    $scope.view = 'flore'
 
-   $scope.changeViewFlore = function(){
-    $scope.view.flore = !$scope.view.flore;
-    $scope.view.faune = !$scope.view.faune;
-   }
-
-  $scope.changeViewFaune = function(){
-    $scope.view.flore = !$scope.view.flore;
-    $scope.view.faune = !$scope.view.faune;
-   }
 
 
 
@@ -128,10 +121,11 @@ $scope.isLoading = true;
                     'code_maille': "",
                     'observateur' : null,
                     'date': null,
-                    'taxon': null
+                    'taxon': null,
+                    'commentaire': null,
                    }
-            $scope.formFlore = resetFormFlore;
-            $scope.formFaune = resetFormFaune
+            $scope.formFlore = angular.copy({resetFormFlore},$scope.formFlore);
+            $scope.formFaune = angular.copy({resetFormFaune},$scope.formFlore);
           }
 
 
@@ -147,7 +141,6 @@ $scope.isLoading = true;
     })
     }
     
-
   }
 
 
@@ -219,7 +212,10 @@ $http.get(URL_APPLICATION+'addObs/loadMailles').success(function(data){
 
    selectedMaille = null;
    $scope.$on('leafletDirectiveGeoJson.click', function(e, args) {
-    $scope.globalForm.code_maille = args.model.properties.CODE_1KM;
+
+    $scope.globalForm.code_maille = args.model.properties.code_1km;
+    console.log(args.model.properties)
+    console.log($scope.globalForm);
       if (!selectedMaille){
           args.leafletObject.setStyle(selectedStyle)
           selectedMaille = args.leafletObject;
@@ -234,11 +230,13 @@ $http.get(URL_APPLICATION+'addObs/loadMailles').success(function(data){
   $scope.switchMaille = function(){
     $scope.globalForm.loc_exact = false;
     $scope.markers = {};
+    $scope.showCoord = false;
     console.log(saveGeojsonMaille);
     $scope.geojsonMaille = saveGeojsonMaille;
   }
 
   $scope.switchPoint = function(){
+    $scope.showCoord = true;
     $scope.globalForm.loc_exact = true;
     $scope.geojsonMaille = {};
     $scope.markers = saveMarkers;

@@ -61,9 +61,6 @@ def search_vern_name(table, expr):
 
 
 
-
-
-
 @addObs.route('/loadMailles', methods=['GET', 'POST'])
 def getMaille():
     db = getConnexion()
@@ -95,10 +92,9 @@ def submitObs(protocole):
         y = str(loc['lat'])
         point = 'POINT('+x+' '+y+')'
         code_maille = flask.request.json['general']['code_maille']
-        print "LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-        print point
 
         date = flask.request.json['general']['date']
+        commentaire = flask.request.json['general']['commentaire']
 
         #prend le centroide de maille pou intersecter avec la foret et l'insee
         centroide = None
@@ -142,13 +138,13 @@ def submitObs(protocole):
             stade_dev = flask.request.json['flore']['stade_dev']
             protocole = protocole.upper()
             if loc_exact:
-                sql = '''INSERT INTO bdn.flore (protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, geom_point, valide, loc_exact  )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s, %s )'''
-                params = [protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied_exact, stade_dev, point, 'false', loc_exact]
+                sql = '''INSERT INTO bdn.flore (protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, geom_point, valide, loc_exact, commentaire  )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s, %s, %s )'''
+                params = [protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied_exact, stade_dev, point, 'false', loc_exact, commentaire]
             else: 
-                sql = '''INSERT INTO bdn.flore (protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, valide, loc_exact, code_maille  )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )'''
-                params = [protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied_exact, stade_dev, 'false', loc_exact, code_maille]                
+                sql = '''INSERT INTO bdn.flore (protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, valide, loc_exact, code_maille, commentaire  )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )'''
+                params = [protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied_exact, stade_dev, 'false', loc_exact, code_maille, commentaire]                
             db.cur.execute(sql, params)
             db.conn.commit()
 
@@ -161,11 +157,19 @@ def submitObs(protocole):
             nb_femelle = flask.request.json['faune']['nb_femelle']
             nb_jeune = flask.request.json['faune']['nb_jeune']
             nb_non_identife = flask.request.json['faune']['nb_non_identifie']
+            trace = flask.request.json['faune']['trace']
             protocole = protocole.upper()
-            sql = '''INSERT INTO bdn.faune (protocole, observateur, date, cd_nom, insee, ccod_frt, type_obs, nb_individu_approx, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, geom_point, valide )
-                   VALUES (%s, %s, %s, %s, %s,%s,%s, %s, %s, %s, %s, %s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s )'''
-            params = [protocole, observateur, date, cd_nom, insee, ccod_frt, type_obs, nb_individu, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, point, 'false']
-            cur.execute(sql, params)
-            conn.commit()
+            if loc_exact:
+
+                sql = '''INSERT INTO bdn.faune (protocole, observateur, date, cd_nom, insee, ccod_frt, type_obs, nb_individu_approx, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, geom_point, valide, loc_exact, commentaire)
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s, %s, %s )'''
+                params = [protocole, observateur, date, cd_nom, insee, ccod_frt, type_obs, nb_individu, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, point, 'false', loc_exact, commentaire]
+            else:
+                sql = '''INSERT INTO bdn.faune (protocole, observateur, date, cd_nom, insee, ccod_frt, type_obs, nb_individu_approx, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, valide, loc_exact, code_maille, commentaire )
+                   VALUES (%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )'''
+                params = [protocole, observateur, date, cd_nom, insee, ccod_frt, type_obs, nb_individu, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, 'false', loc_exact, code_maille, commentaire]
+            print params
+            db.cur.execute(sql, params)
+            db.conn.commit()
 
     return Response(flask.json.dumps('success'), mimetype='application/json')

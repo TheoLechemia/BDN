@@ -78,11 +78,14 @@
 
 							      
 							  
-							  <div class="form-group">
+							  <div ng-show="showCoord" class="form-group">
 								  <label> Coordonnées  </label>
 								  <input class="form-control" type="number" step="0.001" name="" placeholder="X" ng-model="markers.main.lng" ng-change="changeLng()" >
 								  <input class="form-control" type="number" step="0.001" placeholder="Y" ng-model="markers.main.lat" ng-change="changeLat()">
 							  </div>
+
+							  <label> Champs facultatifs  </label>
+							  <input class="form-control" type="text" placeholder="Commentaire" ng-model="globalForm.commentaire"  >
 
 
 							  <!-- FLORE -->
@@ -128,7 +131,7 @@
 								  	<input class="form-control" type="text" placeholder="Nombre de jeune" ng-model="formFaune.nb_jeune" >
 								  	<input class="form-control" type="text" placeholder="Nombre non identifié" ng-model="formFaune.nb_non_identifie" >
 
-								  	<input class="form-control" type="text" placeholder="Commentaire" ng-model="formFaune.commentaire"  >
+								  	
 								  </div>
 							</div>
 
@@ -137,9 +140,7 @@
 						</form>
 
 						<div class="row" style="height: 10px;"></div>
-						
-						
-					
+											
 					</div>
 				</div>
 				
@@ -153,8 +154,6 @@
 					<button class="btn btn-success" ng-click="switchMaille()" ng-class="{'disabled': geojsonMaille.data != undefined }"> Mode maille</button>
 					 <button ng-click="switchPoint()" class="btn btn-success" ng-class="{'disabled': markers.main != undefined }"> Mode point</button>	
 			</div>
-
-			  <div ng-message="required">Ce champs est requis </div>
 
   </div>
 		</div>
