@@ -68,6 +68,7 @@ def simpleGeoJson(tab, geom, properties):
         for p in properties:
             myproperties[p] = r[p]
         myGeoJson['features'].append({"type": "Feature", "properties": myproperties, "geometry": ast.literal_eval(myGeom)})
+    return myGeoJson
 
 
 

@@ -43,6 +43,8 @@ $(document).ready( function () {
   /*LEAFLET*/
 
  var selectLayer;
+
+ console.log(observations)
  
  function generateLayerFromGeojson(observations){
  	currentGeojsonLayer = L.geoJson(observations, {

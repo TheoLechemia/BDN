@@ -11,6 +11,7 @@ from datetime import datetime
 from ..initApp import app
 from werkzeug.exceptions import HTTPException, NotFound 
 import geojson2shp
+from ..auth import check_auth
 
 #synthese = flask.Blueprint('synthese', __name__)
 synthese = flask.Blueprint('synthese', __name__, static_url_path="/synthese", static_folder="static", template_folder="templates")
@@ -43,6 +44,7 @@ def nocache(view):
 
 
 @synthese.route("/")
+@check_auth(1)
 def synthese_index():
     return flask.render_template('indexSynthese.html', URL_APPLICATION=config.URL_APPLICATION, page_title=u"Interface de visualisation des données")
 

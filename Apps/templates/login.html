@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
 	<title></title>
@@ -9,5 +9,75 @@
 	<input placeholder="Mot de passe" type="password" name="password">
 	<input type="submit" name="">
 </form>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>BDN-WEB connexion</title>
+  <style type="text/css">
+  	.inner-addon { 
+    position: relative; 
+}
+
+/* style icon */
+.inner-addon .fa {
+  position: absolute;
+  padding: 10px;
+  pointer-events: none;
+}
+
+/* align icon */
+.left-addon .fa  { left:  0px;}
+.right-addon .fa { right: 0px;}
+
+/* add padding  */
+.left-addon input  { padding-left:  30px; }
+.right-addon input { padding-right: 30px; }
+
+  </style>
+  
+  
+  <link rel="stylesheet" href="{{url_for('static', filename= 'font-awesome/css/font-awesome.min.css')}}">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <link rel="stylesheet" href= " {{url_for('static', filename='css/main.css')}} " >
+
+  
+</head>
+
+<body>
+<div class="wrapper" style="width:25%; margin: 5% 0px 0px 35%; text-align: center;">
+	<h3> BDN-WEB </h3>
+  <div class="panel" style="padding: 20px">
+  <form action="" method="post">
+     <div class="form-group inner-addon right-addon">
+    	<i class="fa fa-user"></i>
+       <input type="text" class="form-control" name="username" placeholder="Identifiant">
+     </div>
+     <div class="form-group inner-addon right-addon">
+     	<i class="fa fa-lock"></i>
+       <input type="password" name="password" class="form-control" placeholder="Mot de passe">
+     </div>
+
+     <input type="submit" class="btn btn-success" value="Connexion">
+  </form>
+     
+    
+   </div>
+   {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="alert alert-danger">
+        <strong> {{messages[0]}}</strong> 
+        </div>
+    {% endif %}
+  {% endwith %}
+</div>
+
+    <script src="js/index.js"></script>
+
 </body>
 </html>

@@ -10,7 +10,7 @@
 
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<title> BDN-WEB</title>
-
+ <link rel="stylesheet" href= " {{url_for('static', filename='css/main.css')}} " >
 	<style type="text/css">
 
   body{
@@ -27,27 +27,34 @@
     transition: all 0.3s;
     box-shadow: 0 1px 2px #c8d1d3;
   }
-  .panel-default:hover  {
+    .panel{
+   /* box-shadow: 1px 1px 3px rgb(136, 136, 136);*/
+    transition: all 0.3s;
+    box-shadow: 0 1px 2px #c8d1d3;
+  }
+  .panel:hover  {
     
     box-shadow: 0px 1px 5px rgb(136, 136, 136);
     cursor:pointer;
   }
 
+  .panel:hover .fa-pencil-square-o{
+    color:#d1a336;
+  }
 
-
-  .panel-default:hover i {
+  .panel:hover i {
     transition: all 0.3s;
   }
 
   .panel-default:hover .fa-cloud-upload{
-    color:#2172ce;
+    color:#d1a336;
   }
 
-  .panel-default:hover .fa-check-circle-o {
+  .panel:hover .fa-check-circle-o {
     color:green;
   }
-  .panel-default:hover .fa-search {
-    color:#843a15;
+  .panel:hover .fa-search {
+    color:#d73727;
   }
     
 		
@@ -92,8 +99,8 @@
 
 
       <ul class="nav navbar-nav navbar-right">
+        <li> <a><b>Bienvenue: </b> {{session.user}} </a> </li> 
         <li><a href="{{url_for('main.deconnexion')}}">Deconnexion</a></li>
-        
       </ul>
     </div>
   </div>
@@ -101,28 +108,36 @@
 <div class="row" style="height: 50px;"> </div>
 
 <div class="row">
-              <div style="width: 70%; margin-left:22%">
+              <div style="width: 70%; margin-left:15%">
+                <div style="width: 100%">
+                  <div class="col-lg-3 panel " style="text-align: center; height: 211px;">  
+                      <a href="{{url_for('addObs.addObs_index')}}"  > 
+                        <i class="fa fa-pencil-square-o " style="font-size: 150px;"> </i>
+                      </a>
+                      <h4>Saisir des données</h4>
+                    </div><!-- /.col-lg-4 -->
 
-                <div class="col-lg-3 panel panel-default" style="text-align: center; height: 211px;">  
-                  <a href="{{url_for('importCSV.indexImport')}}"  > 
-                    <i class="fa fa-cloud-upload " style="font-size: 150px;"> </i>
-                  </a>
-                  <h4>Import de données</h4>
-                </div><!-- /.col-lg-4 -->
+                    <div class="col-lg-3 panel " style="text-align: center; height: 211px;">  
+                      <a href="{{url_for('importCSV.indexImport')}}"  > 
+                        <i class="fa fa-cloud-upload " style="font-size: 150px;"> </i>
+                      </a>
+                      <h4>Importer des données</h4>
+                    </div><!-- /.col-lg-4 -->
 
-                <div class="col-lg-3 panel panel-default" style="text-align: center;">
-                  <a  href="{{url_for('validation.indexValidation')}}" >
-                    <i class="fa fa-check-circle-o"  style="font-size: 150px;"> </i>
-                  </a>
-                  <h4>Interface de validation de données naturalistes</h4>
-                </div><!-- /.col-lg-4 -->
-                <div class="col-lg-3 panel panel-default" style="text-align: center; ">
-                  <a  href="{{url_for('synthese.synthese_index')}}">
-                   <i class="fa fa-search "  style="font-size: 150px;"> </i> 
-                  </a>
-                  <h4>Synthese des observations faune - flore </h4>
-                </div><!-- /.col-lg-4 -->
-              </div>
+                    <div class="col-lg-3 panel" style="text-align: center;">
+                      <a  href="{{url_for('validation.indexValidation')}}" >
+                        <i class="fa fa-check-circle-o"  style="font-size: 150px;"> </i>
+                      </a>
+                      <h4>Interface de validation de données naturalistes</h4>
+                    </div><!-- /.col-lg-4 -->
+                    <div class="col-lg-3 panel " style="text-align: center; ">
+                      <a  href="{{url_for('synthese.synthese_index')}}">
+                       <i class="fa fa-search "  style="font-size: 150px;"> </i> 
+                      </a>
+                      <h4>Synthese des observations faune - flore </h4>
+                    </div><!-- /.col-lg-4 -->
+                </div>
+            </div>
 </div><!-- /.row -->
      
 <div class="row" style="height: 80px;"> </div>
@@ -151,6 +166,14 @@
             </div>
           </div>
       </div>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+      <div class="alert alert-danger" style="width: 54.5%; margin-left:21.5%; text-align: center;"">
+      <strong> Vous n'avez pas les droits suffisants pour acceder à ce module</strong> 
+      </div>
+  {% endif %}
+{% endwith %}
+
 
 
 </body>

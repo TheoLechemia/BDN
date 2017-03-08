@@ -8,6 +8,7 @@ from werkzeug.wrappers import Response
 import os
 from ..initApp import app
 import sys
+from ..auth import check_auth
 
 importCSV = Blueprint('importCSV', __name__, static_url_path="/importCSV", static_folder="static", template_folder="templates")
 
@@ -31,6 +32,7 @@ def allowed_file(filename):
 
 
 @importCSV.route('/', methods=['GET', 'POST'])
+@check_auth(2)
 def indexImport():
     if request.method == 'GET':
         return render_template('importCSV.html', page_title=u"Import des données naturalistes ")

@@ -11,6 +11,9 @@ CREATE TABLE bdn.synthese
   id_kfey integer,
   geom_point geometry(Point,32620),
   ccod_frt character varying(50),
+  code_maille character varying(20),
+  loc_exact boolean,
+  id_structure integer,
   CONSTRAINT synthese_pkey PRIMARY KEY (id_synthese),
   CONSTRAINT cd_nom FOREIGN KEY (cd_nom)
       REFERENCES taxonomie.taxref (cd_nom) MATCH SIMPLE
@@ -42,24 +45,21 @@ CREATE TABLE bdn.faune
   commentaire character varying(150),
   valide boolean,
   ccod_frt character varying(50),
+  loc_exact boolean,
+  code_maille character varying(20),
+  id_structure integer,
   CONSTRAINT faune_pkey PRIMARY KEY (id_obs),
-  CONSTRAINT id_synthese FOREIGN KEY (id_synthese)
-      REFERENCES bdn.synthese (id_synthese) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT cd_nom FOREIGN KEY (cd_nom)
       REFERENCES taxonomie.taxref (cd_nom) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT fa_id_synthese UNIQUE (id_synthese)
-)
-WITH (
-  OIDS=FALSE
 );
 
 
 ALTER TABLE bdn.faune
   OWNER TO onfuser;
 
-  CREATE TABLE bdn.flore
+CREATE TABLE bdn.flore
 (
   id_obs serial NOT NULL,
   id_synthese character varying(15),
@@ -77,17 +77,17 @@ ALTER TABLE bdn.faune
   commentaire character varying(150),
   valide boolean,
   ccod_frt character varying(50),
+  loc_exact boolean,
+  code_maille character varying(20),
+  id_structure integer,
   CONSTRAINT flore_pkey PRIMARY KEY (id_obs),
   CONSTRAINT cd_nom FOREIGN KEY (cd_nom)
       REFERENCES taxonomie.taxref (cd_nom) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE SET NULL,
-  CONSTRAINT id_synthese FOREIGN KEY (id_synthese)
-      REFERENCES bdn.synthese (id_synthese) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE CASCADE,
   CONSTRAINT fl_id_synthese UNIQUE (id_synthese)
 );
-ALTER TABLE bdn.flore
-  OWNER TO onfuser;
+  ALTER TABLE bdn.flore
+    OWNER TO onfuser;
 
 
   -- Trigger
@@ -123,8 +123,8 @@ AFTER INSERT ON bdn.faune
 
 CREATE OR REPLACE FUNCTION bdn.tr_protocole_to_synthese() RETURNS TRIGGER AS $tr_protocole_to_synthese$
     BEGIN
-    INSERT INTO bdn.synthese (id_synthese, protocole, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, loc_exact, code_maille) 
-    VALUES( concat_ws('', LEFT(new.protocole,2)::text, new.id_obs::text), new.protocole, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.loc_exact, new.code_maille);
+    INSERT INTO bdn.synthese (id_synthese, protocole, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, loc_exact, code_maille, id_structure) 
+    VALUES( concat_ws('', LEFT(new.protocole,2)::text, new.id_obs::text), new.protocole, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.loc_exact, new.code_maille, new.id_structure);
     RETURN NEW;
   
     END;
@@ -275,3 +275,20 @@ CREATE OR REPLACE VIEW bdn.faune_point AS
      JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text AND f.valide = true
      JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom;
 
+
+
+-- schema utilisateur
+CREATE SCHEMA utilisateur;
+
+CREATE TABLE utilisateur.login
+(
+  id serial NOT NULL,
+  nom character varying,
+  mpd character varying,
+  auth_role integer,
+  CONSTRAINT primary_key PRIMARY KEY (id)
+)
+
+CREATE TABLE utilisateur.bib_structure AS
+id_structure integer,
+nom_structure character varying

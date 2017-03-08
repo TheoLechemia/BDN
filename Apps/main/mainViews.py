@@ -3,55 +3,19 @@ from .. import config
 from ..database import *
 import psycopg2
 from .. import utils
+from ..auth import check_auth, User, loadCurrentUser
 
 
 
 main = Blueprint('main', __name__, static_url_path="/main", static_folder="static", template_folder="templates")
 
 
-# from ..initApp import login_manager
-from .. import config
-from .. import database
+
 from flask.ext.login import UserMixin, login_required, login_user, logout_user
 from functools import wraps
 
 
 
-
-class User(UserMixin):
-    def __init__(self,id, username, password, auth_level):
-        self.id = id
-        self.username = username
-        self.password = password
-        self.auth_level = auth_level
-    def get_auth_level(self):
-        return self.auth_level
-
-    def get_id(self):
-        return unicode(self.id)  # python 2
-
-def loadCurrentUser(name):
-    db = getConnexion()
-    sql = 'SELECT * from utilisateur.login WHERE nom = %s'
-    param = [name]
-    db.cur.execute(sql, param)
-    u = db.cur.fetchone()
-    db.closeAll()
-    return User(u[0], u[1],u[2],u[3])
-
-
-def check_auth(level):
-    def _check_auth(func):
-        @wraps(func)
-        def __check_auth(*args, **kwargs):
-            if 'user' in session:
-                if session['auth_level']>level:
-                    return func(*args, **kwargs)
-                #else flasher qu'on a pas suffisammen de droit
-            else:
-                return redirect(url_for("main.login"))
-        return __check_auth
-    return _check_auth
 
 
 
@@ -61,10 +25,15 @@ def login():
         user_data = request.form
         name = user_data['username']
         inputPassword = user_data['password']
-        currentUser = loadCurrentUser(name)
+        try:
+            currentUser = loadCurrentUser(name)
+        except:
+            flash("Identifiant ou mot de passe incorrect")
+            return redirect(url_for("main.login")) 
         session['user'] = currentUser.username
         session['password'] = currentUser.password
-        session['auth_level']= currentUser.auth_level
+        session['auth_level'] = currentUser.auth_level
+        session['id_structure'] = currentUser.id_structure
         session.permanent = True
         #checke si le nom existe bien
         if currentUser.password == inputPassword:
