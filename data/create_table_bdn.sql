@@ -152,6 +152,64 @@ ALTER TABLE bdn.v_search_taxons
 
 
 
+-- Taxonomie
+
+--habitat du taxref
+CREATE TABLE taxonomie.bib_habitat (
+id integer,
+type character varying
+)
+
+INSERT INTO taxonomie.bib_habitat 
+VALUES(1, 'Marin'), (2, 'Eau douce'), (3, 'Terrestre'), (4,'Marin et eau douce' ), (5, 'Marin et Terrestre' ) (6,'Eau saumâtre'), (7, 'Continental (terrestre et/ou eau douce)', (8,'Continental (terrestre et eau douce)' )
+
+--liste rouge
+CREATE TABLE taxonomie.liste_rouge(
+ordre integer,
+cd_ref integer,
+cd_nom integer ,
+nom_cite character varying,
+auteur character varying,
+nom_communs character varying,
+population character varying,
+rang character varying,
+famille character varying,
+endemisme character varying,
+commentaire character varying,
+statut character varying,
+criteres character varying,
+tendance character varying,
+version integer,
+statut_i character varying,
+statut_eu character varying,
+anneeval character varying,
+nom_liste character varying,
+type_liste character varying,
+groupe_grand_public character varying
+)
+
+COPY taxonomie.liste_rouge
+FROM E'/tmp/Liste_rouge_Guadeloupe_ok.txt'
+WITH (format 'csv', header 'true', delimiter E';')
+
+--espece protege taxref
+CREATE TABLE taxonomie.protection (
+cd_nom integer,
+cd_protection character varying,
+nom_cite character varying,
+syn_cite character varying,
+nom_francais_cite character varying,
+precisions character varying,
+cd_nom_cite integer
+)
+
+COPY taxonomie.protection
+FROM E'/tmp/PROTECTION_ESPECES_10.txt'
+WITH (format 'csv', header 'true', delimiter E';')
+
+
+
+
 -- Creation des vues de la liste des taxons personnalisée pour la structure: ICI la liste des taxons antillais / faune et flore
 CREATE VIEW taxonomie.taxons_flore AS(
 SELECT taxonomie.find_cdref(cd_nom) AS cd_ref, nom_vern, lb_nom
@@ -286,9 +344,26 @@ CREATE TABLE utilisateur.login
   nom character varying,
   mpd character varying,
   auth_role integer,
+  id_structure integer,
   CONSTRAINT primary_key PRIMARY KEY (id)
-)
+);
+
+INSERT INTO utilisateur.login
+VALUES(1, 'admin', 'admin', 3, 1 )
+
+
 
 CREATE TABLE utilisateur.bib_structure AS
 id_structure integer,
-nom_structure character varying
+nom_structure character varying;
+
+INSERT INTO utilisateur.bib_structure
+VALUES(1, 'ONF'), (2, 'Réserves');
+
+CREATE TABLE utilisateur.bib_role(
+auth_role integer,
+descritption character varying
+);
+
+INSERT INTO utilisateur.bib_role
+VALUES(1, 'lecteur'), (2, 'contributeur'), (3, 'administrateur');

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html style = "background: url(%%url_for('static', filename='img/foret.jpg')%%) no-repeat center center fixed; -webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover; background-size: cover;">
+<html style = "background: url({{url_for('static', filename='img/foret.jpg')}}) no-repeat center center fixed; -webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover; background-size: cover;">
  <meta charset="UTF-8"> 
 <head>
 	<title> Import Partenaire</title>
@@ -12,7 +12,12 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
   <!-- MY CSS -->
-  <link rel="stylesheet" href= " %%url_for('static', filename='css/main.css')%% " >
+  <link rel="stylesheet" href= " {{url_for('static', filename='css/main.css')}} " >
+  <style type="text/css">
+  	body{
+  		min-height: 0px;
+  	}
+  </style>
 
 </head>
 <body >
@@ -26,7 +31,7 @@
 	</div>
 
 
-	<div class="col-md-2 col-md-offset-4 panel panel-default" style="text-align: center; top: 30%; position: absolute; left:5%;">
+	<div class="col-md-2 col-md-offset-4 panel panel-default" style="text-align: center; margin-top: 15%; margin-left: 40%;">
 		<form action="" enctype=multipart/form-data method='POST'>
 			<h3> Selectionner votre fichier CSV </h3> <br>
 			<div class="form-group" >
@@ -41,7 +46,7 @@
 	        {% if msgs %}
 	          {%- for msg in msgs %}
 	            <div class="alert alert-info">
-	              %% msg %%
+	              {{msg}} 
 	            </div>
 	          {% endfor -%}
 	        {% endif %}

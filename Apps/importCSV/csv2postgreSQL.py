@@ -2,6 +2,7 @@
 import psycopg2
 import csv
 from datetime import datetime
+from flask import session
 
 
 from .. import config
@@ -180,6 +181,11 @@ def csv2PG(file):
                 if res != None:
                     ccod_frt = res[0]
 
+                #recupere l'id_structure depuis la session
+                id_structure = session['id_structure']
+
+
+
 
                 ###FLORE###
                 if protocole == 'FLORE':
@@ -187,9 +193,9 @@ def csv2PG(file):
                     nb_pied = getSpec_without_dict('spec_2', row)
                     nb_pied_approx = getSpec('spec_3', protocole, row)
                     stade_dev = getSpec('spec_4', protocole, row)
-                    sql = '''INSERT INTO bdn.flore (protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, geom_point, valide  )
-                           VALUES (%s, %s, %s, %s, %s,%s,%s,%s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s )'''
-                    params = [protocole, observateur, dateObject, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, point, valide]
+                    sql = '''INSERT INTO bdn.flore (protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, geom_point, valide, id_structure, loc_exact)
+                           VALUES (%s, %s, %s, %s, %s,%s,%s,%s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s, %s, %s )'''
+                    params = [protocole, observateur, dateObject, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, point, valide, id_structure, True]
                     cur.execute(sql, params)
                     conn.commit()
 
@@ -204,9 +210,9 @@ def csv2PG(file):
                     nb_femelle = getSpec_without_dict('spec_6', row)
                     nb_jeune = getSpec_without_dict('spec_7', row)
                     trace = getSpec('spec_8', protocole, row)
-                    sql = '''INSERT INTO bdn.faune (protocole, observateur, date, cd_nom, insee, ccod_frt, type_obs, nb_individu_approx, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, geom_point, valide )
-                           VALUES (%s, %s, %s, %s, %s,%s,%s, %s, %s, %s, %s, %s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s )'''
-                    params = [protocole, observateur, dateObject, cd_nom, insee, ccod_frt, type_obs, nb_individu_approx, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, point, valide]
+                    sql = '''INSERT INTO bdn.faune (protocole, observateur, date, cd_nom, insee, ccod_frt, type_obs, nb_individu_approx, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, geom_point, valide, id_structure, loc_exact )
+                           VALUES (%s, %s, %s, %s, %s,%s,%s, %s, %s, %s, %s, %s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s, %s, %s )'''
+                    params = [protocole, observateur, dateObject, cd_nom, insee, ccod_frt, type_obs, nb_individu_approx, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, point, valide, id_structure, True]
                     cur.execute(sql, params)
                     conn.commit()
 
