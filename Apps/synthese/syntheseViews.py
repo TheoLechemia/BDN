@@ -136,7 +136,7 @@ def loadCommunes():
     db.closeAll()
     return Response(flask.json.dumps(res), mimetype='application/json')
 
-#charge la liste des typologie: group inpn, habitat, liste_rouge
+#charge la liste des typologie: group inpn, habitat, liste_rouge, observateur et structure
 @synthese.route('/loadTypologgie', methods = ['GET'])
 def loadTypologgie():
     db = getConnexion()
@@ -146,9 +146,14 @@ def loadTypologgie():
     habitat = utils.sqltoDict(sql, db.cur)
     sql = "SELECT * FROM taxonomie.bib_liste_rouge"
     listeRouge = utils.sqltoDict(sql, db.cur)
-
+    sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT observateur FROM bdn.synthese ORDER BY observateur DESC)r"
+    db.cur.execute(sql)
+    observateurs = db.cur.fetchone()[0]
+    sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT nom_structure FROM utilisateur.bib_structure ORDER BY nom_structure DESC)r"
+    db.cur.execute(sql)
+    structures = db.cur.fetchone()[0]
     db.closeAll()
-    return Response(flask.json.dumps({'group2_inpn':group2_inpn, 'habitat': habitat, 'listeRouge':listeRouge}), mimetype='application/json')
+    return Response(flask.json.dumps({'group2_inpn':group2_inpn, 'habitat': habitat, 'listeRouge':listeRouge, 'observateurs': observateurs, 'structures': structures}), mimetype='application/json')
 
     
 
