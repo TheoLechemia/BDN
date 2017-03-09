@@ -149,7 +149,7 @@ def loadTypologgie():
     sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT observateur FROM bdn.synthese ORDER BY observateur DESC)r"
     db.cur.execute(sql)
     observateurs = db.cur.fetchone()[0]
-    sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT nom_structure FROM utilisateur.bib_structure ORDER BY nom_structure DESC)r"
+    sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT nom_structure, id_structure FROM utilisateur.bib_structure ORDER BY nom_structure DESC)r"
     db.cur.execute(sql)
     structures = db.cur.fetchone()[0]
     db.closeAll()

@@ -174,11 +174,10 @@
 		<div class="section">
 			<div class="section-title"> Qui ?</div>
 			<input  autocomplete="off" placeholder="Observateur " type="text" ng-model="$ctrl.form.observateur" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="r as r.observateur for r in $ctrl.typologie.observateurs  | limitTo:8" class="form-control"  typeahead-no-results="noResults" >
-			<select class="form-control" ng-model="$ctrl.form.lr" ng-options="r.nom_structure for r in $ctrl.typologie.structures">
+			<select class="form-control" ng-model="$ctrl.form.structure" ng-options="r.nom_structure for r in $ctrl.typologie.structures">
 				<option value=""> - Structure - </option> 
 			</select>
 		
-
 
 	      <div class="form-inline form-group">
 		  	 <button type="button" class="btn btn-danger formbutton " uib-tooltip="Raffraichir la sélection" ng-click="$ctrl.onRefreshEvent()"> <span class="glyphicon glyphicon-remove"> </span>  </button>

@@ -137,11 +137,13 @@ def getFormParameters():
     habitat = flask.request.json['habitat']['id']
     protection = flask.request.json['protection']
     lr = flask.request.json['lr']['id_statut']
+    structure = flask.request.json['structure']['id_structure']
+    observateur = flask.request.json['observateur']['observateur']
 
 
 
     return {'listTaxons':listTaxons, 'firstDate':firstDate, 'lastDate':lastDate, 'commune':commune, 'foret':foret, 'regne':regne, 'phylum': phylum, 'classe':classe, 'ordre':ordre, 'famille': famille, 'group2_inpn':group2_inpn,
-            'habitat': habitat, 'protection': protection, 'lr': lr }
+            'habitat': habitat, 'protection': protection, 'lr': lr, 'structure': structure, 'observateur':observateur }
 
 def buildSQL():
     sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact
@@ -193,6 +195,16 @@ def buildSQL():
         sql = askFirstParame(sql,firstParam)
         sql += 's.cd_nom IN (SELECT cd_nom from taxonomie.liste_rouge WHERE statut = %s)'
         params.append(formParameters['lr'])
+    if formParameters['structure']:
+        firstParam = False
+        sql = askFirstParame(sql,firstParam)
+        sql += 's.id_structure = %s'
+        params.append(formParameters['structure'])
+    if formParameters['observateur']:
+        firstParam = False
+        sql = askFirstParame(sql,firstParam)
+        sql += 's.observateur = %s'
+        params.append(formParameters['observateur'])
 
 
     #recherche geographique
