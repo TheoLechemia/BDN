@@ -90,13 +90,14 @@ def sqltoDictWithParams(sql, params, cur):
     return res
 
 
-def zipIt(dirPath):
+def zipIt(dirPath, maille):
     dirPath=dirPath.split('.')[0]
     zf = zipfile.ZipFile(dirPath+'.zip', mode='w')
-    zf.write(dirPath+"_maille.dbf", os.path.basename(dirPath+"_maille.dbf") )
-    zf.write(dirPath+"_maille.prj", os.path.basename(dirPath+"_maille.prj"))
-    zf.write(dirPath+"_maille.shx", os.path.basename(dirPath+"_maille.shx"))
-    zf.write(dirPath+"_maille.shp", os.path.basename(dirPath+"_maille.shp"))
+    if maille:
+        zf.write(dirPath+"_maille.dbf", os.path.basename(dirPath+"_maille.dbf") )
+        zf.write(dirPath+"_maille.prj", os.path.basename(dirPath+"_maille.prj"))
+        zf.write(dirPath+"_maille.shx", os.path.basename(dirPath+"_maille.shx"))
+        zf.write(dirPath+"_maille.shp", os.path.basename(dirPath+"_maille.shp"))
 
     zf.write(dirPath+"_point.dbf", os.path.basename(dirPath+"_point.dbf") )
     zf.write(dirPath+"_point.prj", os.path.basename(dirPath+"_point.prj"))

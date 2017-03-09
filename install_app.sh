@@ -32,6 +32,10 @@ sudo apt-get install -y nodejs npm
 sudo npm install webpack -g
 sudo ln -s /usr/bin/nodejs /usr/bin/node
 
+#creation du repertoire pour les uploads
+mkdir ./Apps/static/uploads
+chmod 7777 ./Apps/static/uploads/
+
 
 #install python packages
 

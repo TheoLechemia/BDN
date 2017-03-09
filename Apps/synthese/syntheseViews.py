@@ -20,7 +20,7 @@ synthese = flask.Blueprint('synthese', __name__, static_url_path="/synthese", st
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, os.pardir))
-UPLOAD_FOLDER = PARENT_DIR+'\\static\\uploads'
+UPLOAD_FOLDER = PARENT_DIR+'/static/uploads'
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = 'Martine50='  # Change this!
@@ -192,15 +192,17 @@ def export():
 
         time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         filename = "Export_"+time
-        completePath = UPLOAD_FOLDER+"\\"+filename
+        completePath = UPLOAD_FOLDER+"/"+filename
         
         #construction des shapes
+        maille = None
         geojson2shp.export(completePath+"_point.shp", geojsonPoint, 'point')
         if len(geojsonMaille['features'])> 0:
+            maille = True
             geojson2shp.export(completePath+"_maille.shp", geojsonMaille, 'polygon')
 
         #on zipe le tout
-        utils.zipIt(completePath)
+        utils.zipIt(completePath, maille)
         #on retourne le nom du dossier creer, dans la reponse du poste
         return Response(flask.json.dumps(filename), mimetype='application/json')
     return Response(flask.json.dumps("from_get"), mimetype='application/json')
