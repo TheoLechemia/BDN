@@ -1,12 +1,11 @@
 from functools import wraps
-from flask.ext.login import UserMixin
 from flask import session
 from database import *
 from flask import redirect, url_for, request, flash
 
 
 
-class User(UserMixin):
+class User():
     def __init__(self,id, username, password, auth_level, id_structure):
         self.id = id
         self.username = username

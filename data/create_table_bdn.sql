@@ -158,10 +158,25 @@ ALTER TABLE bdn.v_search_taxons
 CREATE TABLE taxonomie.bib_habitat (
 id integer,
 type character varying
-)
+);
+
+CREATE OR REPLACE FUNCTION taxonomie.find_cdref(id integer)
+  RETURNS integer AS
+$BODY$
+--fonction permettant de renvoyer le cd_ref d'un taxon à partir de son cd_nom
+--
+--Gil DELUERMOZ septembre 2011
+
+  DECLARE ref integer;
+  BEGIN
+  SELECT INTO ref cd_ref FROM taxonomie.taxref WHERE cd_nom = id;
+  return ref;
+  END;
+$BODY$
+  LANGUAGE plpgsql IMMUTABLE;
 
 INSERT INTO taxonomie.bib_habitat 
-VALUES(1, 'Marin'), (2, 'Eau douce'), (3, 'Terrestre'), (4,'Marin et eau douce' ), (5, 'Marin et Terrestre' ) (6,'Eau saumâtre'), (7, 'Continental (terrestre et/ou eau douce)', (8,'Continental (terrestre et eau douce)' )
+VALUES (1, 'Marin'), (2, 'Eau douce'), (3, 'Terrestre'), (4,'Marin et eau douce' ), (5, 'Marin et Terrestre' ), (6,'Eau saumâtre'), (7, 'Continental (terrestre et/ou eau douce)'), (8,'Continental (terrestre et eau douce)' );
 
 --liste rouge
 CREATE TABLE taxonomie.liste_rouge(
@@ -186,11 +201,14 @@ anneeval character varying,
 nom_liste character varying,
 type_liste character varying,
 groupe_grand_public character varying
-)
+);
+
+ALTER TABLE taxonomie.liste_rouge
+  OWNER TO onfuser;
 
 COPY taxonomie.liste_rouge
-FROM E'/tmp/Liste_rouge_Guadeloupe_ok.txt'
-WITH (format 'csv', header 'true', delimiter E';')
+FROM E'/home/ubuntu/BDN/data/Liste_rouge_Guadeloupe.txt'
+WITH (format 'csv', header 'true', delimiter E';');
 
 --espece protege taxref
 CREATE TABLE taxonomie.protection (
@@ -201,12 +219,16 @@ syn_cite character varying,
 nom_francais_cite character varying,
 precisions character varying,
 cd_nom_cite integer
-)
+);
+
+ALTER TABLE taxonomie.protection
+  OWNER TO onfuser;
+
+
 
 COPY taxonomie.protection
-FROM E'/tmp/PROTECTION_ESPECES_10.txt'
-WITH (format 'csv', header 'true', delimiter E';')
-
+FROM E'/home/ubuntu/BDN/data/PROTECTION_ESPECES_10.txt'
+WITH (format 'csv', header 'true', delimiter E';');
 
 
 
@@ -215,13 +237,19 @@ CREATE VIEW taxonomie.taxons_flore AS(
 SELECT taxonomie.find_cdref(cd_nom) AS cd_ref, nom_vern, lb_nom
 FROM taxonomie.taxref
 WHERE (mar != 'A' OR gua != 'A' OR sm != 'A' OR sb != 'A') AND regne = 'Plantae'
-)
+);
+
+ALTER TABLE taxonomie.taxons_flore
+  OWNER TO onfuser;
 
 CREATE VIEW taxonomie.taxons_faune AS(
 SELECT taxonomie.find_cdref(cd_nom) AS cd_ref, nom_vern, lb_nom
 FROM taxonomie.taxref
 WHERE (mar != 'A' OR gua != 'A' OR sm != 'A' OR sb != 'A') AND regne = 'Animalia'
-)
+);
+
+ALTER TABLE taxonomie.taxons_faune
+  OWNER TO onfuser;
 
 
   -- Creation des vues pour les exports en shapefile
@@ -277,7 +305,7 @@ CREATE OR REPLACE VIEW bdn.faune_point AS
     f.trace,
     f.geom_point,
     f.commentaire,
-    f.ccod_frt,
+    f.ccod_frt
 
    FROM bdn.faune f
    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
@@ -286,7 +314,7 @@ CREATE OR REPLACE VIEW bdn.faune_point AS
   CREATE OR REPLACE VIEW bdn.flore_point AS 
  SELECT 
     t.nom_vern,
-    t.lb_nom
+    t.lb_nom,
     flore.id_obs,
     flore.id_synthese,
     flore.protocole,
@@ -310,7 +338,7 @@ CREATE OR REPLACE VIEW bdn.faune_point AS
   CREATE OR REPLACE VIEW bdn.flore_poly AS 
  SELECT 
     t.nom_vern,
-    t.lb_nom
+    t.lb_nom,
     f.id_obs,
     f.id_synthese,
     f.protocole,
@@ -334,9 +362,8 @@ CREATE OR REPLACE VIEW bdn.faune_point AS
      JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom;
 
 
-
 -- schema utilisateur
-CREATE SCHEMA utilisateur;
+
 
 CREATE TABLE utilisateur.login
 (
@@ -348,14 +375,21 @@ CREATE TABLE utilisateur.login
   CONSTRAINT primary_key PRIMARY KEY (id)
 );
 
+ALTER TABLE utilisateur.login
+  OWNER TO onfuser;
+
 INSERT INTO utilisateur.login
-VALUES(1, 'admin', 'admin', 3, 1 )
+VALUES(1, 'admin', 'admin', 3, 1 );
 
 
 
-CREATE TABLE utilisateur.bib_structure AS
+CREATE TABLE utilisateur.bib_structure(
 id_structure integer,
-nom_structure character varying;
+nom_structure character varying
+);
+
+ALTER TABLE utilisateur.bib_structure
+  OWNER TO onfuser;
 
 INSERT INTO utilisateur.bib_structure
 VALUES(1, 'ONF'), (2, 'Réserves');
@@ -364,6 +398,10 @@ CREATE TABLE utilisateur.bib_role(
 auth_role integer,
 descritption character varying
 );
+
+ALTER TABLE utilisateur.bib_role
+  OWNER TO onfuser;
+
 
 INSERT INTO utilisateur.bib_role
 VALUES(1, 'lecteur'), (2, 'contributeur'), (3, 'administrateur');

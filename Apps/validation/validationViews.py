@@ -45,6 +45,11 @@ def deleteRow(id_synt):
     sql = """DELETE FROM bdn.synthese WHERE id_synthese = %s; """
     param = [id_synt]
     db.cur.execute(sql, param) 
+    if id_synt[0:2] == 'FA':
+        sql = """DELETE FROM bdn.faune WHERE id_synthese = %s; """
+    if id_synt[0:2] == 'FL':
+        sql = """DELETE FROM bdn.flore WHERE id_synthese = %s; """
+    db.cur.execute(sql, param) 
     db.conn.commit()
     db.closeAll()
     return json.dumps({'success':True, 'id_synthese':id_synt}), 200, {'ContentType':'application/json'}
