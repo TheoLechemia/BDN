@@ -5,6 +5,7 @@ function lastObsCtrl ($uibModal, $http){
 	ctrl = this;
 	ctrl.currentPoint = null;
 
+
 	var overFlowedList = $('.last-obs');
 
 	ctrl.$onChanges = function(changes){
@@ -32,8 +33,9 @@ function lastObsCtrl ($uibModal, $http){
 	}
 
 	ctrl.zoom = function(id_synthese){
-		ctrl.mainController.updateCurrentLeafletObs(id_synthese);
-		ctrl.mainController.updateCurrentListObs(id_synthese);
+		console.log(this.mainController);
+		this.mainController.updateCurrentLeafletObs(id_synthese);
+		this.mainController.updateCurrentListObs(id_synthese);
 	}
 
 	ctrl.isCurrentObs = function(id, row_id_synthese){
