@@ -28,6 +28,13 @@ sudo apt-get install -y python-virtualenv
 sudo apt-get install tofrodos
 sudo ln -s /usr/bin/fromdos /usr/bin/dos2unix 
 
+sudo apt-get install -y nodejs npm
+sudo npm install webpack -g
+sudo ln -s /usr/bin/nodejs /usr/bin/node
+
+#creation du repertoire pour les uploads
+mkdir ./Apps/static/uploads
+chmod 7777 ./Apps/static/uploads/
 
 
 #install python packages

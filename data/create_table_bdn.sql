@@ -160,6 +160,9 @@ id integer,
 type character varying
 );
 
+ALTER TABLE taxonomie.bib_habitat
+  OWNER TO onfuser;
+
 CREATE OR REPLACE FUNCTION taxonomie.find_cdref(id integer)
   RETURNS integer AS
 $BODY$
@@ -250,6 +253,28 @@ WHERE (mar != 'A' OR gua != 'A' OR sm != 'A' OR sb != 'A') AND regne = 'Animalia
 
 ALTER TABLE taxonomie.taxons_faune
   OWNER TO onfuser;
+
+CREATE TABLE taxonomie.bib_liste_rouge (
+id_statut character varying,
+type_statut character varying
+);
+
+INSERT INTO taxonomie.bib_liste_rouge 
+VALUES('NE', 'Non évalué'),
+('NA', 'Non applicable'),
+('DD', 'Données insuffisante'),
+('LC', 'Préoccupation mineure'),
+('QT', 'Quasi menacée'),
+('VU', 'Vulnérable'),
+('EN', 'En danger'),
+('CR', 'En danger critique'),
+('RE', 'Disparu au niveau régional'),
+('EW', 'Eteinte à l''état sauvage'),
+('EX', 'Eteinte') ;
+
+ALTER TABLE taxonomie.bib_liste_rouge
+  OWNER TO onfuser;
+
 
 
   -- Creation des vues pour les exports en shapefile

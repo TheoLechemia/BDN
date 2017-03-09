@@ -112,5 +112,6 @@ sudo -n -u postgres -s psql -d $db_name -c " GRANT SELECT ON layers.perimetre_fo
 
 sudo -n -u postgres -s shp2pgsql -W "LATIN1" -s $projection -D -I ./data/layers/GLP_UTM20N1X1.shp layers.mailles_1k | sudo -n -u postgres -s psql -d $db_name
 sudo -n -u postgres -s psql -d $db_name -c " GRANT SELECT ON layers.mailles_1k TO $user_bdn;"
+sudo -n -u postgres -s psql -d $db_name -c " ALTER TABLE layers.mailles_1k RENAME code_10km TO code_1km;"
 
 fi
