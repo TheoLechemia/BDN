@@ -4,72 +4,75 @@ import os
 from .. import config
 
 def convertUnicodeToString(geometryParam, geomType):
-	if geomType == 'point':
-		return {'type': 'Point', 'coordinates': geometryParam[u'coordinates']}
-	else:
-		return {'type': 'MultiPolygon', 'coordinates': geometryParam[u'coordinates']}
-	
+    if geomType == 'point':
+        return {'type': 'Point', 'coordinates': geometryParam[u'coordinates']}
+    else:
+        return {'type': 'MultiPolygon', 'coordinates': geometryParam[u'coordinates']}
+    
 
 
 def export(FileName, geojson, geomType):
-	for f in geojson['features']:
-		print f['geometry']
-	DriverName = "ESRI Shapefile"
-	driver = ogr.GetDriverByName(DriverName)
-	if os.path.exists(FileName):
-		driver.DeleteDataSource(FileName)
+    for f in geojson['features']:
+        DriverName = "ESRI Shapefile"
+        driver = ogr.GetDriverByName(DriverName)
+        if os.path.exists(FileName):
+            driver.DeleteDataSource(FileName)
 
-	#def of projections
-	inSpatialRef = osr.SpatialReference()
-	inSpatialRef.ImportFromEPSG(4326)
+    #def of projections
+    inSpatialRef = osr.SpatialReference()
+    inSpatialRef.ImportFromEPSG(4326)
 
-	outSpatialRef = osr.SpatialReference() 
-	outSpatialRef.ImportFromEPSG(config.PROJECTION)
+    outSpatialRef = osr.SpatialReference() 
+    outSpatialRef.ImportFromEPSG(config.PROJECTION)
 
-	coordTransform = osr.CoordinateTransformation(inSpatialRef, outSpatialRef)
-	#create the output shape
-	outDataSource = driver.CreateDataSource(FileName)
-	if geomType == "point":
-		outLayer = outDataSource.CreateLayer(str(FileName), outSpatialRef, geom_type=ogr.wkbPoint)
-	else:
-		outLayer = outDataSource.CreateLayer(str(FileName), outSpatialRef, geom_type=ogr.wkbMultiPolygon)
+    coordTransform = osr.CoordinateTransformation(inSpatialRef, outSpatialRef)
+    #create the output shape
+    outDataSource = driver.CreateDataSource(FileName)
+    if geomType == "point":
+        outLayer = outDataSource.CreateLayer(str(FileName), outSpatialRef, geom_type=ogr.wkbPoint)
+    else:
+        outLayer = outDataSource.CreateLayer(str(FileName), outSpatialRef, geom_type=ogr.wkbMultiPolygon)
 
-	#build the fieldList from the 'propertie' dict of the geojson
-	fielListName = list()
-	for key in geojson['features'][0]['properties']:
-		fielListName.append(str(key))
+    #build the fieldList from the 'propertie' dict of the geojson
+    fielListName = list()
+    for key, value in geojson['features'][0]['properties'].iteritems():
+        fielListName.append(str(key))
+        print key
+        print type(value)
 
-	#create the field 
-	for f in fielListName:
-		field = ogr.FieldDefn(f, ogr.OFTString)
-		outLayer.CreateField(field)
-	#add the field to the layer
+    #create the field 
+    for f in fielListName:
+        field = ogr.FieldDefn(f, ogr.OFTString)
+        outLayer.CreateField(field)
+    #add the field to the layer
 
 
-	layerDefinition = outLayer.GetLayerDefn()
+    layerDefinition = outLayer.GetLayerDefn()
 
-	for f in geojson['features']:
-		#create a feature
-		feature = ogr.Feature(outLayer.GetLayerDefn())
-		#fill the fields
-		for i in range(layerDefinition.GetFieldCount()):
-			newFieldName = layerDefinition.GetFieldDefn(i).GetName()
-			oldFieldName = fielListName[i]
-			fieldContent = f['properties'][oldFieldName]
-			if fieldContent is unicode:
-				fieldContent = f['properties'][oldFieldName].encode('utf-8')
-				fieldContent = str(fieldContent)
-			if type(fieldContent) is list:
-				fieldContent = str(fieldContent[0].encode('utf-8'))
-			feature.SetField(newFieldName, fieldContent)
-		#get the geom
-		geometry = convertUnicodeToString(f['geometry'], geomType)
-		print geometry
+    for f in geojson['features']:
+        #create a feature
+        feature = ogr.Feature(outLayer.GetLayerDefn())
+        #fill the fields
+        for i in range(layerDefinition.GetFieldCount()):
+            newFieldName = layerDefinition.GetFieldDefn(i).GetName()
+            oldFieldName = fielListName[i]
+            fieldContent = f['properties'][oldFieldName]
+            if type(fieldContent) is unicode:
+                fieldContent = f['properties'][oldFieldName].encode('utf-8')
+                fieldContent = str(fieldContent)
+            if type(fieldContent) is list:
+                fieldContent = str(fieldContent[0].encode('utf-8'))
+            if type(fieldContent) is int:
+                fieldContent = str(fieldContent)
+            feature.SetField(newFieldName, str(fieldContent))
+        #get the geom
+        geometry = convertUnicodeToString(f['geometry'], geomType)
+        print geometry
 
-		point = ogr.CreateGeometryFromJson(str(geometry))
-		print point
-		point.Transform(coordTransform) 
-		feature.SetGeometry(point)
-		#create the feature in the layer
-		outLayer.CreateFeature(feature)
-		feature.Destroy()
+        point = ogr.CreateGeometryFromJson(str(geometry))
+        print point
+        point.Transform(coordTransform) 
+        feature.SetGeometry(point)
+        #create the feature in the layer
+        outLayer.CreateFeature(feature)
+        feature.Destroy()
