@@ -11,13 +11,6 @@ main = Blueprint('main', __name__, static_url_path="/main", static_folder="stati
 
 
 
-from flask.ext.login import UserMixin, login_required, login_user, logout_user
-from functools import wraps
-
-
-
-
-
 
 @main.route('/login', methods= ['GET','POST'])
 def login():

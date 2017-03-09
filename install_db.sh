@@ -51,6 +51,7 @@ echo "Création de la BDD..."
   sudo -n -u postgres -s psql -d $db_name -c "CREATE SCHEMA taxonomie AUTHORIZATION $user_bdn;"
   sudo -n -u postgres -s psql -d $db_name -c "CREATE SCHEMA layers AUTHORIZATION $user_bdn;"
   sudo -n -u postgres -s psql -d $db_name -c "CREATE SCHEMA fdw AUTHORIZATION $user_bdn;"
+    sudo -n -u postgres -s psql -d $db_name -c "CREATE SCHEMA utilisateur AUTHORIZATION $user_bdn;"
 
 
 
@@ -84,6 +85,8 @@ cp ./data/create_table_bdn.sql /tmp/create_table_bdn.sql
 
 sudo sed -i -e "s/onfuser/$user_bdn/g" /tmp/create_table_bdn.sql
 sudo sed -i -e "s/32620/$projection/g" /tmp/create_table_bdn.sql
+# sudo sed -i -e "s/listerougepath/$liste_rouge_path/g" /tmp/create_table_bdn.sql
+# sudo sed -i -e "s/taxrefprotectionpath/$taxref_protection_path/g" /tmp/create_table_bdn.sql
 
 echo "Creation de de la base ..."
 sudo -n -u postgres -s psql -d $db_name -f /tmp/create_table_bdn.sql &>> log/install_db.log
@@ -104,7 +107,10 @@ echo "Creation des tables spatiales"
  
 
 
- sudo -n -u postgres -s shp2pgsql -W "LATIN1" -s $projection -D -I ./data/layers/perimetre_forets.shp layers.perimetre_forets | sudo -n -u postgres -s psql -d $db_name
- sudo -n -u postgres -s psql -d $db_name -c " GRANT SELECT ON layers.perimetre_forets TO $user_bdn;"
+sudo -n -u postgres -s shp2pgsql -W "LATIN1" -s $projection -D -I ./data/layers/perimetre_forets.shp layers.perimetre_forets | sudo -n -u postgres -s psql -d $db_name
+sudo -n -u postgres -s psql -d $db_name -c " GRANT SELECT ON layers.perimetre_forets TO $user_bdn;"
+
+sudo -n -u postgres -s shp2pgsql -W "LATIN1" -s $projection -D -I ./data/layers/GLP_UTM20N1X1.shp layers.mailles_1k | sudo -n -u postgres -s psql -d $db_name
+sudo -n -u postgres -s psql -d $db_name -c " GRANT SELECT ON layers.mailles_1k TO $user_bdn;"
 
 fi
