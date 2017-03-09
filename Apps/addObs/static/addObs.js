@@ -102,11 +102,12 @@ $scope.showCoord = true;
 
 
 
- var completeForm = {'general': $scope.globalForm, 'faune': $scope.formFaune, 'flore': $scope.formFlore};
+
 
  $scope.validationAttempt = false;
 
   $scope.onSubmit = function(protocole, form){
+    var completeForm = {'general': $scope.globalForm, 'faune': $scope.formFaune, 'flore': $scope.formFlore};
     $scope.validationAttempt = true;
     console.log(completeForm)
     if (form.$valid){
@@ -115,8 +116,9 @@ $scope.showCoord = true;
             $scope.formSuccessfullySent = true;
             //angular.copy({},form);
             // on reset tous les champs
+            var saveCoord = $scope.globalForm.coord;
             $scope.globalForm = {
-                    'coord' : {'lat': null, 'lng':null },
+                    'coord' : saveCoord,
                     'loc_exact' : true,
                     'code_maille': "",
                     'observateur' : null,
@@ -124,8 +126,8 @@ $scope.showCoord = true;
                     'taxon': null,
                     'commentaire': null,
                    }
-            $scope.formFlore = angular.copy({resetFormFlore},$scope.formFlore);
-            $scope.formFaune = angular.copy({resetFormFaune},$scope.formFlore);
+            $scope.formFlore = resetFormFlore;
+            $scope.formFaune = resetFormFaune;
           }
 
 
@@ -140,7 +142,6 @@ $scope.showCoord = true;
 
     })
     }
-    
   }
 
 

@@ -295,6 +295,7 @@ function lastObsCtrl ($uibModal, $http){
 			}
 		}
 		if(changes.currentListObs){
+			//scroll dans la liste
 			if(changes.currentListObs.currentValue != undefined){
 				    var vpHeight = overFlowedList.height();
 				    var scrollTop = overFlowedList.scrollTop();
