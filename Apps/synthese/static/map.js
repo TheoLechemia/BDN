@@ -9,7 +9,7 @@ module.exports = function(angularInstance){
 			lat: 16.2412500, 
 			lng: -61.5361400,
 			zoom: 10
-		}
+		};
 
 		var originStyle = {
 		    "color": "#3388ff",
@@ -21,13 +21,13 @@ module.exports = function(angularInstance){
 		var selectedStyle = {
 		  'color':'#ff0000',
 		   'weight':3
-		}
+		};
 
 		var mailleStyle = {
 	    "color": "#000000",
 	    "weight": 1,
 	    "fillOpacity": 0
-	};
+		};
 
 		var selectLayer;
 		function onCurrentObsChange(id){
