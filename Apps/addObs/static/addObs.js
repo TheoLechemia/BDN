@@ -101,7 +101,9 @@ $scope.showCoord = true;
 
 
 
+function checkInegersInput(form){
 
+}
 
 
  $scope.validationAttempt = false;
@@ -109,8 +111,20 @@ $scope.showCoord = true;
   $scope.onSubmit = function(protocole, form){
     var completeForm = {'general': $scope.globalForm, 'faune': $scope.formFaune, 'flore': $scope.formFlore};
     $scope.validationAttempt = true;
-    console.log(completeForm)
-    if (form.$valid){
+    console.log(completeForm);
+
+    console.log(form);
+/*    if(form.nb_male.$modelValue != undefined){
+      if (typeof form.nb_individu.$modelValue != "number"){
+        form.nb_individu.$invalid = true;
+        form.$valid = false;
+      }
+    }*/
+     console.log(form.$valid);
+
+
+
+/*    if (form.$valid){
           $http.post(URL_APPLICATION+'addObs/submit/'+protocole, completeForm).then(function(response){
           if(response.status == 200){
             $scope.formSuccessfullySent = true;
@@ -142,7 +156,7 @@ $scope.showCoord = true;
           $scope.validationAttempt = false;
 
     })
-    }
+    }*/
   }
 
 

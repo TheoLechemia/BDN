@@ -125,11 +125,27 @@
 								  		<option value=""> - Effectif - </option>
 								  	</select>
 
-								  	<input class="form-control" type="text" placeholder="Nombre d'individu" ng-model="formFaune.nb_individu" >
-								  	<input class="form-control" type="text" placeholder="Nombre de mâle adulte" ng-model="formFaune.nb_male" >
-								  	<input class="form-control" type="text" placeholder="Nombre de femelles adulte" ng-model="formFaune.nb_femelle" >
-								  	<input class="form-control" type="text" placeholder="Nombre de jeune" ng-model="formFaune.nb_jeune" >
-								  	<input class="form-control" type="text" placeholder="Nombre non identifié" ng-model="formFaune.nb_non_identifie" >
+								  	<div class="form-group" ng-class="{'has-error' : addObsForm.nb_individu.$invalid && !addObsForm.nb_individu.$pristine  || (validationAttempt && addObsForm.nb_individu.$invalid)}">
+								  		<input class="form-control" type="number" placeholder="Nombre d'individu" ng-model="formFaune.nb_individu"  name="nb_individu">
+								  		<p ng-show="(addObsForm.nb_individu.$invalid && !addObsForm.nb_individu.$pristine) || (validationAttempt && addObsForm.nb_individu.$invalid) " class="help-block">Ce champs doit être un entier</p>
+								  	</div>
+								  	<div class="form-group" ng-class="{'has-error' : addObsForm.nb_male.$invalid && !addObsForm.nb_male.$pristine  || (validationAttempt && addObsForm.nb_male.$invalid)}">
+								  		<input class="form-control" type="number" placeholder="Nombre de mâle adulte" ng-model="formFaune.nb_male"  name ="nb_male">
+								  		<p ng-show="(addObsForm.nb_male.$invalid && !addObsForm.nb_male.$pristine) || (validationAttempt && addObsForm.nb_male.$invalid) " class="help-block">Ce champs doit être un entier</p>
+								  	</div>
+								  	<div class="form-group" ng-class="{'has-error' : addObsForm.nb_femelle.$invalid && !addObsForm.nb_femelle.$pristine  || (validationAttempt && addObsForm.nb_femelle.$invalid)}">
+								  		<input class="form-control" type="number" placeholder="Nombre de femelles adulte" ng-model="formFaune.nb_femelle"  name="nb_femelle">
+								  		<p ng-show="(addObsForm.nb_femelle.$invalid && !addObsForm.nb_femelle.$pristine) || (validationAttempt && addObsForm.nb_femelle.$invalid) " class="help-block">Ce champs doit être un entier</p>
+								  	</div>
+								  	<div class="form-group" ng-class="{'has-error' : addObsForm.nb_jeune.$invalid && !addObsForm.nb_jeune.$pristine  || (validationAttempt && addObsForm.nb_jeune.$invalid)}">
+								  		<input class="form-control" type="number" placeholder="Nombre de jeune" ng-model="formFaune.nb_jeune"  name = "nb_jeune">
+								  		<p ng-show="(addObsForm.nb_jeune.$invalid && !addObsForm.nb_jeune.$pristine) || (validationAttempt && addObsForm.nb_jeune.$invalid) " class="help-block">Ce champs doit être un entier</p>
+								  	</div>
+								  	<div class="form-group" ng-class="{'has-error' : addObsForm.nb_non_identifie.$invalid && !addObsForm.nb_non_identifie.$pristine  || (validationAttempt && addObsForm.nb_non_identifie.$invalid)}">
+								  		<input class="form-control" type="number" placeholder="Nombre non identifié" ng-model="formFaune.nb_non_identifie"  name="nb_non_identifie">
+								  		<p ng-show="(addObsForm.nb_non_identifie.$invalid && !addObsForm.nb_non_identifie.$pristine) || (validationAttempt && addObsForm.nb_non_identifie.$invalid) " class="help-block">Ce champs doit être un entier</p>
+								  	</div>
+								  	
 
 								  	
 								  </div>
