@@ -23,7 +23,9 @@ body {
   body .app {
     min-height: 100vh; }
   
-
+.no-padding{
+  padding: 0px !important;
+}
 
 
 .btn {
