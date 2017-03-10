@@ -147,7 +147,7 @@ def submitObs(protocole):
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s, %s, %s, %s )'''
                 params = [protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied_exact, stade_dev, point, 'false', loc_exact, commentaire, id_structure]
             else: 
-                sql = '''INSERT INTO bdn.flore (protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, valide, loc_exact, code_maille, commentaire, id_id_structure)
+                sql = '''INSERT INTO bdn.flore (protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, valide, loc_exact, code_maille, commentaire, id_structure)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )'''
                 params = [protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied_exact, stade_dev, 'false', loc_exact, code_maille, commentaire, id_structure]                
             db.cur.execute(sql, params)

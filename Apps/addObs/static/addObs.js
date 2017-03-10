@@ -117,10 +117,11 @@ $scope.showCoord = true;
             //angular.copy({},form);
             // on reset tous les champs
             var saveCoord = $scope.globalForm.coord;
+            var saveMaille = $scope.globalForm.code_maille;
             $scope.globalForm = {
                     'coord' : saveCoord,
-                    'loc_exact' : true,
-                    'code_maille': "",
+                    'loc_exact' : loc_exact,
+                    'code_maille': saveMaille,
                     'observateur' : null,
                     'date': null,
                     'taxon': null,
@@ -229,7 +230,8 @@ $http.get(URL_APPLICATION+'addObs/loadMailles').success(function(data){
     });
    var loc_exact = true;
   $scope.switchMaille = function(){
-    $scope.globalForm.loc_exact = false;
+    loc_exact = false;
+    $scope.globalForm.loc_exact = loc_exact;
     $scope.markers = {};
     $scope.showCoord = false;
     console.log(saveGeojsonMaille);
@@ -237,8 +239,9 @@ $http.get(URL_APPLICATION+'addObs/loadMailles').success(function(data){
   }
 
   $scope.switchPoint = function(){
+    loc_exact = true;
     $scope.showCoord = true;
-    $scope.globalForm.loc_exact = true;
+    $scope.globalForm.loc_exact = loc_exact;
     $scope.geojsonMaille = {};
     $scope.markers = saveMarkers;
   }

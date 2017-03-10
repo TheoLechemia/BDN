@@ -146,7 +146,7 @@ def getFormParameters():
             'habitat': habitat, 'protection': protection, 'lr': lr, 'structure': structure, 'observateur':observateur }
 
 def buildSQL():
-    sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact
+    sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur
               FROM bdn.synthese s
               LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom"""
@@ -236,7 +236,5 @@ def buildSQL():
         sql = sql + " s.date <= %s "
         params.append(formParameters['lastDate'])
 
-    #on join avec les mailles
-    print 'LES PARAMETRESSSSSSSSSSSSSSSSSS'
-    print params
+    print sql
     return {'params': params, 'sql' :sql}

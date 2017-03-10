@@ -62,8 +62,8 @@ def lastObs():
               LIMIT 50"""
     db.cur.execute(sql)
     res = db.cur.fetchall()
-    geojsonMaille = { "type": "FeatureCollection",  "features" : list() }
-    geojsonPoint = { "type": "FeatureCollection",  "features" : list() }
+    geojsonMaille = { "type": "FeatureCollection",  "features" : list()}
+    geojsonPoint = { "type": "FeatureCollection",  "features" : list()}
     for r in res:
         date = r[5].strftime("%Y/%m/%d")
         mypropertiesPoint = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[8], 'id' : r[1]}
