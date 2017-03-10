@@ -11,6 +11,8 @@ function lastObsCtrl ($uibModal, $http){
 	ctrl.$onChanges = function(changes){
 		if (changes.geojson){
 			if (changes.geojson.currentValue != undefined){
+				console.log("chargement des trucs")
+				console.log(changes.geojson.currentValue);
 				ctrl.currentList = changes.geojson.currentValue.point;
 			}
 		}
