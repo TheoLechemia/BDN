@@ -5,15 +5,12 @@ function lastObsCtrl ($uibModal, $http){
 	ctrl = this;
 	ctrl.currentPoint = null;
 
-
 	var overFlowedList = $('.last-obs');
 
 	ctrl.$onChanges = function(changes){
 		if (changes.geojson){
 			if (changes.geojson.currentValue != undefined){
-				console.log("chargement des trucs")
-				console.log(changes.geojson.currentValue);
-				ctrl.currentList = changes.geojson.currentValue.point;
+				this.currentList = changes.geojson.currentValue.point;
 			}
 		}
 		if(changes.currentListObs){
@@ -30,12 +27,10 @@ function lastObsCtrl ($uibModal, $http){
 					    }, 500);
 					}
 			}
-
 		}
 	}
 
 	ctrl.zoom = function(id_synthese){
-		console.log(this.mainController);
 		this.mainController.updateCurrentLeafletObs(id_synthese);
 		this.mainController.updateCurrentListObs(id_synthese);
 	}
@@ -54,8 +49,6 @@ function lastObsCtrl ($uibModal, $http){
 		this.currentList = this.geojson[list];
 		this.selected = list;
 	}
-
-
 }
 
 templateLastObs = 'synthese/templates/listObs.html';
