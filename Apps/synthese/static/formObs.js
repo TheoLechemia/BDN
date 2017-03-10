@@ -22,7 +22,7 @@ function formCtrl(proxy, $http, $scope){
 		'protection':null,
 		'lr':{'id_statut':null, 'type_statut':null},
 		'observateur': {'observateur':null},
-		'structure': null,
+		'structure': {'id_structure': null, 'nom_structure': null},
 	}
 
 	// à l'envoie du formulaire, on le passe au module pere: APP qui fait la requete ajax sur les geojson et les passe a toute l'appli
