@@ -4,9 +4,9 @@ import sys
 from Apps import config
 from Apps.database import *
 
-fileName = input('Entrez le chemin du fichier CSV (entre guillemets) : ')
+schemaName = input('Entrez le chemin du fichier CSV (entre guillemets) : ')
+fullName = schemaName+".releve"+
 
-print type(fileName)
 
 try:
     db = getConnexion()
@@ -26,8 +26,8 @@ try:
             column_name_and_type.append({'name':row[0], 'type': row[2]})
 
 
-    addPermission = "ALTER TABLE bdn."+tableName+" OWNER TO "config.USER";"
-    stringCreate = """CREATE TABLE bdn."""+tableName+"""
+    
+    stringCreate = """CREATE TABLE """+fullName+""" 
     (
       id_obs serial CONSTRAINT """+tableName+"""_PK PRIMARY KEY,
       id_synthese character varying(15),
@@ -45,6 +45,7 @@ try:
       code_maille character varying(20),
       id_structure integer,"""
 
+    addPermission = "ALTER TABLE "+fullName+" OWNER TO "config.USER";"
     for r in column_name_and_type:
         stringCreate+=" "+ r['name']+" "+r['type']+","
 
@@ -57,23 +58,23 @@ try:
 
     # ##Cree la vue pour y mettre la liste des taxons personnalisé. Par default on met tous le taxref, a change par le gestionnaire de BDD
 
-    sql = "CREATE VIEW taxonomie.taxons_"+tableName+" AS SELECT * FROM taxonomie.taxref;"
-    sql += addPermission
+    sql = "CREATE VIEW taxonomie.taxons_"+schemaName+" AS SELECT * FROM taxonomie.taxref;"
+    sql += "ALTER TABLE taxonomie.taxons_"+schemaName+" OWNER TO "config.USER";"
     db.cur.execute(sql)
     db.conn.commit()
 
     # #create trigers
 
-    trigger = """CREATE TRIGGER tr_"""+tableName+"""_to_synthese
-                BEFORE INSERT ON bdn."""+tableName+"""
-                FOR EACH ROW EXECUTE PROCEDURE bdn.tr_protocole_to_synthese();"""
+    trigger = """CREATE TRIGGER tr_"""+schemaName+"""_to_synthese
+                BEFORE INSERT ON """+fullName+"""
+                FOR EACH ROW EXECUTE PROCEDURE synthese.tr_protocole_to_synthese();"""
 
     db.cur.execute(trigger)
     db.conn.commit()
 
     trigger = """CREATE TRIGGER fill_id_syn_"""+tableName+"""
-                AFTER INSERT ON bdn."""+tableName+"""
-                FOR EACH ROW EXECUTE PROCEDURE bdn.fill_id_synthese();"""
+                AFTER INSERT ON """+fullName+"""
+                FOR EACH ROW EXECUTE PROCEDURE synthese.fill_id_synthese();"""
     db.cur.execute(trigger)
     db.conn.commit()
 
@@ -81,12 +82,12 @@ try:
 
 
 
-    stringCreate = "CREATE TABLE bdn.bib_champs_tortue ( id serial NOT NULL, nom_champ character varying, valeur character varying, CONSTRAINT "+tableName+"PK PRIMARY KEY (id))"
-    stringCreate += addPermission
+    stringCreate = "CREATE TABLE "+schemaName+".bib_champs_"+schemaName+"( id serial NOT NULL, nom_champ character varying, valeur character varying, CONSTRAINT "+schemaName+"PK PRIMARY KEY (id))"
+    stringCreate += "ALTER TABLE "+schemaName+".bib_champs_"+schemaName+" OWNER TO "config.USER";"
     db.cur.execute(stringCreate)
     db.conn.commit()
 
-    sql = "INSERT INTO bdn.bib_protocole VALUES ('tortue', 'tortue', 'addObs/tortue.html', 'bib_champs_tortue')"
+    sql = "INSERT INTO synthese.bib_protocole VALUES ('tortue', '"+fullName+"' , 'addObs/tortue.html', '"+schemaName+".bib_champs_"+schemaName+"')"
     db.cur.execute(sql)
     db.conn.commit()
 
@@ -106,7 +107,7 @@ try:
                 liste_deroulante_tab = list()
                 while i<len(row) and row[i]!= '':
                     value = row[i]
-                    sql = "INSERT INTO bdn.bib_champs_tortue(nom_champ, valeur) VALUES(%s, %s) "
+                    sql = "INSERT INTO "+schemaName+".bib_champs_"+schemaName+"(nom_champ, valeur) VALUES(%s, %s) "
                     params = [column_name, value]
                     db.cur.execute(sql, params)
                     db.conn.commit()

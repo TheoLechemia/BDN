@@ -1,6 +1,6 @@
-CREATE TABLE bdn.synthese
+CREATE TABLE synthese.syntheseff
 (
-  id_synthese character varying(15) NOT NULL,
+  id_synthese serial,
   protocole character varying(50) NOT NULL,
   observateur character varying(100) NOT NULL,
   date date NOT NULL,
@@ -18,15 +18,14 @@ CREATE TABLE bdn.synthese
       REFERENCES taxonomie.taxref (cd_nom) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE SET NULL
 );
-ALTER TABLE bdn.synthese
+ALTER TABLE synthese.syntheseff
   OWNER TO onfuser;
 
 
-CREATE TABLE bdn.faune
+CREATE TABLE contact_faune.freleve
 (
   id_obs serial NOT NULL,
   id_synthese character varying(15),
-  protocole character varying(50) NOT NULL,
   observateur character varying(100) NOT NULL,
   date date NOT NULL,
   cd_nom integer NOT NULL,
@@ -57,14 +56,13 @@ CREATE TABLE bdn.faune
 );
 
 
-ALTER TABLE bdn.faune
+ALTER TABLE contact_faune.releve
   OWNER TO onfuser;
 
-CREATE TABLE bdn.flore
+CREATE TABLE contact_flore.releve
 (
   id_obs serial NOT NULL,
   id_synthese character varying(15),
-  protocole character varying(50) NOT NULL,
   observateur character varying(100) NOT NULL,
   date date NOT NULL,
   cd_nom integer NOT NULL,
@@ -88,83 +86,76 @@ CREATE TABLE bdn.flore
       ON UPDATE CASCADE ON DELETE SET NULL,
   CONSTRAINT fl_id_synthese UNIQUE (id_synthese)
 );
-  ALTER TABLE bdn.flore
+  ALTER TABLE contact_flore.releve
     OWNER TO onfuser;
 
 
   -- Trigger
 -- create id_synthese in protocole
 
-CREATE OR REPLACE FUNCTION bdn.fill_id_synthese() RETURNS TRIGGER AS $fill_id_synthese$
+CREATE OR REPLACE FUNCTION synthese.tr_protocole_to_synthese() RETURNS TRIGGER AS $tr_protocole_to_synthese$
+    DECLARE newid INTEGER;
+    DECLARE schemaname character varying;
     BEGIN
-    EXECUTE format('UPDATE %s.%s
-    SET id_synthese = CONCAT(LEFT(protocole,2)::text, id_obs::text)',TG_TABLE_SCHEMA, TG_TABLE_NAME);
-    RETURN NULL;
-    END;    
-$fill_id_synthese$ LANGUAGE plpgsql;
-
-CREATE TRIGGER fill_id_synthese_flore
-BEFORE INSERT ON bdn.flore
-    FOR EACH ROW EXECUTE PROCEDURE bdn.fill_id_synthese();
-
-CREATE TRIGGER fill_id_synthese_faune
-BEFORE INSERT ON bdn.faune
-    FOR EACH ROW EXECUTE PROCEDURE bdn.fill_id_synthese();
-
-
-CREATE OR REPLACE FUNCTION bdn.tr_protocole_to_synthese() RETURNS TRIGGER AS $tr_protocole_to_synthese$
-    BEGIN
-    INSERT INTO bdn.synthese (id_synthese, protocole, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, loc_exact, code_maille, id_structure) 
-    VALUES( concat_ws('', LEFT(new.protocole,2)::text, new.id_obs::text), new.protocole, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.loc_exact, new.code_maille, new.id_structure);
+    schemaname = quote_ident(tg_table_schema);
+    INSERT INTO synthese.syntheseff (protocole, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, loc_exact, code_maille, id_structure) 
+    VALUES( tg_table_schema, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.loc_exact, new.code_maille, new.id_structure) ;
+    SELECT INTO newid currval('synthese.syntheseff_id_synthese_seq');
+    EXECUTE format('
+    UPDATE %s.%s SET id_synthese = %s;', TG_TABLE_SCHEMA, TG_TABLE_NAME, newid);
     RETURN NEW;
   
     END;
 $tr_protocole_to_synthese$ LANGUAGE plpgsql;
 
-CREATE TRIGGER tr_fl_to_synthese
-BEFORE INSERT ON bdn.flore
-    FOR EACH ROW EXECUTE PROCEDURE bdn.tr_protocole_to_synthese();
-
 CREATE TRIGGER tr_fa_to_synthese
-BEFORE INSERT ON bdn.faune
-    FOR EACH ROW EXECUTE PROCEDURE bdn.tr_protocole_to_synthese();
+AFTER INSERT ON contact_faune.releve
+    FOR EACH ROW EXECUTE PROCEDURE synthese.tr_protocole_to_synthese();
+
+CREATE TRIGGER tr_fl_to_synthese
+AFTER INSERT ON contact_flore.releve
+    FOR EACH ROW EXECUTE PROCEDURE synthese.tr_protocole_to_synthese();
 
 
-CREATE OR REPLACE VIEW bdn.v_search_taxons AS 
+-- end trigger
+
+CREATE OR REPLACE VIEW synthese.v_search_taxons AS 
  SELECT DISTINCT s.cd_nom,
     t.nom_vern,
     t.lb_nom,
     s.protocole
-   FROM bdn.synthese s
+   FROM synthese.syntheseff s
      JOIN taxonomie.taxref t ON s.cd_nom = t.cd_nom;
 
-ALTER TABLE bdn.v_search_taxons
+ALTER TABLE synthese.v_search_taxons
   OWNER TO onfuser;
 
 
-CREATE TABLE bdn.bib_protocole (
+CREATE TABLE synthese.bib_protocole (
 nom_protocole character varying CONSTRAINT bib_protocole_pk PRIMARY KEY,
+nom_schema character varying,
 nom_table character varying,
+nom_complet character varying,
 template character varying,
 bib_champs character varying
 );
-ALTER TABLE bdn.bib_protocole
+ALTER TABLE synthese.bib_protocole
     OWNER TO onfuser;
 
 
-INSERT INTO bdn.bib_protocole VALUES ('Contact Flore', 'flore', 'addObs/contactFlore.html', 'bib_champs_contact_flore'), ('Contact Faune', 'faune', 'addObs/contactFaune.html', 'bib_champs_contact_faune');
+INSERT INTO synthese.bib_protocole VALUES ('Contact Flore', 'contact_flore', 'releve', 'contact_flore.releve', 'addObs/contactFlore.html', 'contact_flore.bib_champs_contact_flore'), ('Contact Faune','contact_faune', 'releve', 'contact_faune.releve', 'addObs/contactFaune.html', 'contact_faune.bib_champs_contact_faune');
 
-CREATE TABLE bdn.bib_champs_contact_faune(
+CREATE TABLE contact_faune.bib_champs_contact_faune(
 id serial  CONSTRAINT bib_fa_primary_key PRIMARY KEY,
 nom_champ character varying,
 valeur character varying
 );
-ALTER TABLE bdn.bib_champs_contact_faune
+ALTER TABLE contact_faune.bib_champs_contact_faune
     OWNER TO onfuser;
 
 
 
-INSERT INTO bdn.bib_champs_contact_faune (nom_champ, valeur) VALUES
+INSERT INTO contact_faune.bib_champs_contact_faune (nom_champ, valeur) VALUES
 ('type_obs', 'Contact visuel'),
 ('type_obs', 'Chant'),
 ('type_obs', 'Cris'),
@@ -229,15 +220,15 @@ INSERT INTO bdn.bib_champs_contact_faune (nom_champ, valeur) VALUES
 
 
 
-CREATE TABLE bdn.bib_champs_contact_flore(
+CREATE TABLE contact_flore.bib_champs_contact_flore(
 id serial  CONSTRAINT bib_fl_primary_key PRIMARY KEY,
 nom_champ character varying,
 valeur character varying
 );
-ALTER TABLE bdn.bib_champs_contact_flore
+ALTER TABLE contact_flore.bib_champs_contact_flore
     OWNER TO onfuser;
 
-INSERT INTO bdn.bib_champs_contact_flore (nom_champ, valeur) VALUES
+INSERT INTO contact_flore.bib_champs_contact_flore (nom_champ, valeur) VALUES
 ('abondance', '1'),
 ('abondance', '2-3'),
 ('abondance', '4-5'),
@@ -347,22 +338,22 @@ WITH (format 'csv', header 'true', delimiter E';');
 
 
 -- Creation des vues de la liste des taxons personnalisée pour la structure: ICI la liste des taxons antillais / faune et flore
-CREATE VIEW taxonomie.taxons_flore AS(
+CREATE VIEW taxonomie.taxons_contact_flore AS(
 SELECT taxonomie.find_cdref(cd_nom) AS cd_ref, nom_vern, lb_nom
 FROM taxonomie.taxref
 WHERE (mar != 'A' OR gua != 'A' OR sm != 'A' OR sb != 'A') AND regne = 'Plantae'
 );
 
-ALTER TABLE taxonomie.taxons_flore
+ALTER TABLE taxonomie.taxons_contact_flore
   OWNER TO onfuser;
 
-CREATE VIEW taxonomie.taxons_faune AS(
+CREATE VIEW taxonomie.taxons_contact_faune AS(
 SELECT taxonomie.find_cdref(cd_nom) AS cd_ref, nom_vern, lb_nom
 FROM taxonomie.taxref
 WHERE (mar != 'A' OR gua != 'A' OR sm != 'A' OR sb != 'A') AND regne = 'Animalia'
 );
 
-ALTER TABLE taxonomie.taxons_faune
+ALTER TABLE taxonomie.taxons_contact_faune
   OWNER TO onfuser;
 
 CREATE TABLE taxonomie.bib_liste_rouge (
@@ -419,7 +410,7 @@ CREATE OR REPLACE VIEW bdn.faune_poly AS
      JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom;
 
 
-CREATE OR REPLACE VIEW bdn.faune_point AS 
+CREATE OR REPLACE VIEW contact_faune.faune_point AS 
  SELECT
     t.nom_vern,
     t.lb_nom,
@@ -443,11 +434,11 @@ CREATE OR REPLACE VIEW bdn.faune_point AS
     f.commentaire,
     f.ccod_frt
 
-   FROM bdn.faune f
+   FROM contact_faune.releve f
    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
   WHERE f.loc_exact = true;
 
-  CREATE OR REPLACE VIEW bdn.flore_point AS 
+  CREATE OR REPLACE VIEW contact_flore.flore_point AS 
  SELECT 
     t.nom_vern,
     t.lb_nom,
@@ -467,11 +458,11 @@ CREATE OR REPLACE VIEW bdn.faune_point AS
     flore.commentaire,
     flore.ccod_frt
 
-   FROM bdn.flore flore
+   FROM contact_flore.releve flore
    JOIN taxonomie.taxref t ON t.cd_nom = flore.cd_nom
   WHERE flore.loc_exact = true AND flore.valide = true;
 
-  CREATE OR REPLACE VIEW bdn.flore_poly AS 
+  CREATE OR REPLACE VIEW contact_flore.flore_poly AS 
  SELECT 
     t.nom_vern,
     t.lb_nom,
@@ -493,7 +484,7 @@ CREATE OR REPLACE VIEW bdn.faune_point AS
     m.code_1km,
     m.geom
 
-   FROM bdn.flore f
+   FROM contact_flore.flore f
      JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text AND f.valide = true
      JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom;
 

@@ -85,7 +85,7 @@ def getMaille():
 @addObs.route('/loadProtocoles', methods=['GET', 'POST'])
 def getProtocoles():
     db = getConnexion()
-    sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM bdn.bib_protocole) p"
+    sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM synthese.bib_protocole) p"
     db.cur.execute(sql)
     return Response(flask.json.dumps(db.cur.fetchone()[0]), mimetype='application/json')
 
@@ -94,7 +94,7 @@ def getProtocoles():
 @addObs.route('/loadValues/<protocole>', methods=['GET', 'POST'])
 def getValues(protocole):
     db=getConnexion()
-    sql = "SELECT * FROM bdn."+protocole
+    sql = "SELECT * FROM "+protocole
     db.cur.execute(sql)
     res = db.cur.fetchall()
     currentField = res[0][1]
@@ -121,8 +121,8 @@ def getParmeters():
 
 
 
-@addObs.route('/submit/<protocole>', methods=['GET', 'POST'])
-def submitObs(protocole):
+@addObs.route('/submit/', methods=['GET', 'POST'])
+def submitObs():
     db = getConnexion()
     if flask.request.method == 'POST':
         observateur = flask.request.json['general']['observateur']
@@ -137,6 +137,10 @@ def submitObs(protocole):
 
         date = flask.request.json['general']['date']
         commentaire = flask.request.json['general']['commentaire']
+        protocoleObject = flask.request.json['protocole']
+
+        fullTableName = protocoleObject['nom_complet']
+        protocoleName = protocoleObject['nom_table']
 
         #prend le centroide de maille pou intersecter avec la foret et l'insee
         centroide = None
@@ -179,18 +183,18 @@ def submitObs(protocole):
         id_structure = session['id_structure']
         valide= False
 
-        generalValues = [protocole.upper(), observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure]
+        generalValues = [observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure]
 
 
         ###protocole
 
         
-        stringInsert = "INSERT INTO bdn."+protocole+"(protocole, observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure"
+        stringInsert = "INSERT INTO "+fullTableName+"(observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure"
         stringValues = ""
         if loc_exact:
-            stringValues = "VALUES (%s, %s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config.PROJECTION)+"), %s, %s, %s, %s, %s, %s, %s"
+            stringValues = "VALUES (%s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config.PROJECTION)+"), %s, %s, %s, %s, %s, %s, %s"
         else:
-            stringValues = "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s"
+            stringValues = "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s"
         keys = getParmeters()['keys']
         values = getParmeters()['values']
         for k in keys:
@@ -207,7 +211,6 @@ def submitObs(protocole):
         print 'LAAAAAAAAAAAAAAAAAAA \q'
         print sql
         print params
-        print len(params)
 
         db.cur.execute(sql, params)
         db.conn.commit()

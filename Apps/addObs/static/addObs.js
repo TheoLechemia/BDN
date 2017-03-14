@@ -14,13 +14,13 @@ $http.get(URL_APPLICATION+"addObs/loadProtocoles").then(function(response){
 
 $scope.search_scientist_name = function(expre, selectedProtocole){
   console.log(selectedProtocole);
-  return $http.get(URL_APPLICATION+"addObs/search_scientist_name/"+selectedProtocole.nom_table+"/"+expre).then(function(response){ 
+  return $http.get(URL_APPLICATION+"addObs/search_scientist_name/"+selectedProtocole.nom_schema+"/"+expre).then(function(response){ 
     return response.data;
   })
   }
 
 $scope.search_vern_name = function(expre, selectedProtocole){
-  return $http.get(URL_APPLICATION+"addObs/search_vern_name/"+selectedProtocole.nom_table+"/"+expre).then(function(response){ 
+  return $http.get(URL_APPLICATION+"addObs/search_vern_name/"+selectedProtocole.nom_schema+"/"+expre).then(function(response){ 
     return response.data;
   })
   }
@@ -69,8 +69,7 @@ $scope.showCoord = true;
 
  $scope.validationAttempt = false;
 
-  $scope.onSubmit = function(protocole, form){
-    console.log($scope.protocoleForm);
+  $scope.onSubmit = function(form){
     var completeForm = {'protocole': $scope.selectedProtocole, 'general': $scope.globalForm, 'protocoleForm': $scope.child.protocoleForm};
     $scope.validationAttempt = true;
     console.log(completeForm);
@@ -80,7 +79,7 @@ $scope.showCoord = true;
      console.log(form.$valid);
 
     if (form.$valid){
-          $http.post(URL_APPLICATION+'addObs/submit/'+protocole, completeForm).then(function(response){
+          $http.post(URL_APPLICATION+'addObs/submit/', completeForm).then(function(response){
           if(response.status == 200){
             $scope.formSuccessfullySent = true;
             //angular.copy({},form);

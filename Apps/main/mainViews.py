@@ -45,9 +45,9 @@ def login():
 def index():
     db = getConnexion()
     stat = {}
-    sql = """WITH nb_taxons AS (SELECT COUNT(DISTINCT cd_nom) as nb_tot_tax FROM bdn.synthese),
-                  nb_obs AS (SELECT COUNT(*) as nb_tot_obs FROM bdn.synthese ),
-                  nb_observateur AS (SELECT COUNT(DISTINCT observateur) as nb_tot_observateurs FROM bdn.synthese)
+    sql = """WITH nb_taxons AS (SELECT COUNT(DISTINCT cd_nom) as nb_tot_tax FROM synthese.syntheseff),
+                  nb_obs AS (SELECT COUNT(*) as nb_tot_obs FROM synthese.syntheseff ),
+                  nb_observateur AS (SELECT COUNT(DISTINCT observateur) as nb_tot_observateurs FROM synthese.syntheseff)
             SELECT nb_tot_tax, nb_tot_obs, nb_tot_observateurs
             FROM nb_taxons, nb_obs, nb_observateur """
     db.cur.execute(sql)

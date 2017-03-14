@@ -55,7 +55,7 @@ def synthese_index():
 def lastObs():
     db = getConnexion()
     sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, ST_X(ST_Transform(geom_point, 4326)), ST_Y(ST_Transform(geom_point, 4326)), s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact
-              FROM bdn.synthese s
+              FROM synthese.synthesef s
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
               LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
               ORDER BY date DESC
@@ -110,11 +110,11 @@ def getObs():
 def loadTaxons(protocole):
     db = getConnexion()
     if protocole == "Tout":
-        sql = """SELECT * FROM bdn.v_search_taxons"""
+        sql = """SELECT * FROM synthese.v_search_taxons"""
         #sql = " SELECT * FROM taxonomie.test"
     else:
         curProtocole = "'"+protocole+"'"
-        sql = "SELECT * FROM bdn.v_search_taxons WHERE regne = "+curProtocole
+        sql = "SELECT * FROM synthese.v_search_taxons WHERE regne = "+curProtocole
     res = utils.sqltoDict(sql, db.cur)
     db.closeAll()
     return Response(flask.json.dumps(res), mimetype='application/json')
@@ -147,7 +147,7 @@ def loadTypologgie():
     habitat = utils.sqltoDict(sql, db.cur)
     sql = "SELECT * FROM taxonomie.bib_liste_rouge"
     listeRouge = utils.sqltoDict(sql, db.cur)
-    sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT observateur FROM bdn.synthese ORDER BY observateur DESC)r"
+    sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT observateur FROM synthese.synthese ORDER BY observateur DESC)r"
     db.cur.execute(sql)
     observateurs = db.cur.fetchone()[0]
     sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT nom_structure, id_structure FROM utilisateur.bib_structure ORDER BY nom_structure DESC)r"
@@ -217,48 +217,46 @@ def uploaded_file(filename):
     return flask.send_from_directory(UPLOAD_FOLDER ,filename)
 
 
+# @synthese.route('/ficheObs/<protocole>/<id_synthese>')
+# def loadFicheObs(protocole, id_synthese):
+#     db = getConnexion()
+#     if protocole == 'FAUNE':
+#         sql = "SELECT p.*, ST_X(ST_Transform(p.geom_point, 4326)) as x, ST_Y(ST_Transform(p.geom_point, 4326)) as y, t.lb_nom, t.nom_vern FROM bdn.faune p JOIN taxonomie.taxref t ON t.cd_nom = p.cd_nom WHERE id_synthese = %s "
+#     if protocole == 'FLORE':
+#         sql = "SELECT p.*, ST_X(ST_Transform(p.geom_point, 4326)) as x, ST_Y(ST_Transform(p.geom_point, 4326)) as y, t.lb_nom, t.nom_vern FROM bdn.flore p JOIN taxonomie.taxref t ON t.cd_nom = p.cd_nom WHERE id_synthese = %s"
+#     params = [id_synthese]
+#     res = utils.sqltoDictWithParams(sql, params, db.cur)
+#     return Response(flask.json.dumps(res[0]), mimetype='application/json')
 
-
-@synthese.route('/ficheObs/<protocole>/<id_synthese>')
-def loadFicheObs(protocole, id_synthese):
-    db = getConnexion()
-    if protocole == 'FAUNE':
-        sql = "SELECT p.*, ST_X(ST_Transform(p.geom_point, 4326)) as x, ST_Y(ST_Transform(p.geom_point, 4326)) as y, t.lb_nom, t.nom_vern FROM bdn.faune p JOIN taxonomie.taxref t ON t.cd_nom = p.cd_nom WHERE id_synthese = %s "
-    if protocole == 'FLORE':
-        sql = "SELECT p.*, ST_X(ST_Transform(p.geom_point, 4326)) as x, ST_Y(ST_Transform(p.geom_point, 4326)) as y, t.lb_nom, t.nom_vern FROM bdn.flore p JOIN taxonomie.taxref t ON t.cd_nom = p.cd_nom WHERE id_synthese = %s"
-    params = [id_synthese]
-    res = utils.sqltoDictWithParams(sql, params, db.cur)
-    return Response(flask.json.dumps(res[0]), mimetype='application/json')
-
-@synthese.route('/modifyObs/<protocole>/<id_synthese>', methods=['GET', 'POST'])
-def modifyObs(protocole, id_synthese):
-    db = getConnexion()
-    print protocole
-    print id_synthese
-    observateur = None
-    if flask.request.method == 'POST':
-        observateur = flask.request.json['observateur']
-        sql = """UPDATE bdn."""+protocole+""" SET observateur = %s WHERE id_synthese = %s;
-                 UPDATE bdn.synthese SET observateur = %s WHERE id_synthese = %s"""
-        params = [observateur, id_synthese,observateur, id_synthese]
-        db.cur.execute(sql, params)
-        cd_nom = flask.request.json['taxon']['cd_nom']
-        print cd_nom
-        sql = """UPDATE bdn."""+protocole+""" SET cd_nom = %s WHERE id_synthese = %s;
-                UPDATE bdn.synthese SET cd_nom = %s WHERE id_synthese = %s """
-        params = [cd_nom, id_synthese, cd_nom, id_synthese]
-        db.cur.execute(sql, params)
-        loc = flask.request.json['loc']
-        x = str(loc['x'])
-        y = str(loc['y'])
-        point = 'POINT('+x+' '+y+')'
-        sql = """UPDATE bdn."""+protocole+""" SET geom_point = ST_Transform(ST_PointFromText(%s, 4326),%s) WHERE id_synthese = %s;
-                UPDATE bdn.synthese SET geom_point = ST_Transform(ST_PointFromText(%s, 4326),%s) WHERE id_synthese = %s;"""
-        params = [point, config.PROJECTION, id_synthese, point, config.PROJECTION, id_synthese]
-        db.cur.execute(sql, params)
-        db.conn.commit()
-    db.closeAll()
-    return Response(flask.json.dumps(loc), mimetype='application/json')
+# @synthese.route('/modifyObs/<protocole>/<id_synthese>', methods=['GET', 'POST'])
+# def modifyObs(protocole, id_synthese):
+#     db = getConnexion()
+#     print protocole
+#     print id_synthese
+#     observateur = None
+#     if flask.request.method == 'POST':
+#         observateur = flask.request.json['observateur']
+#         sql = """UPDATE bdn."""+protocole+""" SET observateur = %s WHERE id_synthese = %s;
+#                  UPDATE bdn.synthese SET observateur = %s WHERE id_synthese = %s"""
+#         params = [observateur, id_synthese,observateur, id_synthese]
+#         db.cur.execute(sql, params)
+#         cd_nom = flask.request.json['taxon']['cd_nom']
+#         print cd_nom
+#         sql = """UPDATE bdn."""+protocole+""" SET cd_nom = %s WHERE id_synthese = %s;
+#                 UPDATE bdn.synthese SET cd_nom = %s WHERE id_synthese = %s """
+#         params = [cd_nom, id_synthese, cd_nom, id_synthese]
+#         db.cur.execute(sql, params)
+#         loc = flask.request.json['loc']
+#         x = str(loc['x'])
+#         y = str(loc['y'])
+#         point = 'POINT('+x+' '+y+')'
+#         sql = """UPDATE bdn."""+protocole+""" SET geom_point = ST_Transform(ST_PointFromText(%s, 4326),%s) WHERE id_synthese = %s;
+#                 UPDATE bdn.synthese SET geom_point = ST_Transform(ST_PointFromText(%s, 4326),%s) WHERE id_synthese = %s;"""
+#         params = [point, config.PROJECTION, id_synthese, point, config.PROJECTION, id_synthese]
+#         db.cur.execute(sql, params)
+#         db.conn.commit()
+#     db.closeAll()
+#     return Response(flask.json.dumps(loc), mimetype='application/json')
 
 
 

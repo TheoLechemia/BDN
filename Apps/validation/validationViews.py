@@ -38,17 +38,15 @@ def indexValidation():
 
 
 
-@validation.route('/delete/<id_synt>')
-def deleteRow(id_synt):
+@validation.route('/delete/<id_synt>/<protocole>')
+def deleteRow(id_synt, protocole):
     db = getConnexion()
     id_synt = str(id_synt)
-    sql = """DELETE FROM bdn.synthese WHERE id_synthese = %s; """
+    sql = "DELETE FROM synthese.syntheseff WHERE id_synthese = %s; "
     param = [id_synt]
     db.cur.execute(sql, param) 
-    if id_synt[0:2] == 'FA':
-        sql = """DELETE FROM bdn.faune WHERE id_synthese = %s; """
-    if id_synt[0:2] == 'FL':
-        sql = """DELETE FROM bdn.flore WHERE id_synthese = %s; """
+
+    sql = "DELETE FROM "+protocole+".releve WHERE id_synthese = %s; "
     db.cur.execute(sql, param) 
     db.conn.commit()
     db.closeAll()
@@ -70,7 +68,7 @@ def validate():
             tupleSynth = tuple(id_synt)
         print "OHHH"
         print id_synt
-        sql = """UPDATE bdn.synthese
+        sql = """UPDATE synthese.syntheseff
                  SET valide = TRUE
                  WHERE id_synthese IN %s;"""
         param = [tupleSynth]

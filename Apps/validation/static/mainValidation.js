@@ -167,8 +167,9 @@ $('.validate').click(function(){
 	$(row).removeClass('currentRow');
     $(row).hide( "slow" );
     id = $(row).attr("idSynthese");
+    protocole = $(row).attr("protocole");
 	
-	data = {'validate': id}
+	data = {'validate': id, 'protocole': protocole}
 	data = JSON.stringify(data)
 	$.ajax({
 	  type: "POST",
@@ -186,19 +187,21 @@ var id;
 $('.delete').click(function(){
 	row = this.parentElement;
 	id = $(row).attr("idSynthese");
+	protocole = $(row).attr("protocole");
 	$('#confirmDelete').click(function(){
 			$.ajax({
 			  type: "GET",
-			  url: URL_APPLICATION+"validation/delete/"+id
+			  url: URL_APPLICATION+"validation/delete/"+id+"/"+protocole
 			})
 		$('.modal').modal('hide');
 		$(row).addClass("delete_ok");
 		$(row).hide( "slow" );
-		arrayID = [];
-		arrayID.push(id);
-		deletePoint(arrayID);
+		idArray = [];
+		idArray.push(id);
+		deletePoint(idArray);
 	})		
 });
+
 
 
 
