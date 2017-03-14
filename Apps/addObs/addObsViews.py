@@ -81,6 +81,46 @@ def getMaille():
     db.closeAll()
     return Response(flask.json.dumps(res), mimetype='application/json')
 
+
+@addObs.route('/loadProtocoles', methods=['GET', 'POST'])
+def getProtocoles():
+    db = getConnexion()
+    sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM bdn.bib_protocole) p"
+    db.cur.execute(sql)
+    return Response(flask.json.dumps(db.cur.fetchone()[0]), mimetype='application/json')
+
+
+
+@addObs.route('/loadValues/<protocole>', methods=['GET', 'POST'])
+def getValues(protocole):
+    db=getConnexion()
+    sql = "SELECT * FROM bdn."+protocole
+    db.cur.execute(sql)
+    res = db.cur.fetchall()
+    currentField = res[0][1]
+    finalDict = {currentField:list()}
+    for r in res:
+        if r[1] == currentField:
+            finalDict[currentField].append(r[2])
+        else:
+            currentField = r[1]
+            finalDict[currentField] = list()
+            finalDict[currentField].append(r[2])
+    return Response(flask.json.dumps(finalDict), mimetype='application/json')
+
+
+def getParmeters():
+    data = flask.request.json['protocoleForm']
+    listKeys = list()
+    listValues = list()
+    for key, value in data.iteritems():
+        listKeys.append(key)
+        listValues.append(value)
+    return {'keys': listKeys, 'values': listValues}
+
+
+
+
 @addObs.route('/submit/<protocole>', methods=['GET', 'POST'])
 def submitObs(protocole):
     db = getConnexion()
@@ -101,6 +141,7 @@ def submitObs(protocole):
         #prend le centroide de maille pou intersecter avec la foret et l'insee
         centroide = None
         if not loc_exact:
+            point = None
             sql = "SELECT ST_AsText(ST_Centroid(ST_TRANSFORM(geom, 4326))) FROM layers.mailles_1k WHERE code_1km = %s "
             params = [code_maille]
             db.cur.execute(sql, params)
@@ -133,48 +174,47 @@ def submitObs(protocole):
         if res != None:
             insee = res[0]
 
-        #recupere la id_structure a partir de l'info stocker dans la session
+
+        #recupere l id_structure a partir de l'info stocker dans la session
         id_structure = session['id_structure']
+        valide= False
+
+        generalValues = [protocole.upper(), observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure]
+
+
+        ###protocole
+
         
-        if protocole == 'flore':
-            abondance = flask.request.json['flore']['abondance']
-            nb_pied_exact = flask.request.json['flore']['nb_pied_exact']
-            nb_pied_approx = flask.request.json['flore']['nb_pied_approx']
-            stade_dev = flask.request.json['flore']['stade_dev']
-            protocole = protocole.upper()
-            if loc_exact:
-                sql = '''INSERT INTO bdn.flore (protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, geom_point, valide, loc_exact, commentaire, id_structure  )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s, %s, %s, %s )'''
-                params = [protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied_exact, stade_dev, point, 'false', loc_exact, commentaire, id_structure]
-            else: 
-                sql = '''INSERT INTO bdn.flore (protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied, stade_dev, valide, loc_exact, code_maille, commentaire, id_structure)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )'''
-                params = [protocole, observateur, date, cd_nom, insee, ccod_frt, abondance, nb_pied_approx, nb_pied_exact, stade_dev, 'false', loc_exact, code_maille, commentaire, id_structure]                
-            db.cur.execute(sql, params)
-            db.conn.commit()
+        stringInsert = "INSERT INTO bdn."+protocole+"(protocole, observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure"
+        stringValues = ""
+        if loc_exact:
+            stringValues = "VALUES (%s, %s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config.PROJECTION)+"), %s, %s, %s, %s, %s, %s, %s"
+        else:
+            stringValues = "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s"
+        keys = getParmeters()['keys']
+        values = getParmeters()['values']
+        for k in keys:
+            stringInsert += ", "+k
+            stringValues += ", %s"
+        stringInsert+=")"
+        stringValues+=")"
+        for v in values:
+            generalValues.append(v)
+        params = generalValues
+        sql = stringInsert+stringValues
 
-        if protocole == 'faune':
-            type_obs = flask.request.json['faune']['type_obs']
-            effectif = flask.request.json['faune']['effectif']
-            comportement = flask.request.json['faune']['comportement']
-            nb_individu = flask.request.json['faune']['nb_individu']
-            nb_male = flask.request.json['faune']['nb_male']
-            nb_femelle = flask.request.json['faune']['nb_femelle']
-            nb_jeune = flask.request.json['faune']['nb_jeune']
-            nb_non_identife = flask.request.json['faune']['nb_non_identifie']
-            trace = flask.request.json['faune']['trace']
-            protocole = protocole.upper()
-            if loc_exact:
 
-                sql = '''INSERT INTO bdn.faune (protocole, observateur, date, cd_nom, insee, ccod_frt, type_obs, nb_individu_approx, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, geom_point, valide, loc_exact, commentaire, id_structure)
-                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, ST_Transform(ST_PointFromText(%s, 4326),32620), %s, %s, %s, %s )'''
-                params = [protocole, observateur, date, cd_nom, insee, ccod_frt, type_obs, nb_individu, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, point, 'false', loc_exact, commentaire, id_structure]
-            else:
-                sql = '''INSERT INTO bdn.faune (protocole, observateur, date, cd_nom, insee, ccod_frt, type_obs, nb_individu_approx, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, valide, loc_exact, code_maille, commentaire, id_structure )
-                   VALUES (%s, %s, %s, %s, %s, %s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s )'''
-                params = [protocole, observateur, date, cd_nom, insee, ccod_frt, type_obs, nb_individu, comportement, nb_non_identife, nb_male, nb_femelle, nb_jeune, trace, 'false', loc_exact, code_maille, commentaire, id_structure]
-            print params
-            db.cur.execute(sql, params)
-            db.conn.commit()
+        print 'LAAAAAAAAAAAAAAAAAAA \q'
+        print sql
+        print params
+        print len(params)
+
+        db.cur.execute(sql, params)
+        db.conn.commit()
 
     return Response(flask.json.dumps('success'), mimetype='application/json')
+
+
+
+
+    

@@ -7,19 +7,30 @@ var app = angular.module("app", ['leaflet-directive', 'ui.bootstrap']).config(fu
 
 app.controller("headerCtrl", function($scope, $http, leafletData){
 
+$http.get(URL_APPLICATION+"addObs/loadProtocoles").then(function(response){ 
+    $scope.protocole = response.data;
+  })
 
-$scope.search_scientist_name = function(expre, view){
-  return $http.get(URL_APPLICATION+"addObs/search_scientist_name/"+view+"/"+expre).then(function(response){ 
+
+$scope.search_scientist_name = function(expre, selectedProtocole){
+  console.log(selectedProtocole);
+  return $http.get(URL_APPLICATION+"addObs/search_scientist_name/"+selectedProtocole.nom_table+"/"+expre).then(function(response){ 
     return response.data;
   })
   }
 
-$scope.search_vern_name = function(expre, view){
-  return $http.get(URL_APPLICATION+"addObs/search_vern_name/"+view+"/"+expre).then(function(response){ 
+$scope.search_vern_name = function(expre, selectedProtocole){
+  return $http.get(URL_APPLICATION+"addObs/search_vern_name/"+selectedProtocole.nom_table+"/"+expre).then(function(response){ 
     return response.data;
   })
   }
 
+$scope.bindNewValues = function(protocole){
+  table = protocole.bib_champs
+  $http.get(URL_APPLICATION+"addObs/loadValues/"+table).then(function(response){ 
+    $scope.fields = response.data;
+  });
+};
 
 
 $scope.isLoading = true;
@@ -36,7 +47,7 @@ $scope.showCoord = true;
     'code_maille': null,
     'commentaire': null,
    }
-   var resetFormFlore = {
+/*   var resetFormFlore = {
     'abondance' : null,
     'nb_pied_exact': null,
     'nb_pied_approx': null,
@@ -54,12 +65,11 @@ $scope.showCoord = true;
     'nb_jeune':null,
     'nb_non_identifie': null,
   }
-  $scope.formFaune = resetFormFaune;
+  $scope.formFaune = resetFormFaune;*/
 
 
-   $scope.view = 'flore'
 
-
+   $scope.child = {'protocoleForm':{}};
 
 
    $scope.isOpen = false;
@@ -109,22 +119,16 @@ function checkInegersInput(form){
  $scope.validationAttempt = false;
 
   $scope.onSubmit = function(protocole, form){
-    var completeForm = {'general': $scope.globalForm, 'faune': $scope.formFaune, 'flore': $scope.formFlore};
+    console.log($scope.protocoleForm);
+    var completeForm = {'protocole': $scope.selectedProtocole, 'general': $scope.globalForm, 'protocoleForm': $scope.child.protocoleForm};
     $scope.validationAttempt = true;
     console.log(completeForm);
 
     console.log(form);
-/*    if(form.nb_male.$modelValue != undefined){
-      if (typeof form.nb_individu.$modelValue != "number"){
-        form.nb_individu.$invalid = true;
-        form.$valid = false;
-      }
-    }*/
+
      console.log(form.$valid);
 
-
-
-/*    if (form.$valid){
+    if (form.$valid){
           $http.post(URL_APPLICATION+'addObs/submit/'+protocole, completeForm).then(function(response){
           if(response.status == 200){
             $scope.formSuccessfullySent = true;
@@ -141,10 +145,10 @@ function checkInegersInput(form){
                     'taxon': null,
                     'commentaire': null,
                    }
-            $scope.formFlore = resetFormFlore;
-            $scope.formFaune = resetFormFaune;
+/*            $scope.formFlore = resetFormFlore;
+            $scope.formFaune = resetFormFaune;*/
+          $scope.child.protocoleForm = {};
           }
-
 
           setTimeout(function(){
             $scope.formSuccessfullySent = false;
@@ -156,7 +160,7 @@ function checkInegersInput(form){
           $scope.validationAttempt = false;
 
     })
-    }*/
+    }
   }
 
 

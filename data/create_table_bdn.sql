@@ -8,7 +8,6 @@ CREATE TABLE bdn.synthese
   insee character varying(10),
   altitude integer,
   valide boolean,
-  id_kfey integer,
   geom_point geometry(Point,32620),
   ccod_frt character varying(50),
   code_maille character varying(20),
@@ -31,8 +30,15 @@ CREATE TABLE bdn.faune
   observateur character varying(100) NOT NULL,
   date date NOT NULL,
   cd_nom integer NOT NULL,
+  geom_point geometry(Point,32620),
   insee character varying(10),
   altitude integer,
+  commentaire character varying(150),
+  valide boolean,
+  ccod_frt character varying(50),
+  loc_exact boolean,
+  code_maille character varying(20),
+  id_structure integer,
   type_obs character varying(50),
   nb_individu_approx character varying(50),
   comportement character varying(50),
@@ -41,13 +47,8 @@ CREATE TABLE bdn.faune
   nb_femelle integer,
   nb_jeune integer,
   trace character varying(50),
-  geom_point geometry(Point,32620),
-  commentaire character varying(150),
-  valide boolean,
-  ccod_frt character varying(50),
-  loc_exact boolean,
-  code_maille character varying(20),
-  id_structure integer,
+  
+
   CONSTRAINT faune_pkey PRIMARY KEY (id_obs),
   CONSTRAINT cd_nom FOREIGN KEY (cd_nom)
       REFERENCES taxonomie.taxref (cd_nom) MATCH SIMPLE
@@ -67,20 +68,21 @@ CREATE TABLE bdn.flore
   observateur character varying(100) NOT NULL,
   date date NOT NULL,
   cd_nom integer NOT NULL,
+  geom_point geometry(Point,32620),
   insee character varying(10),
   altitude integer,
-  abondance character varying(15),
-  nb_pied_approx character varying(15),
-  nb_pied integer,
-  stade_dev character varying(50),
-  geom_point geometry(Point,32620),
   commentaire character varying(150),
   valide boolean,
   ccod_frt character varying(50),
   loc_exact boolean,
   code_maille character varying(20),
   id_structure integer,
-  CONSTRAINT flore_pkey PRIMARY KEY (id_obs),
+  abondance character varying(15),
+  nb_pied_approx character varying(15),
+  nb_pied integer,
+  stade_dev character varying(50),
+  
+  CONSTRAINT fl_pk PRIMARY KEY (id_obs),
   CONSTRAINT cd_nom FOREIGN KEY (cd_nom)
       REFERENCES taxonomie.taxref (cd_nom) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE SET NULL,
@@ -149,6 +151,38 @@ CREATE OR REPLACE VIEW bdn.v_search_taxons AS
 
 ALTER TABLE bdn.v_search_taxons
   OWNER TO onfuser;
+
+
+CREATE TABLE bdn.bib_protocole (
+nom_protocole character varying CONSTRAINT bib_protocole_pk PRIMARY KEY,
+nom_table character varying,
+template character varying,
+bib_champs character varying
+);
+
+INSERT INTO bdn.bib_protocole VALUES ('Contact Flore', 'flore', 'addObs/contactFlore.html', 'bib_champs_contact_flore'), ('Contact Faune', 'faune', 'addObs/contactFaune.html', 'bib_champs_contact_faune');
+
+CREATE TABLE bdn.bib_champs_contact_faune(
+id serial  CONSTRAINT ca_primary_key PRIMARY KEY,
+nom_champ character varying,
+valeur character varying
+);
+
+
+
+INSERT INTO bdn.bib_champs_contact_faune (nom_champ, valeur) VALUES
+('type_obs', 'Contact visuel'),
+('type_obs', 'Chant'),
+('type_obs', 'Cris'),
+('type_obs', 'Nid'),
+('type_obs', 'Gîte'),
+('type_obs', 'Nichoir'),
+('type_obs', 'Empreintes, traces'),
+('type_obs', 'Détection'),
+('type_obs', 'Capture manuelle'),
+('type_obs', 'Indices (crottes,...)'),
+('type_obs', 'Animal mort ou collision');
+
 
 
 
@@ -430,3 +464,5 @@ ALTER TABLE utilisateur.bib_role
 
 INSERT INTO utilisateur.bib_role
 VALUES(1, 'lecteur'), (2, 'contributeur'), (3, 'administrateur');
+
+

@@ -43,11 +43,15 @@
 			<div class="col-sm-3"> 
 				<div class="panel panel-default">
 					<div class="section">
-						<form name="addObsForm" ng-submit="onSubmit(view, addObsForm)" novalidate>
+						<form name="addObsForm" ng-submit="onSubmit(selectedProtocole.nom_table, addObsForm)" novalidate>
 							<div class="form-group">
 							    <div class="btn-group">
-			        				<label class="btn btn-success" ng-model="view" uib-btn-radio="'flore'" uncheckable>Flore</label>
-			        				<label class="btn btn-success" ng-model="view" uib-btn-radio="'faune'" uncheckable>Faune</label>
+							    <label> Protocole</label>
+							    	<select ng-model="selectedProtocole" ng-change="bindNewValues(selectedProtocole)" ng-options="row.nom_protocole for row in protocole">
+							    		<option value=""> - Selectionner un protocole - </option>
+							    	</select>
+<!-- 			        				<label class="btn btn-success" ng-model="view" uib-btn-radio="'flore'" uncheckable>Flore</label>
+			        				<label class="btn btn-success" ng-model="view" uib-btn-radio="'faune'" uncheckable>Faune</label> -->
 			  					</div>
 			  				</div>
 			  				<div class="form-group" ng-class="{'has-error' : addObsForm.observateur.$invalid && !addObsForm.observateur.$pristine  || (validationAttempt && addObsForm.observateur.$invalid)}">
@@ -57,11 +61,11 @@
 
 
 							<div class="form-group" >
-						 		<input name = "nom_vern" id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="globalForm.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.nom_vern for taxon in search_vern_name($viewValue, view)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="noResults" typeahead-loading="isLoading">
+						 		<input name = "nom_vern" id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="globalForm.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.nom_vern for taxon in search_vern_name($viewValue, selectedProtocole)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="noResults" typeahead-loading="isLoading">
 						 	</div>
 						
 							<div class="form-group" ng-class="{'has-error' : addObsForm.lb_nom.$invalid && !addObsForm.lb_nom.$pristine  || (validationAttempt && addObsForm.lb_nom.$invalid) }">
-							 	<input name="lb_nom" autocomplete="off" placeholder="Nom scientifique " type="text" ng-model="globalForm.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.lb_nom for taxon in search_scientist_name($viewValue, view)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="noResults" typeahead-loading="isLoading" required>
+							 	<input name="lb_nom" autocomplete="off" placeholder="Nom scientifique " type="text" ng-model="globalForm.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.lb_nom for taxon in search_scientist_name($viewValue, selectedProtocole)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="noResults" typeahead-loading="isLoading" required>
 							 	<p ng-show="(addObsForm.lb_nom.$invalid && !addObsForm.lb_nom.$pristine) || (validationAttempt && addObsForm.lb_nom.$invalid)" class="help-block">Le nom scientifique est requis</p>
 							</div>
 
@@ -87,99 +91,19 @@
 							  <label> Champs facultatifs  </label>
 							  <input class="form-control" type="text" placeholder="Commentaire" ng-model="globalForm.commentaire"  >
 
+							  <div class="slide-animate" ng-include="selectedProtocole.template"></div>
 
-							  <!-- FLORE -->
-
-							  <div ng-if="view == 'flore' ">
-								  <div class="form-group" >
-								  	<input class="form-control" type="text" placeholder="Nombre de pied exact"  ng-model="formFlore.nb_pied_exact" >
-								  	<select class="form-control" type="text" placeholder="Abondance" ng-model="formFlore.abondance" ng-options="choice as choice for choice in abondance" >
-								  		<option value=""> - Abondance - </option>
-								  	</select>
-								  	
-								  	<select class="form-control" type="text" ng-model="formFlore.nb_pied_approx" ng-options="choice as choice for choice in nb_pied_approx">
-								  		<option value=""> - Nombre de pied approximattif -</option>
-								  	</select>
-								  </div>
-								  <div class="form-group">
-								  	<select class="form-control" type="text" placeholder="Stade de développement" ng-model="formFlore.stade_dev" ng-options="choice as choice for choice in stade_dev">
-								  		<option value=""> - Stade de développement - </option>
-								  	</select>
-								  </div>
-							  </div>
-
-
-							  <!-- FAUNE -->
-							  <div ng-if="view == 'faune'">
-								  <div class="form-group" >
-								  	<select class="form-control" type="text" placeholder="Type d'observation" ng-model="formFaune.type_obs" ng-options="choice as choice for choice in type_obs" >
-								  		<option value=""> - Type d'observation - </option>
-								  	</select>
-								  	<select class="form-control" type="text" placeholder="Traces" ng-model="formFaune.comportement" ng-options="choice as choice for choice in comportement">
-								  		<option value=""> - Comportement - </option> 
-								  	</select>
-								  	<select class="form-control" type="text" placeholder="Traces" ng-model="formFaune.trace" ng-options="choice as choice for choice in trace">
-								  		<option value=""> - Trace - </option> 
-								  	</select>
-								  	<select class="form-control" type="text" placeholder="Effectif" ng-model="formFaune.effectif" ng-options="choice as choice for choice in effectif" >
-								  		<option value=""> - Effectif - </option>
-								  	</select>
-								 </div>
-
-<!-- 								  	<div class="form-group" ng-class="{'has-error' : addObsForm.nb_individu.$invalid && !addObsForm.nb_individu.$pristine  || (validationAttempt && addObsForm.nb_individu.$invalid)}">
-								  		<input class="form-control" type="number" placeholder="Nombre d'individu" ng-model="formFaune.nb_individu"  name="nb_individu">
-								  		<p ng-show="(addObsForm.nb_individu.$invalid && !addObsForm.nb_individu.$pristine) || (validationAttempt && addObsForm.nb_individu.$invalid) " class="help-block">Ce champs doit être un entier</p>
-								  	</div>
-								  	<div class="form-group" ng-class="{'has-error' : addObsForm.nb_male.$invalid && !addObsForm.nb_male.$pristine  || (validationAttempt && addObsForm.nb_male.$invalid)}">
-								  		<input class="form-control" type="number" placeholder="Nombre de mâle adulte" ng-model="formFaune.nb_male"  name ="nb_male">
-								  		<p ng-show="(addObsForm.nb_male.$invalid && !addObsForm.nb_male.$pristine) || (validationAttempt && addObsForm.nb_male.$invalid) " class="help-block">Ce champs doit être un entier</p>
-								  	</div>
-								  	<div class="form-group" ng-class="{'has-error' : addObsForm.nb_femelle.$invalid && !addObsForm.nb_femelle.$pristine  || (validationAttempt && addObsForm.nb_femelle.$invalid)}">
-								  		<input class="form-control" type="number" placeholder="Nombre de femelles adulte" ng-model="formFaune.nb_femelle"  name="nb_femelle">
-								  		<p ng-show="(addObsForm.nb_femelle.$invalid && !addObsForm.nb_femelle.$pristine) || (validationAttempt && addObsForm.nb_femelle.$invalid) " class="help-block">Ce champs doit être un entier</p>
-								  	</div>
-								  	<div class="form-group" ng-class="{'has-error' : addObsForm.nb_jeune.$invalid && !addObsForm.nb_jeune.$pristine  || (validationAttempt && addObsForm.nb_jeune.$invalid)}">
-								  		<input class="form-control" type="number" placeholder="Nombre de jeune" ng-model="formFaune.nb_jeune"  name = "nb_jeune">
-								  		<p ng-show="(addObsForm.nb_jeune.$invalid && !addObsForm.nb_jeune.$pristine) || (validationAttempt && addObsForm.nb_jeune.$invalid) " class="help-block">Ce champs doit être un entier</p>
-								  	</div>
-								  	<div class="form-group" ng-class="{'has-error' : addObsForm.nb_non_identifie.$invalid && !addObsForm.nb_non_identifie.$pristine  || (validationAttempt && addObsForm.nb_non_identifie.$invalid)}">
-								  		<input class="form-control" type="number" placeholder="Nombre non identifié" ng-model="formFaune.nb_non_identifie"  name="nb_non_identifie">
-								  		<p ng-show="(addObsForm.nb_non_identifie.$invalid && !addObsForm.nb_non_identifie.$pristine) || (validationAttempt && addObsForm.nb_non_identifie.$invalid) " class="help-block">Ce champs doit être un entier</p>
-								  	</div> -->
-
-
-								  	<div class="form-group">
-									    <div class="col-sm-6 no-padding" ng-class="{'has-error' : addObsForm.nb_individu.$invalid && !addObsForm.nb_individu.$pristine  || (validationAttempt && addObsForm.nb_individu.$invalid)}"">
-									        <input class="form-control" type="number" placeholder="Nombre d'individu" ng-model="formFaune.nb_individu"  name="nb_individu">
-									    </div>
-									    <div class="col-sm-6 no-padding" ng-class="{'has-error' : addObsForm.nb_male.$invalid && !addObsForm.nb_male.$pristine  || (validationAttempt && addObsForm.nb_male.$invalid)}">
-									        <input class="form-control" type="number" placeholder="Nombre de mâle adulte" ng-model="formFaune.nb_male"  name ="nb_male">
-									    </div>
-									</div>
-								  	<div class="form-group">
-									  	<div class="col-sm-6 no-padding" ng-class="{'has-error' : addObsForm.nb_femelle.$invalid && !addObsForm.nb_femelle.$pristine  || (validationAttempt && addObsForm.nb_femelle.$invalid)}">
-									  		<input class="form-control" type="number" placeholder="Nombre de femelles adulte" ng-model="formFaune.nb_femelle"  name="nb_femelle">
-									  	</div>
-									  	<div class="col-sm-6 no-padding" ng-class="{'has-error' : addObsForm.nb_jeune.$invalid && !addObsForm.nb_jeune.$pristine  || (validationAttempt && addObsForm.nb_jeune.$invalid)}">
-									  		<input class="form-control" type="number" placeholder="Nombre de jeune" ng-model="formFaune.nb_jeune"  name = "nb_jeune">
-									  	</div>
-									</div>
-									<div class="form-group" ng-class="{'has-error' : addObsForm.nb_non_identifie.$invalid && !addObsForm.nb_non_identifie.$pristine  || (validationAttempt && addObsForm.nb_non_identifie.$invalid)}">
-								  		<input class="form-control" type="number" placeholder="Nombre non identifié" ng-model="formFaune.nb_non_identifie"  name="nb_non_identifie">
-								  	</div>
-
-								  	
-							</div>
 
 							<input class="btn btn-success" type="submit">
 							<div ng-show="formSuccessfullySent" class="alert alert-success">Observation enregistrée avec succès</div>
 						</form>
 
 						<div class="row" style="height: 10px;"></div>
+
 											
 					</div>
 				</div>
-				
+
 			</div>
 
 			<div class="col-sm-9">

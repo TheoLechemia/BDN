@@ -35,7 +35,7 @@
 							<span> {{taxon.name}} </span> <span style="cursor: pointer;" class="glyphicon glyphicon-remove" ng-click="$ctrl.removeTaxonEvent(taxon.cd_nom)"> </span>
 						</div>
 				</div>
-				<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg" ng-click="$ctrl.advancedSearch()" > Recherche taxonomique avancée </button>
+				<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg" ng-click="$ctrl.advancedSearch()" > Recherche avancée </button>
 				<div ng-show ="$ctrl.form.regne != null " class="ng-hide">
 					<p> <b> Filtres: </b> </p>
 					<table>
@@ -179,7 +179,7 @@
 			</select>
 		
 
-	      <div class="form-inline form-group">
+	      <div class="form-inline form-group" style="margin-top: 5px;">
 		  	 <button type="button" class="btn btn-danger formbutton " uib-tooltip="Raffraichir la sélection" ng-click="$ctrl.onRefreshEvent()"> <span class="glyphicon glyphicon-remove"> </span>  </button>
 		   	<button type="submit" type="button" class="btn btn btn-success formbutton" ng-click="$ctrl.submitForm($ctrl.form)"> Rechercher </button>
 		  </div>
