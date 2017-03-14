@@ -95,32 +95,21 @@ CREATE TABLE bdn.flore
   -- Trigger
 -- create id_synthese in protocole
 
---flore
-CREATE OR REPLACE FUNCTION bdn.fill_id_synthese_flore() RETURNS TRIGGER AS $fill_id_synthese$
+CREATE OR REPLACE FUNCTION bdn.fill_id_synthese() RETURNS TRIGGER AS $fill_id_synthese$
     BEGIN
-    UPDATE bdn.flore
-    SET id_synthese = concat_ws('', LEFT(protocole,2)::text, id_obs::text);
+    EXECUTE format('UPDATE %s.%s
+    SET id_synthese = CONCAT(LEFT(protocole,2)::text, id_obs::text)',TG_TABLE_SCHEMA, TG_TABLE_NAME);
     RETURN NULL;
-    END;
+    END;    
 $fill_id_synthese$ LANGUAGE plpgsql;
 
-CREATE TRIGGER tr_id_synthese_fl
-AFTER INSERT ON bdn.flore
-    FOR EACH ROW EXECUTE PROCEDURE bdn.fill_id_synthese_flore();
+CREATE TRIGGER fill_id_synthese_flore
+BEFORE INSERT ON bdn.flore
+    FOR EACH ROW EXECUTE PROCEDURE bdn.fill_id_synthese();
 
-
-
-CREATE OR REPLACE FUNCTION bdn.fill_id_synthese_faune() RETURNS TRIGGER AS $fill_id_synthese$
-    BEGIN
-    UPDATE bdn.faune
-    SET id_synthese = concat_ws('', LEFT(protocole,2)::text, id_obs::text);
-    RETURN NULL;
-    END;
-$fill_id_synthese$ LANGUAGE plpgsql;
-
-CREATE TRIGGER tr_id_synthese_fa
-AFTER INSERT ON bdn.faune
-    FOR EACH ROW EXECUTE PROCEDURE bdn.fill_id_synthese_faune();
+CREATE TRIGGER fill_id_synthese_faune
+BEFORE INSERT ON bdn.faune
+    FOR EACH ROW EXECUTE PROCEDURE bdn.fill_id_synthese();
 
 
 CREATE OR REPLACE FUNCTION bdn.tr_protocole_to_synthese() RETURNS TRIGGER AS $tr_protocole_to_synthese$
