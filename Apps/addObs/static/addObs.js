@@ -47,26 +47,6 @@ $scope.showCoord = true;
     'code_maille': null,
     'commentaire': null,
    }
-/*   var resetFormFlore = {
-    'abondance' : null,
-    'nb_pied_exact': null,
-    'nb_pied_approx': null,
-    'stade_dev': null,
-   }
-   $scope.formFlore = resetFormFlore;
-   var resetFormFaune = {
-    'type_obs': null,
-    'effectif': null,
-    'comportement': null,
-    'trace': null, 
-    'nb_individu':null, 
-    'nb_male': null,
-    'nb_femelle': null,
-    'nb_jeune':null,
-    'nb_non_identifie': null,
-  }
-  $scope.formFaune = resetFormFaune;*/
-
 
 
    $scope.child = {'protocoleForm':{}};
@@ -85,35 +65,6 @@ $scope.showCoord = true;
     $scope.globalForm.coord.lat = $scope.markers.main.lat;
    }
 
-
-   $scope.abondance = [
-        '1',
-        '2-3',
-        '4-5',
-        '6-50',
-        '>50 (<5%)',
-        '5-25%',
-        '16-25%',
-        '26-50%',
-        '51-75%',
-        '76-100%',
-      ]
-  $scope.nb_pied_approx = ['<1', '10 - 50', '50 - 100', '100 - 500', '>1000']
-  $scope.stade_dev = ['Plantule', 'Juvenile', 'Adulte', 'Bouton', 'Début floraison', 'Plein floraison', 'Fin floraison', 'Début fructification', 'Plein fructification', 'Fin fructification', 'Dissémination', 'Squelette, autre',
-                      'Prothale (Ptéridophytes)', 'Sporophyte juvénile (Ptéridophytes)','Sporophyte Adulte (Ptéridophytes)', 'Sporange immature (Ptéridophytes)', 'Sporange matures (Sporophyte)']
-
-  $scope.type_obs= ['Animal mort ou collision','Capture manuelle', 'Chant','Cris','Contact sonore', 'Contact visuel', 'Détection','Empreintes, Traces','Filet','Gîte', 'Nichoir', 'Nid', 'Indices (crottes,...)'];
-
-  $scope.effectif = ['1-5','6-10','11-20','21-50','51-100','101-500','501-1000','> 1000'];
-
-  $scope.comportement = ['Alerte','Alimentation','Colonie avec certaines femelles gestantes','Colonie avec jeunes non volants','Colonie avec jeunes volants','Colonie avec males','Colonie avec mise bas','Repos','Colonie de reproduction','Colonie sans jeunes','Comportement parental','Comportement territorial','Eclosion','Emergence','En chasse','En vol','Estivage','Fuite','Harem','Hibernation','Individus isolés','Léthargie diurne','Léthargie hivernale','Migration','Nidification','Parade nuptiale','Ponte','Reproduction','Transit','Autres']
-  $scope.trace = ['Crottes ou crottier','Ecorçage ou frottis','Empreintes','Epiderme','Guano','Nid','Oeufs','Pelage','Pelotes de réjection','Restes alimentaires',"Restes de l'animal",'Terrier','Autres','Larves','Exuvie']
-
-
-
-function checkInegersInput(form){
-
-}
 
 
  $scope.validationAttempt = false;

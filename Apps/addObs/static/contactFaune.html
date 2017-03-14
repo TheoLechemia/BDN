@@ -2,13 +2,13 @@
 	<select class="form-control" type="text" placeholder="Type d'observation" ng-model="child.protocoleForm.type_obs" ng-options="choice as choice for choice in fields.type_obs" >
 		<option value=""> - Type d'observation - </option>
 	</select>
-	<select class="form-control" type="text" placeholder="Traces" ng-model="child.protocoleForm.comportement" ng-options="choice as choice for choice in comportement">
+	<select class="form-control" type="text" placeholder="Traces" ng-model="child.protocoleForm.comportement" ng-options="choice as choice for choice in fields.comportement">
 		<option value=""> - Comportement - </option> 
 	</select>
-	<select class="form-control" type="text" placeholder="Traces" ng-model="child.protocoleForm.trace" ng-options="choice as choice for choice in trace">
+	<select class="form-control" type="text" placeholder="Traces" ng-model="child.protocoleForm.trace" ng-options="choice as choice for choice in fields.trace">
 		<option value=""> - Trace - </option> 
 	</select>
-	<select class="form-control" type="text" placeholder="Effectif" ng-model="child.protocoleForm.nb_individu_approx" ng-options="choice as choice for choice in effectif" style="margin-bottom: 10px;" >
+	<select class="form-control" type="text" placeholder="Effectif" ng-model="child.protocoleForm.nb_individu_approx" ng-options="choice as choice for choice in fields.effectif" style="margin-bottom: 10px;" >
 		<option value=""> - Effectif - </option>
 	</select>
 </div>

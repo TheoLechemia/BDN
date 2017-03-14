@@ -148,14 +148,19 @@ nom_table character varying,
 template character varying,
 bib_champs character varying
 );
+ALTER TABLE bdn.bib_protocole
+    OWNER TO onfuser;
+
 
 INSERT INTO bdn.bib_protocole VALUES ('Contact Flore', 'flore', 'addObs/contactFlore.html', 'bib_champs_contact_flore'), ('Contact Faune', 'faune', 'addObs/contactFaune.html', 'bib_champs_contact_faune');
 
 CREATE TABLE bdn.bib_champs_contact_faune(
-id serial  CONSTRAINT ca_primary_key PRIMARY KEY,
+id serial  CONSTRAINT bib_fa_primary_key PRIMARY KEY,
 nom_champ character varying,
 valeur character varying
 );
+ALTER TABLE bdn.bib_champs_contact_faune
+    OWNER TO onfuser;
 
 
 
@@ -170,7 +175,90 @@ INSERT INTO bdn.bib_champs_contact_faune (nom_champ, valeur) VALUES
 ('type_obs', 'Détection'),
 ('type_obs', 'Capture manuelle'),
 ('type_obs', 'Indices (crottes,...)'),
-('type_obs', 'Animal mort ou collision');
+('type_obs', 'Animal mort ou collision'),
+('effectif', '1-5'),
+('effectif', '6-10'),
+('effectif', '11-20'),
+('effectif', '21-50'),
+('effectif', '51-100'),
+('effectif', '101-500'),
+('effectif', '501-1000'),
+('effectif', '>1000'),
+('comportement', 'Reproduction'),
+('comportement', 'Parade nuptiale'),
+('comportement', 'Ponte'),
+('comportement', 'Nidification'),
+('comportement', 'Emergence'),
+('comportement', 'Eclosion'),
+('comportement', 'Comportement parental'),
+('comportement', 'Colonie avec mise bas'),
+('comportement', 'Colonie de reproduction'),
+('comportement', 'Colonie avec certaines femelles gestantes'),
+('comportement', 'Colonie avec jeunes non volants'),
+('comportement', 'Colonie avec jeunes volants'),
+('comportement', 'Colonie sans jeunes'),
+('comportement', 'Colonie avec males'),
+('comportement', 'Individus isolés'),
+('comportement', 'En chasse'),
+('comportement', 'En vol'),
+('comportement', 'Fuite'),
+('comportement', 'Alerte'),
+('comportement', 'Repos'),
+('comportement', 'Léthargie diurne'),
+('comportement', 'Alimentation'),
+('comportement', 'Transit'),
+('comportement', 'Estivage'),
+('comportement', 'Migration'),
+('comportement', 'Harem'),
+('comportement', 'Autres'),
+('trace', 'Crottes ou crottier'),
+('trace', 'Ecorçage ou frottis'),
+('trace', 'Empreintes'),
+('trace', 'Epiderme'),
+('trace', 'Guano'),
+('trace', 'Nid'),
+('trace', 'Oeufs'),
+('trace', 'Pelage'),
+('trace', 'Pelotes de réjection'),
+('trace', 'Restes alimentaires'),
+('trace', 'Restes de l"animal'),
+('trace', 'Terrier'),
+('trace', 'Larves'),
+('trace', 'Exuvie');
+
+
+
+
+CREATE TABLE bdn.bib_champs_contact_flore(
+id serial  CONSTRAINT bib_fl_primary_key PRIMARY KEY,
+nom_champ character varying,
+valeur character varying
+);
+ALTER TABLE bdn.bib_champs_contact_flore
+    OWNER TO onfuser;
+
+INSERT INTO bdn.bib_champs_contact_flore (nom_champ, valeur) VALUES
+('abondance', '1'),
+('abondance', '2-3'),
+('abondance', '4-5'),
+('abondance', '6-50'),
+('abondance', '< 5%'),
+('abondance', '5-25%'),
+('abondance', '16-25%'),
+('abondance', '26-50%'),
+('abondance', '51-75%'),
+('abondance', '76-100%'),
+('nb_pied_approx', '1 à 10'),
+('nb_pied_approx', '10 à 100'),
+('nb_pied_approx', 'Plus de 100'),
+('nb_pied_approx', 'Plus de 100'),
+('stade_dev', 'Stade végétatif'),
+('stade_dev', 'Stade bouton floraux'),
+('stade_dev', 'Début floraison'),
+('stade_dev', 'Pleine floraison'),
+('stade_dev', 'Fin de floraison et maturation des fruits'),
+('stade_dev', 'Dissémination'),
+('stade_dev', 'Stade de décrépitude');
 
 
 

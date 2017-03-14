@@ -1,7 +1,7 @@
 # coding: utf-8
 import csv
 import sys
-from Apps.config import *
+from Apps import config
 from Apps.database import *
 
 fileName = input('Entrez le chemin du fichier CSV (entre guillemets) : ')
@@ -26,6 +26,7 @@ try:
             column_name_and_type.append({'name':row[0], 'type': row[2]})
 
 
+    addPermission = "ALTER TABLE bdn."+tableName+" OWNER TO "config.USER";"
     stringCreate = """CREATE TABLE bdn."""+tableName+"""
     (
       id_obs serial CONSTRAINT """+tableName+"""_PK PRIMARY KEY,
@@ -34,7 +35,7 @@ try:
       observateur character varying(100) NOT NULL,
       date date NOT NULL,
       cd_nom integer NOT NULL,
-      geom_point geometry(Point,32620),
+      geom_point geometry(Point,"""+config.PROJECTONN"""),
       insee character varying(10),
       altitude integer,
       commentaire character varying(150),
@@ -47,14 +48,17 @@ try:
     for r in column_name_and_type:
         stringCreate+=" "+ r['name']+" "+r['type']+","
 
-    stringCreate = stringCreate[0:-1]+")"
+    stringCreate = stringCreate[0:-1]+");"
+    stringCreate += addPermission
+
     db.cur.execute(stringCreate)
     db.conn.commit()
 
 
     # ##Cree la vue pour y mettre la liste des taxons personnalisé. Par default on met tous le taxref, a change par le gestionnaire de BDD
 
-    sql = "CREATE VIEW taxonomie.taxons_"+tableName+" AS SELECT * FROM taxonomie.taxref"
+    sql = "CREATE VIEW taxonomie.taxons_"+tableName+" AS SELECT * FROM taxonomie.taxref;"
+    sql += addPermission
     db.cur.execute(sql)
     db.conn.commit()
 
@@ -78,6 +82,7 @@ try:
 
 
     stringCreate = "CREATE TABLE bdn.bib_champs_tortue ( id serial NOT NULL, nom_champ character varying, valeur character varying, CONSTRAINT "+tableName+"PK PRIMARY KEY (id))"
+    stringCreate += addPermission
     db.cur.execute(stringCreate)
     db.conn.commit()
 
