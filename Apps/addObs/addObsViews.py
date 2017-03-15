@@ -214,6 +214,7 @@ def submitObs():
 
         db.cur.execute(sql, params)
         db.conn.commit()
+        db.closeAll()
 
     return Response(flask.json.dumps('success'), mimetype='application/json')
 
