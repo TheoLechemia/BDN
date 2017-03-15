@@ -117,6 +117,7 @@ def askFirstParame(sql, firstParam):
     return sql
 
 def getFormParameters():
+    protocole = flask.request.json['selectedProtocole']
     listTaxons = flask.request.json['listTaxons']
     firstDate = flask.request.json['when']['first']
     lastDate = flask.request.json['when']['last']
@@ -143,11 +144,11 @@ def getFormParameters():
 
 
     return {'listTaxons':listTaxons, 'firstDate':firstDate, 'lastDate':lastDate, 'commune':commune, 'foret':foret, 'regne':regne, 'phylum': phylum, 'classe':classe, 'ordre':ordre, 'famille': famille, 'group2_inpn':group2_inpn,
-            'habitat': habitat, 'protection': protection, 'lr': lr, 'structure': structure, 'observateur':observateur }
+            'habitat': habitat, 'protection': protection, 'lr': lr, 'structure': structure, 'observateur':observateur, 'protocole':protocole }
 
 def buildSQL():
     sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur, st.nom_structure
-              FROM bdn.synthese s
+              FROM synthese.syntheseff s
               LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
               JOIN utilisateur.bib_structure st ON st.id_structure = s.id_structure"""
@@ -155,15 +156,22 @@ def buildSQL():
     firstParam = True
     #recuperation des parametres
     formParameters = getFormParameters()
-
+    if formParameters['protocole']:
+        currentProtocole = formParameters['protocole']['nom_schema']
+        sql = askFirstParame(sql, firstParam)
+        sql+="s.protocole = %s"
+        params.append(currentProtocole)
+        firstParam=False
     if len(formParameters['listTaxons']) > 0:
+        sql = askFirstParame(sql, firstParam)
         firstParam = False
-        sql = sql + " WHERE s.cd_nom IN %s "
+        sql = sql + "s.cd_nom IN %s "
         params.append(tuple(formParameters['listTaxons']))
     #recherche taxonomique avance
     if formParameters['regne']:
+        sql = askFirstParame(sql, firstParam)
         firstParam = False
-        sql = sql + " WHERE t.regne = %s"
+        sql = sql + "t.regne = %s"
         params.append(formParameters['regne'])
     if formParameters['phylum'] and formParameters['phylum'] != 'Aucun':
         sql = sql + " AND t.phylum = %s"

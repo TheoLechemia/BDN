@@ -6,26 +6,19 @@
 	<form>
 		<div class="section">
 				<div class="section-title"> Quoi ?</div>
-				<div class="form-inline form-group">
-					
-					  <input  class="radiotout" ng-model="$ctrl.regneRadio" class="radio" type="radio" name="optradio" value="Tout"  ng-checked="true" ng-click="$ctrl.changeProtocole('Tout')">
-					  <label>Tout</label>
-							
-					
-			  			<input ng-model="$ctrl.regneRadio" class="radio" type="radio" name="optradio" value="FAUNE" ng-click="$ctrl.changeProtocole('FAUNE')">
-			  			<label>Faune</label>
-					
-					
-					  <input ng-model="$ctrl.regneRadio" class="radio" type="radio" name="optradio" value="FLORE" ng-click="$ctrl.changeProtocole('FLORE')">
-					  <label>Flore</label>
+				<div class="form-group">
+					<label> Protocole</label>
+			    	<select class="form-control" ng-model="$ctrl.form.selectedProtocole" ng-change="$ctrl.changeProtocole($ctrl.form.selectedProtocole)" ng-options="row.nom_protocole for row in $ctrl.protocoles">
+			    		<option value=""> - Tous - </option>
+			    		<!-- <option value="Tous"> Tous</option> -->
+			    	</select>
 					
 				</div>
 					
 				<div class="form-group">
-				
+				<label>Taxon(s)</label>
 			 		<input id="input_lbnom" autocomplete="off" placeholder="Nom Latin " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.lb_nom for taxon in $ctrl.taxons | filter:{lb_nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectlbNom($item, $model, $label)" >
-				</div>
-				<div class="form-group">
+				
 				 	<input id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in $ctrl.taxons | filter:{nom_vern:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectNomVern($item, $model, $label)" >
 				</div>
 
@@ -134,14 +127,13 @@
 				<div class="section-title"> Où ?</div>
 
 			   <div class="form-group">
-					<!-- 		 		<input placeholder="Selectionner une commune " type="text" ng-model="$ctrl.form.where" typeahead-editable="false" typeahead-min-length="3" uib-typeahead="commune as commune.nom for commune in $ctrl.communes | filter:{nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults"> -->
+	
 					    <select class="form-control" ng-model="$ctrl.form.where" ng-options="commune.nom for commune in $ctrl.communes">
 					    	<option value=""> - Selectionner une commune - </option>
 					    </select>
 			 	</div>
 
 			 	<div class="form-group">
-			 		<!-- <input placeholder="Selectionner une forêt " type="text" ng-model="$ctrl.form.foret" typeahead-editable="false" typeahead-min-length="0" uib-typeahead="foret as foret.lib_frt for foret in $ctrl.forets | filter:{lib_frt:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults"> -->
 			 			<select class="form-control" ng-model="$ctrl.form.foret" ng-options="foret.lib_frt for foret in $ctrl.forets">
 					    	<option value=""> - Selectionner une forêt - </option>
 					    </select>

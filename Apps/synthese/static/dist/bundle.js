@@ -1,41 +1,41 @@
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-/******/
+
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-/******/
+
 /******/ 		// Check if module is in cache
 /******/ 		if(installedModules[moduleId])
 /******/ 			return installedModules[moduleId].exports;
-/******/
+
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
 /******/ 			l: false,
 /******/ 			exports: {}
 /******/ 		};
-/******/
+
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
+
 /******/ 		// Flag the module as loaded
 /******/ 		module.l = true;
-/******/
+
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/
-/******/
+
+
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-/******/
+
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-/******/
+
 /******/ 	// identity function for calling harmony imports with the correct context
 /******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
+
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -46,7 +46,7 @@
 /******/ 			});
 /******/ 		}
 /******/ 	};
-/******/
+
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
 /******/ 	__webpack_require__.n = function(module) {
 /******/ 		var getter = module && module.__esModule ?
@@ -55,13 +55,13 @@
 /******/ 		__webpack_require__.d(getter, 'a', getter);
 /******/ 		return getter;
 /******/ 	};
-/******/
+
 /******/ 	// Object.prototype.hasOwnProperty.call
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
+
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-/******/
+
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
@@ -77,6 +77,7 @@ function formCtrl(proxy, $http, $scope){
 
 	// Modele du formulaire
 	ctrl.form = {
+		'selectedProtocole': null,
 		'who' : null,
 		'taxon' : {'lb_nom': null, 'nom_vern': null, 'cd_nom' : null },
 		'listTaxons' : [],
@@ -113,7 +114,14 @@ function formCtrl(proxy, $http, $scope){
 	})
 	// changement de protocole, change les données de recherche des taxons (faune, flore) depuis le module pere APP
 	this.changeProtocole = function(protocole){
-		this.onProtocoleChange({$event:{protocole:protocole}})}
+		if(protocole){
+			currentProtocole = protocole.nom_schema
+		}
+		else{
+			currentProtocole = "Tout"
+		}
+		this.onProtocoleChange({$event:{protocole:currentProtocole}})
+	}
 
 
 	// Liste des rang taxonomique de la recherche avancée
@@ -218,6 +226,7 @@ function formCtrl(proxy, $http, $scope){
 	ctrl.onRefreshEvent = function(){
 		console.log('refresh');
 		this.form = {
+		'selectedProtocole': null,
 		'who' : null,
 		'taxon' : {'lb_nom': null, 'nom_vern': null, 'cd_nom' : null },
 		'listTaxons' : [],
@@ -273,6 +282,7 @@ angularInstance.component('formObs', {
 	communes : '<',
 	forets: '<',
 	typologie : '<',
+	protocoles : '<',
 	onProtocoleChange : '&'
   }
 });
@@ -370,7 +380,6 @@ module.exports = function(angularInstance){
 			lng: -61.5361400,
 			zoom: 10
 		};
-		ctrl.geojsonToDirective = null;
 
 		var originStyle = {
 		    "color": "#3388ff",
@@ -587,6 +596,9 @@ proxy = angularInstance.factory('proxy', function proxy($http) {
 			},
 			loadTaxonomyHierachy : function(rang_fils, rang_pere, rang_grand_pere, value_rang_grand_pere, value){
 				return $http.get(URL_APPLICATION +"synthese/loadTaxonomyHierachy/"+rang_fils+"/"+rang_pere+"/"+rang_grand_pere+"/"+value_rang_grand_pere+"/"+value)
+			},
+			loadProtocole: function(){
+				return $http.get(URL_APPLICATION+"synthese/loadProtocoles")
 			}			
 		}
 	  });
@@ -618,7 +630,6 @@ function appCtrl (proxy){
     });
   
 
-
   proxy.loadTaxons('Tout').then(function(response){
       ctrl.taxonslist = response.data;
       ctrl.TaxonsFaune = ctrl.taxonslist.filter(function(t){
@@ -638,6 +649,9 @@ function appCtrl (proxy){
   proxy.loadTypologgie().then(function(response){
     ctrl.typologie = response.data;
   }) 
+  proxy.loadProtocole().then(function(response){
+    ctrl.protocoles = response.data;
+  })
 
   ctrl.formSubmit = function(form){
     ctrl.form = form;
@@ -665,8 +679,6 @@ function appCtrl (proxy){
     console.log("update with: "+ id_synthese);
     ctrl.currentLeafletObs = id_synthese;
   }
-
-
 
   ctrl.exportShape = function(form){
     proxy.exportShapeFile(form).then(function(response){

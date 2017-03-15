@@ -55,7 +55,7 @@ def synthese_index():
 def lastObs():
     db = getConnexion()
     sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, ST_X(ST_Transform(geom_point, 4326)), ST_Y(ST_Transform(geom_point, 4326)), s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact
-              FROM synthese.synthesef s
+              FROM synthese.syntheseff s
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
               LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
               ORDER BY date DESC
@@ -111,13 +111,19 @@ def loadTaxons(protocole):
     db = getConnexion()
     if protocole == "Tout":
         sql = """SELECT * FROM synthese.v_search_taxons"""
-        #sql = " SELECT * FROM taxonomie.test"
     else:
         curProtocole = "'"+protocole+"'"
-        sql = "SELECT * FROM synthese.v_search_taxons WHERE regne = "+curProtocole
+        sql = "SELECT * FROM synthese.v_search_taxons WHERE protocole = "+curProtocole
     res = utils.sqltoDict(sql, db.cur)
     db.closeAll()
     return Response(flask.json.dumps(res), mimetype='application/json')
+
+@synthese.route('/loadProtocoles', methods=['GET', 'POST'])
+def getProtocoles():
+    db = getConnexion()
+    sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM synthese.bib_protocole) p"
+    db.cur.execute(sql)
+    return Response(flask.json.dumps(db.cur.fetchone()[0]), mimetype='application/json')
 
 #charge la liste des foret
 @synthese.route('/loadForets', methods=['GET', 'POST'])
@@ -147,7 +153,7 @@ def loadTypologgie():
     habitat = utils.sqltoDict(sql, db.cur)
     sql = "SELECT * FROM taxonomie.bib_liste_rouge"
     listeRouge = utils.sqltoDict(sql, db.cur)
-    sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT observateur FROM synthese.synthese ORDER BY observateur DESC)r"
+    sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT observateur FROM synthese.syntheseff ORDER BY observateur DESC)r"
     db.cur.execute(sql)
     observateurs = db.cur.fetchone()[0]
     sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT nom_structure, id_structure FROM utilisateur.bib_structure ORDER BY nom_structure DESC)r"

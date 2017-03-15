@@ -5,6 +5,7 @@ function formCtrl(proxy, $http, $scope){
 
 	// Modele du formulaire
 	ctrl.form = {
+		'selectedProtocole': null,
 		'who' : null,
 		'taxon' : {'lb_nom': null, 'nom_vern': null, 'cd_nom' : null },
 		'listTaxons' : [],
@@ -41,7 +42,14 @@ function formCtrl(proxy, $http, $scope){
 	})
 	// changement de protocole, change les données de recherche des taxons (faune, flore) depuis le module pere APP
 	this.changeProtocole = function(protocole){
-		this.onProtocoleChange({$event:{protocole:protocole}})}
+		if(protocole){
+			currentProtocole = protocole.nom_schema
+		}
+		else{
+			currentProtocole = "Tout"
+		}
+		this.onProtocoleChange({$event:{protocole:currentProtocole}})
+	}
 
 
 	// Liste des rang taxonomique de la recherche avancée
@@ -146,6 +154,7 @@ function formCtrl(proxy, $http, $scope){
 	ctrl.onRefreshEvent = function(){
 		console.log('refresh');
 		this.form = {
+		'selectedProtocole': null,
 		'who' : null,
 		'taxon' : {'lb_nom': null, 'nom_vern': null, 'cd_nom' : null },
 		'listTaxons' : [],
@@ -201,6 +210,7 @@ angularInstance.component('formObs', {
 	communes : '<',
 	forets: '<',
 	typologie : '<',
+	protocoles : '<',
 	onProtocoleChange : '&'
   }
 });

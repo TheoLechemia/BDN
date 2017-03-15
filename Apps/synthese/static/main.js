@@ -20,7 +20,6 @@ function appCtrl (proxy){
     });
   
 
-
   proxy.loadTaxons('Tout').then(function(response){
       ctrl.taxonslist = response.data;
       ctrl.TaxonsFaune = ctrl.taxonslist.filter(function(t){
@@ -40,6 +39,9 @@ function appCtrl (proxy){
   proxy.loadTypologgie().then(function(response){
     ctrl.typologie = response.data;
   }) 
+  proxy.loadProtocole().then(function(response){
+    ctrl.protocoles = response.data;
+  })
 
   ctrl.formSubmit = function(form){
     ctrl.form = form;
@@ -67,8 +69,6 @@ function appCtrl (proxy){
     console.log("update with: "+ id_synthese);
     ctrl.currentLeafletObs = id_synthese;
   }
-
-
 
   ctrl.exportShape = function(form){
     proxy.exportShapeFile(form).then(function(response){
