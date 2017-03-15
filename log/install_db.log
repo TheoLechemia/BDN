@@ -7,9 +7,6 @@ ALTER TABLE
 CREATE FUNCTION
 CREATE TRIGGER
 CREATE TRIGGER
-CREATE FUNCTION
-CREATE TRIGGER
-CREATE TRIGGER
 CREATE VIEW
 ALTER TABLE
 CREATE TABLE
@@ -38,13 +35,13 @@ ALTER TABLE
 CREATE TABLE
 INSERT 0 11
 ALTER TABLE
-psql:/tmp/create_table_bdn.sql:419: ERROR:  relation "layers.mailles_1k" does not exist
-LINE 26:      JOIN layers.mailles_1k m ON m.code_1km::text = f.code_m...
+psql:/tmp/create_table_bdn.sql:409: ERROR:  relation "layers.mailles_1k" does not exist
+LINE 25:      JOIN layers.mailles_1k m ON m.code_1km::text = f.code_m...
                    ^
 CREATE VIEW
 CREATE VIEW
-psql:/tmp/create_table_bdn.sql:498: ERROR:  relation "layers.mailles_1k" does not exist
-LINE 24:      JOIN layers.mailles_1k m ON m.code_1km::text = f.code_m...
+psql:/tmp/create_table_bdn.sql:485: ERROR:  relation "layers.mailles_1k" does not exist
+LINE 23:      JOIN layers.mailles_1k m ON m.code_1km::text = f.code_m...
                    ^
 CREATE TABLE
 ALTER TABLE

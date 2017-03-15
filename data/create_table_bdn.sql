@@ -22,7 +22,7 @@ ALTER TABLE synthese.syntheseff
   OWNER TO onfuser;
 
 
-CREATE TABLE contact_faune.freleve
+CREATE TABLE contact_faune.releve
 (
   id_obs serial NOT NULL,
   id_synthese character varying(15),
@@ -381,12 +381,11 @@ ALTER TABLE taxonomie.bib_liste_rouge
 
   -- Creation des vues pour les exports en shapefile
 
-CREATE OR REPLACE VIEW bdn.faune_poly AS 
+CREATE OR REPLACE VIEW contact_faune.faune_poly AS 
  SELECT t.nom_vern,
     t.lb_nom,
     f.id_obs,
     f.id_synthese,
-    f.protocole,
     f.observateur,
     f.date,
     f.cd_nom,
@@ -405,7 +404,7 @@ CREATE OR REPLACE VIEW bdn.faune_poly AS
     m.code_1km,
     m.geom
 
-   FROM bdn.faune f
+   FROM contact_faune.releve f
      JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text AND f.valide=true
      JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom;
 
@@ -416,7 +415,6 @@ CREATE OR REPLACE VIEW contact_faune.faune_point AS
     t.lb_nom,
     f.id_obs,
     f.id_synthese,
-    f.protocole,
     f.observateur,
     f.date,
     f.cd_nom,
@@ -444,7 +442,6 @@ CREATE OR REPLACE VIEW contact_faune.faune_point AS
     t.lb_nom,
     flore.id_obs,
     flore.id_synthese,
-    flore.protocole,
     flore.observateur,
     flore.date,
     flore.cd_nom,
@@ -468,7 +465,6 @@ CREATE OR REPLACE VIEW contact_faune.faune_point AS
     t.lb_nom,
     f.id_obs,
     f.id_synthese,
-    f.protocole,
     f.observateur,
     f.date,
     f.cd_nom,
@@ -484,7 +480,7 @@ CREATE OR REPLACE VIEW contact_faune.faune_point AS
     m.code_1km,
     m.geom
 
-   FROM contact_flore.flore f
+   FROM contact_flore.releve f
      JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text AND f.valide = true
      JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom;
 
