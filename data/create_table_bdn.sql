@@ -95,14 +95,14 @@ CREATE TABLE contact_flore.releve
 
 CREATE OR REPLACE FUNCTION synthese.tr_protocole_to_synthese() RETURNS TRIGGER AS $tr_protocole_to_synthese$
     DECLARE newid INTEGER;
-    DECLARE schemaname character varying;
+    DECLARE protocoleid INTEGER;
     BEGIN
-    schemaname = quote_ident(tg_table_schema);
+ 
     INSERT INTO synthese.syntheseff (protocole, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, loc_exact, code_maille, id_structure) 
-    VALUES( tg_table_schema, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.loc_exact, new.code_maille, new.id_structure) ;
+    VALUES(tg_table_schema, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.loc_exact, new.code_maille, new.id_structure) RETURNING new.id_obs INTO protocoleid;
     SELECT INTO newid currval('synthese.syntheseff_id_synthese_seq');
     EXECUTE format('
-    UPDATE %s.%s SET id_synthese = %s;', TG_TABLE_SCHEMA, TG_TABLE_NAME, newid);
+    UPDATE %s.%s SET id_synthese = %s WHERE id_obs=%s;', TG_TABLE_SCHEMA, TG_TABLE_NAME, newid, protocoleid);
     RETURN NEW;
   
     END;
