@@ -1,6 +1,8 @@
 #coding: utf-8
 from flask import Flask, request, render_template, url_for, redirect, send_from_directory, flash, session, Blueprint, json
 import csv2postgreSQL
+import csv
+from Apps.database import *
 
 from werkzeug.utils import secure_filename
 from werkzeug.wrappers import Response 
@@ -46,10 +48,40 @@ def indexImport():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            print "OHHHHHHHHHHHHHHHHHHH"
             #write in postgres
-            csv2postgreSQL.csv2PG(UPLOAD_FOLDER+'/'+filename)
-            flash('Fichier ajoute avec succes')
+            inputProtocole = str()
+            with open(UPLOAD_FOLDER+'/'+filename) as csvFile:   
+                reader = csv.DictReader(csvFile, delimiter = ';')
+                #next(reader, None)
+                for row in reader:
+                    inputProtocole =  row['protocole']
+            db=getConnexion()
+            sql = "SELECT * FROM "+inputProtocole+".bib_champs_"+inputProtocole
+            db.cur.execute(sql)
+
+            res = db.cur.fetchall()
+            currentSpec = res[0][2]
+            #currentField = res[0][3]
+            interpretationDict = dict()
+            interpretationDict[currentSpec] = dict()
+            for r in res:
+                if r[2]==currentSpec:
+                    interpretationDict[currentSpec][r[1]] = r[4]
+                else:
+                    currentSpec = r[2]
+                    interpretationDict[currentSpec] = dict()
+                    interpretationDict[currentSpec][r[1]] = r[4]
+
+            sql = "SELECT distinct(no_spec),nom_champ from "+inputProtocole+".bib_champs_"+inputProtocole
+            db.cur.execute(sql)
+            res = db.cur.fetchall()
+            fieldList= list()
+            for r in res:
+                fieldList.append({'spec_name': r[0], 'field_name': r[1]})
+
+
+            csv2postgreSQL.csv2PG(UPLOAD_FOLDER+'/'+filename, interpretationDict, inputProtocole, fieldList)
+            # flash('Fichier ajoute avec succes')
             return redirect(request.url)
             #return redirect(url_for('importCSV.uploaded_fileCSV', filename=filename))
         else:
