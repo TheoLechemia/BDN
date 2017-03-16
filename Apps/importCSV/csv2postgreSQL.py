@@ -3,134 +3,27 @@ import psycopg2
 import csv
 from datetime import datetime
 from flask import session
-
+from Apps.database import *
 
 from .. import config
 
-#build all the dict
-#spec1: abondance, spec2:nombre_exact, spec3:nombre_pied_approximatif, spec4:stade_dev
-# floreDict = {'spec_1':{
-#                   1: "5-15",
-#                   2: "16-25",
-#                   3: "26-50",
-#                   4: "51-75",
-#                   5: "76-100"
-#                   },
-#             'spec_3':{
-#                 1: '1-10',
-#                 2: '10-50',
-#                 3: '50-100',
-#                 4: '100-500',
-#                 5: '500-1000',
-#                 6: '>1000'
-#             },
-#             'spec_4':{
-#                 1: 'Plantule',
-#                 2: 'Juvénile',
-#                 3: 'Adulte',
-#                 4: 'Bouton',
-#                 5: 'Début de floraison',
-#                 6: 'Pleine floraison',
-#                 7: 'Fin de floraison',
-#                 8: 'Début de fructification',
-#                 9: 'Plein fructification',
-#                 10: 'Fin de fructification',
-#                 11: 'Dissémination',
-#                 12: 'squelette, autre',
-#                 13: 'Ptéridophyte: Prothalle',
-#                 14: 'Ptéridophyte: Sporophyte juvénile',
-#                 15: 'Ptéridophyte: Sporophyte adulte',
-#                 16: 'Ptéridophyte: Sporophyte immature',
-#                 17: 'Ptéridophyte: Sporophyte mature'
-#             }
-# }
-
-# fauneDict = {'spec_1':{
-#                 12:'Animal mort ou collision',
-#                 1: 'Capture Manuelle',
-#                 13: 'Chant',
-#                 14: 'Cris',
-#                 3: 'Contact Sonore',
-#                 10: 'Contact Visuel',
-#                 2: 'Détection',
-#                 4: 'Empreintes, Traces',
-#                 5: 'Filet',
-#                 6: 'Gîte',
-#                 7: 'Indices (crottes,...)',
-#                 8: 'Nichoir',
-#                 9: 'Nid'
-#                 },
-#             'spec_2': {
-#                 1: '1-5',
-#                 2: '6-10',
-#                 3: '11-20',
-#                 4: '21-50',
-#                 5: '51-100',
-#                 6: '101-500',
-#                 7: '501-1000',
-#                 8: 'Sup.1000'
-#             },
-#             'spec_3':{
-#                 1: 'Alerte',
-#                 2: 'Alimentation',
-#                 3: 'Colonie avec certaines femelles gestantes',
-#                 4: 'Colonie avec jeunes non volants',
-#                 5: 'Colonie avec jeunes volants',
-#                 6: 'Colonie avec males',
-#                 7: 'Colonie avec mis bas',
-#                 8: 'Repos',
-#                 9: 'Colonie de reproduction',
-#                 10: 'Colonie sans jeunes',
-#                 11: 'Comportement parental',
-#                 12: 'Comportement territoirial',
-#                 13: 'Eclosion',
-#                 14: 'Emergence',
-#                 15: 'En chasse',
-#                 16: 'En vol',
-#                 17: 'Estivage',
-#                 18: 'Fuite',
-#                 19: 'Harem',
-#                 20: 'Hibernation',
-#                 21: 'Individus isolés',
-#                 22: 'Léthargie diurne',
-#                 23: 'Léthargie hivernale',
-#                 24: 'Migration',
-#                 25: 'Nidification',
-#                 26: 'Ponte',
-#                 27: 'Reproduction',
-#                 28: 'Transit',
-#                 29: 'Autre',
-#                 30: 'Parade nuptiale'
-#                 },
-#             'spec_8':{
-#                 1: 'Crotte ou crottier',
-#                 2: 'Ecorçage ou frottis',
-#                 3: 'Empreintes',
-#                 4: 'Epiderme',
-#                 5: 'Guano',
-#                 6: 'Nid',
-#                 7: 'Pelotes de réjection',
-#                 8: 'Restes alimentaires',
-#                 9: "Restes de l'animal",
-#                 10: 'Terrier',
-#                 11: 'Autres',
-#                 12: 'Pelage',
-#                 13: 'Oeufs',
-#                 14: 'Larves',
-#                 15: 'Exuvie'
-#             }
-#         }
-
-def getSpec(specNumber, row, interpreationDict):
+def getSpec(specNumber, row, interpretationDict):
+    print "SPEEEEEEEEEEEEEEEEEEC NUMBEEEEEEEEEEEEEER"
+    print specNumber
+    print 'SPEEEEEEEEEEEEEEC VALUEEEEEEEEEEEEEEEEEEEEEE'
     stringList = row[specNumber].split('#')
+    print stringList
     value = None
     #si le champs n'est pas vide on recupere l'id situe apres le #
     if len(stringList) != 1:
         specInt = int(stringList[1])
         try:
-            value = interpreationDict[specNumber][specInt]
+            value = interpretationDict[specNumber][specInt]
+            #if value = '': ce n'est pas un champs a choix mutliple, on recupere juste le nombre rentre avec le #
         except KeyError:
             print "Une erreur est survenue, vérifier le tableau de conversion des champs generiques"
+            value = stringList[1]
+    print value
     return value
 
 def getSpec_without_dict(specNumber, row):
@@ -140,83 +33,112 @@ def getSpec_without_dict(specNumber, row):
         value = tabInter[1]
     return value
 
-def csv2PG(file, interpreationDict, inputProtocole, fieldList):
-    conn = psycopg2.connect(database=config.DATABASE_NAME, user=config.USER, password=config.PASSWORD, host=config.HOST, port=config.PORT)
-    cur = conn.cursor()
-    fullTableName = inputProtocole+".releve"
+def csv2PG(file):
+    db = getConnexion()
     sql = str()
     generalValues = []
 
-    try: 
-        with open(file) as csvfile:
-            reader = csv.DictReader(csvfile, delimiter = ';', quotechar= '|')
-            for row in reader:
-                ###COMMUN###
-                observateur = row['observateur_nom']+" "+ row['observateur_prenom']
-                protocole = row['protocole']
-                commentaire = row['comment']
-                #on enleve l'heure de la date
-                listDate = row['date'].split(' ')
-                date = listDate[0]
-                dateObject = datetime.strptime(date, "%Y-%M-%d")
-                lon = row['loc_x']
-                lon = lon.replace(',', '.')
-                lat = row['loc_y']
-                lat = lat.replace(',', '.')
-                cd_nom = row['taxon_id']
-                #formatage en WKT
-                point = 'POINT('+lon+' '+lat+')'
-                print 'OOOOOOOOOOOOOOOOOOOOOOOOOOH'
-                print point
-                print dateObject
-                valide = "FALSE"
-                sql_insee = """ SELECT code_insee FROM layers.commune WHERE ST_INTERSECTS(geom,(ST_Transform(ST_PointFromText(%s, 4326),32620)))"""
-                param = [point]
-                cur.execute(sql_insee, param)
-                resinsee = cur.fetchone()
-                insee = None
-                if resinsee != None:
-                	insee = resinsee[0]
+    # try: 
+    with open(file) as csvfile:
+        reader = csv.DictReader(csvfile, delimiter = ';', quotechar= '|')
+        inputProtocole = None
+        fieldList = None
+        fullTableName = str()
+        interpretationDict = None
+        for row in reader:
+            ###COMMUN###
+            #recupere les bib champs du protocole de la ligne et construit le dict pour interprete les champs
+            if inputProtocole != row['protocole']:
+                inputProtocole =  row['protocole']
+                fullTableName = inputProtocole+".releve"
 
-                sql_foret = """ SELECT ccod_frt FROM layers.perimetre_forets WHERE ST_INTERSECTS(geom,(ST_Transform(ST_PointFromText(%s, 4326),32620))) """
-                cur.execute(sql_foret, param)
-                ccod_frt = None 
-                res = cur.fetchone()
-                if res != None:
-                    ccod_frt = res[0]
+                sql = "SELECT * FROM "+inputProtocole+".bib_champs_"+inputProtocole
+                db.cur.execute(sql)
+                res = db.cur.fetchall()
+                currentSpec = res[0][2]
+                #currentField = res[0][3]
+                interpretationDict = dict()
+                interpretationDict[currentSpec] = dict()
+                for r in res:
+                    if r[2]==currentSpec:
+                        interpretationDict[currentSpec][r[1]] = r[4]
+                    else:
+                        currentSpec = r[2]
+                        interpretationDict[currentSpec] = dict()
+                        interpretationDict[currentSpec][r[1]] = r[4]
 
-                #recupere l'id_structure depuis la session
-                id_structure = session['id_structure']
-                loc_exact = True
-                code_maille = None
+                #la liste des champs avec les spec
+                sql = "SELECT distinct(no_spec),nom_champ from "+inputProtocole+".bib_champs_"+inputProtocole
+                db.cur.execute(sql)
+                res = db.cur.fetchall()
+                fieldList= list()
+                for r in res:
+                    fieldList.append({'spec_name': r[0], 'field_name': r[1]})
+                print 'LAAAAAAAAAAAAAAAAAA'
+                print fieldList
 
-                stringInsert = "INSERT INTO "+fullTableName+" (observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure"
-                stringValues = " VALUES (%s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config.PROJECTION)+"), %s, %s, %s, %s, %s, %s, %s"
+            observateur = row['observateur_nom']+" "+ row['observateur_prenom']
+            protocole = row['protocole']
+            commentaire = row['comment']
+            #on enleve l'heure de la date
+            listDate = row['date'].split(' ')
+            date = listDate[0]
+            dateObject = datetime.strptime(date, "%Y-%M-%d")
+            lon = row['loc_x']
+            lon = lon.replace(',', '.')
+            lat = row['loc_y']
+            lat = lat.replace(',', '.')
+            cd_nom = row['taxon_id']
+            #formatage en WKT
+            point = 'POINT('+lon+' '+lat+')'
+            valide = "FALSE"
+            sql_insee = """ SELECT code_insee FROM layers.commune WHERE ST_INTERSECTS(geom,(ST_Transform(ST_PointFromText(%s, 4326),32620)))"""
+            param = [point]
+            db.cur.execute(sql_insee, param)
+            resinsee = db.cur.fetchone()
+            insee = None
+            if resinsee != None:
+                insee = resinsee[0]
 
-                generalValues = [observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure]
-                for field in fieldList:
-                    value = getSpec(field['spec_name'], row, interpreationDict)
-                    stringInsert += ", "+field['field_name']
-                    stringValues += ", %s"
-                    generalValues.append(value)
-                stringInsert+=")"
-                stringValues+=");"
+            sql_foret = """ SELECT ccod_frt FROM layers.perimetre_forets WHERE ST_INTERSECTS(geom,(ST_Transform(ST_PointFromText(%s, 4326),32620))) """
+            db.cur.execute(sql_foret, param)
+            ccod_frt = None 
+            res = db.cur.fetchone()
+            if res != None:
+                ccod_frt = res[0]
 
-                sql = stringInsert+stringValues
+            #recupere l'id_structure depuis la session
+            id_structure = session['id_structure']
+            loc_exact = True
+            code_maille = None
 
-                print sql
-                print generalValues
-                cur.execute(sql, generalValues)
-                conn.commit()
-    except:
-        pass
-    # f = open('C:\\Users\\tl90744\\Documents\\BDN\\Apps\\static\\uploads\\test.txt', 'w')
-    # f.write(sql+'\n')
+            stringInsert = "INSERT INTO "+fullTableName+" (observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure"
+            stringValues = " VALUES (%s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config.PROJECTION)+"), %s, %s, %s, %s, %s, %s, %s"
 
-    # f.write(str(generalValues))
-    # f.close()
+            generalValues = [observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure]
+            for field in fieldList:
+                value = getSpec(field['spec_name'], row, interpretationDict)
+                stringInsert += ", "+field['field_name']
+                stringValues += ", %s"
+                generalValues.append(value)
+            stringInsert+=")"
+            stringValues+=");"
 
-    finally: 
-        cur.close()
-        conn.close()
+            sql = stringInsert+stringValues
+            print interpretationDict
+            f = open('C:\\Users\\tl90744\\Documents\\BDN\\Apps\\static\\uploads\\test.txt', 'w')
+            f.write(sql+'\n')
+            f.write(str(generalValues))
+            f.close()
+
+            db.cur.execute(sql, generalValues)
+            db.conn.commit()
+
+# except:
+#     pass
+
+
+# finally: 
+    db.cur.close()
+    db.closeAll()
 
