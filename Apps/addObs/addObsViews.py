@@ -97,13 +97,13 @@ def getValues(protocole):
     sql = "SELECT * FROM "+protocole
     db.cur.execute(sql)
     res = db.cur.fetchall()
-    currentField = res[0][2]
+    currentField = res[0][3]
     finalDict = {currentField:list()}
     for r in res:
-        if r[2] == currentField:
-            finalDict[currentField].append(r[2])
+        if r[3] == currentField:
+            finalDict[currentField].append(r[4])
         else:
-            currentField = r[2]
+            currentField = r[3]
             finalDict[currentField] = list()
             finalDict[currentField].append(r[4])
     return Response(flask.json.dumps(finalDict), mimetype='application/json')
