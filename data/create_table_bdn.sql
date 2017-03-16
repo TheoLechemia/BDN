@@ -292,57 +292,7 @@ $BODY$
 INSERT INTO taxonomie.bib_habitat 
 VALUES (1, 'Marin'), (2, 'Eau douce'), (3, 'Terrestre'), (4,'Marin et eau douce' ), (5, 'Marin et Terrestre' ), (6,'Eau saumâtre'), (7, 'Continental (terrestre et/ou eau douce)'), (8,'Continental (terrestre et eau douce)' );
 
---liste rouge
-CREATE TABLE taxonomie.liste_rouge(
-ordre integer,
-cd_ref integer,
-cd_nom integer ,
-nom_cite character varying,
-auteur character varying,
-nom_communs character varying,
-population character varying,
-rang character varying,
-famille character varying,
-endemisme character varying,
-commentaire character varying,
-statut character varying,
-criteres character varying,
-tendance character varying,
-version integer,
-statut_i character varying,
-statut_eu character varying,
-anneeval character varying,
-nom_liste character varying,
-type_liste character varying,
-groupe_grand_public character varying
-);
 
-ALTER TABLE taxonomie.liste_rouge
-  OWNER TO onfuser;
-
-COPY taxonomie.liste_rouge
-FROM E'/home/ubuntu/BDN/data/Liste_rouge_Guadeloupe.txt'
-WITH (format 'csv', header 'true', delimiter E';');
-
---espece protege taxref
-CREATE TABLE taxonomie.protection (
-cd_nom integer,
-cd_protection character varying,
-nom_cite character varying,
-syn_cite character varying,
-nom_francais_cite character varying,
-precisions character varying,
-cd_nom_cite integer
-);
-
-ALTER TABLE taxonomie.protection
-  OWNER TO onfuser;
-
-
-
-COPY taxonomie.protection
-FROM E'/home/ubuntu/BDN/data/PROTECTION_ESPECES_10.txt'
-WITH (format 'csv', header 'true', delimiter E';');
 
 
 
@@ -539,3 +489,56 @@ INSERT INTO utilisateur.bib_role
 VALUES(1, 'lecteur'), (2, 'contributeur'), (3, 'administrateur');
 
 
+##SPECIFIQUE DOM
+
+--liste rouge
+CREATE TABLE taxonomie.liste_rouge(
+ordre integer,
+cd_ref integer,
+cd_nom integer ,
+nom_cite character varying,
+auteur character varying,
+nom_communs character varying,
+population character varying,
+rang character varying,
+famille character varying,
+endemisme character varying,
+commentaire character varying,
+statut character varying,
+criteres character varying,
+tendance character varying,
+version integer,
+statut_i character varying,
+statut_eu character varying,
+anneeval character varying,
+nom_liste character varying,
+type_liste character varying,
+groupe_grand_public character varying
+);
+
+ALTER TABLE taxonomie.liste_rouge
+  OWNER TO onfuser;
+
+COPY taxonomie.liste_rouge
+FROM E'./data/Liste_rouge_Guadeloupe.txt'
+WITH (format 'csv', header 'true', delimiter E';');
+
+--espece protege taxref
+CREATE TABLE taxonomie.protection (
+cd_nom integer,
+cd_protection character varying,
+nom_cite character varying,
+syn_cite character varying,
+nom_francais_cite character varying,
+precisions character varying,
+cd_nom_cite integer
+);
+
+ALTER TABLE taxonomie.protection
+  OWNER TO onfuser;
+
+
+
+COPY taxonomie.protection
+FROM E'./data/PROTECTION_ESPECES_10.txt'
+WITH (format 'csv', header 'true', delimiter E';');

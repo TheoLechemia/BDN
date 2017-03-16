@@ -1,0 +1,18 @@
+drop_apps_db=true
+
+db_name=db_name
+
+user_bdn=user_name
+
+user_bdn_pass=password
+
+taxref_path=/home/MY_USER/BDN/TAXREFv10.0.txt
+
+projection=MY_SRID
+
+#specifique DOM
+
+liste_rouge_path=/home/ubuntu/BDN/data/Liste_rouge_Guadeloupe.txt
+
+taxref_protection_path=/home/ubuntu/BDN/PROTECTION_ESPECES_10.txt
+
