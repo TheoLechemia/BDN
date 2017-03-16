@@ -4,6 +4,8 @@ import sys
 from Apps import config
 from Apps.database import *
 
+import cStringIO	
+
 fileName = input('Entrez le chemin du fichier CSV (entre guillemets) : ')
 
 
@@ -104,18 +106,25 @@ with open(fileName) as csvfile:
         i=3
         field_number = 1
         string_spec_number = str()
-        if row[1] == 'liste_deroulante':
+        if row[1] == 'Liste de choix':
             liste_deroulante_tab = list()
             while i<len(row) and row[i]!= '':
                 value = row[i]
                 sql = "INSERT INTO "+schemaName+".bib_champs_"+schemaName+"(id_champ, no_spec, nom_champ, valeur) VALUES(%s, %s, %s, %s) "
                 string_spec_number = 'spec_'+str(spec_number)
+                value = value.decode('utf-8')
                 params = [field_number, string_spec_number , column_name, value]
                 print params
                 db.cur.execute(sql, params)
                 db.conn.commit()
                 i += 1
                 field_number += 1
+        else:
+            sql = "INSERT INTO "+schemaName+".bib_champs_"+schemaName+"(id_champ, no_spec, nom_champ, valeur) VALUES(%s, %s, %s, %s) "
+            string_spec_number = 'spec_'+str(spec_number)  
+            params = [None, string_spec_number , column_name, None]
+            db.cur.execute(sql, params)
+            db.conn.commit()      	
         spec_number += 1
 
 db.closeAll()
