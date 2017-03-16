@@ -7,27 +7,27 @@ var app = angular.module("app", ['leaflet-directive', 'ui.bootstrap']).config(fu
 
 app.controller("headerCtrl", function($scope, $http, leafletData){
 
-$http.get(URL_APPLICATION+"addObs/loadProtocoles").then(function(response){ 
+$http.get(configuration.URL_APPLICATION+"addObs/loadProtocoles").then(function(response){ 
     $scope.protocole = response.data;
   })
 
 
 $scope.search_scientist_name = function(expre, selectedProtocole){
   console.log(selectedProtocole);
-  return $http.get(URL_APPLICATION+"addObs/search_scientist_name/"+selectedProtocole.nom_schema+"/"+expre).then(function(response){ 
+  return $http.get(configuration.URL_APPLICATION+"addObs/search_scientist_name/"+selectedProtocole.nom_schema+"/"+expre).then(function(response){ 
     return response.data;
   })
   }
 
 $scope.search_vern_name = function(expre, selectedProtocole){
-  return $http.get(URL_APPLICATION+"addObs/search_vern_name/"+selectedProtocole.nom_schema+"/"+expre).then(function(response){ 
+  return $http.get(configuration.URL_APPLICATION+"addObs/search_vern_name/"+selectedProtocole.nom_schema+"/"+expre).then(function(response){ 
     return response.data;
   })
   }
 
 $scope.bindNewValues = function(protocole){
   table = protocole.bib_champs
-  $http.get(URL_APPLICATION+"addObs/loadValues/"+table).then(function(response){ 
+  $http.get(configuration.URL_APPLICATION+"addObs/loadValues/"+table).then(function(response){ 
     $scope.fields = response.data;
   });
 };
@@ -79,7 +79,7 @@ $scope.showCoord = true;
      console.log(form.$valid);
 
     if (form.$valid){
-          $http.post(URL_APPLICATION+'addObs/submit/', completeForm).then(function(response){
+          $http.post(configuration.URL_APPLICATION+'addObs/submit/', completeForm).then(function(response){
           if(response.status == 200){
             $scope.formSuccessfullySent = true;
             //angular.copy({},form);
@@ -139,24 +139,24 @@ $scope.geojsonMaille = {};
 
 // load Mailles
 
-$http.get(URL_APPLICATION+'addObs/loadMailles').success(function(data){
+$http.get(configuration.URL_APPLICATION+'addObs/loadMailles').success(function(data){
   console.log(data)
   saveGeojsonMaille['data'] = data;
   saveGeojsonMaille['style'] = originStyle;
 })
 
-/*$http.get(URL_APPLICATION+"static/data/mailles_1km.geojson").success(function(data){
+/*$http.get(configuration.URL_APPLICATION+"static/data/mailles_1km.geojson").success(function(data){
 
   saveGeojsonMaille['data'] = data;
   saveGeojsonMaille['style'] = originStyle;
 })*/
 
 
-  $scope.center = { 'lat':16.2412500 , 'lng':-61.5361400 , 'zoom':11 }
+  $scope.center = { 'lat':configuration.MAP.COORD_CENTER.Y , 'lng':configuration.MAP.COORD_CENTER.X , 'zoom':configuration.MAP.ZOOM_LEVEL }
   $scope.markers = {
     main: {
-        lat: 16.2412500,
-        lng: -61.5361400,
+        lat: configuration.MAP.COORD_CENTER.Y,
+        lng: configuration.MAP.COORD_CENTER.X,
         draggable: true,
         icon : { 
           iconUrl: '/static/lib/leaflet/images/marker-icon.png',
@@ -229,7 +229,7 @@ leafletData.getMap()
         var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
      
         container.style.backgroundColor = 'white';
-       // container.style.backgroundImage = "url("+configuration.URL_APPLICATION+"/static/images/logo_earth_map.PNG)";
+       // container.style.backgroundImage = "url("+configurationuration.configuration.URL_APPLICATION+"/static/images/logo_earth_map.PNG)";
         container.style.width = '50px';
         container.style.height = '50px';
         container.style.border = 'solid white 1px';
@@ -241,14 +241,14 @@ leafletData.getMap()
 
         container.onclick = function(){
           if(currentTileMap == "topo"){
-         // container.style.backgroundImage = "url("+configuration.URL_APPLICATION+"/static/images/logo_topo_map.PNG)";
+         // container.style.backgroundImage = "url("+configurationuration.configuration.URL_APPLICATION+"/static/images/logo_topo_map.PNG)";
           $(container).attr("data-original-title", "Plan");
           map.removeLayer(firstMapTile);
           orthoMap.addTo(map);
           currentTileMap = "earth";
           }
           else{
-          container.style.backgroundImage = "url("+configuration.URL_APPLICATION+"/static/images/logo_earth_map.PNG)";
+          container.style.backgroundImage = "url("+configuration.configuration.URL_APPLICATION+"/static/images/logo_earth_map.PNG)";
           $(container).attr("data-original-title", "Photos aérienne");
           map.removeLayer(orthoMap);
           firstMapTile.addTo(map);

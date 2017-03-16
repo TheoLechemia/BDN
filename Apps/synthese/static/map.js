@@ -6,9 +6,9 @@ module.exports = function(angularInstance){
 	function mapCtrl($http, $scope, leafletData){
 		ctrl = this;
 		ctrl.center = {
-			lat: 16.2412500, 
-			lng: -61.5361400,
-			zoom: 10
+			lat: configuration.MAP.COORD_CENTER.Y, 
+			lng: configuration.MAP.COORD_CENTER.X,
+			zoom: configuration.MAP.ZOOM_LEVEL
 		};
 
 		var originStyle = {

@@ -1,0 +1,26 @@
+URL_APPLICATION= 'MYHOST'
+
+DATABASE_NAME = "MY_DATABASE_NAME"
+
+USER = "MY_USER_NAME"
+
+PASSWORD = "MY_PASS"
+
+HOST = "MYHOST"
+
+PORT = "5432"
+
+PROJECTION = MY_PROJECTION
+
+ID_OBSERVATION = 'id_synthese'
+GEOM_NAME = 'geom_point'
+# TABLE NAME: SCHEMA.TABLE
+TABLE_NAME = 'synthese.syntheseff'
+
+
+##MAP CONFIG
+
+MAP = {
+	'COORD_CENTER': ['x': None, 'y' None],
+	'ZOOM_LEVEL': 11
+}

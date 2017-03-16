@@ -1,4 +1,4 @@
-import config
+from .config import database
 import psycopg2
 import psycopg2.extras
 
@@ -16,7 +16,7 @@ class DatabaseInterface:
 
 
 def getConnexion():
-    conn = psycopg2.connect(database=config.DATABASE_NAME, user=config.USER, password=config.PASSWORD, host=config.HOST, port=config.PORT)
+    conn = psycopg2.connect(database=database['DATABASE_NAME'], user=database['USER'], password=database['PASSWORD'], host=database['HOST'], port=database['PORT'])
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     connexion = DatabaseInterface(conn, cur)
     return connexion

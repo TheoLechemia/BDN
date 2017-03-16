@@ -72,7 +72,7 @@ function appCtrl (proxy){
 
   ctrl.exportShape = function(form){
     proxy.exportShapeFile(form).then(function(response){
-      window.location =URL_APPLICATION+'synthese/uploads/'+response.data;       
+      window.location =configuration.URL_APPLICATION+'synthese/uploads/'+response.data;       
     })
   }
 

@@ -3,7 +3,7 @@ import os
 import flask
 from werkzeug.wrappers import Response 
 import psycopg2
-from .. import config
+from ..config import config
 import ast
 from .. import utils
 from ..database import *
@@ -46,7 +46,7 @@ def nocache(view):
 @synthese.route("/")
 @check_auth(1)
 def synthese_index():
-    return flask.render_template('indexSynthese.html', URL_APPLICATION=config.URL_APPLICATION, page_title=u"Interface de visualisation des données")
+    return flask.render_template('indexSynthese.html', configuration=config, page_title=u"Interface de visualisation des données")
 
 
 

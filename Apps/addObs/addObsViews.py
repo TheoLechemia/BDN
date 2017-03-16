@@ -3,7 +3,7 @@ import os
 import flask
 from werkzeug.wrappers import Response 
 import psycopg2
-from .. import config
+from ..config import config
 from .. import utils
 from ..database import *
 from ..initApp import app
@@ -31,7 +31,7 @@ def nocache(view):
 @check_auth(2)
 @nocache
 def addObs_index():
-    return flask.render_template('addObsIndex.html', URL_APPLICATION=config.URL_APPLICATION, page_title=u"Interface de saisie des données")
+    return flask.render_template('addObsIndex.html', configuration=config, page_title=u"Interface de saisie des données")
 
 
 

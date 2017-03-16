@@ -85,7 +85,7 @@ function bindMarkers(features, layer){
 
 
 var currentGeoJson;
-var map = L.map('map').setView([16.2412500, -61.5361400],11 );
+var map = L.map('map').setView([configuration.MAP.COORD_CENTER.Y, configuration.MAP.COORD_CENTER.X],configuration.MAP.ZOOM_LEVEL );
 L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGhlb2xlY2hlbWlhIiwiYSI6ImNpa29lODhvejAwYTl3MGxzZGY0aHc0NXIifQ.fEujW2fUlRuUk9PHfPdKIg').addTo(map);
 
 
@@ -173,7 +173,7 @@ $('.validate').click(function(){
 	data = JSON.stringify(data)
 	$.ajax({
 	  type: "POST",
-	  url: URL_APPLICATION+'validation/validate',
+	  url: configuration.URL_APPLICATION+'validation/validate',
 	  contentType: 'application/json; charset=utf-8',
 	  data: data,
 	  dataType: "json"
@@ -191,7 +191,7 @@ $('.delete').click(function(){
 	$('#confirmDelete').click(function(){
 			$.ajax({
 			  type: "GET",
-			  url: URL_APPLICATION+"validation/delete/"+id+"/"+protocole
+			  url: configuration.URL_APPLICATION+"validation/delete/"+id+"/"+protocole
 			})
 		$('.modal').modal('hide');
 		$(row).addClass("delete_ok");
@@ -257,7 +257,7 @@ $('#globalValidate').click(function(){
 	jsonData = JSON.stringify(jsonData)
 	$.ajax({
 	  type: "POST",
-	  url: URL_APPLICATION+"/validation/validate",
+	  url: configuration.URL_APPLICATION+"/validation/validate",
 	  contentType: 'application/json; charset=utf-8',
 	  data: jsonData,
 	  dataType: "json"

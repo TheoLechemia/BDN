@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, flash, request, redirect, url_for, session
-from .. import config
+from ..config import config
 from ..database import *
 import psycopg2
 from .. import utils

@@ -1,7 +1,7 @@
 # coding: utf-8
 import csv
 import sys
-from Apps import config
+from Apps.config import config, database
 from Apps.database import *
 
 import cStringIO	
@@ -19,7 +19,7 @@ schemaName = inter[0].split('\\')[-1]
 fullName = schemaName+".releve"
 
 db = getConnexion()
-sql = " CREATE SCHEMA "+ schemaName+" AUTHORIZATION "+ config.USER
+sql = " CREATE SCHEMA "+ schemaName+" AUTHORIZATION "+ database['USER']
 db.cur.execute(sql)
 db.conn.commit()
 
@@ -42,7 +42,7 @@ stringCreate = """CREATE TABLE """+fullName+"""
   observateur character varying(100) NOT NULL,
   date date NOT NULL,
   cd_nom integer NOT NULL,
-  geom_point geometry(Point,"""+str(config.PROJECTION)+"""),
+  geom_point geometry(Point,"""+str(config['MAP']['PROJECTION'])+"""),
   insee character varying(10),
   altitude integer,
   commentaire character varying(150),
@@ -52,7 +52,7 @@ stringCreate = """CREATE TABLE """+fullName+"""
   code_maille character varying(20),
   id_structure integer,"""
 
-addPermission = "ALTER TABLE "+fullName+" OWNER TO "+config.USER+";"
+addPermission = "ALTER TABLE "+fullName+" OWNER TO "+database['USER']+";"
 for r in column_name_and_type:
     stringCreate+=" "+ r['name']+" "+r['type']+","
 
@@ -66,7 +66,7 @@ db.conn.commit()
 # ##Cree la vue pour y mettre la liste des taxons personnalisé. Par default on met tous le taxref, a change par le gestionnaire de BDD
 
 sql = "CREATE VIEW taxonomie.taxons_"+schemaName+" AS SELECT * FROM taxonomie.taxref;"
-sql += "ALTER TABLE taxonomie.taxons_"+schemaName+" OWNER TO "+config.USER+";"
+sql += "ALTER TABLE taxonomie.taxons_"+schemaName+" OWNER TO "+database['USER']+";"
 db.cur.execute(sql)
 db.conn.commit()
 
@@ -84,7 +84,7 @@ db.conn.commit()
 
 
 stringCreate = "CREATE TABLE "+schemaName+".bib_champs_"+schemaName+" ( id serial NOT NULL, id_champ integer, no_spec character varying, nom_champ character varying, valeur character varying, CONSTRAINT "+schemaName+"bib_champs_PK PRIMARY KEY (id));"
-stringCreate += " ALTER TABLE "+schemaName+".bib_champs_"+schemaName+" OWNER TO "+config.USER+";"
+stringCreate += " ALTER TABLE "+schemaName+".bib_champs_"+schemaName+" OWNER TO "+database['USER']+";"
 db.cur.execute(stringCreate)
 db.conn.commit()
 
