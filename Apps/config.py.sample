@@ -1,26 +1,31 @@
-URL_APPLICATION= 'MYHOST'
+# coding: utf-8
 
-DATABASE_NAME = "MY_DATABASE_NAME"
+database = {
+'DATABASE_NAME' : "NAME",
 
-USER = "MY_USER_NAME"
+'USER' : "MYUSER",
 
-PASSWORD = "MY_PASS"
+'PASSWORD' : "MYPASS",
 
-HOST = "MYHOST"
+'HOST' : "localhost",
 
-PORT = "5432"
+'PORT' : "5432",
+}
 
-PROJECTION = MY_PROJECTION
+config = {
+'URL_APPLICATION': 'MYURL',
 
-ID_OBSERVATION = 'id_synthese'
-GEOM_NAME = 'geom_point'
+
+'ID_OBSERVATION' : 'id_synthese',
+'GEOM_NAME' : 'geom_point',
 # TABLE NAME: SCHEMA.TABLE
-TABLE_NAME = 'synthese.syntheseff'
-
+'TABLE_NAME' : 'synthese.syntheseff',
 
 ##MAP CONFIG
 
-MAP = {
-	'COORD_CENTER': ['x': None, 'y' None],
-	'ZOOM_LEVEL': 11
+'MAP' : {
+	'COORD_CENTER': {'X': None, 'Y': None },
+	'ZOOM_LEVEL': 11,
+	'PROJECTION': MY_SRID
+	}
 }

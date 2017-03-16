@@ -1,4 +1,10 @@
 Apps/config.py
+Apps/*.pyc
+Apps/addObs/*.pyc
+Apps/synthese/*.pyc
+Apps/validation/*.pyc
+Apps/importCSV/*.pyc
+Apps/main/*.pyc
 Apps/static/uploads/*
 venv/*
 settings.ini
