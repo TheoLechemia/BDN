@@ -12,7 +12,7 @@ projection=MY_SRID
 
 #specifique DOM
 
-liste_rouge_path=/home/ubuntu/BDN/data/Liste_rouge_Guadeloupe.txt
+liste_rouge_path=/home/USER/BDN/data/Liste_rouge_Guadeloupe.txt
 
-taxref_protection_path=/home/ubuntu/BDN/PROTECTION_ESPECES_10.txt
+taxref_protection_path=/home/USER/BDN/PROTECTION_ESPECES_10.txt
 
