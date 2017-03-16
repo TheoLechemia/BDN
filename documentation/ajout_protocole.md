@@ -16,12 +16,12 @@ Pour cela, remplissez le fichier `/home/USER/BDN/modele_protocole.xls`
   
   
 **Colonne Nom Champs**:  
-Renseignez le nom du champs tel qu'il sera entré en BDD (pas d'espace, ni de caractère spéciaux)  
+Renseignez le nom du champ tel qu'il sera entré en BDD (pas d'espace, ni de caractère spéciaux)  
   
 **Colonne Type**:
-Renseignez ici le type du champs pour l'affichage HTML du formulaire (Entier, liste déroulante, booléen)
+Renseignez ici le type du champ pour l'affichage HTML du formulaire (entier, liste déroulante, booléen)
   
-**Colonne Type en base de donnée**s:
+**Colonne Type en base de données**:
 Renseignez le type SQL (integer, character varying, float etc...)
   
 **Colonnes Choix**:
