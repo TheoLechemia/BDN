@@ -45,7 +45,7 @@ Done !
 * Création d'une "bib" comportant tous les champs spécifiques au protocole ainsi que le contentu des listes déroulantes
 * Création d'une vue `taxonomie.taxons_nom_protocole` dans le schéma taxonomie
 
-Par défault, la vue `taxonomie.taxons_nom_protocole` embarque tous le taxref. Personnalisez cette vue pour y afficher seulement les taxons corespondant à votre protocole. Seul ces taxons seront proposés alors dans le formulaire de saisie.
+Par défault, la vue `taxonomie.taxons_nom_protocole` embarque tout le taxref. Personnalisez cette vue pour y afficher seulement les taxons corespondant à votre protocole. Seul ces taxons seront proposés alors dans le formulaire de saisie.
 
 
 
