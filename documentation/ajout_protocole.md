@@ -10,7 +10,7 @@ Le module générique **addObs** permet d'ajouter en base de données des observ
 "COMMENT" : les champs propres à chaque protocole
 
 La commande `create_protocole` permet de creer une nouvelle table en base de données, ainsi qu'un template HTML pour renseigner des observations de son protocole dans le module **addObs**.  
-Pour cela, remplissez le fichier `/home/USER/BDN/modele_protocole.xls`  
+Pour cela, remplissez le fichier `/home/USER/BDN/modele_protocole.xlsx`  ou `/home/USER/BDN/modele_protocole.odt`
   
 ![modele_protocole](https://github.com/TheoLechemia/BDN/blob/master/documentation/images/modele_protocoe.PNG)
   
