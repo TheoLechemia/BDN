@@ -36,11 +36,16 @@ La commande demande le chemin entier vers le fichier, renseignez le...
 
 Done !
 
+
+
 ## Que fais cette commande ?
 
 * Creation d'un nouveau schema en BDD au nom du fichier CSV
 * Création d'une table `nom_protocole.releve` qui comportera l'ensemble des observations
 * Création d'une "bib" comportant tous les champs spécifiques au protocole ainsi que le contentu des listes déroulantes
+* Création d'une vue `taxonomie.taxons_nom_protocole` dans le schéma taxonomie
+
+Par défault, la vue `taxonomie.taxons_nom_protocole` embarque tous le taxref. Personnalisez cette vue pour y afficher seulement les taxons corespondant à votre protocole. Seul ces taxons seront proposés alors dans le formulaire de saisie.
 
 
 
