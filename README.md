@@ -16,7 +16,7 @@ L'application BDN-WEB Dom-Tom contient plusieurs sous-modules qui peuvent être 
 
 ### Documentation
 ##### [Installer l'application](https://github.com/TheoLechemia/BDN/blob/master/documentation/installation.md)
-##### [Ajouter des nouveaux protocoles](https://github.com/TheoLechemia/BDN/blob/master/documentation/installation.md)
+##### [Ajouter des nouveaux protocoles](https://github.com/TheoLechemia/BDN/blob/master/documentation/ajout_protocole.md)
 
 
 
