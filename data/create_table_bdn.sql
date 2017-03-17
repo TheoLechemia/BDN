@@ -467,7 +467,8 @@ VALUES(1, 'admin', 'admin', 3, 1 );
 
 CREATE TABLE utilisateur.bib_structure(
 id_structure integer,
-nom_structure character varying
+nom_structure character varying,
+CONSTRAINT bib_structure_PK PRIMARY KEY (id_structure),
 );
 
 ALTER TABLE utilisateur.bib_structure
@@ -478,7 +479,8 @@ VALUES(1, 'ONF'), (2, 'Réserves');
 
 CREATE TABLE utilisateur.bib_role(
 auth_role integer,
-descritption character varying
+descritption character varying,
+CONSTRAINT bib_role_PK PRIMARY KEY (auth_role)
 );
 
 ALTER TABLE utilisateur.bib_role

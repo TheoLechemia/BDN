@@ -31,7 +31,7 @@ with open(fileName) as csvfile:
 
     #create table
     for row in reader:
-        column_name_and_type.append({'name':row[0], 'type': row[2]})
+        column_name_and_type.append({'name':row[0], 'type': row[2], 'htmlType': row[2]})
 
 
 
@@ -136,13 +136,26 @@ htmlContent = """<div class='form-group'>
             """
 
 integerInput = "<input class='form-control' type='number' placeholder='{}' ng-model='child.protocoleForm.{}'  name='{}'> \n"
+simpleTextInput = "<input class='form-control' type='text' placeholder='{}' ng-model='child.protocoleForm.{}'  name='{}'> \n"
+booleanInput = """<div'> 
+                    <select class='form-control' type='text' placeholder='{}' ng-model='child.protocoleForm.{}'  > \n
+                      <option value="">  Oui  </option> \n
+                      <option value="">  Non  </option> \n
+                    </select>\n
+                  </div> \n"""
 listInput = "<div'> <select class='form-control' type='text' placeholder='{}' ng-model='child.protocoleForm.{}' ng-options='choice as choice for choice in fields.{}' > <option value=""> - {} - </option> </select>  </div> \n"
 
 for r in column_name_and_type:
-    if r['type'] == 'integer':
+    if r['htmlType'] == 'Entier' or r['htmlType'] == 'Reel' :
         write  =  integerInput.format(r['name'],r['name'],r['name'])
         htmlFile.write(write)
-    else:
+    if r['htmlType'] == 'Chaîne de caractère':
+        write  =  simpleTextInput.format(r['name'],r['name'],r['name'])
+        htmlFile.write(write)
+    if r['htmlType'] == 'Booléen':
+        write  =  booleanInput.format(r['name'],r['name'])
+        htmlFile.write(write)
+    if r['htmlType'] == "Liste de choix" :
         write = listInput.format(r['name'],r['name'],r['name'], r['name'])
         htmlFile.write(write)
 htmlFile.close()

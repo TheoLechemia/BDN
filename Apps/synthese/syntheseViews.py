@@ -153,10 +153,10 @@ def loadTypologgie():
     habitat = utils.sqltoDict(sql, db.cur)
     sql = "SELECT * FROM taxonomie.bib_liste_rouge"
     listeRouge = utils.sqltoDict(sql, db.cur)
-    sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT observateur FROM synthese.syntheseff ORDER BY observateur DESC)r"
+    sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT observateur FROM synthese.syntheseff ORDER BY observateur ASC)r"
     db.cur.execute(sql)
     observateurs = db.cur.fetchone()[0]
-    sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT nom_structure, id_structure FROM utilisateur.bib_structure ORDER BY nom_structure DESC)r"
+    sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT nom_structure, id_structure FROM utilisateur.bib_structure ORDER BY id_structure ASC)r"
     db.cur.execute(sql)
     structures = db.cur.fetchone()[0]
     db.closeAll()
