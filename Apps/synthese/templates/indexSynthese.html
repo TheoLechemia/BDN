@@ -49,6 +49,14 @@
 <div ng-app="app" >
 
     <app ></app>
+</div>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+      <div class="alert alert-danger" style="width: 54.5%; margin-left:21.5%; text-align: center;"">
+      <strong> Vous n'avez pas les droits suffisants pour acceder à ce module</strong> 
+      </div>
+  {% endif %}
+{% endwith %}
 
 
 

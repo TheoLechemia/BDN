@@ -192,6 +192,7 @@ def loadTaxonHierarchy(rang_fils, rang_pere, rang_grand_pere, value_rang_grand_p
 
 
 @synthese.route('/export', methods=['GET', 'POST'])
+@check_auth(2)
 def export():
     if flask.request.method == 'POST':
         geojsonPoint = flask.request.json['point']

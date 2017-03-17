@@ -41,7 +41,7 @@ def login():
 
 
 @main.route('/')
-@check_auth(0)
+@check_auth(1)
 def index():
     db = getConnexion()
     stat = {}
