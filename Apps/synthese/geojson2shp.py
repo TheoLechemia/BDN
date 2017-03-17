@@ -1,7 +1,7 @@
 
 from osgeo import ogr, osr
 import os
-from .. import config
+from ..config import config
 
 def convertUnicodeToString(geometryParam, geomType):
     if geomType == 'point':
@@ -23,7 +23,7 @@ def export(FileName, geojson, geomType):
     inSpatialRef.ImportFromEPSG(4326)
 
     outSpatialRef = osr.SpatialReference() 
-    outSpatialRef.ImportFromEPSG(config.PROJECTION)
+    outSpatialRef.ImportFromEPSG(config['MAP']['PROJECTION'])
 
     coordTransform = osr.CoordinateTransformation(inSpatialRef, outSpatialRef)
     #create the output shape
