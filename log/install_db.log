@@ -14,20 +14,14 @@ ALTER TABLE
 INSERT 0 2
 CREATE TABLE
 ALTER TABLE
-INSERT 0 60
+INSERT 0 64
 CREATE TABLE
 ALTER TABLE
-INSERT 0 21
+INSERT 0 22
 CREATE TABLE
 ALTER TABLE
 CREATE FUNCTION
 INSERT 0 8
-CREATE TABLE
-ALTER TABLE
-COPY 468
-CREATE TABLE
-ALTER TABLE
-COPY 36663
 CREATE VIEW
 ALTER TABLE
 CREATE VIEW
@@ -35,12 +29,14 @@ ALTER TABLE
 CREATE TABLE
 INSERT 0 11
 ALTER TABLE
-psql:/tmp/create_table_bdn.sql:409: ERROR:  relation "layers.mailles_1k" does not exist
+psql:/tmp/create_table_bdn.sql:368: ERROR:  relation "layers.mailles_1k" does not exist
 LINE 25:      JOIN layers.mailles_1k m ON m.code_1km::text = f.code_m...
                    ^
+psql:/tmp/create_table_bdn.sql:396: ERROR:  column f.nb_individu_approx does not exist
+LINE 13:     f.nb_individu_approx,
+             ^
 CREATE VIEW
-CREATE VIEW
-psql:/tmp/create_table_bdn.sql:485: ERROR:  relation "layers.mailles_1k" does not exist
+psql:/tmp/create_table_bdn.sql:444: ERROR:  relation "layers.mailles_1k" does not exist
 LINE 23:      JOIN layers.mailles_1k m ON m.code_1km::text = f.code_m...
                    ^
 CREATE TABLE
@@ -52,3 +48,11 @@ INSERT 0 2
 CREATE TABLE
 ALTER TABLE
 INSERT 0 3
+psql:/tmp/create_table_bdn.sql:517: ERROR:  syntax error at or near "##"
+LINE 1: ##SPECIFIQUE DOM
+        ^
+psql:/tmp/create_table_bdn.sql:520: ERROR:  relation "taxonomie.liste_rouge" does not exist
+psql:/tmp/create_table_bdn.sql:524: ERROR:  relation "taxonomie.liste_rouge" does not exist
+CREATE TABLE
+ALTER TABLE
+psql:/tmp/create_table_bdn.sql:544: ERROR:  could not open file "./data/PROTECTION_ESPECES_10.txt" for reading: No such file or directory

@@ -42,8 +42,10 @@ def search_scientist_name(table, expr):
     db=getConnexion()
     sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
                 SELECT cd_ref, lb_nom, nom_vern from taxonomie.taxons_"""+table+"""
-                WHERE lb_nom ILIKE %s LIMIT 20) r"""
-    params = [expr+"%"]
+                WHERE lb_nom ILIKE %s  
+                ORDER BY lb_nom ASC 
+                LIMIT 20) r"""
+    params = ["%"+expr+"%"]
     db.cur.execute(sql, params)
     res = db.cur.fetchone()[0]
     db.closeAll()
@@ -53,9 +55,11 @@ def search_scientist_name(table, expr):
 def search_vern_name(table, expr):
     db=getConnexion()
     sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
-                SELECT cd_ref, lb_nom, nom_vern from taxonomie.taxons_"""+table+"""
-                WHERE nom_vern ILIKE  %s LIMIT 20) r"""
-    params = [expr+"%"]
+                SELECT cd_ref, lb_nom, nom_vern from taxonomie.taxons_"""+table+""" 
+                WHERE nom_vern ILIKE  %s 
+                ORDER BY nom_vern ASC
+                LIMIT 20) r"""
+    params = ["%"+expr+"%"]
     db.cur.execute(sql, params)
     res = db.cur.fetchone()[0]
     db.closeAll()
@@ -157,9 +161,9 @@ def submitObs():
         #foret
         sql_foret = """ SELECT ccod_frt FROM layers.perimetre_forets WHERE ST_INTERSECTS(geom,(ST_Transform(ST_PointFromText(%s, 4326),%s)))"""
         if loc_exact:
-            params = [point, config.PROJECTION]
+            params = [point, config['MAP']['PROJECTION']]
         else:
-            params = [centroide, config.PROJECTION]
+            params = [centroide, config['MAP']['PROJECTION']]
         db.cur.execute(sql_foret, params)
         res = db.cur.fetchone()
         ccod_frt = None 
@@ -169,9 +173,9 @@ def submitObs():
         # #insee
         sql_insee = """ SELECT code_insee FROM layers.commune WHERE ST_INTERSECTS(geom,(ST_Transform(ST_PointFromText(%s, 4326),%s)))"""
         if loc_exact:
-            params = [point, config.PROJECTION]
+            params = [point, config['MAP']['PROJECTION']]
         else:
-            params = [centroide, config.PROJECTION]
+            params = [centroide, config['MAP']['PROJECTION']]
         db.cur.execute(sql_insee, params)
         res = db.cur.fetchone()
         insee = None 
@@ -192,7 +196,7 @@ def submitObs():
         stringInsert = "INSERT INTO "+fullTableName+"(observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure"
         stringValues = ""
         if loc_exact:
-            stringValues = "VALUES (%s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config.PROJECTION)+"), %s, %s, %s, %s, %s, %s, %s"
+            stringValues = "VALUES (%s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s"
         else:
             stringValues = "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s"
         keys = getParmeters()['keys']
@@ -206,11 +210,6 @@ def submitObs():
             generalValues.append(v)
         params = generalValues
         sql = stringInsert+stringValues
-
-
-        print 'LAAAAAAAAAAAAAAAAAAA \q'
-        print sql
-        print params
 
         db.cur.execute(sql, params)
         db.conn.commit()

@@ -94,7 +94,7 @@ layersDict = {};
 				console.log("click");
 				// update the propertie in the app controller
 				console.log(feature.properties.id);
-				ctrl.mainController.updateCurrentListObs(feature.properties.id);
+				this.mainController.updateCurrentListObs(feature.properties.id);
 				// set the style and popup
 				if (selectLayer != undefined){
 						selectLayer.setStyle(originStyle)
