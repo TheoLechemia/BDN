@@ -1,11 +1,39 @@
 module.exports = function(angularInstance){
-	console.log('exectuteds ???')
 
 	templateLeafletCtrl = 'synthese/templates/map.html';
 
 	function mapCtrl($http, $scope, leafletData){
-		ctrl = this;
-		ctrl.center = {
+		mapCtrl = this;
+		var selectLayer;
+		layersDict = {};
+
+
+	mapCtrl.$onInit = function(){
+	console.log("INIT");
+
+	console.log(this.mainController);
+
+	this.onEachFeature = function(feature, layer){
+		// build the dict of layers
+		layersDict[feature.properties.id] = layer;
+		layer.on({
+			click : function(){
+				// update the propertie in the app controller
+				mapCtrl.mainController.updateCurrentListObs(feature.properties.id);
+				// set the style and popup
+				if (selectLayer != undefined){
+						selectLayer.setStyle(originStyle)
+					}
+				selectLayer = layer;
+				styleAndPopup(selectLayer);	
+			}
+		});
+	};
+
+
+	}//end onINIT
+
+			this.center = {
 			lat: configuration.MAP.COORD_CENTER.Y, 
 			lng: configuration.MAP.COORD_CENTER.X,
 			zoom: configuration.MAP.ZOOM_LEVEL
@@ -29,42 +57,7 @@ module.exports = function(angularInstance){
 	    "fillOpacity": 0
 		};
 
-		var selectLayer;
-		function onCurrentObsChange(id){
-			// get the object which contain all the geojson layer
-			console.log(id)
-			leafletData.getMap()
-		        .then(function(map) {
-		        	if (selectLayer != undefined){
-						selectLayer.setStyle(originStyle)
-					}
-					selectLayer = layersDict[id];
-
-					styleAndPopup(selectLayer);
-
-			        zoom = map.getZoom();
-			        // latlng is different between polygons and point
-			        var latlng;
-			        if(selectLayer.feature.geometry.type == "MultiPolygon"){
-			        	latlng = selectLayer._bounds._northEast;
-			        }
-			        else {
-			        	latlng = selectLayer._latlng;
-			        }
-
-			        if (zoom>=12) {
-
-			        	map.setView(latlng, zoom);
-		    		}
-		    		else{
-		    			map.setView(latlng, 12);
-		    		}
-			        
-		    });
-	}
-
-
-	function styleAndPopup(selectLayer){
+		function styleAndPopup(selectLayer){
 				// set the style
 				selectLayer.setStyle(selectedStyle);
 				//bind the popup
@@ -77,36 +70,45 @@ module.exports = function(angularInstance){
 					selectLayer.bindPopup(table).openPopup();
 
 				}else{
-					selectLayer.bindPopup("<b>"+selectLayer.feature.properties.id_synthese+"<br> </a> <b> Le: </b> "+selectLayer.feature.properties.code_maille+" <br>").openPopup();
+					selectLayer.bindPopup("<b>"+selectLayer.feature.properties.observateur+"<br> </a> <b> Le: </b> "+selectLayer.feature.properties.date+" <br>").openPopup();
 				}
 		      	
 		      	selectLayer.setStyle(selectedStyle);
+			};
+
+
+	function onCurrentObsChange(id){
+		// get the object which contain all the geojson layer
+		leafletData.getMap()
+	        .then(function(map) {
+	        	if (selectLayer != undefined){
+					selectLayer.setStyle(originStyle)
+				}
+				selectLayer = layersDict[id];
+
+				styleAndPopup(selectLayer);
+
+		        zoom = map.getZoom();
+		        // latlng is different between polygons and point
+		        var latlng;
+		        if(selectLayer.feature.geometry.type == "MultiPolygon"){
+		        	latlng = selectLayer._bounds._northEast;
+		        }
+		        else {
+		        	latlng = selectLayer._latlng;
+		        }
+
+		        if (zoom>=12) {
+
+		        	map.setView(latlng, zoom);
+	    		}
+	    		else{
+	    			map.setView(latlng, 12);
+	    		}       
+	    });
 	}
 
-
-layersDict = {};
-
-	function onEachFeature(feature, layer){
-		// build the dict of layers
-		layersDict[feature.properties.id] = layer;
-		layer.on({
-			click : function(){
-				console.log("click");
-				// update the propertie in the app controller
-				console.log(feature.properties.id);
-				this.mainController.updateCurrentListObs(feature.properties.id);
-				// set the style and popup
-				if (selectLayer != undefined){
-						selectLayer.setStyle(originStyle)
-					}
-				selectLayer = layer;
-				styleAndPopup(selectLayer);	
-			}
-		});
-	}
-
-
-		 ctrl.loadGeojsonPoint = function(currentGeojson){
+	mapCtrl.loadGeojsonPoint = function(currentGeojson){
 			this.geojsonToDirective = {
 				'point' : {
 					'data' : currentGeojson.point,
@@ -115,24 +117,23 @@ layersDict = {};
 					 	layersDict[feature.properties.id] = marker;
 			    		return marker;
 					},
-					'onEachFeature': onEachFeature,
+					'onEachFeature': this.onEachFeature,
 				},
 				'maille': {
 					'data': currentGeojson.maille,
-					'onEachFeature' : onEachFeature,
+					'onEachFeature' : this.onEachFeature,
 					}
 		 	}
 		}
-		 	console.log(layersDict);
 		 	
 
 			
 
-		ctrl.$onChanges = function(changes){
+	mapCtrl.$onChanges = function(changes){
+
 			// charge les geojson à la directive une fois qu'ils sont chargés en AJAX
 			if (changes.geojson){
 				if(changes.geojson.currentValue != undefined){
-					console.log(changes.geojson.currentValue);
 				reduceGeojsonMaille = {'type': 'FeatureCollection',
 						'features' : []
 					}
@@ -176,14 +177,15 @@ layersDict = {};
 			}
 		}
 
-
 	} // END controller
 
 
 	angularInstance.component('map', {
-
 	  controller : mapCtrl,
 	  templateUrl : templateLeafletCtrl,
+	   require: {
+	  	mainController : '^app',
+	  },
 	  bindings : {
 	  	'geojson' : '<',
 	  	'currentListObs' : '<',

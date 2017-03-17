@@ -1,10 +1,10 @@
 module.exports = function(angularInstance){
 
-function formCtrl(proxy, $http, $scope){
-	ctrl = this;
+function formControler(proxy, $http, $scope){
+	formCtrl = this;
 
 	// Modele du formulaire
-	ctrl.form = {
+	formCtrl.form = {
 		'selectedProtocole': null,
 		'who' : null,
 		'taxon' : {'lb_nom': null, 'nom_vern': null, 'cd_nom' : null },
@@ -34,7 +34,7 @@ function formCtrl(proxy, $http, $scope){
 
 
 	//RADIO REGNE
-	ctrl.regneRadio = 'current';
+	formCtrl.regneRadio = 'current';
 	$('.radiotout').attr("checked");
 
 	$('radio').click(function(){
@@ -53,14 +53,14 @@ function formCtrl(proxy, $http, $scope){
 
 
 	// Liste des rang taxonomique de la recherche avancée
-	ctrl.regne = ['Animalia', 'Plantae', 'Fungi']
+	formCtrl.regne = ['Animalia', 'Plantae', 'Fungi']
 	$scope.phylum = [];
 	$scope.ordre = [];
 	$scope.classe = [];
 	$scope.famille = [];
 
 	// chargement des données des rang taxonomique en ajax
-	ctrl.loadTaxonomyHierachy = function(rang_fils,rang_pere, rang_grand_pere,value_rang_grand_pere, value){
+	formCtrl.loadTaxonomyHierachy = function(rang_fils,rang_pere, rang_grand_pere,value_rang_grand_pere, value){
 		proxy.loadTaxonomyHierachy(rang_fils,rang_pere,rang_grand_pere,value_rang_grand_pere, value).then(function(response){
 			$scope[rang_fils] = response.data;
 		})
@@ -68,11 +68,11 @@ function formCtrl(proxy, $http, $scope){
 	
 
 	// UI event for taxonomie
-	ctrl.showTaxonomie = false;
+	formCtrl.showTaxonomie = false;
 
 
 	// si on fait la recherche taxonomique: on affiche les trucs selectionnés, et on met à null la recherche par nom de taxon
-	ctrl.onTaxonomieChange = function(){
+	formCtrl.onTaxonomieChange = function(){
 		if (this.showTaxonomie == false){
 			this.showTaxonomie = !$scope.showTaxonomie;
 		}
@@ -90,7 +90,7 @@ function formCtrl(proxy, $http, $scope){
 		this.showNewTaxons = false;
 	}
 	// si on rempli  un nom de taxon apres avoir faire une recherche par taxonomie, on reinitialise la hierarchie taxo à null;
-	ctrl.fillTaxonEvent = function(){
+	formCtrl.fillTaxonEvent = function(){
 		if(this.showTaxonomie){
 			this.showTaxonomie = !$scope.showTaxonomie;
 			this.form.regne = null;
@@ -103,9 +103,9 @@ function formCtrl(proxy, $http, $scope){
 
 	//synchronisation des deux inputs et ajout du cd_nom selectionné dans la liste de cd_nom du formulaire
 	// et ajout à la liste des taxons selectionnés
-		ctrl.showNewTaxons = false;
-		ctrl.newTaxons = []
-	 ctrl.onSelectNomVern = function ($item, $model, $label) {
+		formCtrl.showNewTaxons = false;
+		formCtrl.newTaxons = []
+	 formCtrl.onSelectNomVern = function ($item, $model, $label) {
 	 	   //$("#input_lbnom").val($item.lb_nom);
 	 	   this.form.listTaxons.push($item.cd_nom);
 
@@ -118,10 +118,10 @@ function formCtrl(proxy, $http, $scope){
 			$("#input_lbnom").val('');
 			 $("#input_nomvern").val('');
 			}, 1000)
-		}
+	}
 
 
-	 ctrl.onSelectlbNom = function ($item, $model, $label) {
+	 formCtrl.onSelectlbNom = function ($item, $model, $label) {
 	 	   $("#input_nomvern").val($item.nom_vern);
 	 	   this.form.listTaxons.push($item.cd_nom);
 
@@ -137,21 +137,21 @@ function formCtrl(proxy, $http, $scope){
 			 $("#input_nomvern").val('');
 			}, 1000)
 
-		}
+	}
 	
 
 		// retirer un taxon de la liste des taxons selectionnés
-		ctrl.removeTaxonEvent = function(cd_nom){
-			console.log("remove");	
-			this.newTaxons.splice(this.newTaxons.indexOf(cd_nom), 1 );
-			this.form.listTaxons.splice(this.newTaxons.indexOf(cd_nom), 1 );
-			if (this.newTaxons.length == 0){
-				this.showNewTaxons = false;
-			}
+	formCtrl.removeTaxonEvent = function(cd_nom){
+		console.log("remove");	
+		this.newTaxons.splice(this.newTaxons.indexOf(cd_nom), 1 );
+		this.form.listTaxons.splice(this.newTaxons.indexOf(cd_nom), 1 );
+		if (this.newTaxons.length == 0){
+			this.showNewTaxons = false;
 		}
+	}
 
 	// rafrachir l'ensemble des sélections
-	ctrl.onRefreshEvent = function(){
+	formCtrl.onRefreshEvent = function(){
 		console.log('refresh');
 		this.form = {
 		'selectedProtocole': null,
@@ -180,12 +180,12 @@ function formCtrl(proxy, $http, $scope){
 	} 
 
   	// UI event for date picker
-  		ctrl.popup = {
+  	formCtrl.popup = {
     	first:{ opened : false},
     	last:{opened:false} 
   		};
 
-	ctrl.open = function(prop) {
+	formCtrl.open = function(prop) {
 		if (prop == "first"){
     		this.popup.first.opened = true;
     	}
@@ -202,7 +202,7 @@ var templateForm = 'synthese/templates/formObs.html';
 
 angularInstance.component('formObs', {
 
-  controller : formCtrl,
+  controller : formControler,
   templateUrl : templateForm,
   bindings: {
   	onFormSubmit : '&',

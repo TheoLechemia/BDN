@@ -54,7 +54,7 @@ def synthese_index():
 @nocache
 def lastObs():
     db = getConnexion()
-    sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, ST_X(ST_Transform(geom_point, 4326)), ST_Y(ST_Transform(geom_point, 4326)), s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact
+    sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur
               FROM synthese.syntheseff s
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
               LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
@@ -66,14 +66,14 @@ def lastObs():
     geojsonPoint = { "type": "FeatureCollection",  "features" : list()}
     for r in res:
         date = r[5].strftime("%Y/%m/%d")
-        mypropertiesPoint = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[8], 'id' : r[1]}
-        myPropertiesMaille = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[8], 'id' : r[10]}
+        mypropertiesPoint = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[6], 'id' : r[1], 'observateur': r[10]}
+        myPropertiesMaille = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[6], 'id' : r[7], 'observateur': r[10]}
 
-        #r[11] = loc_exact: check if its point or maille
-        if r[11] == True:
+        #r[9] = loc_exact: check if its point or maille
+        if r[9] == True:
             geojsonPoint['features'].append({"type": "Feature", "properties": mypropertiesPoint, "geometry": ast.literal_eval( r[0]) })
         else:
-            geojsonMaille['features'].append({"type": "Feature", "properties": myPropertiesMaille, "geometry": ast.literal_eval( r[9]) })
+            geojsonMaille['features'].append({"type": "Feature", "properties": myPropertiesMaille, "geometry": ast.literal_eval( r[7]) })
     db.closeAll()
     return Response(flask.json.dumps({'point':geojsonPoint,'maille':geojsonMaille}), mimetype='application/json')
 

@@ -1,13 +1,13 @@
 module.exports = function(angularInstance){
 
 
-function lastObsCtrl ($uibModal, $http){
-	ctrl = this;
-	ctrl.currentPoint = null;
+function listObsCtrl ($uibModal, $http){
+	listCtrl = this;
+	listCtrl.currentPoint = null;
 
 	var overFlowedList = $('.last-obs');
 
-	ctrl.$onChanges = function(changes){
+	listCtrl.$onChanges = function(changes){
 		if (changes.geojson){
 			if (changes.geojson.currentValue != undefined){
 				this.currentList = changes.geojson.currentValue.point;
@@ -30,22 +30,22 @@ function lastObsCtrl ($uibModal, $http){
 		}
 	}
 
-	ctrl.zoom = function(id_synthese){
+	listCtrl.zoom = function(id_synthese){
 		this.mainController.updateCurrentLeafletObs(id_synthese);
 		this.mainController.updateCurrentListObs(id_synthese);
 	}
 
-	ctrl.isCurrentObs = function(id, row_id_synthese){
+	listCtrl.isCurrentObs = function(id, row_id_synthese){
 			return id == row_id_synthese;	
 	}
 
-	ctrl.selected = 'point';
+	listCtrl.selected = 'point';
 
-	ctrl.isSelected = function(list){
+	listCtrl.isSelected = function(list){
 		return this.selected === list;
 	}
 
-	ctrl.changeList = function(list){
+	listCtrl.changeList = function(list){
 		this.currentList = this.geojson[list];
 		this.selected = list;
 	}
@@ -55,7 +55,7 @@ templateLastObs = 'synthese/templates/listObs.html';
 
 angularInstance.component('listObs', {
 
-  controller : lastObsCtrl,
+  controller : listObsCtrl,
   templateUrl : templateLastObs,
   require: {
   	mainController : '^app',

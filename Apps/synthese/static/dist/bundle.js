@@ -1,41 +1,41 @@
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-
+/******/
 /******/ 		// Check if module is in cache
 /******/ 		if(installedModules[moduleId])
 /******/ 			return installedModules[moduleId].exports;
-
+/******/
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
 /******/ 			l: false,
 /******/ 			exports: {}
 /******/ 		};
-
+/******/
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
+/******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.l = true;
-
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-
-
+/******/
+/******/
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-
+/******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-
+/******/
 /******/ 	// identity function for calling harmony imports with the correct context
 /******/ 	__webpack_require__.i = function(value) { return value; };
-
+/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -46,7 +46,7 @@
 /******/ 			});
 /******/ 		}
 /******/ 	};
-
+/******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
 /******/ 	__webpack_require__.n = function(module) {
 /******/ 		var getter = module && module.__esModule ?
@@ -55,13 +55,13 @@
 /******/ 		__webpack_require__.d(getter, 'a', getter);
 /******/ 		return getter;
 /******/ 	};
-
+/******/
 /******/ 	// Object.prototype.hasOwnProperty.call
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-
+/******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-
+/******/
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
@@ -72,11 +72,11 @@
 
 module.exports = function(angularInstance){
 
-function formCtrl(proxy, $http, $scope){
-	ctrl = this;
+function formControler(proxy, $http, $scope){
+	formCtrl = this;
 
 	// Modele du formulaire
-	ctrl.form = {
+	formCtrl.form = {
 		'selectedProtocole': null,
 		'who' : null,
 		'taxon' : {'lb_nom': null, 'nom_vern': null, 'cd_nom' : null },
@@ -106,7 +106,7 @@ function formCtrl(proxy, $http, $scope){
 
 
 	//RADIO REGNE
-	ctrl.regneRadio = 'current';
+	formCtrl.regneRadio = 'current';
 	$('.radiotout').attr("checked");
 
 	$('radio').click(function(){
@@ -125,14 +125,14 @@ function formCtrl(proxy, $http, $scope){
 
 
 	// Liste des rang taxonomique de la recherche avancée
-	ctrl.regne = ['Animalia', 'Plantae', 'Fungi']
+	formCtrl.regne = ['Animalia', 'Plantae', 'Fungi']
 	$scope.phylum = [];
 	$scope.ordre = [];
 	$scope.classe = [];
 	$scope.famille = [];
 
 	// chargement des données des rang taxonomique en ajax
-	ctrl.loadTaxonomyHierachy = function(rang_fils,rang_pere, rang_grand_pere,value_rang_grand_pere, value){
+	formCtrl.loadTaxonomyHierachy = function(rang_fils,rang_pere, rang_grand_pere,value_rang_grand_pere, value){
 		proxy.loadTaxonomyHierachy(rang_fils,rang_pere,rang_grand_pere,value_rang_grand_pere, value).then(function(response){
 			$scope[rang_fils] = response.data;
 		})
@@ -140,11 +140,11 @@ function formCtrl(proxy, $http, $scope){
 	
 
 	// UI event for taxonomie
-	ctrl.showTaxonomie = false;
+	formCtrl.showTaxonomie = false;
 
 
 	// si on fait la recherche taxonomique: on affiche les trucs selectionnés, et on met à null la recherche par nom de taxon
-	ctrl.onTaxonomieChange = function(){
+	formCtrl.onTaxonomieChange = function(){
 		if (this.showTaxonomie == false){
 			this.showTaxonomie = !$scope.showTaxonomie;
 		}
@@ -162,7 +162,7 @@ function formCtrl(proxy, $http, $scope){
 		this.showNewTaxons = false;
 	}
 	// si on rempli  un nom de taxon apres avoir faire une recherche par taxonomie, on reinitialise la hierarchie taxo à null;
-	ctrl.fillTaxonEvent = function(){
+	formCtrl.fillTaxonEvent = function(){
 		if(this.showTaxonomie){
 			this.showTaxonomie = !$scope.showTaxonomie;
 			this.form.regne = null;
@@ -175,9 +175,9 @@ function formCtrl(proxy, $http, $scope){
 
 	//synchronisation des deux inputs et ajout du cd_nom selectionné dans la liste de cd_nom du formulaire
 	// et ajout à la liste des taxons selectionnés
-		ctrl.showNewTaxons = false;
-		ctrl.newTaxons = []
-	 ctrl.onSelectNomVern = function ($item, $model, $label) {
+		formCtrl.showNewTaxons = false;
+		formCtrl.newTaxons = []
+	 formCtrl.onSelectNomVern = function ($item, $model, $label) {
 	 	   //$("#input_lbnom").val($item.lb_nom);
 	 	   this.form.listTaxons.push($item.cd_nom);
 
@@ -190,10 +190,10 @@ function formCtrl(proxy, $http, $scope){
 			$("#input_lbnom").val('');
 			 $("#input_nomvern").val('');
 			}, 1000)
-		}
+	}
 
 
-	 ctrl.onSelectlbNom = function ($item, $model, $label) {
+	 formCtrl.onSelectlbNom = function ($item, $model, $label) {
 	 	   $("#input_nomvern").val($item.nom_vern);
 	 	   this.form.listTaxons.push($item.cd_nom);
 
@@ -209,21 +209,21 @@ function formCtrl(proxy, $http, $scope){
 			 $("#input_nomvern").val('');
 			}, 1000)
 
-		}
+	}
 	
 
 		// retirer un taxon de la liste des taxons selectionnés
-		ctrl.removeTaxonEvent = function(cd_nom){
-			console.log("remove");	
-			this.newTaxons.splice(this.newTaxons.indexOf(cd_nom), 1 );
-			this.form.listTaxons.splice(this.newTaxons.indexOf(cd_nom), 1 );
-			if (this.newTaxons.length == 0){
-				this.showNewTaxons = false;
-			}
+	formCtrl.removeTaxonEvent = function(cd_nom){
+		console.log("remove");	
+		this.newTaxons.splice(this.newTaxons.indexOf(cd_nom), 1 );
+		this.form.listTaxons.splice(this.newTaxons.indexOf(cd_nom), 1 );
+		if (this.newTaxons.length == 0){
+			this.showNewTaxons = false;
 		}
+	}
 
 	// rafrachir l'ensemble des sélections
-	ctrl.onRefreshEvent = function(){
+	formCtrl.onRefreshEvent = function(){
 		console.log('refresh');
 		this.form = {
 		'selectedProtocole': null,
@@ -252,12 +252,12 @@ function formCtrl(proxy, $http, $scope){
 	} 
 
   	// UI event for date picker
-  		ctrl.popup = {
+  	formCtrl.popup = {
     	first:{ opened : false},
     	last:{opened:false} 
   		};
 
-	ctrl.open = function(prop) {
+	formCtrl.open = function(prop) {
 		if (prop == "first"){
     		this.popup.first.opened = true;
     	}
@@ -274,7 +274,7 @@ var templateForm = 'synthese/templates/formObs.html';
 
 angularInstance.component('formObs', {
 
-  controller : formCtrl,
+  controller : formControler,
   templateUrl : templateForm,
   bindings: {
   	onFormSubmit : '&',
@@ -295,13 +295,13 @@ angularInstance.component('formObs', {
 module.exports = function(angularInstance){
 
 
-function lastObsCtrl ($uibModal, $http){
-	ctrl = this;
-	ctrl.currentPoint = null;
+function listObsCtrl ($uibModal, $http){
+	listCtrl = this;
+	listCtrl.currentPoint = null;
 
 	var overFlowedList = $('.last-obs');
 
-	ctrl.$onChanges = function(changes){
+	listCtrl.$onChanges = function(changes){
 		if (changes.geojson){
 			if (changes.geojson.currentValue != undefined){
 				this.currentList = changes.geojson.currentValue.point;
@@ -324,22 +324,22 @@ function lastObsCtrl ($uibModal, $http){
 		}
 	}
 
-	ctrl.zoom = function(id_synthese){
+	listCtrl.zoom = function(id_synthese){
 		this.mainController.updateCurrentLeafletObs(id_synthese);
 		this.mainController.updateCurrentListObs(id_synthese);
 	}
 
-	ctrl.isCurrentObs = function(id, row_id_synthese){
+	listCtrl.isCurrentObs = function(id, row_id_synthese){
 			return id == row_id_synthese;	
 	}
 
-	ctrl.selected = 'point';
+	listCtrl.selected = 'point';
 
-	ctrl.isSelected = function(list){
+	listCtrl.isSelected = function(list){
 		return this.selected === list;
 	}
 
-	ctrl.changeList = function(list){
+	listCtrl.changeList = function(list){
 		this.currentList = this.geojson[list];
 		this.selected = list;
 	}
@@ -349,7 +349,7 @@ templateLastObs = 'synthese/templates/listObs.html';
 
 angularInstance.component('listObs', {
 
-  controller : lastObsCtrl,
+  controller : listObsCtrl,
   templateUrl : templateLastObs,
   require: {
   	mainController : '^app',
@@ -369,13 +369,41 @@ angularInstance.component('listObs', {
 /***/ (function(module, exports) {
 
 module.exports = function(angularInstance){
-	console.log('exectuteds ???')
 
 	templateLeafletCtrl = 'synthese/templates/map.html';
 
 	function mapCtrl($http, $scope, leafletData){
-		ctrl = this;
-		ctrl.center = {
+		mapCtrl = this;
+		var selectLayer;
+		layersDict = {};
+
+
+	mapCtrl.$onInit = function(){
+	console.log("INIT");
+
+	console.log(this.mainController);
+
+	this.onEachFeature = function(feature, layer){
+		// build the dict of layers
+		layersDict[feature.properties.id] = layer;
+		layer.on({
+			click : function(){
+				// update the propertie in the app controller
+				mapCtrl.mainController.updateCurrentListObs(feature.properties.id);
+				// set the style and popup
+				if (selectLayer != undefined){
+						selectLayer.setStyle(originStyle)
+					}
+				selectLayer = layer;
+				styleAndPopup(selectLayer);	
+			}
+		});
+	};
+
+
+	}//end onINIT
+
+			this.center = {
 			lat: configuration.MAP.COORD_CENTER.Y, 
 			lng: configuration.MAP.COORD_CENTER.X,
 			zoom: configuration.MAP.ZOOM_LEVEL
@@ -399,42 +427,7 @@ module.exports = function(angularInstance){
 	    "fillOpacity": 0
 		};
 
-		var selectLayer;
-		function onCurrentObsChange(id){
-			// get the object which contain all the geojson layer
-			console.log(id)
-			leafletData.getMap()
-		        .then(function(map) {
-		        	if (selectLayer != undefined){
-						selectLayer.setStyle(originStyle)
-					}
-					selectLayer = layersDict[id];
-
-					styleAndPopup(selectLayer);
-
-			        zoom = map.getZoom();
-			        // latlng is different between polygons and point
-			        var latlng;
-			        if(selectLayer.feature.geometry.type == "MultiPolygon"){
-			        	latlng = selectLayer._bounds._northEast;
-			        }
-			        else {
-			        	latlng = selectLayer._latlng;
-			        }
-
-			        if (zoom>=12) {
-
-			        	map.setView(latlng, zoom);
-		    		}
-		    		else{
-		    			map.setView(latlng, 12);
-		    		}
-			        
-		    });
-	}
-
-
-	function styleAndPopup(selectLayer){
+		function styleAndPopup(selectLayer){
 				// set the style
 				selectLayer.setStyle(selectedStyle);
 				//bind the popup
@@ -447,36 +440,45 @@ module.exports = function(angularInstance){
 					selectLayer.bindPopup(table).openPopup();
 
 				}else{
-					selectLayer.bindPopup("<b>"+selectLayer.feature.properties.id_synthese+"<br> </a> <b> Le: </b> "+selectLayer.feature.properties.code_maille+" <br>").openPopup();
+					selectLayer.bindPopup("<b>"+selectLayer.feature.properties.observateur+"<br> </a> <b> Le: </b> "+selectLayer.feature.properties.date+" <br>").openPopup();
 				}
 		      	
 		      	selectLayer.setStyle(selectedStyle);
+			};
+
+
+	function onCurrentObsChange(id){
+		// get the object which contain all the geojson layer
+		leafletData.getMap()
+	        .then(function(map) {
+	        	if (selectLayer != undefined){
+					selectLayer.setStyle(originStyle)
+				}
+				selectLayer = layersDict[id];
+
+				styleAndPopup(selectLayer);
+
+		        zoom = map.getZoom();
+		        // latlng is different between polygons and point
+		        var latlng;
+		        if(selectLayer.feature.geometry.type == "MultiPolygon"){
+		        	latlng = selectLayer._bounds._northEast;
+		        }
+		        else {
+		        	latlng = selectLayer._latlng;
+		        }
+
+		        if (zoom>=12) {
+
+		        	map.setView(latlng, zoom);
+	    		}
+	    		else{
+	    			map.setView(latlng, 12);
+	    		}       
+	    });
 	}
 
-
-layersDict = {};
-
-	function onEachFeature(feature, layer){
-		// build the dict of layers
-		layersDict[feature.properties.id] = layer;
-		layer.on({
-			click : function(){
-				console.log("click");
-				// update the propertie in the app controller
-				console.log(feature.properties.id);
-				ctrl.mainController.updateCurrentListObs(feature.properties.id);
-				// set the style and popup
-				if (selectLayer != undefined){
-						selectLayer.setStyle(originStyle)
-					}
-				selectLayer = layer;
-				styleAndPopup(selectLayer);	
-			}
-		});
-	}
-
-
-		 ctrl.loadGeojsonPoint = function(currentGeojson){
+	mapCtrl.loadGeojsonPoint = function(currentGeojson){
 			this.geojsonToDirective = {
 				'point' : {
 					'data' : currentGeojson.point,
@@ -485,24 +487,23 @@ layersDict = {};
 					 	layersDict[feature.properties.id] = marker;
 			    		return marker;
 					},
-					'onEachFeature': onEachFeature,
+					'onEachFeature': this.onEachFeature,
 				},
 				'maille': {
 					'data': currentGeojson.maille,
-					'onEachFeature' : onEachFeature,
+					'onEachFeature' : this.onEachFeature,
 					}
 		 	}
 		}
-		 	console.log(layersDict);
 		 	
 
 			
 
-		ctrl.$onChanges = function(changes){
+	mapCtrl.$onChanges = function(changes){
+
 			// charge les geojson à la directive une fois qu'ils sont chargés en AJAX
 			if (changes.geojson){
 				if(changes.geojson.currentValue != undefined){
-					console.log(changes.geojson.currentValue);
 				reduceGeojsonMaille = {'type': 'FeatureCollection',
 						'features' : []
 					}
@@ -546,14 +547,15 @@ layersDict = {};
 			}
 		}
 
-
 	} // END controller
 
 
 	angularInstance.component('map', {
-
 	  controller : mapCtrl,
 	  templateUrl : templateLeafletCtrl,
+	   require: {
+	  	mainController : '^app',
+	  },
 	  bindings : {
 	  	'geojson' : '<',
 	  	'currentListObs' : '<',
