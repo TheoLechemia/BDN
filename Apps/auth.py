@@ -38,6 +38,7 @@ def check_auth(level):
                     return func(*args, **kwargs)
                 else:
                     flash("")
+                    print 'LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
                     print request.referrer
                     return redirect(request.referrer)
             else:
