@@ -85,11 +85,13 @@ $scope.showCoord = true;
             //angular.copy({},form);
             // on reset tous les champs
             var saveCoord = $scope.globalForm.coord;
-            var saveMaille = $scope.globalForm.code_maille;
+            var saveMaille = $scope.globalForm.geom_poly;
+            console.log("save_maileeeeeeee")
+            console.log(saveMaille);
             $scope.globalForm = {
                     'coord' : saveCoord,
                     'loc_exact' : loc_exact,
-                    'code_maille': saveMaille,
+                    'geom_poly': saveMaille,
                     'observateur' : null,
                     'date': null,
                     'taxon': null,

@@ -40,91 +40,21 @@
  {% include 'navbar.html' %}
 
 <div class="" id="page">
+	<div class="row">
+		<div class="col-md-5"></div>
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+			<h3> Choisissez un protocole </h3>
 
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-		<div class="panel panel-default stat-panel">
-
-			
-
-		<h4> Liste des taxons non validés </h4>
-			<p id=action> </p>
-			<table id="table_id" class="display table">
-			        <thead>
-			            <tr>
-			                <th> </th>
-			                <th>  </th>
-			                <th> </th>
-			                <th> </th>
-			                <th>Protocole</th>
-			                <th>Nom Vernaculaire</th>
-			                <th>Nom Scientifique</th>
-			                <th>Date</th>
-			                <th>Observateur</th>
-
-			            </tr>
-					</thead>
-					<tbody>
-            		{% for taxon in taxList %}
-						<tr class="taxonRow" idSynthese="{{taxon.id_synthese}}" protocole="{{taxon.protocole}}"> 
-							<td> <input class = "check" type="checkbox"> </td>
-							<td class="search" data-container="body" data-toggle="tooltip" data-placement="right" title="Zoomer sur l'observation"> <span class="glyphicon glyphicon-search " style="cursor:pointer;"> </span> </td>
-							<td class="validate" > <span class="glyphicon glyphicon-ok " style="color:green; cursor:pointer;" data-toggle="tooltip" title="Valider l'observation" data-placement="right"> </span> </td>
-							<td class="delete" data-toggle="modal" data-target=".bd-example-modal-lg" > <span class="glyphicon glyphicon-remove " style="color:red; cursor:pointer;" data-toggle="tooltip" title="Supprimer l'observation" data-placement="right">  </span> </td>
-							<td>{{taxon.protocole}}  </td>
-							<td> {{taxon.nom_vern}} </td>
-							<td> <a target="_blank" href= 'https://inpn.mnhn.fr/espece/cd_nom/{{taxon.cd_nom}}' > {{taxon.lb_nom}} </a> </td>
-							<td> {{taxon.date}} </td>
-							<td> {{taxon.observateur}} </td>
-
-						</tr>
-					{% endfor %}
-					</tbody>
-			</table>
-			<button id="lauchValidateModal"  class="btn btn-success disabled" data-toggle="modal" data-target=".validate-modal">  Valider <span class="glyphicon glyphicon-ok "></span> </button>
+				{% for p in protocoles %}
+					<a href="{{ url_for('validation.mapValidation',protocole=p.nom_schema) }}" class="btn btn-success"> {{p.nom_protocole}} </a>
+				{% endfor %}
 		</div>
 	</div>
 
 
 
-		<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-		  <div class="modal-dialog modal-lg">
-		    <div class="modal-content" style="width: 50%;margin: 0 auto; text-align: center; ">
-		    	<h3> Confirmation </h3>
-		      	<button  type="button" class="btn btn-primary cancel">Annuler</button>
-				<button id='confirmDelete' type="button" class="btn btn-danger">Oui, supprimer cette observation</button>
-				<div  style="height: 20px"> </div>
-		    </div>
-		  </div>
-		</div>
-
-		<div class="modal fade validate-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-		  <div class="modal-dialog modal-lg">
-		    <div class="modal-content" style="width: 50%;margin: 0 auto; text-align: center; ">
-		    	<h3> Confirmation </h3>
-		    	<p id ="insertHTML"> </p>
-		      	<button  type="button" class="btn btn-danger cancel" >Annuler</button>
-				<button id="globalValidate" type="button" class="btn btn-success">Valider</button>
-				<div  style="height: 20px"> </div>
-		    </div>
-		  </div>
-		</div>
 
 
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-		<div id=map style="height: 90vh;"> </div>
-
-	</div>
-
-
-
-
-</div> 
-
-<script type="text/javascript"> var configuration= {{configuration|tojson}},
-									observations = {{geojson|tojson}} 
-</script>
-
-<script type="text/javascript" src="{{url_for('validation.static', filename='mainValidation.js') }}"> </script>
 
 
 </body>

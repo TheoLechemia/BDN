@@ -149,11 +149,8 @@ function deletePoint(arrayDelete){
 	console.log(arrayDelete);
       	
 	    currentGeoJson.features = currentGeoJson.features.filter(function(point){
-	    	//return (idArray.find(point.properties.id_synthese) != -1);
 	    	return findInArray(arrayDelete, point.properties.id_synthese);
-/*	    	return arrayDelete.find(function(del){
-	    		return del != point.properties.id_synthese
-	    	})*/
+
 	    })
 	    map.removeLayer(currentGeoJsonLayer);
 	    currentGeoJsonLayer = generateLayerFromGeojson(currentGeoJson)
@@ -231,7 +228,6 @@ $('.check').change(function(){
 
 
 
-
 $('#globalValidate').click(function(){
 	
 	var rows = [];
@@ -253,11 +249,11 @@ $('#globalValidate').click(function(){
 
 
 	arrayCheckList = Array.from(checkList)
-	jsonData = {'validate' : arrayCheckList}
+	jsonData = {'validate' : arrayCheckList, 'protocole': PROTOCOLE}
 	jsonData = JSON.stringify(jsonData)
 	$.ajax({
 	  type: "POST",
-	  url: configuration.URL_APPLICATION+"/validation/validate",
+	  url: configuration.URL_APPLICATION+"validation/validate/",
 	  contentType: 'application/json; charset=utf-8',
 	  data: jsonData,
 	  dataType: "json"
@@ -268,8 +264,8 @@ $('#globalValidate').click(function(){
 		//checkList.clear();
 	})	
 
-})
 
+})
 // fill the modal with the number of observations
 $('#lauchValidateModal').click(function(){
 	$('#insertHTML').html("Valider les "+ checkList.size+" observations selectionnées ?");

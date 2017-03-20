@@ -12,14 +12,30 @@ validation = Blueprint('validation', __name__, static_url_path="/validation", st
 
 
 
-@validation.route("/")
+@validation.route('/')
 @check_auth(3)
 def indexValidation():
+    db = getConnexion()
+
+    sql = "SELECT array_to_json(array_agg(row_to_json(row))) FROM (SELECT * FROM synthese.bib_protocole) row"
+    db.cur.execute(sql)
+    print 'LAAAAAAAAAAAAAAAAAAAAAAAAA'
+    protocoles = db.cur.fetchone()[0]
+    print type(protocoles)
+    db.closeAll()
+    return render_template('indexValidation.html', protocoles=protocoles, page_title=u"Interface de validation des données")
+
+    
+
+
+@validation.route("/<protocole>")
+@check_auth(3)
+def mapValidation(protocole):
     db = getConnexion()
     sql = """ SELECT f."""+config['ID_OBSERVATION']+""" as id_synthese, f.observateur, f.protocole, f.cd_nom, t.nom_vern, t.lb_nom, f.date, ST_AsGeoJSON(ST_TRANSFORM("""+config['GEOM_NAME']+""", 4326)) AS geom
      FROM """+config['TABLE_NAME']+""" f
      JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
-     WHERE f.valide = FALSE AND f.loc_exact = TRUE"""
+     WHERE f.valide = FALSE AND f.loc_exact = TRUE AND protocole = '"""+protocole+"""' """ 
     print sql
     res = utils.sqltoDict(sql, db.cur)
     nom_vern = None
@@ -31,7 +47,7 @@ def indexValidation():
     geojson = utils.simpleGeoJson(res, 'geom', ['id_synthese'])
     print geojson
     db.closeAll()
-    return render_template('indexValidation.html', configuration=config, taxList=res, geojson = geojson, page_title=u"Interface de validation des données")
+    return render_template('mapValidation.html', configuration=config, taxList=res, geojson = geojson, protocole=protocole, page_title=u"Interface de validation des données")
 
 
 
@@ -51,7 +67,7 @@ def deleteRow(id_synt, protocole):
     return json.dumps({'success':True, 'id_synthese':id_synt}), 200, {'ContentType':'application/json'}
 
 
-@validation.route('/validate', methods=['GET', 'POST'])
+@validation.route('/validate/', methods=['GET', 'POST'])
 def validate():
     db = getConnexion()
     #id_synt = str(id_synt)
@@ -59,18 +75,26 @@ def validate():
     id_synt = tuple()
     if request.method == 'POST':
         id_synt = request.json['validate']
-        if type(id_synt) != str:
-            tab.append(id_synt)
-            tupleSynth = tuple(tab)
+        protocole = request.json['protocole']
+        print 'lAAAAAAAAAAAAAAAAAAAAA'
+        print type(id_synt)
+        if type(id_synt) is list:
+            intTab = list()
+            for i in id_synt:
+                intTab.append(int(i))
+            tupleSynth = tuple(intTab)
         else:
-            tupleSynth = tuple(id_synt)
-        print "OHHH"
-        print id_synt
+            tupleSynth = tuple(int(id_synt))
+
         sql = """UPDATE synthese.syntheseff
                  SET valide = TRUE
-                 WHERE id_synthese IN %s;"""
-        param = [tupleSynth]
-        db.cur.execute(sql,param) 
+                 WHERE id_synthese IN %s ;
+                 UPDATE """+protocole+""".releve
+                 SET valide = TRUE 
+                 WHERE id_synthese IN %s ;"""
+        param = [tupleSynth, tupleSynth]
+        db.cur.execute(sql,param)
+
         
         db.conn.commit()
     db.closeAll()
