@@ -10,7 +10,7 @@ CREATE TABLE synthese.syntheseff
   valide boolean,
   geom_point geometry(Point,32620),
   ccod_frt character varying(50),
-  geom_maille geometry(Point,32620),
+  geom_poly geometry(Point,32620),
   loc_exact boolean,
   id_structure integer,
   CONSTRAINT synthese_pkey PRIMARY KEY (id_synthese),
@@ -36,7 +36,7 @@ CREATE TABLE contact_faune.releve
   valide boolean,
   ccod_frt character varying(50),
   loc_exact boolean,
-  geom_maille geometry(Point,32620),
+  geom_poly geometry(Point,32620),
   id_structure integer,
   type_obs character varying(50),
   effectif character varying(50),
@@ -73,7 +73,7 @@ CREATE TABLE contact_flore.releve
   valide boolean,
   ccod_frt character varying(50),
   loc_exact boolean,
-  geom_maille geometry(Point,32620),
+  geom_poly geometry(Point,32620),
   id_structure integer,
   abondance character varying(15),
   nb_pied_approx character varying(15),
@@ -464,7 +464,7 @@ VALUES(1, 'admin', 'admin', 3, 1 );
 CREATE TABLE utilisateur.bib_structure(
 id_structure integer,
 nom_structure character varying,
-CONSTRAINT bib_structure_PK PRIMARY KEY (id_structure),
+CONSTRAINT bib_structure_PK PRIMARY KEY (id_structure)
 );
 
 ALTER TABLE utilisateur.bib_structure
@@ -487,7 +487,7 @@ INSERT INTO utilisateur.bib_role
 VALUES(1, 'lecteur'), (2, 'contributeur'), (3, 'administrateur');
 
 
-##SPECIFIQUE DOM
+--SPECIFIQUE DOM
 
 --liste rouge
 CREATE TABLE taxonomie.liste_rouge(
@@ -518,7 +518,7 @@ ALTER TABLE taxonomie.liste_rouge
   OWNER TO onfuser;
 
 COPY taxonomie.liste_rouge
-FROM E'./data/Liste_rouge_Guadeloupe.txt'
+FROM E'/home/ubuntu/BDN/data/Liste_rouge_Guadeloupe.txt'
 WITH (format 'csv', header 'true', delimiter E';');
 
 --espece protege taxref
@@ -538,5 +538,5 @@ ALTER TABLE taxonomie.protection
 
 
 COPY taxonomie.protection
-FROM E'./data/PROTECTION_ESPECES_10.txt'
+FROM E'/home/ubuntu/BDN/data/PROTECTION_ESPECES_10.txt'
 WITH (format 'csv', header 'true', delimiter E';');
