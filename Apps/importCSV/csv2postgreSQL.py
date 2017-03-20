@@ -74,11 +74,11 @@ def csv2PG(file):
                 fieldList= list()
                 for r in res:
                     fieldList.append({'spec_name': r[0], 'field_name': r[1]})
-                print 'LAAAAAAAAAAAAAAAAAA'
                 print fieldList
 
             observateur = row['observateur_nom']+" "+ row['observateur_prenom']
             protocole = row['protocole']
+            comm_loc = row['loc_nom']
             commentaire = row['comment']
             #on enleve l'heure de la date
             listDate = row['date'].split(' ')
@@ -110,12 +110,12 @@ def csv2PG(file):
             #recupere l'id_structure depuis la session
             id_structure = session['id_structure']
             loc_exact = True
-            code_maille = None
+            geom_poly = None
 
-            stringInsert = "INSERT INTO "+fullTableName+" (observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure"
-            stringValues = " VALUES (%s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s"
+            stringInsert = "INSERT INTO "+fullTableName+" (observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, geom_poly, id_structure, comm_loc"
+            stringValues = " VALUES (%s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s, %s"
 
-            generalValues = [observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure]
+            generalValues = [observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, geom_poly, id_structure, comm_loc]
             for field in fieldList:
                 value = getSpec(field['spec_name'], row, interpretationDict)
                 stringInsert += ", "+field['field_name']
@@ -125,12 +125,6 @@ def csv2PG(file):
             stringValues+=");"
 
             sql = stringInsert+stringValues
-            print interpretationDict
-            f = open('C:\\Users\\tl90744\\Documents\\BDN\\Apps\\static\\uploads\\test.txt', 'w')
-            f.write(sql+'\n')
-            f.write(str(generalValues))
-            f.close()
-
             db.cur.execute(sql, generalValues)
             db.conn.commit()
 

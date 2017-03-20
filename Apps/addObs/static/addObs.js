@@ -46,6 +46,7 @@ $scope.showCoord = true;
     'loc_exact' : true,
     'geom_poly': null,
     'commentaire': null,
+    'comm_loc': null,
    }
 
 
@@ -96,6 +97,7 @@ $scope.showCoord = true;
                     'date': null,
                     'taxon': null,
                     'commentaire': null,
+                    'comm_loc': null,
                    }
 /*            $scope.formFlore = resetFormFlore;
             $scope.formFaune = resetFormFaune;*/

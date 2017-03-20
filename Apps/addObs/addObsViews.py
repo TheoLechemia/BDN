@@ -143,6 +143,7 @@ def submitObs():
 
         date = flask.request.json['general']['date']
         commentaire = flask.request.json['general']['commentaire']
+        comm_loc = flask.request.json['general']['comm_loc']
         protocoleObject = flask.request.json['protocole']
 
         fullTableName = protocoleObject['nom_complet']
@@ -155,8 +156,6 @@ def submitObs():
         if not loc_exact:
             point = None
             geom_poly = ogr.CreateGeometryFromWkt(wkt_poly)
-            print 'LAAAAAAAAAAA'
-            print wkt_poly
             centroid = geom_poly.Centroid()
             wkt_centroid = str(centroid)
 
@@ -202,21 +201,24 @@ def submitObs():
         id_structure = session['id_structure']
         valide= False
 
-        generalValues = [observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, wkt_poly, id_structure]
+        generalValues = [observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, wkt_poly, id_structure, comm_loc]
 
 
-        ###protocole
-
-        
-        stringInsert = "INSERT INTO "+fullTableName+"(observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, geom_poly, id_structure"
+        ###protocole 
+        stringInsert = "INSERT INTO "+fullTableName+"(observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, geom_poly, id_structure, comm_loc"
         stringValues = ""
         if loc_exact:
-            stringValues = "VALUES (%s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s"
+            stringValues = "VALUES (%s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s, %s"
         else:
-            stringValues = "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, ST_Transform(ST_GeomFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s"
+            stringValues = "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, ST_Transform(ST_GeomFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s"
         keys = getParmeters()['keys']
         values = getParmeters()['values']
         for k in keys:
+            print 'lAAAAAAAAAAAAA'
+            print type(k)
+            print type(stringInsert)
+            print k
+            print stringInsert
             stringInsert += ", "+k
             stringValues += ", %s"
         stringInsert+=")"
