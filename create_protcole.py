@@ -38,7 +38,7 @@ with open(fileName) as csvfile:
 stringCreate = """CREATE TABLE """+fullName+""" 
 (
   id_obs serial CONSTRAINT """+schemaName+"""_PK PRIMARY KEY,
-  id_synthese character varying(15),
+  id_synthese integer,
   observateur character varying(100) NOT NULL,
   date date NOT NULL,
   cd_nom integer NOT NULL,

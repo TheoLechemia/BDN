@@ -25,7 +25,7 @@ ALTER TABLE synthese.syntheseff
 CREATE TABLE contact_faune.releve
 (
   id_obs serial NOT NULL,
-  id_synthese character varying(15),
+  id_synthese integer,
   observateur character varying(100) NOT NULL,
   date date NOT NULL,
   cd_nom integer NOT NULL,
@@ -62,7 +62,7 @@ ALTER TABLE contact_faune.releve
 CREATE TABLE contact_flore.releve
 (
   id_obs serial NOT NULL,
-  id_synthese character varying(15),
+  id_synthese integer,
   observateur character varying(100) NOT NULL,
   date date NOT NULL,
   cd_nom integer NOT NULL,
