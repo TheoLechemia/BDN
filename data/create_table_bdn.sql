@@ -10,7 +10,7 @@ CREATE TABLE synthese.syntheseff
   valide boolean,
   geom_point geometry(Point,32620),
   ccod_frt character varying(50),
-  code_maille character varying(20),
+  geom_maille geometry(Point,32620),
   loc_exact boolean,
   id_structure integer,
   CONSTRAINT synthese_pkey PRIMARY KEY (id_synthese),
@@ -36,7 +36,7 @@ CREATE TABLE contact_faune.releve
   valide boolean,
   ccod_frt character varying(50),
   loc_exact boolean,
-  code_maille character varying(20),
+  geom_maille geometry(Point,32620),
   id_structure integer,
   type_obs character varying(50),
   effectif character varying(50),
@@ -73,7 +73,7 @@ CREATE TABLE contact_flore.releve
   valide boolean,
   ccod_frt character varying(50),
   loc_exact boolean,
-  code_maille character varying(20),
+  geom_maille geometry(Point,32620),
   id_structure integer,
   abondance character varying(15),
   nb_pied_approx character varying(15),
@@ -98,8 +98,8 @@ CREATE OR REPLACE FUNCTION synthese.tr_protocole_to_synthese() RETURNS TRIGGER A
     DECLARE protocoleid INTEGER;
     BEGIN
  
-    INSERT INTO synthese.syntheseff (protocole, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, loc_exact, code_maille, id_structure) 
-    VALUES(tg_table_schema, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.loc_exact, new.code_maille, new.id_structure) RETURNING new.id_obs INTO protocoleid;
+    INSERT INTO synthese.syntheseff (protocole, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, loc_exact, geom_poly, id_structure) 
+    VALUES(tg_table_schema, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.loc_exact, new.geom_poly, new.id_structure) RETURNING new.id_obs INTO protocoleid;
     SELECT INTO newid currval('synthese.syntheseff_id_synthese_seq');
     EXECUTE format('
     UPDATE %s.%s SET id_synthese = %s WHERE id_obs=%s;', TG_TABLE_SCHEMA, TG_TABLE_NAME, newid, protocoleid);
@@ -351,7 +351,7 @@ CREATE OR REPLACE VIEW contact_faune.faune_poly AS
     f.insee,
     f.altitude,
     f.type_obs,
-    f.nb_individu_approx,
+    f.effectif,
     f.comportement,
     f.nb_non_identife,
     f.nb_male,
@@ -360,12 +360,11 @@ CREATE OR REPLACE VIEW contact_faune.faune_poly AS
     f.trace,
     f.commentaire,
     f.ccod_frt,
-    m.code_1km,
-    m.geom
+    f.geom_poly
 
    FROM contact_faune.releve f
-     JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text AND f.valide=true
-     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom;
+   JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
+   WHERE f.valide=true;
 
 
 CREATE OR REPLACE VIEW contact_faune.faune_point AS 
@@ -380,7 +379,7 @@ CREATE OR REPLACE VIEW contact_faune.faune_point AS
     f.insee,
     f.altitude,
     f.type_obs,
-    f.nb_individu_approx,
+    f.effectif,
     f.comportement,
     f.nb_non_identife,
     f.nb_male,
@@ -435,13 +434,10 @@ CREATE OR REPLACE VIEW contact_faune.faune_point AS
     f.stade_dev,
     f.commentaire,
     f.ccod_frt,
-    f.code_maille,
-    m.code_1km,
-    m.geom
-
+    f.geom_poly
    FROM contact_flore.releve f
-     JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text AND f.valide = true
-     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom;
+     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
+     WHERE f.valide = true;
 
 
 -- schema utilisateur

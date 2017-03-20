@@ -71,6 +71,7 @@ def validate():
                  WHERE id_synthese IN %s;"""
         param = [tupleSynth]
         db.cur.execute(sql,param) 
+        
         db.conn.commit()
     db.closeAll()
     return json.dumps({'success':True, 'id_synthese':id_synt}), 200, {'ContentType':'application/json'}
