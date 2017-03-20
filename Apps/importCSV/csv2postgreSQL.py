@@ -110,12 +110,12 @@ def csv2PG(file):
             #recupere l'id_structure depuis la session
             id_structure = session['id_structure']
             loc_exact = True
-            geom_poly = None
+            code_maille = None
 
-            stringInsert = "INSERT INTO "+fullTableName+" (observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, geom_poly, id_structure, comm_loc"
+            stringInsert = "INSERT INTO "+fullTableName+" (observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc"
             stringValues = " VALUES (%s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s, %s"
 
-            generalValues = [observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, geom_poly, id_structure, comm_loc]
+            generalValues = [observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc]
             for field in fieldList:
                 value = getSpec(field['spec_name'], row, interpretationDict)
                 stringInsert += ", "+field['field_name']

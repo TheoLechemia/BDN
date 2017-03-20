@@ -44,7 +44,7 @@ $scope.showCoord = true;
    $scope.globalForm = {
     'coord' : {'lat': null, 'lng':null },
     'loc_exact' : true,
-    'geom_poly': null,
+    'code_maille': null,
     'commentaire': null,
     'comm_loc': null,
    }
@@ -86,13 +86,11 @@ $scope.showCoord = true;
             //angular.copy({},form);
             // on reset tous les champs
             var saveCoord = $scope.globalForm.coord;
-            var saveMaille = $scope.globalForm.geom_poly;
-            console.log("save_maileeeeeeee")
-            console.log(saveMaille);
+            var saveMaille = $scope.globalForm.code_maille;
             $scope.globalForm = {
                     'coord' : saveCoord,
                     'loc_exact' : loc_exact,
-                    'geom_poly': saveMaille,
+                    'code_maille': saveMaille,
                     'observateur' : null,
                     'date': null,
                     'taxon': null,
@@ -187,9 +185,7 @@ $http.get(configuration.URL_APPLICATION+'addObs/loadMailles').success(function(d
    selectedMaille = null;
    $scope.$on('leafletDirectiveGeoJson.click', function(e, args) {
 
-    // converti en WKT la layer selectionné et l'ajout au modèle du formuaire
-    wkt = toWKT(args.leafletObject)
-    $scope.globalForm.geom_poly = wkt;
+    $scope.globalForm.code_maille = args.model.properties.code_1km;
 
     //set style
       if (!selectedMaille){
@@ -273,27 +269,3 @@ leafletData.getMap()
  });
 
 
-function toWKT(layer) {
-    var lng, lat, coords = [];
-    if (layer instanceof L.Polygon || layer instanceof L.Polyline) {
-        var latlngs = layer.getLatLngs();
-        var latlngs = latlngs[0][0]
-        for (var i = 0; i < latlngs.length; i++) {
-        //latlngs[i]
-        console.log(latlngs[i])
-        coords.push(latlngs[i].lng + " " + latlngs[i].lat);
-          if (i === 0) {
-            lng = latlngs[i].lng;
-            lat = latlngs[i].lat;
-          }
-  };
-        if (layer instanceof L.Polygon) {
-          console.log("passe par polygone")
-            return "POLYGON((" + coords.join(",") + "," + lng + " " + lat + "))";
-        } else if (layer instanceof L.Polyline) {
-            return "LINESTRING(" + coords.join(",") + ")";
-        }
-    } else if (layer instanceof L.Marker) {
-        return "POINT(" + layer.getLatLng().lng + " " + layer.getLatLng().lat + ")";
-    }
-}

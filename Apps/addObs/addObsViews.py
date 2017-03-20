@@ -9,7 +9,6 @@ from ..database import *
 from ..initApp import app
 from ..auth import check_auth
 
-from osgeo import ogr
 
 addObs = flask.Blueprint('addObs', __name__,static_url_path="/addObs", static_folder="static", template_folder="templates")
 
@@ -139,6 +138,7 @@ def submitObs():
         x = str(loc['lng'])
         y = str(loc['lat'])
         point = 'POINT('+x+' '+y+')'
+        code_maille = flask.request.json['general']['code_maille']
        
 
         date = flask.request.json['general']['date']
@@ -149,27 +149,17 @@ def submitObs():
         fullTableName = protocoleObject['nom_complet']
         protocoleName = protocoleObject['nom_table']
 
-        #geom poly
-        wkt_poly = flask.request.json['general']['geom_poly']
-
-         #prend le centroide de maille pour intersecter avec la foret et l'insee
-        if not loc_exact:
-            point = None
-            geom_poly = ogr.CreateGeometryFromWkt(wkt_poly)
-            centroid = geom_poly.Centroid()
-            wkt_centroid = str(centroid)
-
 
         #prend le centroide de maille pour intersecter avec la foret et l'insee
-        # centroide = None
-        # if not loc_exact:
-        #     point = None
-        #     sql = "SELECT ST_AsText(ST_Centroid(ST_TRANSFORM(geom, 4326))) FROM layers.mailles_1k WHERE code_1km = %s "
-        #     params = [code_maille]
-        #     db.cur.execute(sql, params)
-        #     res = db.cur.fetchone()
-        #     if res != None:
-        #         centroide = res[0]
+        centroid = None
+        if not loc_exact:
+            point = None
+            sql = "SELECT ST_AsText(ST_Centroid(ST_TRANSFORM(geom, 4326))) FROM layers.mailles_1k WHERE code_1km = %s "
+            params = [code_maille]
+            db.cur.execute(sql, params)
+            res = db.cur.fetchone()
+            if res != None:
+                centroid = res[0]
 
 
         #foret
@@ -177,7 +167,7 @@ def submitObs():
         if loc_exact:
             params = [point, config['MAP']['PROJECTION']]
         else:
-            params = [wkt_centroid, config['MAP']['PROJECTION']]
+            params = [centroid, config['MAP']['PROJECTION']]
         db.cur.execute(sql_foret, params)
         res = db.cur.fetchone()
         ccod_frt = None 
@@ -189,7 +179,7 @@ def submitObs():
         if loc_exact:
             params = [point, config['MAP']['PROJECTION']]
         else:
-            params = [wkt_centroid, config['MAP']['PROJECTION']]
+            params = [centroid, config['MAP']['PROJECTION']]
         db.cur.execute(sql_insee, params)
         res = db.cur.fetchone()
         insee = None 
@@ -201,16 +191,16 @@ def submitObs():
         id_structure = session['id_structure']
         valide= False
 
-        generalValues = [observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, wkt_poly, id_structure, comm_loc]
+        generalValues = [observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc]
 
 
         ###protocole 
-        stringInsert = "INSERT INTO "+fullTableName+"(observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, geom_poly, id_structure, comm_loc"
+        stringInsert = "INSERT INTO "+fullTableName+"(observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc"
         stringValues = ""
         if loc_exact:
             stringValues = "VALUES (%s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s, %s"
         else:
-            stringValues = "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, ST_Transform(ST_GeomFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s"
+            stringValues = "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s"
         keys = getParmeters()['keys']
         values = getParmeters()['values']
         for k in keys:
