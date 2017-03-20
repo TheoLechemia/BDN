@@ -44,7 +44,7 @@ $scope.showCoord = true;
    $scope.globalForm = {
     'coord' : {'lat': null, 'lng':null },
     'loc_exact' : true,
-    'code_maille': null,
+    'geom_poly': null,
     'commentaire': null,
    }
 
@@ -183,9 +183,11 @@ $http.get(configuration.URL_APPLICATION+'addObs/loadMailles').success(function(d
    selectedMaille = null;
    $scope.$on('leafletDirectiveGeoJson.click', function(e, args) {
 
-    $scope.globalForm.code_maille = args.model.properties.code_1km;
-    console.log(args.model.properties)
-    console.log($scope.globalForm);
+    // converti en WKT la layer selectionné et l'ajout au modèle du formuaire
+    wkt = toWKT(args.leafletObject)
+    $scope.globalForm.geom_poly = wkt;
+
+    //set style
       if (!selectedMaille){
           args.leafletObject.setStyle(selectedStyle)
           selectedMaille = args.leafletObject;
@@ -257,8 +259,6 @@ leafletData.getMap()
         }
         return container;
       }
-    
-
 });
     });
 
@@ -269,4 +269,27 @@ leafletData.getMap()
  });
 
 
-
+function toWKT(layer) {
+    var lng, lat, coords = [];
+    if (layer instanceof L.Polygon || layer instanceof L.Polyline) {
+        var latlngs = layer.getLatLngs();
+        var latlngs = latlngs[0][0]
+        for (var i = 0; i < latlngs.length; i++) {
+        //latlngs[i]
+        console.log(latlngs[i])
+        coords.push(latlngs[i].lng + " " + latlngs[i].lat);
+          if (i === 0) {
+            lng = latlngs[i].lng;
+            lat = latlngs[i].lat;
+          }
+  };
+        if (layer instanceof L.Polygon) {
+          console.log("passe par polygone")
+            return "POLYGON((" + coords.join(",") + "," + lng + " " + lat + "))";
+        } else if (layer instanceof L.Polyline) {
+            return "LINESTRING(" + coords.join(",") + ")";
+        }
+    } else if (layer instanceof L.Marker) {
+        return "POINT(" + layer.getLatLng().lng + " " + layer.getLatLng().lat + ")";
+    }
+}
