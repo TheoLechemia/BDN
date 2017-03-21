@@ -29,20 +29,14 @@ ALTER TABLE
 CREATE TABLE
 INSERT 0 11
 ALTER TABLE
-psql:/tmp/create_table_bdn.sql:370: ERROR:  relation "layers.mailles_1k" does not exist
+psql:/tmp/create_table_bdn.sql:371: ERROR:  relation "layers.mailles_1k" does not exist
 LINE 26:    JOIN layers.mailles_1k m ON m.code_1km::text = f.code_mai...
                  ^
-psql:/tmp/create_table_bdn.sql:371: ERROR:  syntax error at or near "WHERE"
-LINE 1: WHERE f.valide=true;
-        ^
 CREATE VIEW
 CREATE VIEW
-psql:/tmp/create_table_bdn.sql:446: ERROR:  relation "layers.mailles_1k" does not exist
-LINE 22:      JOIN layers.mailles_1k m ON m.code_1km::text = f.code_m...
-                   ^
-psql:/tmp/create_table_bdn.sql:447: ERROR:  syntax error at or near "WHERE"
-LINE 1: WHERE f.valide = true;
-        ^
+psql:/tmp/create_table_bdn.sql:447: ERROR:  relation "layers.mailles_1k" does not exist
+LINE 22:     JOIN layers.mailles_1k m ON m.code_1km::text = f.code_ma...
+                  ^
 CREATE TABLE
 ALTER TABLE
 INSERT 0 1

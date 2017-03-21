@@ -367,7 +367,7 @@ CREATE OR REPLACE VIEW contact_faune.faune_poly AS
    FROM contact_faune.releve f
    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
    JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text AND f.valide=true
-   JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom;
+   JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
    WHERE f.valide=true;
 
 
@@ -441,9 +441,9 @@ CREATE OR REPLACE VIEW contact_faune.faune_point AS
     m.geom,
     m.code_1km
    FROM contact_flore.releve f
-     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
-     JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text AND f.valide=true
-    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom;
+    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
+    JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text AND f.valide=true
+    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
      WHERE f.valide = true;
 
 
