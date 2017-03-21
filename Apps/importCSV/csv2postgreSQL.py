@@ -45,27 +45,13 @@ def csv2PG(file):
         fieldList = None
         fullTableName = str()
         interpretationDict = None
+
         for row in reader:
             ###COMMUN###
             #recupere les bib champs du protocole de la ligne et construit le dict pour interprete les champs
             if inputProtocole != row['protocole']:
                 inputProtocole =  row['protocole']
                 fullTableName = inputProtocole+".releve"
-
-                sql = "SELECT * FROM "+inputProtocole+".bib_champs_"+inputProtocole
-                db.cur.execute(sql)
-                res = db.cur.fetchall()
-                currentSpec = res[0][2]
-                #currentField = res[0][3]
-                interpretationDict = dict()
-                interpretationDict[currentSpec] = dict()
-                for r in res:
-                    if r[2]==currentSpec:
-                        interpretationDict[currentSpec][r[1]] = r[4]
-                    else:
-                        currentSpec = r[2]
-                        interpretationDict[currentSpec] = dict()
-                        interpretationDict[currentSpec][r[1]] = r[4]
 
                 #la liste des champs avec les spec
                 sql = "SELECT distinct(no_spec),nom_champ from "+inputProtocole+".bib_champs_"+inputProtocole
@@ -74,7 +60,23 @@ def csv2PG(file):
                 fieldList= list()
                 for r in res:
                     fieldList.append({'spec_name': r[0], 'field_name': r[1]})
-                print fieldList
+
+                # sql = "SELECT * FROM "+inputProtocole+".bib_champs_"+inputProtocole
+                # db.cur.execute(sql)
+                # res = db.cur.fetchall()
+                # currentSpec = res[0][2]
+                # #currentField = res[0][3]
+                # interpretationDict = dict()
+                # interpretationDict[currentSpec] = dict()
+                # for r in res:
+                #     if r[2]==currentSpec:
+                #         interpretationDict[currentSpec][r[1]] = r[4]
+                #     else:
+                #         currentSpec = r[2]
+                #         interpretationDict[currentSpec] = dict()
+                #         interpretationDict[currentSpec][r[1]] = r[4]
+
+
 
             observateur = row['observateur_nom']+" "+ row['observateur_prenom']
             protocole = row['protocole']
@@ -117,12 +119,24 @@ def csv2PG(file):
 
             generalValues = [observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc]
             for field in fieldList:
-                value = getSpec(field['spec_name'], row, interpretationDict)
+                #value = getSpec(field['spec_name'], row, interpretationDict)
+                print 'lLAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+
+                tabInter = row[field['spec_name']].split('#')
+                value = ''
+                if len(tabInter) != 1:
+                    value = tabInter[1]
+                print value
                 stringInsert += ", "+field['field_name']
                 stringValues += ", %s"
-                generalValues.append(value)
+                generalValues.append(value.capitalize())
+
+
             stringInsert+=")"
             stringValues+=");"
+
+            print stringInsert
+            print stringValues
 
             sql = stringInsert+stringValues
             db.cur.execute(sql, generalValues)

@@ -1,13 +1,11 @@
 <div class="panel panel-default ">
 	<div class="panel-heading ">
-		<h3 class="panel-title align"> <b> {{$ctrl.currentList.features.length}} observations </b> </h3>
+		<h3 class="panel-title align"> <b> {{$ctrl.geojson.maille.features.length + $ctrl.geojson.point.features.length}} observations </b> </h3>
 		<div class="btn-group btn-align">
 		  <button type="button" class="btn btn-xs " ng-click="$ctrl.changeList('point')" ng-class="{ 'btn-primary' : $ctrl.isSelected('point')}" >Point</button>
 		  <button type="button" class="btn btn-xs " ng-click="$ctrl.changeList('maille')" ng-class="{'btn-primary' : $ctrl.isSelected('maille')}">Maille</button>
 		</div>
 	</div>
-
-
 
 		<table class="table last-obs">
 			 <thead>

@@ -31,8 +31,7 @@ with open(fileName) as csvfile:
 
     #create table
     for row in reader:
-        column_name_and_type.append({'name':row[0], 'type': row[2]})
-
+        column_name_and_type.append({'name':row[0], 'htmlType' : row[1], 'db_type': row[2]})
 
 
 stringCreate = """CREATE TABLE """+fullName+""" 
@@ -46,6 +45,7 @@ stringCreate = """CREATE TABLE """+fullName+"""
   insee character varying(10),
   altitude integer,
   commentaire character varying(150),
+  comm_loc character varying(150),
   valide boolean,
   ccod_frt character varying(50),
   loc_exact boolean,
@@ -54,7 +54,7 @@ stringCreate = """CREATE TABLE """+fullName+"""
 
 addPermission = "ALTER TABLE "+fullName+" OWNER TO "+database['USER']+";"
 for r in column_name_and_type:
-    stringCreate+=" "+ r['name']+" "+r['type']+","
+    stringCreate+=" "+ r['name']+" "+r['db_type']+","
 
 stringCreate = stringCreate[0:-1]+");"
 stringCreate += addPermission
@@ -99,10 +99,10 @@ with open(fileName) as csvfile:
     next(reader, None)
 
     #fill table bib_champ
+    spec_number = 1
     for row in reader:
         #table_row = row[0].split(',')
         column_name = row[0]
-        spec_number = 1
         i=3
         field_number = 1
         string_spec_number = str()
@@ -136,13 +136,28 @@ htmlContent = """<div class='form-group'>
             """
 
 integerInput = "<input class='form-control' type='number' placeholder='{}' ng-model='child.protocoleForm.{}'  name='{}'> \n"
-listInput = "<div'> <select class='form-control' type='text' placeholder='{}' ng-model='child.protocoleForm.{}' ng-options='choice as choice for choice in fields.{}' > <option value=""> - {} - </option> </select>  </div> \n"
+simpleTextInput = "<input class='form-control' type='text' placeholder='{}' ng-model='child.protocoleForm.{}'  name='{}'> \n"
+booleanInput = """<div'> 
+                    <select class='form-control' type='text' placeholder='{}' ng-model='child.protocoleForm.{}'  > \n
+                      <option value=""> -{}- </option> 
+                      <option value="True">  Oui  </option> \n
+                      <option value="False">  Non  </option> \n
+                    </select>\n
+                  </div> \n"""
+listInput = "<div> <select class='form-control' type='text' placeholder='{}' ng-model='child.protocoleForm.{}' ng-options='choice as choice for choice in fields.{}' > <option value=""> - {} - </option> </select>  </div> \n"
 
 for r in column_name_and_type:
-    if r['type'] == 'integer':
+    print r['htmlType']
+    if r['htmlType'] == 'Entier' or r['htmlType'] == 'Reel' :
         write  =  integerInput.format(r['name'],r['name'],r['name'])
         htmlFile.write(write)
-    else:
+    if r['htmlType'] == 'Chaîne de caractère':
+        write  =  simpleTextInput.format(r['name'],r['name'],r['name'])
+        htmlFile.write(write)
+    if r['htmlType'] == 'Booléen':
+        write  =  booleanInput.format(r['name'],r['name'], r['name'])
+        htmlFile.write(write)
+    if r['htmlType'] == "Liste de choix" :
         write = listInput.format(r['name'],r['name'],r['name'], r['name'])
         htmlFile.write(write)
 htmlFile.close()

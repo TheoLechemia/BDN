@@ -1,4 +1,0 @@
-nom;type1;type2;choix;choix1;choix;choix;choix;choix;choix;choix;choix;choix;choix;choix;choix;choix;choix;choix;choix;choix;choix;choix;choix;choix;choix;choix;choix
-nombre_adulte;champs_libre;integer;;;;;;;;;;;;;;;;;;;;;;;;;
-nombre_femelle;;integer;;;;;;;;;;;;;;;;;;;;;;;;;
-type_trace;liste_deroulante;character varying;rouge;bleu;vert;;;;;;;;;;;;;;;;;;;;;;
