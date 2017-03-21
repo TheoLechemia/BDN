@@ -10,7 +10,10 @@ from Apps.validation.validationViews import validation
 
 from Apps.addObs.addObsViews import addObs
 
+from Apps.download.downloadViews import download
+
 from flask.ext.compress import Compress
+
 
 compress = Compress()
 compress.init_app(app)
@@ -24,6 +27,8 @@ app.register_blueprint(importCSV, url_prefix='/importCSV')
 app.register_blueprint(validation, url_prefix='/validation')
 
 app.register_blueprint(addObs, url_prefix='/addObs')
+
+app.register_blueprint(download, url_prefix='/download')
 
 
 if __name__ == "__main__":

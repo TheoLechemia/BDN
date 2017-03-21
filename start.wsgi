@@ -32,6 +32,10 @@ from Apps.error.error_views import errorsbp
 
 from Apps.addObs.addObsViews import addObs
 
+from Apps.download.downloadViews import download
+
+
+
 application.register_blueprint(main)
 
 application.register_blueprint(synthese, url_prefix='/synthese')
@@ -43,5 +47,7 @@ application.register_blueprint(validation, url_prefix='/validation')
 application.register_blueprint(errorsbp)
 
 application.register_blueprint(addObs,url_prefix='/addObs')
+
+app.register_blueprint(download, url_prefix='/download')
 
 

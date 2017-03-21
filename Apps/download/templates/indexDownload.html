@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- Jquery + bootstrap-->
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"
+			  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+			  crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <!-- MY CSS -->
+  <link rel="stylesheet" href= " {{url_for('static', filename='css/main.css')}} " >
+	<title></title>
+</head>
+<body>
+
+ {% include 'navbar.html' %}
+
+<form action= " {{url_for('download.getData')}} " method="POST">
+
+	<label> Selectionnez un protocole </label>
+	 <select name = "protocole" >
+	 	{% for p in protocoles %}
+	 	<option value={{p.nom_schema}}> {{p.nom_protocole}} </option>
+	 	{% endfor %}
+	 </select>
+
+	 <label> Selectionnez un structure </label>
+	 <select name = "structure" >
+	 	<option value="Tous"> Tous </option>
+	 	{% for s in structures %}
+	 	<option value={{s.id_structure}}> {{s.nom_structure}} </option>
+	 	{% endfor %}
+	 </select>
+
+ 	<button class="btn btn-success submit" type="submit" value='Envoyer'>Envoyer</button>
+ </form>
+
+
+</body>
+</html>

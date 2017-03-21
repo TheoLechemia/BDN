@@ -19,7 +19,6 @@ def indexValidation():
 
     sql = "SELECT array_to_json(array_agg(row_to_json(row))) FROM (SELECT * FROM synthese.bib_protocole) row"
     db.cur.execute(sql)
-    print 'LAAAAAAAAAAAAAAAAAAAAAAAAA'
     protocoles = db.cur.fetchone()[0]
     print type(protocoles)
     db.closeAll()
@@ -36,7 +35,6 @@ def mapValidation(protocole):
      FROM """+config['TABLE_NAME']+""" f
      JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
      WHERE f.valide = FALSE AND f.loc_exact = TRUE AND protocole = '"""+protocole+"""' """ 
-    print sql
     res = utils.sqltoDict(sql, db.cur)
     nom_vern = None
     for r in res:

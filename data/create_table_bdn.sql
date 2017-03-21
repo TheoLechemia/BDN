@@ -341,7 +341,7 @@ ALTER TABLE taxonomie.bib_liste_rouge
 
   -- Creation des vues pour les exports en shapefile
 
-CREATE OR REPLACE VIEW contact_faune.faune_poly AS 
+CREATE OR REPLACE VIEW contact_faune.layer_poly AS 
  SELECT t.nom_vern,
     t.lb_nom,
     f.id_obs,
@@ -360,6 +360,8 @@ CREATE OR REPLACE VIEW contact_faune.faune_poly AS
     f.nb_jeune,
     f.trace,
     f.commentaire,
+    f.comm_loc,
+    f.id_structure,
     f.ccod_frt,
     m.geom,
     m.code_1km
@@ -367,11 +369,10 @@ CREATE OR REPLACE VIEW contact_faune.faune_poly AS
    FROM contact_faune.releve f
    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
    JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text AND f.valide=true
-   JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
    WHERE f.valide=true;
 
 
-CREATE OR REPLACE VIEW contact_faune.faune_point AS 
+CREATE OR REPLACE VIEW contact_faune.layer_point AS 
  SELECT
     t.nom_vern,
     t.lb_nom,
@@ -392,13 +393,15 @@ CREATE OR REPLACE VIEW contact_faune.faune_point AS
     f.trace,
     f.geom_point,
     f.commentaire,
+    f.id_structure,
+    f.comm_loc,
     f.ccod_frt
 
    FROM contact_faune.releve f
    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
   WHERE f.loc_exact = true;
 
-  CREATE OR REPLACE VIEW contact_flore.flore_point AS 
+  CREATE OR REPLACE VIEW contact_flore.layer_point AS 
  SELECT 
     t.nom_vern,
     t.lb_nom,
@@ -415,13 +418,15 @@ CREATE OR REPLACE VIEW contact_faune.faune_point AS
     flore.stade_dev,
     flore.geom_point,
     flore.commentaire,
+    flore.comm_loc,
+    flore.id_structure,
     flore.ccod_frt
 
    FROM contact_flore.releve flore
    JOIN taxonomie.taxref t ON t.cd_nom = flore.cd_nom
   WHERE flore.loc_exact = true AND flore.valide = true;
 
-  CREATE OR REPLACE VIEW contact_flore.flore_poly AS 
+  CREATE OR REPLACE VIEW contact_flore.layer_poly AS 
  SELECT 
     t.nom_vern,
     t.lb_nom,
@@ -438,12 +443,13 @@ CREATE OR REPLACE VIEW contact_faune.faune_point AS
     f.stade_dev,
     f.commentaire,
     f.ccod_frt,
+    f.comm_loc,
+    f.id_structure,
     m.geom,
     m.code_1km
    FROM contact_flore.releve f
     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
     JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text AND f.valide=true
-    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
      WHERE f.valide = true;
 
 

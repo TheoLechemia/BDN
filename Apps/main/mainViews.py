@@ -65,6 +65,6 @@ def deconnexion():
         session.pop('password', None)
         session.pop('auth_level', None)
     return redirect(url_for("main.login"))
-    
+
 
 
