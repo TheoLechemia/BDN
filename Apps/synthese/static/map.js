@@ -18,6 +18,7 @@ module.exports = function(angularInstance){
 		layersDict[feature.properties.id] = layer;
 		layer.on({
 			click : function(){
+				console.log("clickkkkkk");
 				// update the propertie in the app controller
 				mapCtrl.mainController.updateCurrentListObs(feature.properties.id);
 				// set the style and popup
@@ -58,19 +59,20 @@ module.exports = function(angularInstance){
 		};
 
 		function styleAndPopup(selectLayer){
+				console.log(selectLayer);
 				// set the style
 				selectLayer.setStyle(selectedStyle);
 				//bind the popup
 				if(selectLayer.feature.geometry.type == 'MultiPolygon'){
 					table = "<p>"+selectLayer.feature.properties.nb_observation+" observation(s)</p><table class='table'><thead><tr><th>Nom </th><th>Date</th></tr></thead> <tbody>"
 					selectLayer.feature.properties.listIdSyn.forEach(function(obs, index){
-						table+="<tr> <td> mon nom </td> <td> "+selectLayer.feature.properties.listIdSyn[index]+"</td> </tr>"
+						table+="<tr> <td>"+selectLayer.feature.properties.observateurs[index]+" </td> <td>"+selectLayer.feature.properties.lb_nom[index]+" </td> <td> "+selectLayer.feature.properties.date[index]+"</td> </tr>"
 					})
 					table+="</tbody> </table>"
 					selectLayer.bindPopup(table).openPopup();
 
 				}else{
-					selectLayer.bindPopup("<b>"+selectLayer.feature.properties.observateur+"<br> </a> <b> Le: </b> "+selectLayer.feature.properties.date+" <br>").openPopup();
+					selectLayer.bindPopup("<b>Observateur: </b> "+selectLayer.feature.properties.observateur+"<br> <b> Nom sc. : </b>  "+selectLayer.feature.properties.lb_nom+" <br> <b> Date: </b>  "+selectLayer.feature.properties.date+" <br>").openPopup();
 				}
 		      	
 		      	selectLayer.setStyle(selectedStyle);
@@ -140,17 +142,32 @@ module.exports = function(angularInstance){
 				var i=0;
 				var copyGeojson = changes.geojson.currentValue.maille.features.slice();
 
+
 				while(i<copyGeojson.length){
 					currentFeature= copyGeojson[i];
 					currentIdMaille = currentFeature.properties.id;
 					geometry = currentFeature.geometry;
-					properties = {'code_maille' : currentIdMaille, 'nb_observation' : 1, 'id' : currentFeature.properties.id, 'listIdSyn': [currentFeature.properties.id_synthese]}
+					console.log('current feature');
+					console.log(currentFeature);
+
+					properties = {'code_maille' : currentIdMaille,
+								   'nb_observation' : 1,
+								   'id' : currentFeature.properties.id,
+								   'listIdSyn': [currentFeature.properties.id_synthese],
+								   'lb_nom': [currentFeature.properties.lb_nom],
+								   'observateurs': [currentFeature.properties.observateur],
+								   'date' : [currentFeature.properties.date]}
 					var j = 0;
 					while(j < copyGeojson.length){
 						if (i != j && copyGeojson[j].properties.id === currentIdMaille){
 
+							console.log("copyGeojson")
+							console.log(copyGeojson);
 							properties.nb_observation++;
 							properties.listIdSyn.push(copyGeojson[j].properties.id_synthese);
+							properties.lb_nom.push(copyGeojson[j].properties.lb_nom); 
+							properties.observateurs.push(copyGeojson[j].properties.observateur);
+							properties.date.push(copyGeojson[j].properties.date);
 							//si il y etait deja on peut le remover
 							copyGeojson.splice(j,1);
 						}
