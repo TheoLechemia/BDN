@@ -61,11 +61,20 @@
 
 
 							<div class="form-group" >
-						 		<input name = "nom_vern" id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="globalForm.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.nom_vern for taxon in search_vern_name($viewValue, selectedProtocole)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="noResults" typeahead-loading="isLoading">
+						 		<input name = "nom_vern" id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="globalForm.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.nom_vern for taxon in search_vern_name($viewValue, selectedProtocole)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="noResultsNomVern" typeahead-loading="loadingNomVern">
 						 	</div>
+
+							 	<i ng-show="loadingNomVern" class="glyphicon glyphicon-refresh"></i>
+						 	    <div ng-show="noResultsNomVern">
+							      <i  style="color:red;" class="glyphicon glyphicon-remove"></i> Aucun résultat
+							    </div>
 						
 							<div class="form-group" ng-class="{'has-error' : addObsForm.lb_nom.$invalid && !addObsForm.lb_nom.$pristine  || (validationAttempt && addObsForm.lb_nom.$invalid) }">
-							 	<input name="lb_nom" autocomplete="off" placeholder="Nom scientifique " type="text" ng-model="globalForm.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.lb_nom for taxon in search_scientist_name($viewValue, selectedProtocole)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="noResults" typeahead-loading="isLoading" required>
+							 	<input name="lb_nom" autocomplete="off" placeholder="Nom scientifique " type="text" ng-model="globalForm.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.lb_nom for taxon in search_scientist_name($viewValue, selectedProtocole)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="noResults"  required typeahead-loading="loadingLbnom">
+							 	<i ng-show="loadingLbnom" class="glyphicon glyphicon-refresh"></i>
+							 	    <div ng-show="noResults">
+								      <i  style="color:red;" class="glyphicon glyphicon-remove"></i> Aucun résultat
+								    </div>
 							 	<p ng-show="(addObsForm.lb_nom.$invalid && !addObsForm.lb_nom.$pristine) || (validationAttempt && addObsForm.lb_nom.$invalid)" class="help-block">Le nom scientifique est requis</p>
 							</div>
 
