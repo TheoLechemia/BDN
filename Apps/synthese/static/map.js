@@ -1,4 +1,4 @@
-fmodule.exports = function(angularInstance){
+module.exports = function(angularInstance){
 
 	templateLeafletCtrl = 'synthese/templates/map.html';
 
@@ -8,17 +8,17 @@ fmodule.exports = function(angularInstance){
 		layersDict = {};
 
 
-	mapCtrl.$onInit = function(){
-	console.log("INIT");
+		mapCtrl.center = {
+			'lat': configuration.MAP.COORD_CENTER.Y, 
+			'lng': configuration.MAP.COORD_CENTER.X,
+			'zoom': configuration.MAP.ZOOM_LEVEL
+		};
 
-	console.log(this.mainController);
-
-	this.onEachFeature = function(feature, layer){
+		mapCtrl.onEachFeature = function(feature, layer){
 		// build the dict of layers
 		layersDict[feature.properties.id] = layer;
 		layer.on({
 			click : function(){
-				console.log("clickkkkkk");
 				// update the propertie in the app controller
 				mapCtrl.mainController.updateCurrentListObs(feature.properties.id);
 				// set the style and popup
@@ -30,15 +30,6 @@ fmodule.exports = function(angularInstance){
 			}
 		});
 	};
-
-
-	}//end onINIT
-
-			this.center = {
-			lat: configuration.MAP.COORD_CENTER.Y, 
-			lng: configuration.MAP.COORD_CENTER.X,
-			zoom: configuration.MAP.ZOOM_LEVEL
-		};
 
 		var originStyle = {
 		    "color": "#3388ff",
@@ -63,8 +54,8 @@ fmodule.exports = function(angularInstance){
 				// set the style
 				selectLayer.setStyle(selectedStyle);
 				//bind the popup
-				if(selectLayer.feature.geometry.type == 'MultiPolygon'){
-					table = "<p>"+selectLayer.feature.properties.nb_observation+" observation(s)</p><table class='table'><thead><tr><th>Nom </th><th>Date</th></tr></thead> <tbody>"
+				if(selectLayer instanceof L.Polygon){
+					table = "<p>"+selectLayer.feature.properties.nb_observation+" observation(s)</p><table class='table'><thead><tr> <th>Observateur </th> <th>Nom </th>  <th>Date</th></tr></thead> <tbody>"
 					selectLayer.feature.properties.listIdSyn.forEach(function(obs, index){
 						table+="<tr> <td>"+selectLayer.feature.properties.observateurs[index]+" </td> <td>"+selectLayer.feature.properties.lb_nom[index]+" </td> <td> "+selectLayer.feature.properties.date[index]+"</td> </tr>"
 					})
