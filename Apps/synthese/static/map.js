@@ -1,4 +1,4 @@
-module.exports = function(angularInstance){
+fmodule.exports = function(angularInstance){
 
 	templateLeafletCtrl = 'synthese/templates/map.html';
 
