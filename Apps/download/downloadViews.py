@@ -16,7 +16,7 @@ import csv
 download = Blueprint('download', __name__, static_url_path="/download", static_folder="static", template_folder="templates")
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, os.pardir))
-UPLOAD_FOLDER = PARENT_DIR+'\\static\\uploads'
+UPLOAD_FOLDER = PARENT_DIR+'/static/uploads'
 
 @download.route('/', methods=['GET', 'POST'])
 @check_auth(2)
@@ -47,13 +47,14 @@ def getData():
 
         time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         filename = "Export_"+time
-        dirPath = UPLOAD_FOLDER+"\\"+filename
+        dirPath = UPLOAD_FOLDER+"/"+filename
         point_path = dirPath+"_point"
         poly_path = dirPath+"_maille"
         point_csv_path = dirPath+"_csv_point.csv"
         poly_csv_path = dirPath+"_csv_maille.csv"
+        debug = dirPath+"_debug"
         #construction de la requete a partir du formulaire envoye
-        if nom_structure == 'Tout':
+        if nom_structure == 'Tous':
             sql_point = "SELECT * FROM "+nom_schema+".layer_point"
         else:
             sql_point = "SELECT * FROM "+nom_schema+".layer_point WHERE nom_structure = '"+nom_structure+"'"
@@ -62,7 +63,8 @@ def getData():
         print cmd
 
         os.system(cmd)
-        if nom_structure == 'Tout':
+
+        if nom_structure == 'Tous':
             sql_poly = "SELECT * FROM "+nom_schema+".layer_poly"
         else:    
             sql_poly = "SELECT * FROM "+nom_schema+".layer_poly WHERE nom_structure = '"+nom_structure+"'"
@@ -72,6 +74,11 @@ def getData():
 
         ##CSV
         
+        with open(debug, 'w') as file:
+            file.write(sql_poly+ "\n")
+            file.write(cmd+ "\n")
+            file.write(sql_point+ "\n")
+
         with open(point_csv_path, 'w') as f:
             outputquery = "COPY ({0}) TO STDOUT WITH CSV HEADER DELIMITER AS ';'".format(sql_point)
             db.cur.copy_expert(outputquery, f)

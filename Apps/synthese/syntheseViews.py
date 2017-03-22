@@ -54,9 +54,10 @@ def synthese_index():
 @nocache
 def lastObs():
     db = getConnexion()
-    sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur
+    sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur, u.nom_structure
               FROM synthese.syntheseff s
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
+              JOIN utilisateur.bib_structure u ON u.id_structure = s.id_structure
               LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
               ORDER BY date DESC
               LIMIT 50"""
@@ -66,8 +67,8 @@ def lastObs():
     geojsonPoint = { "type": "FeatureCollection",  "features" : list()}
     for r in res:
         date = r[5].strftime("%Y/%m/%d")
-        mypropertiesPoint = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[6], 'id' : r[1], 'observateur': r[10]}
-        myPropertiesMaille = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[6], 'id' : r[8], 'observateur': r[10]}
+        mypropertiesPoint = {'nom_vern': r[4], 'lb_nom':r[2], 'cd_nom': r[3], 'date': date, 'protocole': r[6], 'observateur': r[10], 'structure': r[11], 'id_synthese': r[1], 'id' : r[1]}
+        myPropertiesMaille = {'nom_vern': r[4], 'lb_nom':r[2], 'cd_nom': r[3], 'date': date, 'protocole': r[6], 'observateur': r[10], 'structure': r[11], 'id_synthese': r[1], 'id' : r[8]}
 
         #r[9] = loc_exact: check if its point or maille
         if r[9] == True:
@@ -93,8 +94,8 @@ def getObs():
         for r in res:
             date = r[5].strftime("%Y/%m/%d")
             #id du point = id_synthese,  id de la maille = son code maille
-            mypropertiesPoint = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[6],'id' : r[1], 'observateur': r[10], 'structure': r[11] }
-            myPropertiesMaille = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': r[4], 'date': date, 'protocole': r[6],'id' : r[8] }
+            mypropertiesPoint = {'nom_vern': r[4], 'lb_nom':r[2], 'cd_nom': r[3], 'date': date, 'protocole': r[6], 'observateur': r[10], 'structure': r[11], 'id_synthese': r[1],'id' : r[1] }
+            myPropertiesMaille = {'nom_vern': r[4], 'lb_nom':r[2], 'cd_nom': r[3], 'date': date, 'protocole': r[6], 'observateur': r[10], 'structure': r[11], 'id_synthese': r[1], 'id' : r[8] }
             #r[9] = loc_exact: check if its point or maille
             if r[9]:
                 geojsonPoint['features'].append({"type": "Feature", "properties": mypropertiesPoint, "geometry": ast.literal_eval( r[0]) })

@@ -29,14 +29,6 @@ ALTER TABLE
 CREATE TABLE
 INSERT 0 11
 ALTER TABLE
-psql:/tmp/create_table_bdn.sql:371: ERROR:  relation "layers.mailles_1k" does not exist
-LINE 26:    JOIN layers.mailles_1k m ON m.code_1km::text = f.code_mai...
-                 ^
-CREATE VIEW
-CREATE VIEW
-psql:/tmp/create_table_bdn.sql:447: ERROR:  relation "layers.mailles_1k" does not exist
-LINE 22:     JOIN layers.mailles_1k m ON m.code_1km::text = f.code_ma...
-                  ^
 CREATE TABLE
 ALTER TABLE
 INSERT 0 1
@@ -52,3 +44,11 @@ COPY 468
 CREATE TABLE
 ALTER TABLE
 COPY 36663
+CREATE VIEW
+ALTER VIEW
+CREATE VIEW
+ALTER VIEW
+CREATE VIEW
+ALTER VIEW
+CREATE VIEW
+ALTER VIEW

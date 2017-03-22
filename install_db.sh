@@ -85,21 +85,6 @@ sudo -n -u postgres -s psql -d $db_name -c "ALTER TABLE taxonomie.taxref OWNER T
 
 cp ./data/create_table_bdn.sql /tmp/create_table_bdn.sql
 
-sudo sed -i -e "s/onfuser/$user_bdn/g" /tmp/create_table_bdn.sql
-sudo sed -i -e "s/32620/$projection/g" /tmp/create_table_bdn.sql
-# sudo sed -i -e "s/listerougepath/$liste_rouge_path/g" /tmp/create_table_bdn.sql
-# sudo sed -i -e "s/taxrefprotectionpath/$taxref_protection_path/g" /tmp/create_table_bdn.sql
-
-echo "Creation de de la base ..."
-sudo -n -u postgres -s psql -d $db_name -f /tmp/create_table_bdn.sql &>> log/install_db.log
-
-rm /tmp/create_table_bdn.sql
-rm ./TAXREFv10.0.txt
-sudo -n -u postgres -s psql -d $db_name -c "DROP FOREIGN TABLE fdw.taxref_v10;"
-
-
-
-
 echo "Creation des tables spatiales"
 ## creation des layers 
 
@@ -115,5 +100,22 @@ sudo -n -u postgres -s psql -d $db_name -c " GRANT SELECT ON layers.perimetre_fo
 sudo -n -u postgres -s shp2pgsql -W "LATIN1" -s $projection -D -I ./data/layers/GLP_UTM20N1X1.shp layers.mailles_1k | sudo -n -u postgres -s psql -d $db_name
 sudo -n -u postgres -s psql -d $db_name -c " GRANT SELECT ON layers.mailles_1k TO $user_bdn;"
 sudo -n -u postgres -s psql -d $db_name -c " ALTER TABLE layers.mailles_1k RENAME code_10km TO code_1km;"
+
+sudo sed -i -e "s/onfuser/$user_bdn/g" /tmp/create_table_bdn.sql
+sudo sed -i -e "s/32620/$projection/g" /tmp/create_table_bdn.sql
+# sudo sed -i -e "s/listerougepath/$liste_rouge_path/g" /tmp/create_table_bdn.sql
+# sudo sed -i -e "s/taxrefprotectionpath/$taxref_protection_path/g" /tmp/create_table_bdn.sql
+
+echo "Creation de de la base ..."
+sudo -n -u postgres -s psql -d $db_name -f /tmp/create_table_bdn.sql &>> log/install_db.log
+
+rm /tmp/create_table_bdn.sql
+rm ./TAXREFv10.0.txt
+sudo -n -u postgres -s psql -d $db_name -c "DROP FOREIGN TABLE fdw.taxref_v10;"
+
+
+
+
+
 
 fi

@@ -25,7 +25,6 @@ def indexValidation():
     sql = "SELECT array_to_json(array_agg(row_to_json(row))) FROM (SELECT * FROM synthese.bib_protocole) row"
     db.cur.execute(sql)
     protocoles = db.cur.fetchone()[0]
-    print type(protocoles)
     db.closeAll()
     return render_template('indexValidation.html', protocoles=protocoles, page_title=u"Interface de validation des données")
 
@@ -40,8 +39,9 @@ def mapValidation(protocole):
               FROM synthese.syntheseff s
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
               LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
-              WHERE s.valide = false"""
-    db.cur.execute(sql)
+              WHERE s.valide = false AND protocole = %s """
+    param = [protocole]
+    db.cur.execute(sql, param)
     res = db.cur.fetchall()
     geojson = { "type": "FeatureCollection",  "features" : list()}
     nom_vern = unicode()

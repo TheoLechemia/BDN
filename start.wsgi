@@ -48,6 +48,6 @@ application.register_blueprint(errorsbp)
 
 application.register_blueprint(addObs,url_prefix='/addObs')
 
-app.register_blueprint(download, url_prefix='/download')
+application.register_blueprint(download, url_prefix='/download')
 
 

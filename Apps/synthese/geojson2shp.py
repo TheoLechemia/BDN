@@ -36,9 +36,9 @@ def export(FileName, geojson, geomType):
     #build the fieldList from the 'propertie' dict of the geojson
     fielListName = list()
     for key, value in geojson['features'][0]['properties'].iteritems():
-        fielListName.append(str(key))
+        print 'LAAAAAAAAAAAAAAAAAAAAAAAA'
         print key
-        print type(value)
+        fielListName.append(str(key))
 
     #create the field 
     for f in fielListName:
