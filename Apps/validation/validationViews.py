@@ -6,6 +6,11 @@ from ..database import *
 from .. import utils
 from werkzeug.wrappers import Response 
 from ..auth import check_auth
+import ast
+
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 validation = Blueprint('validation', __name__, static_url_path="/validation", static_folder="static", template_folder="templates")
@@ -31,21 +36,33 @@ def indexValidation():
 @check_auth(3)
 def mapValidation(protocole):
     db = getConnexion()
-    sql = """ SELECT f."""+config['ID_OBSERVATION']+""" as id_synthese, f.observateur, f.protocole, f.cd_nom, t.nom_vern, t.lb_nom, f.date, ST_AsGeoJSON(ST_TRANSFORM("""+config['GEOM_NAME']+""", 4326)) AS geom
-     FROM """+config['TABLE_NAME']+""" f
-     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
-     WHERE f.valide = FALSE AND f.loc_exact = TRUE AND protocole = '"""+protocole+"""' """ 
-    res = utils.sqltoDict(sql, db.cur)
-    nom_vern = None
+    sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur
+              FROM synthese.syntheseff s
+              JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
+              LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
+              WHERE s.valide = false"""
+    db.cur.execute(sql)
+    res = db.cur.fetchall()
+    geojson = { "type": "FeatureCollection",  "features" : list()}
+    nom_vern = unicode()
     for r in res:
-        if r['nom_vern'] == None:
-            r['nom_vern'] = '-'
-        r['nom_vern'] = r['nom_vern'].decode('utf-8')
+        if r[4] == None:
+            nom_vern = '-'
+        else:
+            nom_vern = r[4].decode('utf-8')
+        date = r[5].strftime("%Y/%m/%d")
+        mypropertiesPoint = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': nom_vern, 'date': date, 'protocole': r[6], 'id' : r[1], 'observateur': r[10]}
+        myPropertiesMaille = {'id_synthese': r[1], 'lb_nom':r[2], 'cd_nom': r[3], 'nom_vern': nom_vern, 'date': date, 'protocole': r[6], 'id' : r[8], 'observateur': r[10]}
 
-    geojson = utils.simpleGeoJson(res, 'geom', ['id_synthese'])
-    print geojson
+        #r[9] = loc_exact: check if its point or maille
+        if r[9] == True:
+            geojson['features'].append({"type": "Feature", "properties": mypropertiesPoint, "geometry": ast.literal_eval( r[0]) })
+        else:
+            geojson['features'].append({"type": "Feature", "properties": myPropertiesMaille, "geometry": ast.literal_eval( r[7]) })
     db.closeAll()
-    return render_template('mapValidation.html', configuration=config, taxList=res, geojson = geojson, protocole=protocole, page_title=u"Interface de validation des données")
+    return render_template('mapValidation.html', configuration=config, taxList=res, geojson=geojson, protocole=protocole, page_title=u"Interface de validation des données")
+
+
 
 
 

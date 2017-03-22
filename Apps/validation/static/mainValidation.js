@@ -97,7 +97,7 @@ L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/
 
      // interaction list - map 
       $('.search').click(function(){
-      	console.log('click')
+      	console.log('click2')
       	// back to origin style
       	if (selectLayer != undefined){
 	      	 selectLayer.setStyle({
@@ -118,17 +118,24 @@ L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/
             selectLayer = p[key];
 			}
           }
-         //selectLayer.openPopup();
 
         if (selectLayer != undefined) {
 	        selectLayer.setStyle({
 	            color: '#ff0000',
 	            fillColor: '#ff0000'
 	        });
-	        if(map.getZoom() > 12){
-				map.setView(selectLayer._latlng);
+
+	        if (selectLayer instanceof L.Polygon) {
+	        	console.log(selectLayer._bounds._northEast);
+	        	current_lat_lng = selectLayer._bounds._northEast;
+	        }
+	        else{
+	        	current_lat_lng = selectLayer._latlng;
+	        }
+	        if(map.getZoom() > 13){
+				map.setView(current_lat_lng);
 			} else {
-				map.setView(selectLayer._latlng, 12);
+				map.setView(current_lat_lng, 13);
 			}
   		}
 
@@ -159,6 +166,7 @@ function deletePoint(arrayDelete){
 
 
 $('.validate').click(function(){
+	console.log('validateeee ONE')
 	row = this.parentElement;
 	$(row).addClass("validate_ok")
 	$(row).removeClass('currentRow');
@@ -166,11 +174,12 @@ $('.validate').click(function(){
     id = $(row).attr("idSynthese");
     protocole = $(row).attr("protocole");
 	
-	data = {'validate': id, 'protocole': protocole}
+	data = {'validate': [id], 'protocole': protocole}
+	console.log(data);
 	data = JSON.stringify(data)
 	$.ajax({
 	  type: "POST",
-	  url: configuration.URL_APPLICATION+'validation/validate',
+	  url: configuration.URL_APPLICATION+'validation/validate/',
 	  contentType: 'application/json; charset=utf-8',
 	  data: data,
 	  dataType: "json"
