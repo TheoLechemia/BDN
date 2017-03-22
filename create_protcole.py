@@ -129,6 +129,70 @@ with open(fileName) as csvfile:
 
 db.closeAll()
 
+#vue pour les export en shapefile
+
+string_create_view_poly = """CREATE OR REPLACE VIEW """+schemaName+"""layer_poly AS 
+ SELECT t.nom_vern,
+    t.lb_nom,
+    f.observateur,
+    f.date,
+    ST_X(ST_CENTROID(ST_TRANSFORM(m.geom,4326))) AS X,
+    ST_Y(ST_CENTROID(ST_TRANSFORM(m.geom,4326))) AS Y,
+    f.cd_nom,
+    f.insee,
+    f.altitude,
+    f.commentaire,
+    f.comm_loc,
+    f.ccod_frt,
+    m.geom,
+    m.code_1km,
+    s.nom_structure,
+    f.id_synthese,"""
+for r in column_name_and_type:
+  string_create_view_poly += "f."+r['name']+' ,'
+string_create_view_poly = string_create_view_poly[:-1]
+
+string_create_view_poly += """ FROM """+schemaName+""".releve f
+    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
+    JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text
+    JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure
+     WHERE f.valide = TRUE AND f.loc_exact = FALSE;"""
+
+string_create_view_point = """CREATE OR REPLACE VIEW"""+schemaName+""".layer_point AS 
+ SELECT
+    t.nom_vern,
+    t.lb_nom,
+    f.observateur,
+    f.date,
+    ST_X(ST_TRANSFORM(f.geom_point, 4326)) AS X,
+    ST_Y(ST_TRANSFORM(f.geom_point, 4326)) AS Y,
+    f.comm_loc,
+    f.cd_nom,
+    f.insee,
+    f.ccod_frt,
+    f.altitude,
+    f.commentaire,
+    f.geom_point,
+    s.nom_structure,
+    f.id_synthese,"""
+for r in column_name_and_type:
+  string_create_view_point += "f."+r['name']+' ,'
+string_create_view_point = string_create_view_point[:-1]
+
+string_create_view_point += """ FROM """+schemaName+""".releve f
+   JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
+   JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text 
+   JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure
+   WHERE f.valide=true AND loc_exact = false; """
+
+string_create_view_point += " ALTER VIEW"+schemaName+".layer_point OWNER TO "+database['USER']+";"
+string_create_view_poly += " ALTER VIEW"+schemaName+".layer_poly OWNER TO "+database['USER']+";"
+db.cur.execute(string_create_view_point)
+db.cur.execute(string_create_view_poly)
+db.commit()
+
+
+
 htmlFileName = ".\\Apps\\addObs\\static\\"+schemaName+".html"
 htmlFile = open(htmlFileName, "w")
 

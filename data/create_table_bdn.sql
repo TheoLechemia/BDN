@@ -455,6 +455,13 @@ CREATE OR REPLACE VIEW contact_faune.layer_poly AS
     f.cd_nom,
     f.insee,
     f.altitude,
+    f.commentaire,
+    f.comm_loc,
+    f.ccod_frt,
+    m.geom,
+    m.code_1km,
+    s.nom_structure,
+    f.id_synthese,
     f.type_obs,
     f.effectif,
     f.comportement,
@@ -462,14 +469,8 @@ CREATE OR REPLACE VIEW contact_faune.layer_poly AS
     f.nb_male,
     f.nb_femelle,
     f.nb_jeune,
-    f.trace,
-    f.commentaire,
-    f.comm_loc,
-    f.ccod_frt,
-    m.geom,
-    m.code_1km,
-    s.nom_structure,
-    f.id_synthese
+    f.trace
+
 
    FROM contact_faune.releve f
    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
@@ -494,6 +495,10 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
     f.insee,
     f.ccod_frt,
     f.altitude,
+    f.commentaire,
+    f.geom_point,
+    s.nom_structure,
+    f.id_synthese,
     f.type_obs,
     f.effectif,
     f.comportement,
@@ -501,11 +506,8 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
     f.nb_male,
     f.nb_femelle,
     f.nb_jeune,
-    f.trace,
-    f.commentaire,
-    f.geom_point,
-    s.nom_structure,
-    f.id_synthese
+    f.trace
+
 
     
    FROM contact_faune.releve f
@@ -529,14 +531,15 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
     f.insee,
     f.ccod_frt,
     f.altitude,
+      f.geom_point,
+    f.commentaire,
+    s.nom_structure,
+    f.id_synthese,
     f.abondance,
     f.nb_pied_approx,
     f.nb_pied,
-    f.stade_dev,
-    f.geom_point,
-    f.commentaire,
-    s.nom_structure,
-    f.id_synthese
+    f.stade_dev
+
 
    FROM contact_flore.releve f
    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
@@ -561,15 +564,16 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
     f.insee,
     f.ccod_frt,
     f.altitude,
-    f.abondance,
-    f.nb_pied_approx,
-    f.nb_pied,
-    f.stade_dev,
     f.commentaire,
     m.geom,
     m.code_1km,
     s.nom_structure,
     f.id_synthese
+    f.abondance,
+    f.nb_pied_approx,
+    f.nb_pied,
+    f.stade_dev
+
    FROM contact_flore.releve f
     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
     JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text
