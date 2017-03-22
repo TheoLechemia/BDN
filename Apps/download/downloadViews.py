@@ -10,6 +10,7 @@ from .. import utils
 
 from datetime import datetime
 import os
+import csv
 
 
 download = Blueprint('download', __name__, static_url_path="/download", static_folder="static", template_folder="templates")
@@ -38,40 +39,49 @@ def index():
 
 @download.route('/data', methods=['POST'])
 def getData():
+    db = getConnexion()
     if request.method == 'POST':
         result = request.form
         nom_schema = result['protocole']
-        id_structure = result['structure']
+        nom_structure = result['structure']
 
         time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         filename = "Export_"+time
         dirPath = UPLOAD_FOLDER+"\\"+filename
         point_path = dirPath+"_point"
         poly_path = dirPath+"_maille"
+        point_csv_path = dirPath+"_csv_point.csv"
+        poly_csv_path = dirPath+"_csv_maille.csv"
         #construction de la requete a partir du formulaire envoye
-        if id_structure == 'Tout':
-            sql = "SELECT * FROM "+nom_schema+".layer_point"
+        if nom_structure == 'Tout':
+            sql_point = "SELECT * FROM "+nom_schema+".layer_point"
         else:
-            sql = "SELECT * FROM "+nom_schema+".layer_point"
-        sql = """SELECT * FROM """+nom_schema+""".layer_point WHERE id_structure = """+id_structure
+            sql_point = "SELECT * FROM "+nom_schema+".layer_point WHERE nom_structure = '"+nom_structure+"'"
         cmd = """ogr2ogr -f "ESRI Shapefile" """+point_path+""".shp PG:"host="""+database['HOST']+""" user="""+database['USER']+""" dbname="""+database['DATABASE_NAME']+""" password="""+database['PASSWORD']+""" " -sql  """
-        cmd = cmd +'"'+sql+'"'
+        cmd = cmd +'"'+sql_point+'"'
         print cmd
-        # output = open(UPLOAD_FOLDER+"\\truc.txt", "w")
-        # output.write(cmd)
-        #output.close()
-        #cree un dossier avec les shapefiles dedans (shp, shx etc..)
+
         os.system(cmd)
-        if id_structure == 'Tout':
-            sql = "SELECT * FROM "+nom_schema+".layer_poly"
+        if nom_structure == 'Tout':
+            sql_poly = "SELECT * FROM "+nom_schema+".layer_poly"
         else:    
-            sql = """SELECT * FROM """+nom_schema+""".layer_poly WHERE id_structure = """+id_structure
+            sql_poly = "SELECT * FROM "+nom_schema+".layer_poly WHERE nom_structure = '"+nom_structure+"'"
         cmd = """ogr2ogr -f "ESRI Shapefile" """+poly_path+""".shp PG:"host="""+database['HOST']+""" user="""+database['USER']+""" dbname="""+database['DATABASE_NAME']+""" password="""+database['PASSWORD']+""" " -sql  """
-        cmd = cmd +'"'+sql+'"'
+        cmd = cmd +'"'+sql_poly+'"'
         os.system(cmd)
+
+        ##CSV
+        
+        with open(point_csv_path, 'w') as f:
+            outputquery = "COPY ({0}) TO STDOUT WITH CSV HEADER DELIMITER AS ';'".format(sql_point)
+            db.cur.copy_expert(outputquery, f)
+        with open(poly_csv_path, 'w') as f:
+            db.outputquery = "COPY ({0}) TO STDOUT WITH CSV HEADER DELIMITER AS ';'".format(sql_poly)
+            db.cur.copy_expert(outputquery, f)
+
+
         #on zipe le tout
-        utils.zipIt(dirPath, True)
-        print UPLOAD_FOLDER
-        print filename
+        utils.zipItwithCSV(dirPath, True)
+
+        db.closeAll()
         return send_from_directory(UPLOAD_FOLDER ,filename+".zip")
-        #return Response(json.dumps(nom_schema), mimetype='application/json')

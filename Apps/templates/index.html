@@ -103,6 +103,7 @@
 
 
       <ul class="nav navbar-nav navbar-right">
+        <li><a href="{{url_for('download.index')}}"" style="cursor: pointer; font-size: 25px;"> <i class="fa fa-cloud-download" aria-hidden="true"></i></a> </li>
         <li> <a><b>Bienvenue: </b> {{session.user}} </a> </li> 
         <li><a href="{{url_for('main.deconnexion')}}">Deconnexion</a></li>
       </ul>

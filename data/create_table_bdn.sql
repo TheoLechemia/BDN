@@ -348,6 +348,8 @@ CREATE OR REPLACE VIEW contact_faune.layer_poly AS
     f.id_synthese,
     f.observateur,
     f.date,
+    ST_X(ST_CENTROID(ST_TRANSFORM(m.geom,4326))) AS X,
+    ST_Y(ST_CENTROID(ST_TRANSFORM(m.geom,4326))) AS Y,
     f.cd_nom,
     f.insee,
     f.altitude,
@@ -361,27 +363,30 @@ CREATE OR REPLACE VIEW contact_faune.layer_poly AS
     f.trace,
     f.commentaire,
     f.comm_loc,
-    f.id_structure,
     f.ccod_frt,
     m.geom,
-    m.code_1km
+    m.code_1km,
+    s.nom_structure
 
    FROM contact_faune.releve f
    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
-   JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text AND f.valide=true
-   WHERE f.valide=true;
+   JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text 
+   JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure
+   WHERE f.valide=true AND loc_exact = false;
 
 
 CREATE OR REPLACE VIEW contact_faune.layer_point AS 
  SELECT
     t.nom_vern,
     t.lb_nom,
-    f.id_obs,
-    f.id_synthese,
     f.observateur,
     f.date,
+    ST_X(ST_TRANSFORM(f.geom_point, 4326)) AS X,
+    ST_Y(ST_TRANSFORM(f.geom_point, 4326)) AS Y,
+    f.comm_loc,
     f.cd_nom,
     f.insee,
+    f.ccod_frt,
     f.altitude,
     f.type_obs,
     f.effectif,
@@ -391,40 +396,40 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
     f.nb_femelle,
     f.nb_jeune,
     f.trace,
-    f.geom_point,
     f.commentaire,
-    f.id_structure,
-    f.comm_loc,
-    f.ccod_frt
-
+    f.geom_point,
+    s.nom_structure
+    
    FROM contact_faune.releve f
    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
-  WHERE f.loc_exact = true;
+   JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure
+  WHERE f.loc_exact = TRUE;
 
   CREATE OR REPLACE VIEW contact_flore.layer_point AS 
  SELECT 
     t.nom_vern,
     t.lb_nom,
-    flore.id_obs,
-    flore.id_synthese,
-    flore.observateur,
-    flore.date,
-    flore.cd_nom,
-    flore.insee,
-    flore.altitude,
-    flore.abondance,
-    flore.nb_pied_approx,
-    flore.nb_pied,
-    flore.stade_dev,
-    flore.geom_point,
-    flore.commentaire,
-    flore.comm_loc,
-    flore.id_structure,
-    flore.ccod_frt
+    f.observateur,
+    f.date,
+    ST_X(ST_TRANSFORM(f.geom_point, 4326)) AS X,
+    ST_Y(ST_TRANSFORM(f.geom_point, 4326)) AS Y,
+    f.comm_loc,
+    f.cd_nom,
+    f.insee,
+    f.ccod_frt,
+    f.altitude,
+    f.abondance,
+    f.nb_pied_approx,
+    f.nb_pied,
+    f.stade_dev,
+    f.geom_point,
+    f.commentaire,
+    s.nom_structure
 
-   FROM contact_flore.releve flore
-   JOIN taxonomie.taxref t ON t.cd_nom = flore.cd_nom
-  WHERE flore.loc_exact = true AND flore.valide = true;
+   FROM contact_flore.releve f
+   JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
+   JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure
+  WHERE f.loc_exact = TRUE AND f.valide = TRUE;
 
   CREATE OR REPLACE VIEW contact_flore.layer_poly AS 
  SELECT 
@@ -434,23 +439,26 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
     f.id_synthese,
     f.observateur,
     f.date,
+    ST_X(ST_CENTROID(ST_TRANSFORM(m.geom,4326))) AS X,
+    ST_Y(ST_CENTROID(ST_TRANSFORM(m.geom,4326))) AS Y,
+    f.comm_loc,
     f.cd_nom,
     f.insee,
+    f.ccod_frt,
     f.altitude,
     f.abondance,
     f.nb_pied_approx,
     f.nb_pied,
     f.stade_dev,
     f.commentaire,
-    f.ccod_frt,
-    f.comm_loc,
-    f.id_structure,
     m.geom,
-    m.code_1km
+    m.code_1km,
+    s.nom_structure
    FROM contact_flore.releve f
     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
-    JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text AND f.valide=true
-     WHERE f.valide = true;
+    JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text
+    JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure
+     WHERE f.valide = TRUE AND f.loc_exact = FALSE;
 
 
 -- schema utilisateur
