@@ -4,7 +4,6 @@ import sys
 from Apps.config import config, database
 from Apps.database import *
 
-import cStringIO	
 
 fileName = input('Entrez le chemin du fichier CSV (entre guillemets) : ')
 
@@ -15,7 +14,7 @@ fileName = input('Entrez le chemin du fichier CSV (entre guillemets) : ')
 #try:
 
 inter = fileName.split('.')
-schemaName = inter[0].split('\\')[-1]
+schemaName = inter[0].split('/')[-1]
 fullName = schemaName+".releve"
 
 db = getConnexion()
@@ -127,7 +126,6 @@ with open(fileName) as csvfile:
             db.conn.commit()      	
         spec_number += 1
 
-db.closeAll()
 
 #vue pour les export en shapefile
 
@@ -158,7 +156,7 @@ string_create_view_poly += """ FROM """+schemaName+""".releve f
     JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure
      WHERE f.valide = TRUE AND f.loc_exact = FALSE;"""
 
-string_create_view_point = """CREATE OR REPLACE VIEW"""+schemaName+""".layer_point AS 
+string_create_view_point = """CREATE OR REPLACE VIEW """+schemaName+""".layer_point AS 
  SELECT
     t.nom_vern,
     t.lb_nom,
@@ -185,8 +183,8 @@ string_create_view_point += """ FROM """+schemaName+""".releve f
    JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure
    WHERE f.valide=true AND loc_exact = false; """
 
-string_create_view_point += " ALTER VIEW"+schemaName+".layer_point OWNER TO "+database['USER']+";"
-string_create_view_poly += " ALTER VIEW"+schemaName+".layer_poly OWNER TO "+database['USER']+";"
+string_create_view_point += " ALTER VIEW "+schemaName+".layer_point OWNER TO "+database['USER']+";"
+string_create_view_poly += " ALTER VIEW "+schemaName+".layer_poly OWNER TO "+database['USER']+";"
 db.cur.execute(string_create_view_point)
 db.cur.execute(string_create_view_poly)
 db.commit()
@@ -227,6 +225,8 @@ for r in column_name_and_type:
 htmlFile.close()
 
 print "PROTCOLE AJOUTE AVEC SUCCES"
+
+db.closeAll()
 
 #except:
     # e = sys.exc_info()[0]
