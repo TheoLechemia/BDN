@@ -531,7 +531,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
     f.insee,
     f.ccod_frt,
     f.altitude,
-      f.geom_point,
+    f.geom_point,
     f.commentaire,
     s.nom_structure,
     f.id_synthese,
@@ -549,12 +549,11 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
   ALTER VIEW contact_flore.layer_point
   OWNER TO onfuser;
 
-  CREATE OR REPLACE VIEW contact_flore.layer_poly AS 
+CREATE OR REPLACE VIEW contact_flore.layer_poly AS 
  SELECT 
     t.nom_vern,
     t.lb_nom,
     f.id_obs,
-    f.id_synthese,
     f.observateur,
     f.date,
     ST_X(ST_CENTROID(ST_TRANSFORM(m.geom,4326))) AS X,

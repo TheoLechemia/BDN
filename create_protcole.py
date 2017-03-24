@@ -14,7 +14,7 @@ fileName = input('Entrez le chemin du fichier CSV (entre guillemets) : ')
 #try:
 
 inter = fileName.split('.')
-schemaName = inter[0].split('/')[-1]
+schemaName = inter[0].split('//')[-1]
 fullName = schemaName+".releve"
 
 db = getConnexion()
@@ -129,7 +129,7 @@ with open(fileName) as csvfile:
 
 #vue pour les export en shapefile
 
-string_create_view_poly = """CREATE OR REPLACE VIEW """+schemaName+"""layer_poly AS 
+string_create_view_poly = """CREATE OR REPLACE VIEW """+schemaName+""".layer_poly AS 
  SELECT t.nom_vern,
     t.lb_nom,
     f.observateur,
@@ -183,11 +183,19 @@ string_create_view_point += """ FROM """+schemaName+""".releve f
    JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure
    WHERE f.valide=true AND loc_exact = false; """
 
+db.cur.execute(string_create_view_poly)
+db.cur.execute(string_create_view_point)
+db.conn.commit()  
+
+
 string_create_view_point += " ALTER VIEW "+schemaName+".layer_point OWNER TO "+database['USER']+";"
 string_create_view_poly += " ALTER VIEW "+schemaName+".layer_poly OWNER TO "+database['USER']+";"
-db.cur.execute(string_create_view_point)
+
 db.cur.execute(string_create_view_poly)
-db.commit()
+db.cur.execute(string_create_view_point)
+db.conn.commit()  
+
+
 
 
 
