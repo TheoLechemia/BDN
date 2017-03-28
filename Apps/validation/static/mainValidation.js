@@ -43,13 +43,28 @@ $(document).ready( function () {
   /*LEAFLET*/
 
  var selectLayer;
+ var dictLayer = {};
+
+ var originStyle = {
+		    "color": "#3388ff",
+		    "fill": true,
+		    "fillOpacity": 0.2,
+		    "weight":3
+		};
+
+var selectedStyle = {
+		  'color':'#ff0000',
+		   'weight':3
+		};
 
  console.log(observations)
  
  function generateLayerFromGeojson(observations){
  	currentGeojsonLayer = L.geoJson(observations, {
           pointToLayer: function (feature, latlng) {
-                           return L.circleMarker(latlng);
+          					var layer = L.circleMarker(latlng);
+          					dictLayer[feature.properties.id_synthese] = layer;
+          					return layer;
                            },
           onEachFeature: bindMarkers,
 	   });
@@ -61,15 +76,9 @@ function bindMarkers(features, layer){
 	layer.on({
 		click: function(e){
 			if (selectLayer != undefined){
-				selectLayer.setStyle({
-					color: '#3388ff',
-	            	fillColor: '#3388ff'
-				})
+				selectLayer.setStyle(originStyle);
 			}
-				e.target.setStyle({
-					color: '#ff0000',
-		            fillColor: '#ff0000'
-				})
+				e.target.setStyle(selectedStyle);
 
 				// higlight the row
 
@@ -77,7 +86,6 @@ function bindMarkers(features, layer){
 				row = $("[idSynthese="+id_synthese+"]")
 				$(row).siblings().removeClass('currentRow');
          		$(row).addClass('currentRow');
-
 			selectLayer = e.target;
 		}
 	})
@@ -97,33 +105,20 @@ L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/
 
      // interaction list - map 
       $('.search').click(function(){
-      	console.log('click2')
       	// back to origin style
       	if (selectLayer != undefined){
-	      	 selectLayer.setStyle({
-	            color: '#3388ff',
-	            fillColor: '#3388ff'
-	        });
+	      	 selectLayer.setStyle(originStyle);
       	}
 
       	row = this.parentElement;
       	id_synthese = $(row).attr("idSynthese");
          $(row).siblings().removeClass('currentRow');
          $(row).addClass('currentRow');
-        var id_observation = $(this).attr('idSynthese');
-        p = (currentGeoJsonLayer._layers);
-        
-        for (var key in p) {
-          if (p[key].feature.properties.id_synthese == id_synthese){
-            selectLayer = p[key];
-			}
-          }
+
+        selectLayer = dictLayer[id_synthese];
 
         if (selectLayer != undefined) {
-	        selectLayer.setStyle({
-	            color: '#ff0000',
-	            fillColor: '#ff0000'
-	        });
+	        selectLayer.setStyle(selectedStyle);
 
 	        if (selectLayer instanceof L.Polygon) {
 	        	console.log(selectLayer._bounds._northEast);
@@ -166,7 +161,6 @@ function deletePoint(arrayDelete){
 
 
 $('.validate').click(function(){
-	console.log('validateeee ONE')
 	row = this.parentElement;
 	$(row).addClass("validate_ok")
 	$(row).removeClass('currentRow');
