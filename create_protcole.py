@@ -14,7 +14,7 @@ fileName = input('Entrez le chemin du fichier CSV (entre guillemets) : ')
 #try:
 
 inter = fileName.split('.')
-schemaName = inter[0].split('//')[-1]
+schemaName = inter[0].split('\\')[-1]
 fullName = schemaName+".releve"
 
 db = getConnexion()
