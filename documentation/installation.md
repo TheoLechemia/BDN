@@ -39,3 +39,11 @@ Mettre le fichier de liste rouge de l'UICN correspondant à sa région dans `./d
 
 `sudo apachectl restart`
 
+
+## Sauvegarde automatique
+Taper `crontab -e`  
+et ajouter la ligne suivante à la fin du fichier
+` 45 23 * * * /home/ubuntu/BDN/cron_pg_backup.sh`  
+Cette commande va ainsi faire des sauvegarde journalière et mensuelles de la BDD
+
+
