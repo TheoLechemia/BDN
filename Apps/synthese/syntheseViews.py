@@ -55,7 +55,7 @@ def synthese_index():
 def lastObs():
     db = getConnexion()
     sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur, u.nom_structure
-              FROM synthese.syntheseff s
+              FROM synthese.releve s
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
               JOIN utilisateur.bib_structure u ON u.id_structure = s.id_structure
               LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
@@ -155,7 +155,7 @@ def loadTypologgie():
     habitat = utils.sqltoDict(sql, db.cur)
     sql = "SELECT * FROM taxonomie.bib_liste_rouge"
     listeRouge = utils.sqltoDict(sql, db.cur)
-    sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT observateur FROM synthese.syntheseff ORDER BY observateur ASC)r"
+    sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT observateur FROM synthese.releve ORDER BY observateur ASC)r"
     db.cur.execute(sql)
     observateurs = db.cur.fetchone()[0]
     sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT nom_structure, id_structure FROM utilisateur.bib_structure ORDER BY id_structure ASC)r"

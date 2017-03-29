@@ -1,4 +1,4 @@
-CREATE TABLE synthese.syntheseff
+CREATE TABLE synthese.releve
 (
   id_synthese serial,
   protocole character varying(50) NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE synthese.syntheseff
       REFERENCES taxonomie.taxref (cd_nom) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE SET NULL
 );
-ALTER TABLE synthese.syntheseff
+ALTER TABLE synthese.releve
   OWNER TO onfuser;
 
 
@@ -100,9 +100,9 @@ CREATE OR REPLACE FUNCTION synthese.tr_protocole_to_synthese() RETURNS TRIGGER A
     DECLARE protocoleid INTEGER;
     BEGIN
  
-    INSERT INTO synthese.syntheseff (protocole, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, loc_exact, code_maille, id_structure) 
+    INSERT INTO synthese.releve (protocole, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, loc_exact, code_maille, id_structure) 
     VALUES(tg_table_schema, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.loc_exact, new.code_maille, new.id_structure) RETURNING new.id_obs INTO protocoleid;
-    SELECT INTO newid currval('synthese.syntheseff_id_synthese_seq');
+    SELECT INTO newid currval('synthese.releve_id_synthese_seq');
     EXECUTE format('
     UPDATE %s.%s SET id_synthese = %s WHERE id_obs=%s;', TG_TABLE_SCHEMA, TG_TABLE_NAME, newid, protocoleid);
     RETURN NEW;
@@ -126,7 +126,7 @@ CREATE OR REPLACE VIEW synthese.v_search_taxons AS
     t.nom_vern,
     t.lb_nom,
     s.protocole
-   FROM synthese.syntheseff s
+   FROM synthese.releve s
      JOIN taxonomie.taxref t ON s.cd_nom = t.cd_nom;
 
 ALTER TABLE synthese.v_search_taxons

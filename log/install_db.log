@@ -50,5 +50,7 @@ CREATE VIEW
 ALTER VIEW
 CREATE VIEW
 ALTER VIEW
-CREATE VIEW
-ALTER VIEW
+psql:/tmp/create_table_bdn.sql:580: ERROR:  syntax error at or near "."
+LINE 20:     f.abondance,
+              ^
+psql:/tmp/create_table_bdn.sql:583: ERROR:  relation "contact_flore.layer_poly" does not exist

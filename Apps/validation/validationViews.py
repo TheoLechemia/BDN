@@ -38,7 +38,7 @@ def mapValidation(protocole):
     db = getConnexion()
     id_structure = session['id_structure']
     sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur
-              FROM synthese.syntheseff s
+              FROM synthese.releve s
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
               LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
               WHERE s.valide = false AND s.protocole = %s AND id_structure = %s"""
@@ -73,7 +73,7 @@ def mapValidation(protocole):
 def deleteRow(id_synt, protocole):
     db = getConnexion()
     id_synt = str(id_synt)
-    sql = "DELETE FROM synthese.syntheseff WHERE id_synthese = %s; "
+    sql = "DELETE FROM synthese.releve WHERE id_synthese = %s; "
     param = [id_synt]
     db.cur.execute(sql, param) 
 
@@ -103,7 +103,7 @@ def validate():
         else:
             tupleSynth = tuple(int(id_synt))
 
-        sql = """UPDATE synthese.syntheseff
+        sql = """UPDATE synthese.releve
                  SET valide = TRUE
                  WHERE id_synthese IN %s ;
                  UPDATE """+protocole+""".releve
