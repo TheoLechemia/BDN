@@ -7,6 +7,7 @@ from .. import utils
 from werkzeug.wrappers import Response 
 from ..auth import check_auth
 import ast
+from flask import session
 
 import sys
 reload(sys)
@@ -35,12 +36,13 @@ def indexValidation():
 @check_auth(3)
 def mapValidation(protocole):
     db = getConnexion()
+    id_structure = session['id_structure']
     sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur
               FROM synthese.syntheseff s
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
               LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
-              WHERE s.valide = false AND protocole = %s """
-    param = [protocole]
+              WHERE s.valide = false AND s.protocole = %s AND id_structure = %s"""
+    param = [protocole, id_structure]
     db.cur.execute(sql, param)
     res = db.cur.fetchall()
     geojson = { "type": "FeatureCollection",  "features" : list()}

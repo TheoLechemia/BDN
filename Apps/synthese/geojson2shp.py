@@ -12,12 +12,10 @@ def convertUnicodeToString(geometryParam, geomType):
 
 
 def export(FileName, geojson, geomType):
-    print geojson
-    for f in geojson['features']:
-        DriverName = "ESRI Shapefile"
-        driver = ogr.GetDriverByName(DriverName)
-        if os.path.exists(FileName):
-            driver.DeleteDataSource(FileName)
+    DriverName = "ESRI Shapefile"
+    driver = ogr.GetDriverByName(DriverName)
+    if os.path.exists(FileName):
+        driver.DeleteDataSource(FileName)
 
     #def of projections
     inSpatialRef = osr.SpatialReference()
@@ -34,10 +32,6 @@ def export(FileName, geojson, geomType):
     else:
         outLayer = outDataSource.CreateLayer(str(FileName), outSpatialRef, geom_type=ogr.wkbMultiPolygon)
 
-    #build the fieldList from the 'propertie' dict of the geojson
-    fielListName = list()
-    for key, value in geojson['features'][0]['properties'].iteritems():
-        fielListName.append(str(key))
 
     fielListName = ['nom_vern', 'lb_nom', 'cd_nom', 'date', 'protocole', 'observateur', 'structure', 'id_synthese']
 
