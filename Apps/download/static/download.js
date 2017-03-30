@@ -1,8 +1,144 @@
-module.exports = function(angularInstance){
+var angularInstance = angular.module("app", ['ui.bootstrap']);
+
+angularInstance.controller("headerCtrl", function($scope){
+
+ })
+
+//PROXY//
+proxy = angularInstance.factory('proxy', function proxy($http) {
+		return{
+			lastObs: function(){
+	            return $http.get(CONFIGURATION.URL_APPLICATION+"synthese/lastObs");
+				},
+			sendData : function(data){
+				return $http.post(CONFIGURATION.URL_APPLICATION+"download/getObs", data)
+			},
+
+			loadTaxons: function(protocole){
+				return $http.get(CONFIGURATION.URL_APPLICATION+"synthese/loadTaxons/"+protocole)
+			},
+			loadCommunes: function(){
+				return $http.get(CONFIGURATION.URL_APPLICATION+"synthese/loadCommunes")
+			},
+			loadForets: function(){
+				return $http.get(CONFIGURATION.URL_APPLICATION+"synthese/loadForets")
+			},
+			loadTypologgie : function(){
+				return $http.get(CONFIGURATION.URL_APPLICATION+"synthese/loadTypologgie")
+			},
+			exportShapeFile : function(data){
+				return $http.post(CONFIGURATION.URL_APPLICATION+"synthese/export", data)
+			},
+			loadTaxonomyHierachy : function(rang_fils, rang_pere, rang_grand_pere, value_rang_grand_pere, value){
+				return $http.get(CONFIGURATION.URL_APPLICATION +"synthese/loadTaxonomyHierachy/"+rang_fils+"/"+rang_pere+"/"+rang_grand_pere+"/"+value_rang_grand_pere+"/"+value)
+			},
+			loadProtocole: function(){
+				return $http.get(CONFIGURATION.URL_APPLICATION+"addObs/loadProtocoles")
+			},
+			bindNewValues : function(table_field){
+ 				return $http.get(CONFIGURATION.URL_APPLICATION+"addObs/loadValues/"+table_field)
+			}
+	  }
+	});
+
+
+// APPP //
+
+
+template = 'download/templates/app.html';
+
+function appCtrl (proxy){
+  var ctrl = this;
+  
+  ctrl.nbObs = "Les 50 dernieres observations";
+  proxy.lastObs().then(function(response){
+      ctrl.geojson = response.data;
+
+    });
+  
+
+  proxy.loadTaxons('Tout').then(function(response){
+      ctrl.taxonslist = response.data;
+      ctrl.TaxonsFaune = ctrl.taxonslist.filter(function(t){
+        return t.regne ='Animalia'
+      })
+      ctrl.TaxonsFlore = ctrl.taxonslist.filter(function(t){
+        return t.regne ='Plantae'
+      })
+    })
+
+  proxy.loadCommunes().then(function(response){
+      ctrl.communesList = response.data;
+  })
+  proxy.loadForets().then(function(response){
+      ctrl.foretsList = response.data;
+  })
+  proxy.loadTypologgie().then(function(response){
+    ctrl.typologie = response.data;
+  }) 
+  proxy.loadProtocole().then(function(response){
+    ctrl.protocoles = response.data;
+  })
+
+  ctrl.formSubmit = function(form){
+    ctrl.form = form;
+    console.log(form);
+    proxy.sendData(form).then(function(response){
+    	window.location =CONFIGURATION.URL_APPLICATION+'download/uploads/'+response.data;      
+/*      ctrl.geojson = response.data;
+      nbObs = ctrl.geojson.point.features.length+ctrl.geojson.maille.features.length
+      ctrl.nbObs = nbObs+' observation(s)'*/
+    });
+  }
+
+  ctrl.changeProtocole = function(protocole){
+  	console.log(protocole);
+  	table_field = protocole.bib_champs;
+  	console.log(table_field);
+  	proxy.bindNewValues(table_field).then(function(response){
+  		ctrl.fields = response.data;
+  	})
+    proxy.loadTaxons(protocole.nom_schema).then(function(response){
+      ctrl.taxonslist = response.data;
+    })
+  }
+
+
+  ctrl.updateCurrentListObs = function(id_synthese){
+    
+    ctrl.currentListObs = id_synthese;
+  }
+
+  ctrl.updateCurrentLeafletObs = function(id_synthese){
+    console.log("update with: "+ id_synthese);
+    ctrl.currentLeafletObs = id_synthese;
+  }
+
+  ctrl.exportShape = function(form){
+    proxy.exportShapeFile(form).then(function(response){
+    	console.log(response.data);
+      window.location =CONFIGURATION.URL_APPLICATION+'download/download/uploads/'+response.data;       
+    })
+  }
+
+
+}
+
+angularInstance.component('app', {
+
+  controller : appCtrl,
+  templateUrl : template
+
+});
+
+
+
+// FORM
+
 
 function formControler(proxy, $http, $scope){
 	formCtrl = this;
-
+	formCtrl.templateProtocole = null;
 	// Modele du formulaire
 	formCtrl.form = {
 		'selectedProtocole': null,
@@ -41,15 +177,19 @@ function formControler(proxy, $http, $scope){
 		$(this).siblings.removeAttr('checked')
 	})
 	// changement de protocole, change les données de recherche des taxons (faune, flore) depuis le module pere APP
-	this.changeProtocole = function(protocole){
+	formCtrl.changeProtocole = function(protocole){
 		if(protocole){
-			currentProtocole = protocole.nom_schema
+			this.templateProtocole = CONFIGURATION.URL_APPLICATION+"addObs/"+protocole.template;
+			console.log(this.templateProtocole);
+			currentProtocole = protocole
 		}
 		else{
 			currentProtocole = "Tout"
 		}
 		this.onProtocoleChange({$event:{protocole:currentProtocole}})
 	}
+
+
 
 
 	// Liste des rang taxonomique de la recherche avancée
@@ -197,7 +337,7 @@ function formControler(proxy, $http, $scope){
 
 }
 
-var templateForm = 'synthese/templates/formObs.html';
+var templateForm = CONFIGURATION.URL_APPLICATION+'download/download/templates/formObs.html';
 
 
 angularInstance.component('formObs', {
@@ -211,8 +351,7 @@ angularInstance.component('formObs', {
 	forets: '<',
 	typologie : '<',
 	protocoles : '<',
-	onProtocoleChange : '&'
+	onProtocoleChange : '&',
+	fields : '<',
   }
 });
-
-}// END WEBPACK

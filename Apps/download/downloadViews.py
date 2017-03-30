@@ -4,6 +4,7 @@ from flask import Flask, request, render_template, url_for, redirect, send_from_
 from ..auth import check_auth
 
 from ..config import database
+from ..config import config
 from ..database import *
 
 from .. import utils
@@ -16,7 +17,7 @@ import csv
 download = Blueprint('download', __name__, static_url_path="/download", static_folder="static", template_folder="templates")
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, os.pardir))
-UPLOAD_FOLDER = PARENT_DIR+'/static/uploads'
+UPLOAD_FOLDER = PARENT_DIR+'\\static\\uploads'
 
 @download.route('/', methods=['GET', 'POST'])
 @check_auth(2)
@@ -33,62 +34,87 @@ def index():
 
 
     db.closeAll()
-    return render_template('indexDownload.html', protocoles = protocoles, structures = structures, page_title=u"Télécharger des données")
+    return render_template('indexDownload.html', protocoles = protocoles, structures = structures, page_title=u"Télécharger des données", configuration=config)
 
 
 
-@download.route('/data', methods=['POST'])
-def getData():
+@download.route('/getObs', methods=['POST'])
+def getObs():
     db = getConnexion()
     if request.method == 'POST':
-        result = request.form
-        nom_schema = result['protocole']
-        nom_structure = result['structure']
+        schemaReleve = 'synthese'
+        if request.json['selectedProtocole']:
+            schemaReleve = request.json['selectedProtocole']['nom_schema']
+        sql = " SELECT * FROM "+schemaReleve+".%s s "
+
+        dictSQL = utils.buildSQL(sql, 'download')
+        # params = tuple(dictSQL['params'])
+        params = dictSQL['params']
+        reformatedParams = list()
+        print len(params)
+        print params
+        stringTupple = str()
+        for p in params:
+            if type(p) is int or type(p) is float:
+                reformatedParams.append(p)
+            if type(p) is tuple:
+                if len(p) ==1:
+                    stringTupple = str(p).replace(',','')
+                    reformatedParams.append(stringTupple)
+            if type(p) is str or type(p) is unicode:
+                reformatedParams.append("'"+p+"'")
+
+        paramtersPoint = list(reformatedParams)
+        paramtersPoint.insert(0, 'layer_point')
+        paramtersMaille = list(reformatedParams)
+        paramtersMaille.insert(0, 'layer_poly')
+        paramtersCSV = list(reformatedParams)
+        paramtersCSV.insert(0, 'to_csv')
+
+        print reformatedParams
+        print 'LAAAAAAAAAAAAAAAAAA'
+        print paramtersPoint
+        print paramtersMaille
+        sql_point = dictSQL['sql']%tuple(paramtersPoint)
+        sql_poly = dictSQL['sql']%tuple(paramtersMaille)
+        sql_csv = dictSQL['sql']%tuple(paramtersCSV)
+
 
         time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         filename = "Export_"+time
-        dirPath = UPLOAD_FOLDER+"/"+filename
+        dirPath = UPLOAD_FOLDER+"\\"+filename
         point_path = dirPath+"_point"
         poly_path = dirPath+"_maille"
-        point_csv_path = dirPath+"_csv_point.csv"
-        poly_csv_path = dirPath+"_csv_maille.csv"
+        csv_path = dirPath+"_csv.csv"
         debug = dirPath+"_debug"
+
         #construction de la requete a partir du formulaire envoye
-        if nom_structure == 'Tous':
-            sql_point = "SELECT * FROM "+nom_schema+".layer_point"
-        else:
-            sql_point = "SELECT * FROM "+nom_schema+".layer_point WHERE nom_structure = '"+nom_structure+"'"
+        ###POINT###
         cmd = """ogr2ogr -f "ESRI Shapefile" """+point_path+""".shp PG:"host="""+database['HOST']+""" user="""+database['USER']+""" dbname="""+database['DATABASE_NAME']+""" password="""+database['PASSWORD']+""" " -sql  """
         cmd = cmd +'"'+sql_point+'"'
-        print cmd
-
         os.system(cmd)
-
-        if nom_structure == 'Tous':
-            sql_poly = "SELECT * FROM "+nom_schema+".layer_poly"
-        else:    
-            sql_poly = "SELECT * FROM "+nom_schema+".layer_poly WHERE nom_structure = '"+nom_structure+"'"
+        ###MAILLE###
         cmd = """ogr2ogr -f "ESRI Shapefile" """+poly_path+""".shp PG:"host="""+database['HOST']+""" user="""+database['USER']+""" dbname="""+database['DATABASE_NAME']+""" password="""+database['PASSWORD']+""" " -sql  """
         cmd = cmd +'"'+sql_poly+'"'
         os.system(cmd)
-
-        ##CSV
-        
-        with open(debug, 'w') as file:
-            file.write(sql_poly+ "\n")
-            file.write(cmd+ "\n")
-            file.write(sql_point+ "\n")
-
-        with open(point_csv_path, 'w') as f:
-            outputquery = "COPY ({0}) TO STDOUT WITH CSV HEADER DELIMITER AS ';'".format(sql_point)
+        cmd_poly = cmd +'"'+sql_poly+'"'
+        file = open(debug, 'w')
+        file.write(cmd_poly)
+        file.close()
+        os.system(cmd)
+        ###CSV###
+        with open(csv_path, 'w') as f:
+            outputquery = "COPY ({0}) TO STDOUT WITH CSV HEADER DELIMITER AS ';'".format(sql_csv)
             db.cur.copy_expert(outputquery, f)
-        with open(poly_csv_path, 'w') as f:
-            db.outputquery = "COPY ({0}) TO STDOUT WITH CSV HEADER DELIMITER AS ';'".format(sql_poly)
-            db.cur.copy_expert(outputquery, f)
-
-
-        #on zipe le tout
+        #ZIP
         utils.zipItwithCSV(dirPath, True)
 
+
         db.closeAll()
-        return send_from_directory(UPLOAD_FOLDER ,filename+".zip")
+        return Response(json.dumps(filename), mimetype='application/json')
+
+
+@download.route('/uploads/<filename>', methods=['GET'])
+def uploads(filename):
+    filename = filename+".zip"
+    return send_from_directory(UPLOAD_FOLDER ,filename)

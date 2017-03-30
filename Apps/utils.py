@@ -1,3 +1,4 @@
+# coding: utf-8
 import psycopg2
 import psycopg2.extras
 import zipfile
@@ -121,8 +122,7 @@ def zipItwithCSV(dirPath, maille):
     zf.write(dirPath+"_point.shx", os.path.basename(dirPath+"_point.shx"))
     zf.write(dirPath+"_point.shp", os.path.basename(dirPath+"_point.shp"))
 
-    zf.write(dirPath+"_csv_point.csv", os.path.basename(dirPath+"_csv_point.csv"))
-    zf.write(dirPath+"_csv_maille.csv", os.path.basename(dirPath+"_csv_maille.csv"))
+    zf.write(dirPath+"_csv.csv", os.path.basename(dirPath+"_csv.csv"))
 
 
 def askFirstParame(sql, firstParam):
@@ -163,27 +163,26 @@ def getFormParameters():
     return {'listTaxons':listTaxons, 'firstDate':firstDate, 'lastDate':lastDate, 'commune':commune, 'foret':foret, 'regne':regne, 'phylum': phylum, 'classe':classe, 'ordre':ordre, 'famille': famille, 'group2_inpn':group2_inpn,
             'habitat': habitat, 'protection': protection, 'lr': lr, 'structure': structure, 'observateur':observateur, 'protocole':protocole }
 
-def buildSQL():
-    sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur, st.nom_structure
-              FROM synthese.releve s
-              LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
-              JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
-              JOIN utilisateur.bib_structure st ON st.id_structure = s.id_structure"""
+def buildSQL(sql, app):
+
     params = list()
     firstParam = True
     #recuperation des parametres
     formParameters = getFormParameters()
-    if formParameters['protocole']:
-        currentProtocole = formParameters['protocole']['nom_schema']
-        sql = askFirstParame(sql, firstParam)
-        sql+="s.protocole = %s"
-        params.append(currentProtocole)
-        firstParam=False
+    #si ça vient de la synthese on recherche le protocole, sinon non
+    if app == "synthese":
+        if formParameters['protocole']:
+            currentProtocole = formParameters['protocole']['nom_schema']
+            sql = askFirstParame(sql, firstParam)
+            sql+="s.protocole = %s"
+            params.append(currentProtocole)
+            firstParam=False
     if len(formParameters['listTaxons']) > 0:
         sql = askFirstParame(sql, firstParam)
         firstParam = False
         sql = sql + "s.cd_nom IN %s "
-        params.append(tuple(formParameters['listTaxons']))
+        tupleTaxon = tuple(formParameters['listTaxons'])
+        params.append(tupleTaxon)
     #recherche taxonomique avance
     if formParameters['regne']:
         sql = askFirstParame(sql, firstParam)

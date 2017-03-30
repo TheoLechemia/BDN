@@ -46,7 +46,7 @@
     transition: all 0.3s;
   }
 
-  .panel:hover .fa-cloud-upload{
+  .panel:hover .fa-cloud-download{
     color:#38a5ed;
   }
 
@@ -122,24 +122,23 @@
                       <h4>Saisir des données</h4>
                   </div><!-- /.col-lg-4 -->
 
-                    <div class="col-lg-3 panel panel-index" >  
-                      <a href="{{url_for('importCSV.indexImport')}}"  > 
-                        <i class="fa fa-cloud-upload " style="font-size: 150px;"> </i>
-                      </a>
-                      <h4>Importer des données</h4>
-                    </div><!-- /.col-lg-4 -->
-
                     <div class="col-lg-3 panel panel-index" >
                       <a  href="{{url_for('validation.indexValidation')}}" >
                         <i class="fa fa-check-circle-o"  style="font-size: 150px;"> </i>
                       </a>
                       <h4>Interface de validation </h4>
                     </div><!-- /.col-lg-4 -->
+                    <div class="col-lg-3 panel panel-index" >  
+                      <a href="{{url_for('download.index')}}"  > 
+                        <i class="fa fa-cloud-download " style="font-size: 150px;"> </i>
+                      </a>
+                      <h4>Exporter des données</h4>
+                    </div><!-- /.col-lg-4 -->
                     <div class="col-lg-3 panel panel-index">
                       <a  href="{{url_for('synthese.synthese_index')}}">
                        <i class="fa fa-search "  style="font-size: 150px;"> </i> 
                       </a>
-                      <h4>Rechercher des observations </h4>
+                      <h4>Synthese faune - flore </h4>
                     </div><!-- /.col-lg-4 -->
                 </div>
             </div>

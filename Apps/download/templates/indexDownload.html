@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+  <!-- Angular -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0-rc.2/angular.min.js"></script>
+<!--  ui bootstrap -->
+<script src="{{url_for('static', filename='lib/uibootstrap.min.js')}}"></script>
+
   <!-- MY CSS -->
   <link rel="stylesheet" href= " {{url_for('static', filename='css/main.css')}} " >
 	<title></title>
@@ -16,26 +21,16 @@
 
  {% include 'navbar.html' %}
 
-<form action= " {{url_for('download.getData')}} " method="POST">
 
-	<label> Selectionnez un protocole </label>
-	 <select name = "protocole" >
-	 	{% for p in protocoles %}
-	 	<option value={{p.nom_schema}}> {{p.nom_protocole}} </option>
-	 	{% endfor %}
-	 </select>
+ <div ng-app="app" >
 
-	 <label> Selectionnez un structure </label>
-	 <select name = "structure" >
-	 	<option value="Tous"> Tous </option>
-	 	{% for s in structures %}
-	 	<option value={{s.nom_structure}}> {{s.nom_structure}} </option>
-	 	{% endfor %}
-	 </select>
-
- 	<button class="btn btn-success submit" type="submit" value='Envoyer'>Télécharger</button>
- </form>
+    <app ></app>
+</div>
 
 
 </body>
+<script type="text/javascript">
+	var CONFIGURATION = {{configuration|tojson}}
+</script>
+<script src="{{url_for('download.static', filename='download.js')}}"></script>
 </html>

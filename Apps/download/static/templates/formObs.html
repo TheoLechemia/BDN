@@ -1,0 +1,113 @@
+<div class="col-md-8 bloc-synthese" style="padding-right: 0px;">
+	<div class="panel panel-default" class='container-fluid typeahead-demo'>
+			<div class="panel-heading">
+					<h3 class="panel-title"> <b> Rechercher des observations </b> </h3>
+			</div>
+		<form>
+			<div class="section">
+					<div class="section-title"> Quoi ?</div>
+					<div class="form-group">
+						<label> Protocole</label>
+				    	<select class="form-control" ng-model="$ctrl.form.selectedProtocole" ng-change="$ctrl.changeProtocole($ctrl.form.selectedProtocole)" ng-options="row.nom_protocole for row in $ctrl.protocoles">
+				    		<option value=""> - Selectionner un protocole - </option>
+				    		<!-- <option value="Tous"> Tous</option> -->
+				    	</select>
+						
+					</div>
+						
+					<div class="form-group">
+					<label>Taxon(s)</label>
+				 		<input id="input_lbnom" autocomplete="off" placeholder="Nom Latin " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.lb_nom for taxon in $ctrl.taxons | filter:{lb_nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectlbNom($item, $model, $label)" >
+					
+					 	<input id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in $ctrl.taxons | filter:{nom_vern:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectNomVern($item, $model, $label)" >
+					</div>
+
+					<div class="alert alert-warning" ng-show="$ctrl.showNewTaxons" class="ng-hide"> 
+						<b> Taxon(s) recherché(s): </b>
+							<div  ng-repeat="taxon in $ctrl.newTaxons">
+								<span> {{taxon.name}} </span> <span style="cursor: pointer;" class="glyphicon glyphicon-remove" ng-click="$ctrl.removeTaxonEvent(taxon.cd_nom)"> </span>
+							</div>
+					</div>
+			</div>
+
+					
+
+			<!-- </div> -->
+
+
+			 <!-- <button type="submit" type="button" class="btn btn-success" "> <span class="glyphicon glyphicon-plus"> </span> </button> -->
+			
+			<!-- <div class="panel panel-default"> -->
+			<div class="section">
+					<div class="section-title"> Où ?</div>
+
+				   <div class="form-group">
+		
+						    <select class="form-control" ng-model="$ctrl.form.where" ng-options="commune.nom for commune in $ctrl.communes">
+						    	<option value=""> - Selectionner une commune - </option>
+						    </select>
+				 	</div>
+
+				 	<div class="form-group">
+				 			<select class="form-control" ng-model="$ctrl.form.foret" ng-options="foret.lib_frt for foret in $ctrl.forets">
+						    	<option value=""> - Selectionner une forêt - </option>
+						    </select>
+				 	</div>
+			</div>
+
+
+			
+			<div class="section">
+					<div class="section-title"> Quand ?</div>
+					  <div class="form-group">
+					      <div>
+					        <p class="input-group">
+					          <input placeholder="Après le: (Date)" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.form.when.first"" is-open="$ctrl.popup.first.opened" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" />
+					          <span class="input-group-btn">
+					            <button type="button" class="btn btn-default" ng-click="$ctrl.open('first')"><i class="glyphicon glyphicon-calendar"></i></button>
+					          </span>
+					        </p>
+					      </div>
+					  </div>
+				      <div>
+				        <p class="input-group">
+				          <input placeholder="Avant le: (Date)" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.form.when.last"" is-open="$ctrl.popup.last.opened" datepicker-options="dateOptions" close-text="Close" alt-input-formats="altInputFormats" />
+				          <span class="input-group-btn">
+				            <button type="button" class="btn btn-default" ng-click="$ctrl.open('last')"><i class="glyphicon glyphicon-calendar"></i></button>
+				          </span>
+				        </p>
+				      </div>
+			</div>
+			<div class="section">
+				<div class="section-title"> Qui ?</div>
+				<input  autocomplete="off" placeholder="Observateur " type="text" ng-model="$ctrl.form.observateur" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="r as r.observateur for r in $ctrl.typologie.observateurs  | limitTo:8" class="form-control"  typeahead-no-results="noResults" >
+				<select class="form-control" ng-model="$ctrl.form.structure" ng-options="r.nom_structure for r in $ctrl.typologie.structures">
+					<option value=""> - Structure - </option> 
+				</select>
+			
+
+		      <div class="form-inline form-group" style="margin-top: 5px;">
+			  	 <button type="button" class="btn btn-danger formbutton " uib-tooltip="Raffraichir la sélection" ng-click="$ctrl.onRefreshEvent()"> <span class="glyphicon glyphicon-remove"> </span>  </button>
+			   	<button type="submit" type="button" class="btn btn btn-success formbutton" ng-click="$ctrl.submitForm($ctrl.form)"> Rechercher </button>
+			  </div>
+			 </div>
+
+			</div> <!-- End  -->
+		</form>
+
+	</div>
+</div>
+<!-- <div class="col-md-3 bloc-synthese" style="padding-right: 0px;">
+	<div class="panel panel-default">
+
+	</div>
+	<div class="panel-heading">
+			<h3 class="panel-title"> <b> Rechercher des observations </b> </h3>
+	</div>
+
+	<div class="section">
+	<div class="slide-animate" ng-include="$ctrl.templateProtocole"></div>
+
+	</div>
+	
+</div> -->

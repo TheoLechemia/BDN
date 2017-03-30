@@ -91,14 +91,18 @@ echo "Creation des tables spatiales"
  sudo -n -u postgres -s shp2pgsql -W "LATIN1" -s $projection -D -I ./data/layers/COMMUNE.shp layers.commune | sudo -n -u postgres -s psql -d $db_name
 
  sudo -n -u postgres -s psql -d $db_name -c " GRANT SELECT ON layers.commune TO $user_bdn;"
+ sudo -n -u postgres -s psql -d $db_name -c "GRANT USAGE, SELECT ON SEQUENCE layers.commune_gid_seq TO $user_bdn;"
  
 
 
 sudo -n -u postgres -s shp2pgsql -W "LATIN1" -s $projection -D -I ./data/layers/perimetre_forets.shp layers.perimetre_forets | sudo -n -u postgres -s psql -d $db_name
 sudo -n -u postgres -s psql -d $db_name -c " GRANT SELECT ON layers.perimetre_forets TO $user_bdn;"
+sudo -n -u postgres -s psql -d $db_name -c "GRANT USAGE, SELECT ON SEQUENCE layers.perimetre_forets_gid_seq TO $user_bdn;"
 
 sudo -n -u postgres -s shp2pgsql -W "LATIN1" -s $projection -D -I ./data/layers/GLP_UTM20N1X1.shp layers.mailles_1k | sudo -n -u postgres -s psql -d $db_name
 sudo -n -u postgres -s psql -d $db_name -c " GRANT SELECT ON layers.mailles_1k TO $user_bdn;"
+sudo -n -u postgres -s psql -d $db_name -c "GRANT USAGE, SELECT ON SEQUENCE layers.mailles_1k_gid_seq TO $user_bdn;"
+
 sudo -n -u postgres -s psql -d $db_name -c " ALTER TABLE layers.mailles_1k RENAME code_10km TO code_1km;"
 
 sudo sed -i -e "s/onfuser/$user_bdn/g" /tmp/create_table_bdn.sql
@@ -114,7 +118,10 @@ rm ./TAXREFv10.0.txt
 sudo -n -u postgres -s psql -d $db_name -c "DROP FOREIGN TABLE fdw.taxref_v10;"
 
 
-
+#Sauvegarde de la BDD
+mkdir $backup_directory
+mkdir $backup_directory/DAYLY
+mkdir $backup_directory/MONTHLY
 
 
 

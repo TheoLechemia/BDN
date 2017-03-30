@@ -87,7 +87,12 @@ def getObs():
     if flask.request.method == 'POST':
         geojsonMaille ={ "type": "FeatureCollection",  "features" : list() }
         geojsonPoint ={ "type": "FeatureCollection",  "features" : list() }
-        sqlAndParams = utils.buildSQL()
+        sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur, st.nom_structure
+              FROM synthese.releve s
+              LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
+              JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
+              JOIN utilisateur.bib_structure st ON st.id_structure = s.id_structure"""
+        sqlAndParams = utils.buildSQL(sql, "synthese")
 
         db.cur.execute(sqlAndParams['sql'], sqlAndParams['params'])
         res = db.cur.fetchall()

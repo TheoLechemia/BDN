@@ -145,7 +145,9 @@ ALTER TABLE synthese.bib_protocole
     OWNER TO onfuser;
 
 
-INSERT INTO synthese.bib_protocole VALUES ('Contact Flore', 'contact_flore', 'releve', 'contact_flore.releve', 'addObs/contactFlore.html', 'contact_flore.bib_champs_contact_flore'), ('Contact Faune','contact_faune', 'releve', 'contact_faune.releve', 'addObs/contactFaune.html', 'contact_faune.bib_champs_contact_faune');
+INSERT INTO synthese.bib_protocole VALUES
+  ('Tout protocole - Synthese','synthese', 'releve', 'synthese.releve', NULL, NULL), ('Contact Flore', 'contact_flore', 'releve', 'contact_flore.releve', 'addObs/contactFlore.html', 'contact_flore.bib_champs_contact_flore'),
+  ('Contact Faune','contact_faune', 'releve', 'contact_faune.releve', 'addObs/contactFaune.html', 'contact_faune.bib_champs_contact_faune');
 
 CREATE TABLE contact_faune.bib_champs_contact_faune(
 id serial  CONSTRAINT bib_fa_primary_key PRIMARY KEY,
@@ -446,7 +448,8 @@ WITH (format 'csv', header 'true', delimiter E';');
   -- Creation des vues pour les exports en shapefile
 
 CREATE OR REPLACE VIEW contact_faune.layer_poly AS 
- SELECT t.nom_vern,
+ SELECT 
+    t.nom_vern,
     t.lb_nom,
     f.observateur,
     f.date,
@@ -461,6 +464,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_poly AS
     m.geom,
     m.code_1km,
     s.nom_structure,
+    f.id_structure,
     f.id_synthese,
     f.type_obs,
     f.effectif,
@@ -483,7 +487,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_poly AS
 
 
 CREATE OR REPLACE VIEW contact_faune.layer_point AS 
- SELECT
+ SELECT 
     t.nom_vern,
     t.lb_nom,
     f.observateur,
@@ -498,6 +502,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
     f.commentaire,
     f.geom_point,
     s.nom_structure,
+    f.id_structure,
     f.id_synthese,
     f.type_obs,
     f.effectif,
@@ -513,7 +518,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
    FROM contact_faune.releve f
    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
    JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure
-  WHERE f.loc_exact = TRUE;
+  WHERE f.valide=true AND f.loc_exact = TRUE;
 
   ALTER VIEW contact_faune.layer_point
   OWNER TO onfuser;
@@ -534,6 +539,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
     f.geom_point,
     f.commentaire,
     s.nom_structure,
+    f.id_structure,
     f.id_synthese,
     f.abondance,
     f.nb_pied_approx,
@@ -548,6 +554,8 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
 
   ALTER VIEW contact_flore.layer_point
   OWNER TO onfuser;
+
+
 
 CREATE OR REPLACE VIEW contact_flore.layer_poly AS 
  SELECT 
@@ -567,7 +575,8 @@ CREATE OR REPLACE VIEW contact_flore.layer_poly AS
     m.geom,
     m.code_1km,
     s.nom_structure,
-    f.id_synthese
+    f.id_structure,
+    f.id_synthese,
     f.abondance,
     f.nb_pied_approx,
     f.nb_pied,
@@ -581,3 +590,167 @@ CREATE OR REPLACE VIEW contact_flore.layer_poly AS
 
     ALTER VIEW contact_flore.layer_poly
     OWNER TO onfuser;
+
+CREATE OR REPLACE VIEW contact_faune.to_csv AS 
+ WITH coord_point AS (
+         SELECT fp.id_obs,
+            st_x(st_transform(fp.geom_point, 4326)) AS x,
+            st_y(st_transform(fp.geom_point, 4326)) AS y
+           FROM contact_faune.releve fp
+          WHERE fp.loc_exact = true
+        ), coord_maille AS (
+         SELECT fm.id_obs,
+            fm.code_maille,
+            st_x(st_centroid(st_transform(m.geom, 4326))) AS x,
+            st_y(st_centroid(st_transform(m.geom, 4326))) AS y
+           FROM contact_faune.releve fm
+             JOIN layers.mailles_1k m ON m.code_1km::text = fm.code_maille::text
+          WHERE fm.loc_exact = false
+        )
+ SELECT t.nom_vern,
+    t.lb_nom,
+    f.observateur,
+    f.date,
+        CASE f.loc_exact
+            WHEN true THEN cp.x
+            WHEN false THEN cm.x
+            ELSE NULL::double precision
+        END AS x,
+        CASE f.loc_exact
+            WHEN true THEN cp.y
+            WHEN false THEN cm.y
+            ELSE NULL::double precision
+        END AS y,
+    f.loc_exact,
+    f.comm_loc,
+    f.cd_nom,
+    f.insee,
+    f.ccod_frt,
+    f.altitude,
+    f.geom_point,
+    f.commentaire,
+    s.nom_structure,
+    f.id_structure,
+    f.id_synthese,
+    f.type_obs,
+    f.effectif,
+    f.comportement,
+    f.nb_non_identife,
+    f.nb_male,
+    f.nb_femelle,
+    f.nb_jeune,
+    f.trace
+   FROM contact_faune.releve f
+     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
+     LEFT JOIN coord_point cp ON cp.id_obs = f.id_obs
+     LEFT JOIN coord_maille cm ON cm.id_obs = f.id_obs
+     JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure;
+
+ALTER TABLE contact_faune.to_csv
+  OWNER TO onfuser;
+
+
+
+CREATE OR REPLACE VIEW contact_flore.to_csv AS 
+ WITH coord_point AS (
+         SELECT fp.id_obs,
+            st_x(st_transform(fp.geom_point, 4326)) AS x,
+            st_y(st_transform(fp.geom_point, 4326)) AS y
+           FROM contact_flore.releve fp
+          WHERE fp.loc_exact = true
+        ), coord_maille AS (
+         SELECT fm.id_obs,
+            fm.code_maille,
+            st_x(st_centroid(st_transform(m.geom, 4326))) AS x,
+            st_y(st_centroid(st_transform(m.geom, 4326))) AS y
+           FROM contact_flore.releve fm
+             JOIN layers.mailles_1k m ON m.code_1km::text = fm.code_maille::text
+          WHERE fm.loc_exact = false
+        )
+ SELECT t.nom_vern,
+    t.lb_nom,
+    f.observateur,
+    f.date,
+        CASE f.loc_exact
+            WHEN true THEN cp.x
+            WHEN false THEN cm.x
+            ELSE NULL::double precision
+        END AS x,
+        CASE f.loc_exact
+            WHEN true THEN cp.y
+            WHEN false THEN cm.y
+            ELSE NULL::double precision
+        END AS y,
+    f.loc_exact,
+    f.comm_loc,
+    f.cd_nom,
+    f.insee,
+    f.ccod_frt,
+    f.altitude,
+    f.geom_point,
+    f.commentaire,
+    s.nom_structure,
+    f.id_structure,
+    f.id_synthese,
+    f.abondance,
+    f.nb_pied_approx,
+    f.nb_pied,
+    f.stade_dev
+   FROM contact_flore.releve f
+     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
+     LEFT JOIN coord_point cp ON cp.id_obs = f.id_obs
+     LEFT JOIN coord_maille cm ON cm.id_obs = f.id_obs
+     JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure;
+
+ALTER TABLE contact_flore.to_csv
+  OWNER TO onfuser;
+
+
+
+CREATE OR REPLACE VIEW synthese.to_csv AS 
+ WITH coord_point AS (
+         SELECT fp.id_synthese,
+            st_x(st_transform(fp.geom_point, 4326)) AS x,
+            st_y(st_transform(fp.geom_point, 4326)) AS y
+           FROM synthese.releve fp
+          WHERE fp.loc_exact = true
+        ), coord_maille AS (
+         SELECT fm.id_synthese,
+            fm.code_maille,
+            st_x(st_centroid(st_transform(m.geom, 4326))) AS x,
+            st_y(st_centroid(st_transform(m.geom, 4326))) AS y
+           FROM synthese.releve fm
+             JOIN layers.mailles_1k m ON m.code_1km::text = fm.code_maille::text
+          WHERE fm.loc_exact = false
+        )
+ SELECT t.nom_vern,
+    t.lb_nom,
+    f.observateur,
+    f.date,
+        CASE f.loc_exact
+            WHEN true THEN cp.x
+            WHEN false THEN cm.x
+            ELSE NULL::double precision
+        END AS x,
+        CASE f.loc_exact
+            WHEN true THEN cp.y
+            WHEN false THEN cm.y
+            ELSE NULL::double precision
+        END AS y,
+    f.loc_exact,
+    f.cd_nom,
+    f.insee,
+    f.ccod_frt,
+    f.altitude,
+    f.geom_point,
+    s.nom_structure,
+    f.id_structure,
+    f.id_synthese
+   FROM synthese.releve f
+     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
+     LEFT JOIN coord_point cp ON cp.id_synthese = f.id_synthese
+     LEFT JOIN coord_maille cm ON cm.id_synthese = f.id_synthese
+     JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure;
+
+ALTER TABLE synthese.to_csv
+  OWNER TO onfuser;

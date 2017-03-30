@@ -130,7 +130,8 @@ with open(fileName) as csvfile:
 #vue pour les export en shapefile
 
 string_create_view_poly = """CREATE OR REPLACE VIEW """+schemaName+""".layer_poly AS 
- SELECT t.nom_vern,
+ SELECT 
+    t.nom_vern,
     t.lb_nom,
     f.observateur,
     f.date,
@@ -145,6 +146,7 @@ string_create_view_poly = """CREATE OR REPLACE VIEW """+schemaName+""".layer_pol
     m.geom,
     m.code_1km,
     s.nom_structure,
+    f.id_structure,
     f.id_synthese,"""
 for r in column_name_and_type:
   string_create_view_poly += "f."+r['name']+' ,'
@@ -172,6 +174,7 @@ string_create_view_point = """CREATE OR REPLACE VIEW """+schemaName+""".layer_po
     f.commentaire,
     f.geom_point,
     s.nom_structure,
+    f.id_structure,
     f.id_synthese,"""
 for r in column_name_and_type:
   string_create_view_point += "f."+r['name']+' ,'
