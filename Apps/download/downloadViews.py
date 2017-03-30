@@ -17,7 +17,7 @@ import csv
 download = Blueprint('download', __name__, static_url_path="/download", static_folder="static", template_folder="templates")
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, os.pardir))
-UPLOAD_FOLDER = PARENT_DIR+'\\static\\uploads'
+UPLOAD_FOLDER = PARENT_DIR+'/static/uploads'
 
 @download.route('/', methods=['GET', 'POST'])
 @check_auth(2)
@@ -82,7 +82,7 @@ def getObs():
 
         time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         filename = "Export_"+time
-        dirPath = UPLOAD_FOLDER+"\\"+filename
+        dirPath = UPLOAD_FOLDER+"/"+filename
         point_path = dirPath+"_point"
         poly_path = dirPath+"_maille"
         csv_path = dirPath+"_csv.csv"

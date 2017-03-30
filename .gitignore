@@ -11,4 +11,4 @@ settings.ini
 node_modules/*
 *.pyc
 *.csv
-log/install_db.log
+log/*
