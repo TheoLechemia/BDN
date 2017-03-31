@@ -208,30 +208,30 @@ htmlFile = open(htmlFileName, "w")
 htmlContent = """<div class='form-group'> 
             """
 
-integerInput = "<input class='form-control' type='number' placeholder='{}' ng-model='child.protocoleForm.{}'  name='{}'> \n"
-simpleTextInput = "<input class='form-control' type='text' placeholder='{}' ng-model='child.protocoleForm.{}'  name='{}'> \n"
+integerInput = "<input class='form-control' type='number' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}'  name='{0}'> \n"
+simpleTextInput = "<input class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}'  name='{}'> \n"
 booleanInput = """<div'> 
-                    <select class='form-control' type='text' placeholder='{}' ng-model='child.protocoleForm.{}'  > \n
-                      <option value=""> -{}- </option> 
+                    <select class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}'  > \n
+                      <option value=""> -{0}- </option> 
                       <option value="True">  Oui  </option> \n
                       <option value="False">  Non  </option> \n
                     </select>\n
                   </div> \n"""
-listInput = "<div> <select class='form-control' type='text' placeholder='{}' ng-model='child.protocoleForm.{}' ng-options='choice as choice for choice in fields.{}' > <option value=""> - {} - </option> </select>  </div> \n"
+listInput = "<div> <select class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}' ng-options='choice as choice for choice in $ctrl.fields.{0}' > <option value=""> - {0} - </option> </select>  </div> \n"
 
 for r in column_name_and_type:
     print r['htmlType']
     if r['htmlType'] == 'Entier' or r['htmlType'] == 'Reel' :
-        write  =  integerInput.format(r['name'],r['name'],r['name'])
+        write  =  integerInput.format(r['name'])
         htmlFile.write(write)
     if r['htmlType'] == 'Chaîne de caractère':
-        write  =  simpleTextInput.format(r['name'],r['name'],r['name'])
+        write  =  simpleTextInput.format(r['name'])
         htmlFile.write(write)
     if r['htmlType'] == 'Booléen':
-        write  =  booleanInput.format(r['name'],r['name'], r['name'])
+        write  =  booleanInput.format(r['name'])
         htmlFile.write(write)
     if r['htmlType'] == "Liste de choix" :
-        write = listInput.format(r['name'],r['name'],r['name'], r['name'])
+        write = listInput.format(r['name'])
         htmlFile.write(write)
 htmlFile.close()
 
