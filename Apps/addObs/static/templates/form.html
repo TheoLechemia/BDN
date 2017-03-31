@@ -39,7 +39,7 @@
 
 							    <div class="form-group" >
 					                <div class='input-group date' id='datetimepicker1' ng-class="{'has-error' : addObsForm.date.$invalid && !addObsForm.date.$pristine || ($ctrl.validationAttempt && addObsForm.date.$invalid) }">
-					                    <input  id="firstDate" name="date" placeholder="Date de l'observation" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.globalForm.date"" is-open="$ctrl.isOpen" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" required ng-click="$ctrl.openDate()" />
+					                    <input  id="firstDate" name="date" placeholder="Date de l'observation" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.globalForm.date"" is-open="$ctrl.isOpen" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" required ng-click="$ctrl.openDate()" max-date="$ctrl.maxDate"/>
 					                    <span class="input-group-addon">
 					                        <span style="cursor: pointer;" class="glyphicon glyphicon-calendar" ng-click="$ctrl.openDate()"></span>
 					                    </span>

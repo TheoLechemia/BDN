@@ -251,10 +251,13 @@ function formControler(proxy, $http, $scope){
 	} 
 
   	// UI event for date picker
+  	formCtrl.maxDate = new Date()
+
   	formCtrl.popup = {
     	first:{ opened : false},
     	last:{opened:false} 
   		};
+
 
 	formCtrl.open = function(prop) {
 		if (prop == "first"){

@@ -69,6 +69,9 @@ function formController($http){
 
    formCtrl.child = {'protocoleForm':{}};
 
+   //DATE UI EVENT
+
+   formCtrl.maxDate = new Date();
 
    formCtrl.isOpen = false;
 
