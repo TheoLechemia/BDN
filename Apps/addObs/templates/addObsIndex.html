@@ -36,93 +36,15 @@
 </head>
 <body>
  {% include 'navbar.html' %}
-<div ng-app="app" class="container-fluid">
 
-        <div ng-controller="headerCtrl">
-		
-			<div class="col-sm-3"> 
-				<div class="panel panel-default">
-					<div class="section">
-						<form name="addObsForm" ng-submit="onSubmit(addObsForm)" novalidate>
-							<div class="form-group">
-							    <div class="btn-group">
-							    <label> Protocole</label>
-							    	<select ng-model="selectedProtocole" ng-change="bindNewValues(selectedProtocole)" ng-options="row.nom_protocole for row in protocole">
-							    		<option value=""> - Selectionner un protocole - </option>
-							    	</select>
-<!-- 			        				<label class="btn btn-success" ng-model="view" uib-btn-radio="'flore'" uncheckable>Flore</label>
-			        				<label class="btn btn-success" ng-model="view" uib-btn-radio="'faune'" uncheckable>Faune</label> -->
-			  					</div>
-			  				</div>
-			  				<div class="form-group" ng-class="{'has-error' : addObsForm.observateur.$invalid && !addObsForm.observateur.$pristine  || (validationAttempt && addObsForm.observateur.$invalid)}">
-								<input class="form-control" type="text" name="observateur" placeholder="Observateur: NOM PRENON - en majuscule" ng-model="globalForm.observateur" required>
-								<p ng-show="(addObsForm.observateur.$invalid && !addObsForm.observateur.$pristine) || (validationAttempt && addObsForm.observateur.$invalid) " class="help-block">Le nom de l'observateur est requis</p>
-							</div>
+  <div ng-app="app" >
+    <app ></app>
+</div>
 
 
-							<div class="form-group" >
-						 		<input name = "nom_vern" id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="globalForm.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.nom_vern for taxon in search_vern_name($viewValue, selectedProtocole)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="noResultsNomVern" typeahead-loading="loadingNomVern">
-						 	</div>
-
-							 	<i ng-show="loadingNomVern" class="glyphicon glyphicon-refresh"></i>
-						 	    <div ng-show="noResultsNomVern">
-							      <i  style="color:red;" class="glyphicon glyphicon-remove"></i> Aucun résultat
-							    </div>
-						
-							<div class="form-group" ng-class="{'has-error' : addObsForm.lb_nom.$invalid && !addObsForm.lb_nom.$pristine  || (validationAttempt && addObsForm.lb_nom.$invalid) }">
-							 	<input name="lb_nom" autocomplete="off" placeholder="Nom scientifique " type="text" ng-model="globalForm.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.lb_nom for taxon in search_scientist_name($viewValue, selectedProtocole)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="noResults"  required typeahead-loading="loadingLbnom">
-							 	<i ng-show="loadingLbnom" class="glyphicon glyphicon-refresh"></i>
-							 	    <div ng-show="noResults">
-								      <i  style="color:red;" class="glyphicon glyphicon-remove"></i> Aucun résultat
-								    </div>
-							 	<p ng-show="(addObsForm.lb_nom.$invalid && !addObsForm.lb_nom.$pristine) || (validationAttempt && addObsForm.lb_nom.$invalid)" class="help-block">Le nom scientifique est requis</p>
-							</div>
-
-							    <div class="form-group" >
-					                <div class='input-group date' id='datetimepicker1' ng-class="{'has-error' : addObsForm.date.$invalid && !addObsForm.date.$pristine || (validationAttempt && addObsForm.date.$invalid) }">
-					                    <input  id="firstDate" name="date" placeholder="Date de l'observation" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="globalForm.date"" is-open="isOpen" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" required ng-click="openDate()" />
-					                    <span class="input-group-addon">
-					                        <span style="cursor: pointer;" class="glyphicon glyphicon-calendar" ng-click="openDate()"></span>
-					                    </span>
-					                </div>
-					                <p style="color: #a94442;"  ng-show="addObsForm.date.$invalid && !addObsForm.date.$pristine || (validationAttempt && addObsForm.date.$invalid)" class="help-block" >Le date est requise</p>
-					            </div>
 
 
-							      
-							  
-							  <div ng-show="showCoord" class="form-group">
-								  <label> Coordonnées  </label>
-								  <input class="form-control" type="number" step="0.001" name="" placeholder="X" ng-model="markers.main.lng" ng-change="changeLng()" >
-								  <input class="form-control" type="number" step="0.001" placeholder="Y" ng-model="markers.main.lat" ng-change="changeLat()">
-							  </div>
-
-							  <label> Champs facultatifs  </label>
-							  <input class="form-control" type="text" placeholder="Commentaire localisation" ng-model="globalForm.comm_loc"  >
-							  
-							  <div class="slide-animate" ng-include="selectedProtocole.template"></div>
-
-							  <input class="form-control" type="text" placeholder="Commentaire" ng-model="globalForm.commentaire"  >
-
-
-							<input class="btn btn-success" type="submit">
-							<div ng-show="formSuccessfullySent" class="alert alert-success">Observation enregistrée avec succès</div>
-						</form>
-
-						<div class="row" style="height: 10px;"></div>
-
-											
-					</div>
-				</div>
-
-			</div>
-
-			<div class="col-sm-9">
-					<leaflet lf-center='center'  height="85vh" markers="markers" geojson=geojsonMaille></leaflet>
-
-					<button class="btn btn-success" ng-click="switchMaille()" ng-class="{'disabled': geojsonMaille.data != undefined }"> Mode maille</button>
-					 <button ng-click="switchPoint()" class="btn btn-success" ng-class="{'disabled': markers.main != undefined }"> Mode point</button>	
-			</div>
+	
 
   </div>
 		</div>

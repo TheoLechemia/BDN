@@ -125,7 +125,7 @@ CREATE OR REPLACE VIEW synthese.v_search_taxons AS
  SELECT DISTINCT s.cd_nom,
     t.nom_vern,
     t.lb_nom,
-    s.protocole
+    t.regne
    FROM synthese.releve s
      JOIN taxonomie.taxref t ON s.cd_nom = t.cd_nom;
 

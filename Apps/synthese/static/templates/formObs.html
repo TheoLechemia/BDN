@@ -6,14 +6,21 @@
 	<form>
 		<div class="section">
 				<div class="section-title"> Quoi ?</div>
-				<div class="form-group">
-					<label> Protocole</label>
-			    	<select class="form-control" ng-model="$ctrl.form.selectedProtocole" ng-change="$ctrl.changeProtocole($ctrl.form.selectedProtocole)" ng-options="row.nom_protocole for row in $ctrl.protocoles">
-			    		<option value=""> - Tous - </option>
-			    		<!-- <option value="Tous"> Tous</option> -->
-			    	</select>
+					<div class="form-inline form-group">
+						<div class="radio">
+						  <input  class="radiotout" ng-model="$ctrl.regneRadio" class="radio" type="radio" name="optradio" value="Tout"  ng-checked="true" ng-click="$ctrl.changeProtocole('Tout')">
+						  <label>Tout</label>
+						</div>			
+						<div class="radio">
+				  			<input ng-model="$ctrl.regneRadio" class="radio" type="radio" name="optradio" value="Animalia" ng-click="$ctrl.changeProtocole('Animalia')">
+				  			<label>Faune</label>
+						</div>
+						<div class="radio">
+						  <input ng-model="$ctrl.regneRadio" class="radio" type="radio" name="optradio" value="Plantae" ng-click="$ctrl.changeProtocole('Plantae')">
+						  <label>Flore</label>
+						</div>
 					
-				</div>
+					</div>
 					
 				<div class="form-group">
 				<label>Taxon(s)</label>

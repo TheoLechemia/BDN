@@ -120,7 +120,7 @@ def loadTaxons(protocole):
         sql = """SELECT * FROM synthese.v_search_taxons"""
     else:
         curProtocole = "'"+protocole+"'"
-        sql = "SELECT * FROM synthese.v_search_taxons WHERE protocole = "+curProtocole
+        sql = "SELECT * FROM synthese.v_search_taxons WHERE regne = "+curProtocole
     res = utils.sqltoDict(sql, db.cur)
     db.closeAll()
     return Response(flask.json.dumps(res), mimetype='application/json')

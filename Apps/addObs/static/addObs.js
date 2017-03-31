@@ -1,48 +1,65 @@
 //var app = angular.module("app", ['leaflet-directive', 'ui.bootstrap']);
 
-var app = angular.module("app", ['leaflet-directive', 'ui.bootstrap']).config(function($interpolateProvider){
-    $interpolateProvider.startSymbol('%%').endSymbol('%%');
+var angularInstance = angular.module("app", ['leaflet-directive', 'ui.bootstrap'])
+
+angularInstance.config(function($logProvider){
+  $logProvider.debugEnabled(false);
 });
 
 
-app.controller("headerCtrl", function($scope, $http, leafletData){
 
-$http.get(configuration.URL_APPLICATION+"addObs/loadProtocoles").then(function(response){ 
-    $scope.protocole = response.data;
-  })
+function appController($http, leafletData){
+  appCtrl = this;
 
+    $http.get(configuration.URL_APPLICATION+"addObs/loadProtocoles").then(function(response){ 
+      appCtrl.protocole = response.data;
+    })
 
-$scope.search_scientist_name = function(expre, selectedProtocole){
-  console.log(selectedProtocole);
-  return $http.get(configuration.URL_APPLICATION+"addObs/search_scientist_name/"+selectedProtocole.nom_schema+"/"+expre).then(function(response){ 
-    return response.data;
-  })
-  }
+}// END CRTL
 
-$scope.search_vern_name = function(expre, selectedProtocole){
-  return $http.get(configuration.URL_APPLICATION+"addObs/search_vern_name/"+selectedProtocole.nom_schema+"/"+expre).then(function(response){ 
-    return response.data;
-  })
-  }
+template = 'addObs/templates/app.html';
+angularInstance.component('app', {
 
-$scope.bindNewValues = function(protocole){
-  table = protocole.bib_champs
-  $http.get(configuration.URL_APPLICATION+"addObs/loadValues/"+table).then(function(response){ 
-    $scope.fields = response.data;
-  });
-};
+  controller : appController,
+  templateUrl : template
 
-
-$scope.isLoading = true;
-$scope.showCoord = true;
+});
 
 
 
 //#######FORMULAIRE ##############
 
+function formController($http){
+  formCtrl = this;
 
-   $scope.globalForm = {
-    'coord' : {'lat': null, 'lng':null },
+
+  formCtrl.bindNewValues = function(protocole){
+    table = protocole.bib_champs
+    $http.get(configuration.URL_APPLICATION+"addObs/loadValues/"+table).then(function(response){ 
+      appCtrl.fields = response.data;
+    });
+  };
+
+
+  formCtrl.search_vern_name = function(expre, selectedProtocole){
+    return $http.get(configuration.URL_APPLICATION+"addObs/search_vern_name/"+selectedProtocole.nom_schema+"/"+expre).then(function(response){ 
+      return response.data;
+    })
+    }
+
+  formCtrl.search_scientist_name = function(expre, selectedProtocole){
+    console.log(selectedProtocole);
+    return $http.get(configuration.URL_APPLICATION+"addObs/search_scientist_name/"+selectedProtocole.nom_schema+"/"+expre).then(function(response){ 
+      return response.data;
+    })
+    }
+
+  formCtrl.isLoading = true;
+  formCtrl.showCoord = true;
+
+
+   formCtrl.globalForm = {
+    'coord' : {'lat': configuration.MAP.COORD_CENTER.Y, 'lng':configuration.MAP.COORD_CENTER.X },
     'loc_exact' : true,
     'code_maille': null,
     'commentaire': null,
@@ -50,44 +67,45 @@ $scope.showCoord = true;
    }
 
 
-   $scope.child = {'protocoleForm':{}};
+   formCtrl.child = {'protocoleForm':{}};
 
 
-   $scope.isOpen = false;
+   formCtrl.isOpen = false;
 
-   $scope.openDate = function(){
-      $scope.isOpen = !$scope.isOpen;
+   formCtrl.openDate = function(){
+      formCtrl.isOpen = !formCtrl.isOpen;
    }
 
-   $scope.changeLng = function(){
-    $scope.globalForm.coord.lng = $scope.markers.main.lng;
-   }
-  $scope.changeLat = function(){
-    $scope.globalForm.coord.lat = $scope.markers.main.lat;
-   }
+  //  formCtrl.changeLng = function(){
+  //   formCtrl.globalForm.coord.lng = formCtrl.markers.main.lng;
+  //  }
+  // formCtrl.changeLat = function(){
+  //   formCtrl.globalForm.coord.lat = formCtrl.markers.main.lat;
+  //  }
 
 
 
- $scope.validationAttempt = false;
+ formCtrl.validationAttempt = false;
 
-  $scope.onSubmit = function(form){
-    var completeForm = {'protocole': $scope.selectedProtocole, 'general': $scope.globalForm, 'protocoleForm': $scope.child.protocoleForm};
-    $scope.validationAttempt = true;
+  formCtrl.onSubmit = function(form){
+    var completeForm = {'protocole': formCtrl.selectedProtocole, 'general': formCtrl.globalForm, 'protocoleForm': formCtrl.child.protocoleForm};
+    formCtrl.validationAttempt = true;
     console.log(completeForm);
 
     console.log(form);
 
      console.log(form.$valid);
+     var loc_exact = this.globalForm.loc_exact;
 
     if (form.$valid){
           $http.post(configuration.URL_APPLICATION+'addObs/submit/', completeForm).then(function(response){
           if(response.status == 200){
-            $scope.formSuccessfullySent = true;
+            formCtrl.formSuccessfullySent = true;
             //angular.copy({},form);
             // on reset tous les champs
-            var saveCoord = $scope.globalForm.coord;
-            var saveMaille = $scope.globalForm.code_maille;
-            $scope.globalForm = {
+            var saveCoord = formCtrl.globalForm.coord;
+            var saveMaille = formCtrl.globalForm.code_maille;
+            formCtrl.globalForm = {
                     'coord' : saveCoord,
                     'loc_exact' : loc_exact,
                     'code_maille': saveMaille,
@@ -97,47 +115,89 @@ $scope.showCoord = true;
                     'commentaire': null,
                     'comm_loc': null,
                    }
-/*            $scope.formFlore = resetFormFlore;
-            $scope.formFaune = resetFormFaune;*/
-          $scope.child.protocoleForm = {};
-          }
 
+          formCtrl.child.protocoleForm = {};
+          }
           setTimeout(function(){
-            $scope.formSuccessfullySent = false;
+            formCtrl.formSuccessfullySent = false;
              }, 200);
           // on reset les actions sur les champs du formulaire pour l'affichage des erreurs
           form.observateur.$pristine= true;
           form.lb_nom.$pristine = true;
           form.date.$pristine = true;
-          $scope.validationAttempt = false;
+          formCtrl.validationAttempt = false;
 
     })
     }
+  }// END onSubmit
+
+
+  // EVENT between components
+    formCtrl.onCoordChange = function(coord){
+    this.globalForm.coord = coord;
   }
 
+  formCtrl.onSwitchLayer = function(){
+    this.globalForm.loc_exact = !this.globalForm.loc_exact;
+    console.log(this.showCoord);
+    this.showCoord = !this.showCoord;
+    console.log(this.showCoord);  
+  }
+
+  formCtrl.onCodeMailleChange = function(code){
+    this.globalForm.code_maille = code;
+  }
+
+  formCtrl.$onChanges = function(changes){
+      if(changes.coord){
+        this.globalForm.coord = changes.coord.currentValue;
+      }
+  }
+
+   formCtrl.checkProtocole  = function(){
+      console.log("click");
+    if(formCtrl.selectedProtocole == undefined){
+      alert("Selectionner un protocole")
+    };
+  }
+
+}// END CTRL
 
 
-//##########################################################
-//####################### MAP ##############################
-//##########################################################
+templateForm = 'addObs/templates/form.html';
+angularInstance.component('formAdd', {
+
+  controller : formController,
+  templateUrl : templateForm,
+  bindings :{
+    protocole: '<',
+    fields : '<',
+  }
+
+});
 
 
 
-var originStyle = {
+
+
+
+function mapController($http, $scope){
+  mapCtrl = this;
+  var originStyle = {
     "color": "#000000",
     "weight": 1,
     "fillOpacity": 0
-};
+  };
 
 var selectedStyle = {
   'color':'#ff0000',
    'weight':3
-}
+  }
 
 
 
 var saveGeojsonMaille = {};
-$scope.geojsonMaille = {};
+mapCtrl.geojsonMaille = {};
 
 // load Mailles
 
@@ -147,45 +207,52 @@ $http.get(configuration.URL_APPLICATION+'addObs/loadMailles').success(function(d
   saveGeojsonMaille['style'] = originStyle;
 })
 
-/*$http.get(configuration.URL_APPLICATION+"static/data/mailles_1km.geojson").success(function(data){
-
-  saveGeojsonMaille['data'] = data;
-  saveGeojsonMaille['style'] = originStyle;
-})*/
 
 
-  $scope.center = { 'lat':configuration.MAP.COORD_CENTER.Y , 'lng':configuration.MAP.COORD_CENTER.X , 'zoom':configuration.MAP.ZOOM_LEVEL }
-  $scope.markers = {
-    main: {
-        lat: configuration.MAP.COORD_CENTER.Y,
-        lng: configuration.MAP.COORD_CENTER.X,
-        draggable: true,
-        icon : { 
-          iconUrl: '/static/lib/leaflet/images/marker-icon.png',
-          shadowUrl: '/static/lib/leaflet/images/marker-shadow.png',
-          iconSize:    [25, 41],
-          iconAnchor:  [12, 41],
-          popupAnchor: [1, -34],
-          tooltipAnchor: [16, -28],
-          shadowSize:  [41, 41]
-        }
+  mapCtrl.center = { 'lat':configuration.MAP.COORD_CENTER.Y , 'lng':configuration.MAP.COORD_CENTER.X , 'zoom':configuration.MAP.ZOOM_LEVEL }
+  mapCtrl.$onInit= function(){
+    mapCtrl.markers = {
+      main: {
+          lat: mapCtrl.y,
+          lng: mapCtrl.x,
+          draggable: true,
+          icon : { 
+            iconUrl: '/static/lib/leaflet/images/marker-icon.png',
+            shadowUrl: '/static/lib/leaflet/images/marker-shadow.png',
+            iconSize:    [25, 41],
+            iconAnchor:  [12, 41],
+            popupAnchor: [1, -34],
+            tooltipAnchor: [16, -28],
+            shadowSize:  [41, 41]
+          }
+      }
     }
+    var saveMarkers = mapCtrl.markers;
   }
-  var saveMarkers = $scope.markers;
 
   // EVENT
 
+  // init marker
+
+
    $scope.$on('leafletDirectiveMarker.drag', function(e, args) {
-      $scope.markers.main.lat = args.leafletObject._latlng.lat;
-      $scope.markers.main.lng = args.leafletObject._latlng.lng;
-      $scope.globalForm.coord.lat = args.leafletObject._latlng.lat;
-      $scope.globalForm.coord.lng = args.leafletObject._latlng.lng;
+      var coord = {'lat':args.leafletObject._latlng.lat, 'lng':args.leafletObject._latlng.lng }
+      mapCtrl.updateCoordinates({
+        $event : {'coord' :coord}
+      });
+      mapCtrl.markers.main.lat = args.leafletObject._latlng.lat;
+      mapCtrl.markers.main.lng = args.leafletObject._latlng.lng;
+
+      saveMarkers = mapCtrl.markers;
    });
 
    selectedMaille = null;
    $scope.$on('leafletDirectiveGeoJson.click', function(e, args) {
 
-    $scope.globalForm.code_maille = args.model.properties.code_1km;
+    var code_maille = args.model.properties.code_1km;
+    mapCtrl.updateCodeMaille({
+      $event : {'code' :code_maille}
+    })
 
     //set style
       if (!selectedMaille){
@@ -198,74 +265,60 @@ $http.get(configuration.URL_APPLICATION+'addObs/loadMailles').success(function(d
       }
       
     });
-   var loc_exact = true;
-  $scope.switchMaille = function(){
-    loc_exact = false;
-    $scope.globalForm.loc_exact = loc_exact;
-    $scope.markers = {};
-    $scope.showCoord = false;
-    console.log(saveGeojsonMaille);
-    $scope.geojsonMaille = saveGeojsonMaille;
+
+  var loc_exact = true;
+  mapCtrl.switchMaille = function(){
+    this.markers={};
+    this.switchLayer();
+    mapCtrl.geojsonMaille = saveGeojsonMaille;
   }
 
-  $scope.switchPoint = function(){
+  mapCtrl.switchPoint = function(){
     loc_exact = true;
-    $scope.showCoord = true;
-    $scope.globalForm.loc_exact = loc_exact;
-    $scope.geojsonMaille = {};
-    $scope.markers = saveMarkers;
+    this.switchLayer();
+    mapCtrl.geojsonMaille = {};
+    mapCtrl.markers = saveMarkers;
   }
 
-// google map layer switcher
-leafletData.getMap()
-            .then(function(map) {
-      console.log(map)
-      var LayerControl = L.Control.extend({
+  mapCtrl.$onChanges = function(changes){
+    if (changes.y){
+      mapCtrl.markers.main.lat = changes.y.currentValue;
+    }
+    if (changes.x){
+      mapCtrl.markers.main.lng = changes.x.currentValue;
+    }
+  }
 
-      options: {
-        position: 'bottomleft' 
-      },
-
-    onAdd: function (map) {
-        currentTileMap = "topo";
-        var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-     
-        container.style.backgroundColor = 'white';
-       // container.style.backgroundImage = "url("+configurationuration.configuration.URL_APPLICATION+"/static/images/logo_earth_map.PNG)";
-        container.style.width = '50px';
-        container.style.height = '50px';
-        container.style.border = 'solid white 1px';
-        container.style.cursor = 'pointer';
-        $(container).attr("data-placement", "right");
-        $(container).attr("data-toggle", "tooltip");
-        $(container).attr("data-original-title", "Photos aérienne");
+}// END CTRL
 
 
-        container.onclick = function(){
-          if(currentTileMap == "topo"){
-         // container.style.backgroundImage = "url("+configurationuration.configuration.URL_APPLICATION+"/static/images/logo_topo_map.PNG)";
-          $(container).attr("data-original-title", "Plan");
-          map.removeLayer(firstMapTile);
-          orthoMap.addTo(map);
-          currentTileMap = "earth";
-          }
-          else{
-          container.style.backgroundImage = "url("+configuration.configuration.URL_APPLICATION+"/static/images/logo_earth_map.PNG)";
-          $(container).attr("data-original-title", "Photos aérienne");
-          map.removeLayer(orthoMap);
-          firstMapTile.addTo(map);
-          currentTileMap = "topo";
-          }
-        }
-        return container;
-      }
+templateMap = 'addObs/templates/map.html';
+angularInstance.component('leafletMap', {
+
+  controller : mapController,
+  templateUrl : templateMap,
+  bindings:{
+    updateCoordinates: '&',
+    switchLayer : '&',
+    updateCodeMaille:'&',
+    x: '<',
+    y: '<',
+  }
+
 });
-    });
 
 
 
 
 
- });
+
+
+
+
+
+
+
+
+ 
 
 

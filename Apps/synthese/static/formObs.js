@@ -43,7 +43,7 @@ function formControler(proxy, $http, $scope){
 	// changement de protocole, change les données de recherche des taxons (faune, flore) depuis le module pere APP
 	this.changeProtocole = function(protocole){
 		if(protocole){
-			currentProtocole = protocole.nom_schema
+			currentProtocole = protocole
 		}
 		else{
 			currentProtocole = "Tout"
@@ -136,7 +136,6 @@ function formControler(proxy, $http, $scope){
 			$("#input_lbnom").val('');
 			 $("#input_nomvern").val('');
 			}, 1000)
-
 	}
 	
 
