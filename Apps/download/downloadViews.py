@@ -36,6 +36,18 @@ def index():
     db.closeAll()
     return render_template('indexDownload.html', protocoles = protocoles, structures = structures, page_title=u"Télécharger des données", configuration=config)
 
+@download.route('/loadTaxons/<protocole>', methods=['GET', 'POST'])
+def loadTaxons(protocole):
+    db = getConnexion()
+    if protocole == "Tout":
+        sql = """SELECT * FROM synthese.v_search_taxons"""
+    else:
+        curProtocole = "'"+protocole+"'"
+        sql = "SELECT * FROM synthese.v_search_taxons WHERE protocole = "+curProtocole
+    res = utils.sqltoDict(sql, db.cur)
+    db.closeAll()
+    return Response(json.dumps(res), mimetype='application/json')
+
 
 
 @download.route('/getObs', methods=['POST'])
@@ -43,8 +55,8 @@ def getObs():
     db = getConnexion()
     if request.method == 'POST':
         schemaReleve = 'synthese'
-        if request.json['selectedProtocole']:
-            schemaReleve = request.json['selectedProtocole']['nom_schema']
+        if request.json['globalForm']['selectedProtocole']:
+            schemaReleve = request.json['globalForm']['selectedProtocole']['nom_schema']
         sql = " SELECT * FROM "+schemaReleve+".%s s "
 
         dictSQL = utils.buildSQL(sql, 'download')

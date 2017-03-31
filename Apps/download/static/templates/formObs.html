@@ -15,7 +15,7 @@
 						
 					</div>
 						
-					<div class="form-group">
+					<div class="form-group" ng-click="$ctrl.checkProtocole()">
 					<label>Taxon(s)</label>
 				 		<input id="input_lbnom" autocomplete="off" placeholder="Nom Latin " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.lb_nom for taxon in $ctrl.taxons | filter:{lb_nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectlbNom($item, $model, $label)" >
 					
@@ -88,26 +88,21 @@
 
 		      <div class="form-inline form-group" style="margin-top: 5px;">
 			  	 <button type="button" class="btn btn-danger formbutton " uib-tooltip="Raffraichir la sélection" ng-click="$ctrl.onRefreshEvent()"> <span class="glyphicon glyphicon-remove"> </span>  </button>
-			   	<button type="submit" type="button" class="btn btn btn-success formbutton" ng-click="$ctrl.submitForm($ctrl.form)"> Rechercher </button>
+			   	<button type="submit" type="button" class="btn btn btn-success formbutton" ng-click="$ctrl.submitForm()"> Rechercher </button>
 			  </div>
 			 </div>
-
-			</div> <!-- End  -->
 		</form>
+	</div> <!-- End  -->
+</div>
+<div class="col-md-3 bloc-synthese" style="padding-right: 0px;">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title"> <b> Protocole {{$ctrl.selectedProtocole.nom_protocole}} </b> </h3>
+		</div>
+
+		<div class="section">
+		<div class="slide-animate" ng-include="$ctrl.templateProtocole"></div>
+	</div>
 
 	</div>
 </div>
-<!-- <div class="col-md-3 bloc-synthese" style="padding-right: 0px;">
-	<div class="panel panel-default">
-
-	</div>
-	<div class="panel-heading">
-			<h3 class="panel-title"> <b> Rechercher des observations </b> </h3>
-	</div>
-
-	<div class="section">
-	<div class="slide-animate" ng-include="$ctrl.templateProtocole"></div>
-
-	</div>
-	
-</div> -->

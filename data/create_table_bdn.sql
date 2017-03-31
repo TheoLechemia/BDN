@@ -123,6 +123,7 @@ AFTER INSERT ON contact_flore.releve
 
 CREATE OR REPLACE VIEW synthese.v_search_taxons AS 
  SELECT DISTINCT s.cd_nom,
+    s.protocole,
     t.nom_vern,
     t.lb_nom,
     t.regne

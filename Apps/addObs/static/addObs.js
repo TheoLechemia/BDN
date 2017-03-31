@@ -158,7 +158,6 @@ function formController($http){
   }
 
    formCtrl.checkProtocole  = function(){
-      console.log("click");
     if(formCtrl.selectedProtocole == undefined){
       alert("Selectionner un protocole")
     };

@@ -15,7 +15,7 @@ proxy = angularInstance.factory('proxy', function proxy($http) {
 			},
 
 			loadTaxons: function(protocole){
-				return $http.get(CONFIGURATION.URL_APPLICATION+"synthese/loadTaxons/"+protocole)
+				return $http.get(CONFIGURATION.URL_APPLICATION+"download/loadTaxons/"+protocole)
 			},
 			loadCommunes: function(){
 				return $http.get(CONFIGURATION.URL_APPLICATION+"synthese/loadCommunes")
@@ -53,19 +53,8 @@ function appCtrl (proxy){
   ctrl.nbObs = "Les 50 dernieres observations";
   proxy.lastObs().then(function(response){
       ctrl.geojson = response.data;
-
     });
   
-
-  proxy.loadTaxons('Tout').then(function(response){
-      ctrl.taxonslist = response.data;
-      ctrl.TaxonsFaune = ctrl.taxonslist.filter(function(t){
-        return t.regne ='Animalia'
-      })
-      ctrl.TaxonsFlore = ctrl.taxonslist.filter(function(t){
-        return t.regne ='Plantae'
-      })
-    })
 
   proxy.loadCommunes().then(function(response){
       ctrl.communesList = response.data;
@@ -95,6 +84,7 @@ function appCtrl (proxy){
   	console.log(protocole);
   	table_field = protocole.bib_champs;
   	console.log(table_field);
+
   	proxy.bindNewValues(table_field).then(function(response){
   		ctrl.fields = response.data;
   	})
@@ -120,6 +110,7 @@ function appCtrl (proxy){
       window.location =CONFIGURATION.URL_APPLICATION+'download/download/uploads/'+response.data;       
     })
   }
+
 
 
 }
@@ -162,9 +153,12 @@ function formControler(proxy, $http, $scope){
 		'structure': {'id_structure': null, 'nom_structure': null},
 	}
 
+	formCtrl.child = {'protocoleForm':{}};
+
 	// à l'envoie du formulaire, on le passe au module pere: APP qui fait la requete ajax sur les geojson et les passe a toute l'appli
-	this.submitForm = function(form){
-		this.onFormSubmit({$event: {form: form}})
+	formCtrl.submitForm = function(){
+		form = {'globalForm': this.form, 'protocoleForm': this.child.protocoleForm} 
+		this.onFormSubmit({$event: {'form': form}})
 	}
 
 
@@ -178,6 +172,7 @@ function formControler(proxy, $http, $scope){
 	})
 	// changement de protocole, change les données de recherche des taxons (faune, flore) depuis le module pere APP
 	formCtrl.changeProtocole = function(protocole){
+		this.selectedProtocole = protocole;
 		if(protocole){
 			this.templateProtocole = CONFIGURATION.URL_APPLICATION+"addObs/"+protocole.template;
 			console.log(this.templateProtocole);
@@ -211,35 +206,7 @@ function formControler(proxy, $http, $scope){
 	formCtrl.showTaxonomie = false;
 
 
-	// si on fait la recherche taxonomique: on affiche les trucs selectionnés, et on met à null la recherche par nom de taxon
-	formCtrl.onTaxonomieChange = function(){
-		if (this.showTaxonomie == false){
-			this.showTaxonomie = !$scope.showTaxonomie;
-		}
-		// on met à null les cd_nom et vide le tableau de cd_nom du formulaire
-		this.form.taxon.cd_nom = null;
-		this.form.taxon.lb_nom = null;
-		this.form.taxon.nom_vern = null;
-		this.form.listTaxons = [];
-		this.newTaxons = [];
 
-		// on vide les input de la recherche des taxons
-		$("#input_lbnom").val('');
-		$("#input_nomvern").val('');
-		// on chache eventuellement la liste des taxons selectionnées
-		this.showNewTaxons = false;
-	}
-	// si on rempli  un nom de taxon apres avoir faire une recherche par taxonomie, on reinitialise la hierarchie taxo à null;
-	formCtrl.fillTaxonEvent = function(){
-		if(this.showTaxonomie){
-			this.showTaxonomie = !$scope.showTaxonomie;
-			this.form.regne = null;
-			this.form.phylum = null;
-			this.form.classe = null;
-			this.form.ordre = null;
-			this.form.famille = null;
-		}
-	} 
 
 	//synchronisation des deux inputs et ajout du cd_nom selectionné dans la liste de cd_nom du formulaire
 	// et ajout à la liste des taxons selectionnés
@@ -318,6 +285,12 @@ function formControler(proxy, $http, $scope){
 		this.newTaxons = [];
 		this.showNewTaxons = false;
 	} 
+
+	  formCtrl.checkProtocole  = function(){
+	    if(formCtrl.selectedProtocole == undefined){
+	      alert("Selectionner un protocole")
+	    };
+	  }
 
   	// UI event for date picker
   	formCtrl.popup = {

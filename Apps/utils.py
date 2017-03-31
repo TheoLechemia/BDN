@@ -124,7 +124,7 @@ def zipItwithCSV(dirPath, maille):
 
     zf.write(dirPath+"_csv.csv", os.path.basename(dirPath+"_csv.csv"))
 
-
+firstParam = True
 def askFirstParame(sql, firstParam):
     if firstParam:
         firstParam = False
@@ -133,30 +133,39 @@ def askFirstParame(sql, firstParam):
         sql = sql + " AND "
     return sql
 
-def getFormParameters():
-    protocole = flask.request.json['selectedProtocole']
-    listTaxons = flask.request.json['listTaxons']
-    firstDate = flask.request.json['when']['first']
-    lastDate = flask.request.json['when']['last']
+def getFormParameters(app):
+    data = None
+    if app == "synthese":
+        data = flask.request.json
+    if app == "download":
+        data = flask.request.json['globalForm']
+
+    protocole = data['selectedProtocole']
+    listTaxons = data['listTaxons']
+    firstDate = data['when']['first']
+    lastDate = data['when']['last']
     foret = None
     commune = None
-    if flask.request.json['where'] != None:
-        commune = flask.request.json['where']['code_insee']    
-    if flask.request.json['foret'] != None: 
-        foret = flask.request.json['foret']['ccod_frt']
+    if data['where'] != None:
+        commune = data['where']['code_insee']    
+    if data['foret'] != None: 
+        foret = data['foret']['ccod_frt']
 
     # recherche taxonomique avancee
-    regne = flask.request.json['regne']
-    phylum = flask.request.json['phylum']
-    classe = flask.request.json['classe']
-    ordre = flask.request.json['ordre']
-    famille = flask.request.json['famille']
-    group2_inpn = flask.request.json['group2_inpn']
-    habitat = flask.request.json['habitat']['id']
-    protection = flask.request.json['protection']
-    lr = flask.request.json['lr']['id_statut']
-    structure = flask.request.json['structure']['id_structure']
-    observateur = flask.request.json['observateur']['observateur']
+    regne = data['regne']
+    phylum = data['phylum']
+    classe = data['classe']
+    ordre = data['ordre']
+    famille = data['famille']
+    group2_inpn = data['group2_inpn']
+    habitat = data['habitat']['id']
+    protection = data['protection']
+    lr = data['lr']['id_statut']
+    structure = data['structure']['id_structure']
+    observateur = data['observateur']['observateur']
+
+
+
 
 
 
@@ -168,7 +177,7 @@ def buildSQL(sql, app):
     params = list()
     firstParam = True
     #recuperation des parametres
-    formParameters = getFormParameters()
+    formParameters = getFormParameters(app)
     #si ça vient de la synthese on recherche le protocole, sinon non
     if app == "synthese":
         if formParameters['protocole']:
@@ -261,5 +270,14 @@ def buildSQL(sql, app):
         sql = sql + " s.date <= %s "
         params.append(formParameters['lastDate'])
 
+    if app == "download":
+        protocoleData = flask.request.json['protocoleForm']
+        for key, value in protocoleData.iteritems():
+            sql = askFirstParame(sql,firstParam)
+            sql+= key+"= %s"
+            firstParam = False
+            params.append(value)
+
+    print 'LAAAAAAAAAAAA SQL'
     print sql
     return {'params': params, 'sql' :sql}
