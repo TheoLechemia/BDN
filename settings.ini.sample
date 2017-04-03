@@ -16,3 +16,5 @@ liste_rouge_path=/home/USER/BDN/data/Liste_rouge_Guadeloupe.txt
 
 taxref_protection_path=/home/USER/BDN/PROTECTION_ESPECES_10.txt
 
+backup_directory=<PATH_TO_BACKUP>
+

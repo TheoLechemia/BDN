@@ -9,10 +9,15 @@ YEAR=`date +%y`
 
 
 #DAILY BACKUP
-export PGPASSWORD=$user_bdn_pass;pg_dump -h localhost -U $user_bdn --format=c --file=$backup_directory/DAYLY/$TODAY.backup bdn
+export PGPASSWORD=Martine50=;pg_dump -h localhost -U onf_admin bdn --format=c --file=/home/ubuntu/sauvegarde_bdd/DAYLY/$TODAY.backup
 
 #MONTHLY BACKUP
 if [ $DAY == "01" ]; then
 	rm $backup_directory/DAYLY/*
-	export PGPASSWORD=$user_bdn_pass;pg_dump -h localhost $user_bdn --format=c --file=$backup_directory/MONTHLY/$MONTH-$YEAR.backup bdn
+	export PGPASSWORD=Martine50=;pg_dump -h localhost -U onf_admin bdn --format=c --file=/home/ubuntu/sauvegarde_bdd/MONTHLY/$MONTH-$YEAR.backup 
 fi
+
+
+
+
+

@@ -36,6 +36,7 @@ from Apps.download.downloadViews import download
 
 
 
+
 application.register_blueprint(main)
 
 application.register_blueprint(synthese, url_prefix='/synthese')
@@ -49,5 +50,3 @@ application.register_blueprint(errorsbp)
 application.register_blueprint(addObs,url_prefix='/addObs')
 
 application.register_blueprint(download, url_prefix='/download')
-
-
