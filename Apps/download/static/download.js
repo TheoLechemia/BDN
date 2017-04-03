@@ -102,9 +102,6 @@ function appCtrl (proxy){
 
 
 
-
-
-
 }
 
 angularInstance.component('app', {
@@ -164,6 +161,7 @@ function formControler(proxy, $http, $scope){
 	})
 	// changement de protocole, change les données de recherche des taxons (faune, flore) depuis le module pere APP
 	formCtrl.changeProtocole = function(protocole){
+		this.child={'protocoleForm': {}};
 		this.selectedProtocole = protocole;
 		if(protocole){
 			this.templateProtocole = CONFIGURATION.URL_APPLICATION+"addObs/"+protocole.template;
@@ -252,6 +250,7 @@ function formControler(proxy, $http, $scope){
 	// rafrachir l'ensemble des sélections
 	formCtrl.onRefreshEvent = function(){
 		console.log('refresh');
+		this.child = {'protocoleForm': {}};
 		this.form = {
 		'selectedProtocole': null,
 		'who' : null,
