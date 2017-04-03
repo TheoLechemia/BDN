@@ -1,5 +1,5 @@
 # coding: utf-8
-from flask import Flask, request, render_template, url_for, redirect, send_from_directory, flash, session, Blueprint, json, Response
+from flask import Flask, request, render_template, url_for, redirect, send_from_directory, flash, session, Blueprint, json, Response, send_file, jsonify
 
 from ..auth import check_auth
 
@@ -8,6 +8,7 @@ from ..config import config
 from ..database import *
 
 from .. import utils
+from ..initApp import app
 
 from datetime import datetime
 import os
@@ -17,7 +18,8 @@ import csv
 download = Blueprint('download', __name__, static_url_path="/download", static_folder="static", template_folder="templates")
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 PARENT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, os.pardir))
-UPLOAD_FOLDER = PARENT_DIR+'/static/uploads'
+UPLOAD_FOLDER = PARENT_DIR+'\\static\\uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @download.route('/', methods=['GET', 'POST'])
 @check_auth(2)
@@ -63,8 +65,6 @@ def getObs():
         # params = tuple(dictSQL['params'])
         params = dictSQL['params']
         reformatedParams = list()
-        print len(params)
-        print params
         stringTupple = str()
         for p in params:
             if type(p) is int or type(p) is float:
@@ -83,10 +83,6 @@ def getObs():
         paramtersCSV = list(reformatedParams)
         paramtersCSV.insert(0, 'to_csv')
 
-        print reformatedParams
-        print 'LAAAAAAAAAAAAAAAAAA'
-        print paramtersPoint
-        print paramtersMaille
         sql_point = dictSQL['sql']%tuple(paramtersPoint)
         sql_poly = dictSQL['sql']%tuple(paramtersMaille)
         sql_csv = dictSQL['sql']%tuple(paramtersCSV)
@@ -94,7 +90,7 @@ def getObs():
 
         time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         filename = "Export_"+time
-        dirPath = UPLOAD_FOLDER+"/"+filename
+        dirPath = UPLOAD_FOLDER+"\\"+filename
         point_path = dirPath+"_point"
         poly_path = dirPath+"_maille"
         csv_path = dirPath+"_csv.csv"
@@ -110,10 +106,6 @@ def getObs():
         cmd = cmd +'"'+sql_poly+'"'
         os.system(cmd)
         cmd_poly = cmd +'"'+sql_poly+'"'
-        file = open(debug, 'w')
-        file.write(cmd_poly)
-        file.close()
-        os.system(cmd)
         ###CSV###
         with open(csv_path, 'w') as f:
             outputquery = "COPY ({0}) TO STDOUT WITH CSV HEADER DELIMITER AS ';'".format(sql_csv)
@@ -125,8 +117,11 @@ def getObs():
         db.closeAll()
         return Response(json.dumps(filename), mimetype='application/json')
 
+        #return redirect(url_for('download.uploads',filename=filename))
+
+
 
 @download.route('/uploads/<filename>', methods=['GET'])
 def uploads(filename):
     filename = filename+".zip"
-    return send_from_directory(UPLOAD_FOLDER ,filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'] ,filename)

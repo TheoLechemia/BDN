@@ -72,12 +72,18 @@ function appCtrl (proxy){
   ctrl.formSubmit = function(form){
     ctrl.form = form;
     console.log(form);
-    proxy.sendData(form).then(function(response){
-    	window.location =CONFIGURATION.URL_APPLICATION+'download/uploads/'+response.data;      
-/*      ctrl.geojson = response.data;
+/*    proxy.sendData(form).then(function(response){
+    	setTimeout(function(){
+
+    	}, 5000);
+    	    
+      ctrl.geojson = response.data;
       nbObs = ctrl.geojson.point.features.length+ctrl.geojson.maille.features.length
-      ctrl.nbObs = nbObs+' observation(s)'*/
-    });
+      ctrl.nbObs = nbObs+' observation(s)'
+    });*/
+    proxy.sendData(form).then(function(response){
+    	window.location =CONFIGURATION.URL_APPLICATION+'download/uploads/'+response.data;       
+    })
   }
 
   ctrl.changeProtocole = function(protocole){
@@ -94,22 +100,8 @@ function appCtrl (proxy){
   }
 
 
-  ctrl.updateCurrentListObs = function(id_synthese){
-    
-    ctrl.currentListObs = id_synthese;
-  }
 
-  ctrl.updateCurrentLeafletObs = function(id_synthese){
-    console.log("update with: "+ id_synthese);
-    ctrl.currentLeafletObs = id_synthese;
-  }
 
-  ctrl.exportShape = function(form){
-    proxy.exportShapeFile(form).then(function(response){
-    	console.log(response.data);
-      window.location =CONFIGURATION.URL_APPLICATION+'download/download/uploads/'+response.data;       
-    })
-  }
 
 
 
