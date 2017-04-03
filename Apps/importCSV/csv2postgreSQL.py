@@ -123,13 +123,15 @@ def csv2PG(file):
                 print 'lLAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
 
                 tabInter = row[field['spec_name']].split('#')
-                value = ''
+                value = None
                 if len(tabInter) != 1:
                     value = tabInter[1]
                 print value
                 stringInsert += ", "+field['field_name']
                 stringValues += ", %s"
-                generalValues.append(value.capitalize())
+                if value != None:
+                    value = value.capitalize()
+                generalValues.append(value)
 
 
             stringInsert+=")"
