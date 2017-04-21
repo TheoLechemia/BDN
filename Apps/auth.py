@@ -1,6 +1,7 @@
 from functools import wraps
 from flask import session
 from database import *
+from config import config
 from flask import redirect, url_for, request, flash
 
 
@@ -20,12 +21,14 @@ class User():
 
 def loadCurrentUser(name):
     db = getConnexion()
-    sql = 'SELECT * from utilisateur.login WHERE nom = %s'
-    param = [name]
+    sql = 'SELECT * from utilisateurs.v_userslist_forall_applications WHERE identifiant = %s AND id_application = %s'
+    param = [name, config['ID_APPLICATION']]
     db.cur.execute(sql, param)
     u = db.cur.fetchone()
     db.closeAll()
-    return User(u[0], u[1],u[2],u[3], u[4])
+    return User(u[1], u[2], u[6],u[16], u[8])
+
+
 
 
 def check_auth(level):
@@ -38,7 +41,6 @@ def check_auth(level):
                     return func(*args, **kwargs)
                 else:
                     flash("")
-                    print 'LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
                     print request.referrer
                     return redirect(request.referrer)
             else:

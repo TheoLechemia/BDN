@@ -66,7 +66,7 @@ sudo -n -u postgres -s psql -d $db_name -c "CREATE FOREIGN TABLE fdw.taxref_v10 
 ordre character varying, famille character varying, group1_inpn character varying,group2_inpn character varying,
 cd_nom integer, cd_taxsup integer, cd_sup integer, cd_ref integer, rang character varying,
 lb_nom character varying, lb_auteur character varying, nom_complet character varying, nom_complet_html character varying, nom_valide character varying,
-nom_vern character varying, nom_vern_eng character varying, habitat character varying, fr character varying,
+nom_vern character varying, nom_vern_eng character varying, id_habitat integer, fr character varying,
 gf character varying, mar character varying, gua character varying, sm character varying, sb character varying,
 spm character varying, may character varying, epa character varying, reu character varying, sa character varying, ta character varying, taaf character varying,
 pf character varying, nc character varying, wf character varying, cli character varying, url character varying) SERVER inpn

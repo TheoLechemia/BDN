@@ -13,6 +13,7 @@ CREATE TABLE synthese.releve
   code_maille character varying,
   loc_exact boolean,
   id_structure integer,
+  diffusable boolean,
   CONSTRAINT synthese_pkey PRIMARY KEY (id_synthese),
   CONSTRAINT cd_nom FOREIGN KEY (cd_nom)
       REFERENCES taxonomie.taxref (cd_nom) MATCH SIMPLE
@@ -39,6 +40,7 @@ CREATE TABLE contact_faune.releve
   loc_exact boolean,
   code_maille character varying,
   id_structure integer,
+  diffusable boolean,
   type_obs character varying(50),
   effectif character varying(50),
   comportement character varying(50),
@@ -77,10 +79,14 @@ CREATE TABLE contact_flore.releve
   loc_exact boolean,
   code_maille character varying,
   id_structure integer,
-  abondance character varying(15),
   nb_pied_approx character varying(15),
   nb_pied integer,
-  stade_dev character varying(50),
+  btn_floraux boolean,
+  floraison boolean,
+  fruit_maturation  boolean,
+  dissemination boolean
+
+  phenologie character varying (100)
   
   CONSTRAINT fl_pk PRIMARY KEY (id_obs),
   CONSTRAINT cd_nom FOREIGN KEY (cd_nom)
@@ -100,8 +106,8 @@ CREATE OR REPLACE FUNCTION synthese.tr_protocole_to_synthese() RETURNS TRIGGER A
     DECLARE protocoleid INTEGER;
     BEGIN
  
-    INSERT INTO synthese.releve (protocole, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, loc_exact, code_maille, id_structure) 
-    VALUES(tg_table_schema, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.loc_exact, new.code_maille, new.id_structure) RETURNING new.id_obs INTO protocoleid;
+    INSERT INTO synthese.releve (protocole, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, loc_exact, code_maille, id_structure, diffusable) 
+    VALUES(tg_table_schema, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.loc_exact, new.code_maille, new.id_structure, new.diffusable) RETURNING new.id_obs INTO protocoleid;
     SELECT INTO newid currval('synthese.releve_id_synthese_seq');
     EXECUTE format('
     UPDATE %s.%s SET id_synthese = %s WHERE id_obs=%s;', TG_TABLE_SCHEMA, TG_TABLE_NAME, newid, protocoleid);
@@ -147,7 +153,7 @@ ALTER TABLE synthese.bib_protocole
 
 
 INSERT INTO synthese.bib_protocole VALUES
-  ('Tout protocole - Synthese','synthese', 'releve', 'synthese.releve', NULL, NULL), ('Contact Flore', 'contact_flore', 'releve', 'contact_flore.releve', 'addObs/contactFlore.html', 'contact_flore.bib_champs_contact_flore'),
+ ('Contact Flore', 'contact_flore', 'releve', 'contact_flore.releve', 'addObs/contactFlore.html', 'contact_flore.bib_champs_contact_flore'),
   ('Contact Faune','contact_faune', 'releve', 'contact_faune.releve', 'addObs/contactFaune.html', 'contact_faune.bib_champs_contact_faune');
 
 CREATE TABLE contact_faune.bib_champs_contact_faune(
@@ -303,7 +309,7 @@ VALUES (1, 'Marin'), (2, 'Eau douce'), (3, 'Terrestre'), (4,'Marin et eau douce'
 -- Creation des vues de la liste des taxons personnalisée pour la structure: ICI la liste des taxons antillais / faune et flore
 CREATE VIEW taxonomie.taxons_contact_flore AS(
 SELECT taxonomie.find_cdref(cd_nom) AS cd_ref, nom_vern, lb_nom
-FROM taxonomie.taxref
+FROM taxonomie.import_taxref
 WHERE (mar != 'A' OR gua != 'A' OR sm != 'A' OR sb != 'A') AND regne = 'Plantae'
 );
 
@@ -312,7 +318,7 @@ ALTER TABLE taxonomie.taxons_contact_flore
 
 CREATE VIEW taxonomie.taxons_contact_faune AS(
 SELECT taxonomie.find_cdref(cd_nom) AS cd_ref, nom_vern, lb_nom
-FROM taxonomie.taxref
+FROM taxonomie.import_taxref
 WHERE (mar != 'A' OR gua != 'A' OR sm != 'A' OR sb != 'A') AND regne = 'Animalia'
 );
 

@@ -4,6 +4,7 @@ from ..database import *
 import psycopg2
 from .. import utils
 from ..auth import check_auth, User, loadCurrentUser
+import hashlib
 
 
 
@@ -23,13 +24,14 @@ def login():
         except:
             flash("Identifiant ou mot de passe incorrect")
             return redirect(url_for("main.login")) 
-        session['user'] = currentUser.username
-        session['password'] = currentUser.password
-        session['auth_level'] = currentUser.auth_level
-        session['id_structure'] = currentUser.id_structure
-        session.permanent = True
-        #checke si le nom existe bien
-        if currentUser.password == inputPassword:
+        #checke si le pass est correct existe bien
+        encode_password = hashlib.md5(inputPassword.encode('utf8')).hexdigest()
+        if currentUser.password == encode_password:
+            session['user'] = currentUser.username
+            session['password'] = encode_password
+            session['auth_level'] = currentUser.auth_level
+            session['id_structure'] = currentUser.id_structure
+            session.permanent = True
             return redirect(url_for("main.index"))
         else:
             flash('Identifiant ou mot de passe incorect')

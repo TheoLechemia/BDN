@@ -14,7 +14,7 @@ fileName = input('Entrez le chemin du fichier CSV (entre guillemets) : ')
 #try:
 
 inter = fileName.split('.')
-schemaName = inter[0].split('\\')[-1]
+schemaName = inter[0].split('/')[-1]
 fullName = schemaName+".releve"
 
 db = getConnexion()
@@ -202,14 +202,14 @@ db.conn.commit()
 
 
 
-htmlFileName = ".\\Apps\\addObs\\static\\"+schemaName+".html"
+htmlFileName = "./Apps/addObs/static/"+schemaName+".html"
 htmlFile = open(htmlFileName, "w")
 
 htmlContent = """<div class='form-group'> 
             """
 
 integerInput = "<input class='form-control' type='number' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}'  name='{0}'> \n"
-simpleTextInput = "<input class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}'  name='{}'> \n"
+simpleTextInput = "<input class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}'  name='{0}'> \n"
 booleanInput = """<div'> 
                     <select class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}'  > \n
                       <option value=""> -{0}- </option> 
@@ -224,10 +224,10 @@ for r in column_name_and_type:
     if r['htmlType'] == 'Entier' or r['htmlType'] == 'Reel' :
         write  =  integerInput.format(r['name'])
         htmlFile.write(write)
-    if r['htmlType'] == 'Chaîne de caractère':
+    if r['htmlType'] == 'Chaine de caractere':
         write  =  simpleTextInput.format(r['name'])
         htmlFile.write(write)
-    if r['htmlType'] == 'Booléen':
+    if r['htmlType'] == 'Booleen':
         write  =  booleanInput.format(r['name'])
         htmlFile.write(write)
     if r['htmlType'] == "Liste de choix" :

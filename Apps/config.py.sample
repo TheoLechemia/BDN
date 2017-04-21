@@ -14,6 +14,8 @@ database = {
 
 config = {
 'URL_APPLICATION': 'MYURL',
+#ID de l'application dans userhub
+'ID_APPLICATION': 3,
 
 
 'ID_OBSERVATION' : 'id_synthese',

@@ -219,8 +219,8 @@ $http.get(configuration.URL_APPLICATION+'addObs/loadMailles').success(function(d
           lng: mapCtrl.x,
           draggable: true,
           icon : { 
-            iconUrl: '/static/lib/leaflet/images/marker-icon.png',
-            shadowUrl: '/static/lib/leaflet/images/marker-shadow.png',
+            iconUrl: configuration.URL_APPLICATION+'/static/lib/leaflet/images/marker-icon.png',
+            shadowUrl: configuration.URL_APPLICATION+'/static/lib/leaflet/images/marker-shadow.png',
             iconSize:    [25, 41],
             iconAnchor:  [12, 41],
             popupAnchor: [1, -34],
