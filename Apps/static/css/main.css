@@ -392,3 +392,8 @@ input ::-webkit-input-placeholder {
 .section {
   padding: 15px 15px 0px 15px;
 }
+
+.sublabel {
+  font-size: 12px;
+  padding-right: 2px;
+}

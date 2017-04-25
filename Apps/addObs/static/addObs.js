@@ -108,11 +108,12 @@ function formController($http){
             // on reset tous les champs
             var saveCoord = formCtrl.globalForm.coord;
             var saveMaille = formCtrl.globalForm.code_maille;
+            var saveObservateur = formCtrl.globalForm.observateur;
             formCtrl.globalForm = {
                     'coord' : saveCoord,
                     'loc_exact' : loc_exact,
                     'code_maille': saveMaille,
-                    'observateur' : null,
+                    'observateur' : saveObservateur,
                     'date': null,
                     'taxon': null,
                     'commentaire': null,

@@ -14,18 +14,18 @@
 </div>
 <div class="form-group">
     <div class="col-sm-6 no-padding" ng-class="{'has-error' : addObsForm.nb_male.$invalid && !addObsForm.nb_male.$pristine  || (validationAttempt && addObsForm.nb_male.$invalid)}">
-        <input class="form-control" type="number" placeholder="Nombre de mâle adulte" ng-model="$ctrl.child.protocoleForm.nb_male"  name ="nb_male">
+        <input class="form-control" type="number" min="0" placeholder="Nombre de mâle adulte" ng-model="$ctrl.child.protocoleForm.nb_male"  name ="nb_male">
     </div>
   	<div class="col-sm-6 no-padding" ng-class="{'has-error' : addObsForm.nb_femelle.$invalid && !addObsForm.nb_femelle.$pristine  || (validationAttempt && addObsForm.nb_femelle.$invalid)}">
-  		<input class="form-control" type="number" placeholder="Nombre de femelles adulte" ng-model="$ctrl.child.protocoleForm.nb_femelle"  name="nb_femelle">
+  		<input class="form-control" type="number" min="0" placeholder="Nombre de femelles adulte" ng-model="$ctrl.child.protocoleForm.nb_femelle"  name="nb_femelle">
   	</div>
 </div>
 <div class="form-group">
   	<div class="col-sm-6 no-padding" ng-class="{'has-error' : addObsForm.nb_jeune.$invalid && !addObsForm.nb_jeune.$pristine  || (validationAttempt && addObsForm.nb_jeune.$invalid)}">
-  		<input class="form-control" type="number" placeholder="Nombre de jeune" ng-model="$ctrl.child.protocoleForm.nb_jeune"  name = "nb_jeune">
+  		<input class="form-control" type="number" min="0" placeholder="Nombre de jeune" ng-model="$ctrl.child.protocoleForm.nb_jeune"  name = "nb_jeune">
   	</div>
 	<div class="col-sm-6 no-padding" ng-class="{'has-error' : addObsForm.nb_non_identifie.$invalid && !addObsForm.nb_non_identifie.$pristine  || (validationAttempt && addObsForm.nb_non_identifie.$invalid)}">
-		<input class="form-control" type="number" placeholder="Nombre non identifié" ng-model="$ctrl.child.protocoleForm.nb_non_identife"  name="nb_non_identifie">
+		<input class="form-control" type="number" min="0" placeholder="Nombre non identifié" ng-model="$ctrl.child.protocoleForm.nb_non_identife"  name="nb_non_identifie">
 	</div>
 </div>
 

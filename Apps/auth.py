@@ -29,8 +29,6 @@ def loadCurrentUser(name):
     return User(u[1], u[2], u[6],u[16], u[8])
 
 
-
-
 def check_auth(level):
     def _check_auth(func):
         @wraps(func)

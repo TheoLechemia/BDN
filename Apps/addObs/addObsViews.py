@@ -8,6 +8,7 @@ from .. import utils
 from ..database import *
 from ..initApp import app
 from ..auth import check_auth
+import ast
 
 
 addObs = flask.Blueprint('addObs', __name__,static_url_path="/addObs", static_folder="static", template_folder="templates")
@@ -96,21 +97,16 @@ def getProtocoles():
 
 
 
-@addObs.route('/loadValues/<protocole>', methods=['GET', 'POST'])
+@addObs.route('/loadValues/<protocole>', methods=['GET'])
 def getValues(protocole):
     db=getConnexion()
     sql = "SELECT * FROM "+protocole
     db.cur.execute(sql)
     res = db.cur.fetchall()
-    currentField = res[0][3]
-    finalDict = {currentField:list()}
+    finalDict = dict()
     for r in res:
-        if r[3] == currentField:
-            finalDict[currentField].append(r[4])
-        else:
-            currentField = r[3]
-            finalDict[currentField] = list()
-            finalDict[currentField].append(r[4])
+        dictValues = ast.literal_eval(r[3])
+        finalDict[r[2]] = dictValues['values']
     return Response(flask.json.dumps(finalDict), mimetype='application/json')
 
 
@@ -125,8 +121,7 @@ def getParmeters():
 
 
 
-
-@addObs.route('/submit/', methods=['GET', 'POST'])
+@addObs.route('/submit/', methods=['POST'])
 def submitObs():
     db = getConnexion()
     if flask.request.method == 'POST':
@@ -204,11 +199,6 @@ def submitObs():
         keys = getParmeters()['keys']
         values = getParmeters()['values']
         for k in keys:
-            print 'lAAAAAAAAAAAAA'
-            print type(k)
-            print type(stringInsert)
-            print k
-            print stringInsert
             stringInsert += ", "+k
             stringValues += ", %s"
         stringInsert+=")"
@@ -221,7 +211,6 @@ def submitObs():
         db.cur.execute(sql, params)
         db.conn.commit()
         db.closeAll()
-
     return Response(flask.json.dumps('success'), mimetype='application/json')
 
 

@@ -79,14 +79,14 @@ CREATE TABLE contact_flore.releve
   loc_exact boolean,
   code_maille character varying,
   id_structure integer,
+  diffusable boolean,
   nb_pied_approx character varying(15),
   nb_pied integer,
   btn_floraux boolean,
   floraison boolean,
   fruit_maturation  boolean,
-  dissemination boolean
-
-  phenologie character varying (100)
+  dissemination boolean,
+  stade_dev character varying (100),
   
   CONSTRAINT fl_pk PRIMARY KEY (id_obs),
   CONSTRAINT cd_nom FOREIGN KEY (cd_nom)
@@ -157,118 +157,53 @@ INSERT INTO synthese.bib_protocole VALUES
   ('Contact Faune','contact_faune', 'releve', 'contact_faune.releve', 'addObs/contactFaune.html', 'contact_faune.bib_champs_contact_faune');
 
 CREATE TABLE contact_faune.bib_champs_contact_faune(
-id serial  CONSTRAINT bib_fa_primary_key PRIMARY KEY,
-id_champ integer,
+id_champ integer CONSTRAINT bib_fa_primary_key PRIMARY KEY,
 no_spec character varying,
 nom_champ character varying,
-valeur character varying
+valeur text,
+lib_champ character varying,
+type_widget character varying
 );
 ALTER TABLE contact_faune.bib_champs_contact_faune
     OWNER TO onfuser;
 
 
 
-INSERT INTO contact_faune.bib_champs_contact_faune (id_champ, nom_champ, valeur, no_spec) VALUES
-(1,'type_obs', 'Contact visuel', 'spec_1'),
-(2,'type_obs', 'Chant', 'spec_1'),
-(3,'type_obs', 'Cris', 'spec_1'),
-(4, 'type_obs', 'Contact sonore', 'spec_1'),
-(5,'type_obs', 'Nid', 'spec_1'),
-(6,'type_obs', 'Gîte', 'spec_1'),
-(7,'type_obs', 'Nichoir', 'spec_1'),
-(8,'type_obs', 'Empreintes, traces', 'spec_1'),
-(9,'type_obs', 'Détection', 'spec_1'),
-(10,'type_obs', 'Indices (crottes,...)', 'spec_1'),
-(11,'type_obs', 'Animal mort ou collision', 'spec_1'),
-(1,'effectif', '1-5','spec_2'),
-(2,'effectif', '6-10','spec_2'),
-(3,'effectif', '11-20','spec_2'),
-(4,'effectif', '21-50','spec_2'),
-(5,'effectif', '51-100','spec_2'),
-(6,'effectif', '101-500','spec_2'),
-(7,'effectif', '501-1000','spec_2'),
-(8,'effectif', '>1000','spec_2'),
-(1,'comportement', 'Reproduction','spec_3'),
-(2,'comportement', 'Parade nuptiale','spec_3'),
-(3,'comportement', 'Ponte','spec_3'),
-(4,'comportement', 'Nidification','spec_3'),
-(5,'comportement', 'Emergence','spec_3'),
-(6,'comportement', 'Eclosion','spec_3'),
-(7,'comportement', 'Comportement parental','spec_3'),
-(8,'comportement', 'Colonie avec mise bas','spec_3'),
-(9,'comportement', 'Colonie de reproduction','spec_3'),
-(10,'comportement', 'Colonie avec certaines femelles gestantes','spec_3'),
-(11,'comportement', 'Colonie avec jeunes non volants','spec_3'),
-(12,'comportement', 'Colonie avec jeunes volants','spec_3'),
-(13,'comportement', 'Colonie sans jeunes','spec_3'),
-(14,'comportement', 'Colonie avec males','spec_3'),
-(15,'comportement', 'Individus isolés','spec_3'),
-(16,'comportement', 'En chasse','spec_3'),
-(17,'comportement', 'En vol','spec_3'),
-(18,'comportement', 'Fuite','spec_3'),
-(19,'comportement', 'Alerte','spec_3'),
-(20,'comportement', 'Repos','spec_3'),
-(21,'comportement', 'Léthargie diurne','spec_3'),
-(22,'comportement', 'Alimentation','spec_3'),
-(23,'comportement', 'Transit','spec_3'),
-(24,'comportement', 'Estivage','spec_3'),
-(25,'comportement', 'Migration','spec_3'),
-(26,'comportement', 'Harem','spec_3'),
-(27,'comportement', 'Autres','spec_3'),
-(NULL, 'nb_male', '', 'spec_4'),
-(NULL, 'nb_femelle', '', 'spec_5'),
-(NULL, 'nb_jeune', '', 'spec_6'),
-(NULL, 'nb_non_identife', '', 'spec_7'),
-(1,'trace', 'Crottes ou crottier','spec_8'),
-(2,'trace', 'Ecorçage ou frottis','spec_8'),
-(3,'trace', 'Empreintes','spec_8'),
-(4,'trace', 'Epiderme','spec_8'),
-(5,'trace', 'Guano','spec_8'),
-(6,'trace', 'Nid','spec_8'),
-(7,'trace', 'Oeufs','spec_8'),
-(8,'trace', 'Pelage','spec_8'),
-(9,'trace', 'Pelotes de réjection','spec_8'),
-(10,'trace', 'Restes alimentaires','spec_8'),
-(11,'trace', 'Restes de l"animal','spec_8'),
-(12,'trace', 'Terrier','spec_8'),
-(13,'trace', 'Larves','spec_8'),
-(14,'trace', 'Exuvie','spec_8');
+INSERT INTO contact_faune.bib_champs_contact_faune (id_champ, nom_champ, valeur, no_spec, lib_champ, type_widget) VALUES
+(1,'type_obs', '{"values": ["Contact visuel","Chant", "Cris", "Autre contact sonore","Nid", "Gîte", "Nichoir", "Empreintes", "Détection", "Indices (crottes,...)" ]}', 'spec_1', 'Type d''observation', 'select'),
+(2,'effectif', '{"values": ["1-5", "6-10", "11-20", "21-50", "51-100", "101-500", "501-1000", ">1000"]}', 'spec_2', 'Effectif', 'select'),
+(3,'comportement', '{"values": ["Reproduction", "Parade nuptiale", "Ponte", "Nidification", "Emergence", "Eclosion", "Comportement parental", "Colonie avec mise bas", "Colonie de reproduction", "Colonie avec certaines femelles gestantes", "Colonie avec jeunes non volants", "Colonie avec jeunes volants", "Colonie sans jeunes", "Colonie avec males", "Individus isolés", "En chasse", "En vol", "Fuite", "Alerte", "Repos", "Léthargie diurne", "Alimentation", "Transit", "Estivage", "Migration", "Harem", "Autres"]}','spec_3', 'Comportement', 'select'),
+(4, 'nb_male', '{"values":[]}', 'spec_4', 'Nombre de mâle', 'number'),
+(5, 'nb_femelle', '{"values":[]}', 'spec_5', 'Nombre de femelle', 'number'),
+(6, 'nb_jeune', '{"values":[]}', 'spec_6', 'Nombre de jeune', 'number'),
+(7, 'nb_non_identife', '{}', 'spec_7', 'Nombre non identifie', 'number'),
+(8,'trace', '{"values":["Crottes ou crottier", "Ecorçage ou frottis", "Empreintes", "Epiderme", "Guano", "Nid", "Oeufs", "Pelage", "Pelotes de réjection", "Restes alimentaires", "Restes de l''animal", "Terrier", "Larves", "Exuvie"]}' ,'spec_8', 'Trace', 'select')
+
 
 
 
 
 CREATE TABLE contact_flore.bib_champs_contact_flore(
-id serial  CONSTRAINT bib_fl_primary_key PRIMARY KEY,
-id_champ integer,
+id_champ integer CONSTRAINT bib_fa_primary_key PRIMARY KEY,
 no_spec character varying,
 nom_champ character varying,
-valeur character varying
+valeur text,
+lib_champ character varying,
+type_widget character varying
 );
 ALTER TABLE contact_flore.bib_champs_contact_flore
     OWNER TO onfuser;
 
-INSERT INTO contact_flore.bib_champs_contact_flore (id_champ, nom_champ, valeur, no_spec) VALUES
-(1,'abondance', '1','spec_1'),
-(2,'abondance', '2-3','spec_1'),
-(3,'abondance', '4-5','spec_1'),
-(4,'abondance', '6-50','spec_1'),
-(5,'abondance', '< 5%','spec_1'),
-(6,'abondance', '5-25%','spec_1'),
-(7,'abondance', '16-25%','spec_1'),
-(8,'abondance', '26-50%','spec_1'),
-(9,'abondance', '51-75%','spec_1'),
-(10,'abondance', '76-100%','spec_1'),
-(NULL, 'nb_pied', '', 'spec_2'),
-(1,'nb_pied_approx', '1 à 10','spec_3'),
-(2,'nb_pied_approx', '10 à 100','spec_3'),
-(3,'nb_pied_approx', 'Plus de 100','spec_3'),
-(1,'stade_dev', 'Stade végétatif','spec_4'),
-(2,'stade_dev', 'Stade bouton floraux', 'spec_4'),
-(3,'stade_dev', 'Début floraison', 'spec_4'),
-(4,'stade_dev', 'Pleine floraison', 'spec_4'),
-(5,'stade_dev', 'Fin de floraison et maturation des fruits', 'spec_4'),
-(6,'stade_dev', 'Dissémination', 'spec_4'),
-(7,'stade_dev', 'Stade de décrépitude', 'spec_4');
+INSERT INTO contact_flore.bib_champs_contact_flore (id_champ, nom_champ, valeur, no_spec, lib_champ, type_widget) VALUES
+(1, 'nb_pied', '{"values":[]}', 'spec_1', 'Nombre de pied', 'number'),
+(2,'nb_pied_approx', '{"values":["1 à 10", "10 à 100", "Plus de 100"]}' ,'spec_2', 'Nombre de pied approximatif', 'select'),
+(3,'stade_dev', '{"values":["Juvénile", "Adulte", "Sénéscent"]}','spec_3', 'Stade de développement', 'select')
+(4,'boutons_flo', '{"values":[]}','spec_4', 'Boutons floraux', 'checkbox'),
+(5,'floraison', '{"values":[]}', 'spec_5', 'Floraison', 'checkbox'),
+(6,'fruit_maturation','{"values":[]}', 'spec_6', 'Fruit mature', 'checkbox' ),
+(7,'dissemination', '{"values":[]}', 'spec_7' ,'Dissémination', 'checkbox' );
+
+
 
 
 

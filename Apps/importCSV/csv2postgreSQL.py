@@ -4,13 +4,9 @@ import csv
 from datetime import datetime
 from flask import session
 from Apps.database import *
-
 from ..config import config
 
 def getSpec(specNumber, row, interpretationDict):
-    print "SPEEEEEEEEEEEEEEEEEEC NUMBEEEEEEEEEEEEEER"
-    print specNumber
-    print 'SPEEEEEEEEEEEEEEC VALUEEEEEEEEEEEEEEEEEEEEEE'
     stringList = row[specNumber].split('#')
     print stringList
     value = None
@@ -54,29 +50,12 @@ def csv2PG(file):
                 fullTableName = inputProtocole+".releve"
 
                 #la liste des champs avec les spec
-                sql = "SELECT distinct(no_spec),nom_champ from "+inputProtocole+".bib_champs_"+inputProtocole
+                sql = "SELECT no_spec, nom_champ FROM "+inputProtocole+".bib_champs_"+inputProtocole
                 db.cur.execute(sql)
                 res = db.cur.fetchall()
                 fieldList= list()
                 for r in res:
                     fieldList.append({'spec_name': r[0], 'field_name': r[1]})
-
-                # sql = "SELECT * FROM "+inputProtocole+".bib_champs_"+inputProtocole
-                # db.cur.execute(sql)
-                # res = db.cur.fetchall()
-                # currentSpec = res[0][2]
-                # #currentField = res[0][3]
-                # interpretationDict = dict()
-                # interpretationDict[currentSpec] = dict()
-                # for r in res:
-                #     if r[2]==currentSpec:
-                #         interpretationDict[currentSpec][r[1]] = r[4]
-                #     else:
-                #         currentSpec = r[2]
-                #         interpretationDict[currentSpec] = dict()
-                #         interpretationDict[currentSpec][r[1]] = r[4]
-
-
 
             observateur = row['observateur_nom']+" "+ row['observateur_prenom']
             protocole = row['protocole']
@@ -114,41 +93,29 @@ def csv2PG(file):
             loc_exact = True
             code_maille = None
 
-            stringInsert = "INSERT INTO "+fullTableName+" (observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc"
-            stringValues = " VALUES (%s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s, %s"
+            stringInsert = "INSERT INTO "+fullTableName+" (observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc, diffusable"
+            stringValues = " VALUES (%s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s, %s, %s"
 
-            generalValues = [observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc]
+            generalValues = [observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc, True]
             for field in fieldList:
-                #value = getSpec(field['spec_name'], row, interpretationDict)
-                print 'lLAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
 
                 tabInter = row[field['spec_name']].split('#')
                 value = None
                 if len(tabInter) != 1:
                     value = tabInter[1]
-                print value
                 stringInsert += ", "+field['field_name']
                 stringValues += ", %s"
                 if value != None:
                     value = value.capitalize()
                 generalValues.append(value)
 
-
             stringInsert+=")"
             stringValues+=");"
-
-            print stringInsert
-            print stringValues
 
             sql = stringInsert+stringValues
             db.cur.execute(sql, generalValues)
             db.conn.commit()
 
-# except:
-#     pass
-
-
-# finally: 
     db.cur.close()
     db.closeAll()
 

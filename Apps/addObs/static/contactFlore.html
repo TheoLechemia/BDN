@@ -1,8 +1,5 @@
 <div class="form-group" >
-	<select class="form-control" type="text" placeholder="Abondance" ng-model="$ctrl.child.protocoleForm.abondance" ng-options="choice as choice for choice in $ctrl.fields.abondance" >
-		<option value=""> - Abondance - </option>
-	</select>
-	<input class="form-control" type="number" placeholder="Nombre de pied exact"  ng-model="$ctrl.child.protocoleForm.nb_pied" >
+	<input class="form-control" type="number" min="0" placeholder="Nombre de pied exact"  ng-model="$ctrl.child.protocoleForm.nb_pied" >
 	
 	<select class="form-control" type="text" ng-model="$ctrl.child.protocoleForm.nb_pied_approx" ng-options="choice as choice for choice in $ctrl.fields.nb_pied_approx">
 		<option value=""> - Nombre de pied approximattif -</option>
@@ -10,6 +7,23 @@
 </div>
 <div class="form-group">
 	<select class="form-control" type="text" placeholder="Stade de développement" ng-model="$ctrl.child.protocoleForm.stade_dev" ng-options="choice as choice for choice in $ctrl.fields.stade_dev" style="margin-bottom: 10px;">
-		<option value=""> - Stade de développement - </option>
+		<option value=""> - Stade de développpement - </option>
 	</select>
+</div>
+
+<label> Phénologie : </label>
+<div class="form-group " >
+	<label class="sublabel"> Boutons floraux :
+		<input type="checkbox" name="" ng-model="$ctrl.child.protocoleForm.btn_floraux">
+	</label>
+	<label class="sublabel"> Floraison :
+		<input type="checkbox" name="" ng-model="$ctrl.child.protocoleForm.floraison">
+	</label>
+	<label class="sublabel"> Fruit à maturation :
+		<input type="checkbox" name="" ng-model="$ctrl.child.protocoleForm.fruit_maturation">
+	</label>
+	<label class="sublabel"> Dissémination :
+		<input type="checkbox" name="" ng-model="$ctrl.child.protocoleForm.dissemination">
+	</label>
+
 </div>
