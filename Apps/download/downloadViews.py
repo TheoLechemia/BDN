@@ -30,7 +30,7 @@ def index():
     db.cur.execute(sql)
     protocoles = db.cur.fetchone()[0]
 
-    sql = "SELECT array_to_json(array_agg(row_to_json(row))) FROM (SELECT * FROM utilisateur.bib_structure) row"
+    sql = "SELECT array_to_json(array_agg(row_to_json(row))) FROM (SELECT * FROM utilisateurs.bib_organismes) row"
     db.cur.execute(sql)
     structures = db.cur.fetchone()[0]
 
