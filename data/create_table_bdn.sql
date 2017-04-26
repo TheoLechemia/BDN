@@ -82,7 +82,7 @@ CREATE TABLE contact_flore.releve
   diffusable boolean,
   nb_pied_approx character varying(15),
   nb_pied integer,
-  btn_floraux boolean,
+  boutons_flo boolean,
   floraison boolean,
   fruit_maturation  boolean,
   dissemination boolean,
@@ -176,7 +176,7 @@ INSERT INTO contact_faune.bib_champs_contact_faune (id_champ, nom_champ, valeur,
 (4, 'nb_male', '{"values":[]}', 'spec_4', 'Nombre de mâle', 'number'),
 (5, 'nb_femelle', '{"values":[]}', 'spec_5', 'Nombre de femelle', 'number'),
 (6, 'nb_jeune', '{"values":[]}', 'spec_6', 'Nombre de jeune', 'number'),
-(7, 'nb_non_identife', '{}', 'spec_7', 'Nombre non identifie', 'number'),
+(7, 'nb_non_identife', '{"values":[]}', 'spec_7', 'Nombre non identifie', 'number'),
 (8,'trace', '{"values":["Crottes ou crottier", "Ecorçage ou frottis", "Empreintes", "Epiderme", "Guano", "Nid", "Oeufs", "Pelage", "Pelotes de réjection", "Restes alimentaires", "Restes de l''animal", "Terrier", "Larves", "Exuvie"]}' ,'spec_8', 'Trace', 'select')
 
 
@@ -196,8 +196,8 @@ ALTER TABLE contact_flore.bib_champs_contact_flore
 
 INSERT INTO contact_flore.bib_champs_contact_flore (id_champ, nom_champ, valeur, no_spec, lib_champ, type_widget) VALUES
 (1, 'nb_pied', '{"values":[]}', 'spec_1', 'Nombre de pied', 'number'),
-(2,'nb_pied_approx', '{"values":["1 à 10", "10 à 100", "Plus de 100"]}' ,'spec_2', 'Nombre de pied approximatif', 'select'),
-(3,'stade_dev', '{"values":["Juvénile", "Adulte", "Sénéscent"]}','spec_3', 'Stade de développement', 'select')
+(2,'nb_pied_approx', '{"values":["1 à 10", "11 à 100", "Plus de 100"]}' ,'spec_2', 'Nombre de pied approximatif', 'select'),
+(3,'stade_dev', '{"values":["Juvénile", "Adulte", "Sénéscent"]}','spec_3', 'Stade de développement', 'select'),
 (4,'boutons_flo', '{"values":[]}','spec_4', 'Boutons floraux', 'checkbox'),
 (5,'floraison', '{"values":[]}', 'spec_5', 'Floraison', 'checkbox'),
 (6,'fruit_maturation','{"values":[]}', 'spec_6', 'Fruit mature', 'checkbox' ),
