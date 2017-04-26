@@ -271,7 +271,58 @@ def uploaded_file(filename):
 #     return Response(flask.json.dumps(loc), mimetype='application/json')
 
 
+##### DETAIL OBS ########
+
+#Renvoie le detail d'une observation a partir de son ID_SYNTHESE
+@synthese.route('/detailsObs/<id_synthese>/', methods=['GET'])
+def detailsObs(id_synthese):
+    db = getConnexion()
+    sql= """SELECT t.nom_vern, t.lb_nom, c.nom AS nom_commune, s.id_synthese, s.observateur, to_char(s.date, 'DD-MM-YYYY') AS date, u.nom_organisme, s.protocole
+          FROM synthese.releve s
+          JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
+          JOIN layers.commune c ON c.code_insee = s.insee
+          JOIN utilisateurs.bib_organismes u ON s.id_structure=u.id_organisme
+          WHERE s.id_synthese = %s"""
+    param = [id_synthese]
+    res = utils.sqltoDictWithParams(sql, param, db.cur)
+    if len(res)>0:
+        res = res[0]
+    db.closeAll()
+    return Response(flask.json.dumps(res), mimetype='application/json')
 
 
 
+@synthese.route('/detailsTaxonomie/<cd_nom>/', methods=['GET'])
+def detailsTaxonomie(cd_nom):
+    db = getConnexion()
+    sql= """SELECT nom_vern, nom_valide, group1_inpn, ordre, famille
+            FROM taxonomie.taxref
+            WHERE cd_nom = %s"""
+    param = [cd_nom]
+    res = utils.sqltoDictWithParams(sql, param, db.cur)
+    if len(res)>0:
+        res = res[0]
+    db.closeAll()
+    return Response(flask.json.dumps(res), mimetype='application/json')
 
+
+@synthese.route('/detailsReglementation/<cd_nom>/', methods=['GET'])
+def detailsReglementation(cd_nom):
+    db = getConnexion()
+    sql= """SELECT a.arrete, a.url, a.type_protection, a.url_inpn, p.cd_nom
+            FROM taxonomie.taxref_protection_especes p
+            JOIN taxonomie.taxref_protection_articles a ON a.cd_protection = p.cd_protection
+            WHERE p.cd_nom = %s"""
+    param = [cd_nom]
+    protection = None
+    protection = utils.sqltoDictWithParams(sql, param, db.cur)
+    sql = """SELECT r.id_categorie_france, br.type_statut, r.liste_rouge_source
+            FROM taxonomie.taxref_liste_rouge_fr r
+            JOIN taxonomie.bib_liste_rouge br ON br.id_statut = r.id_categorie_france
+            WHERE r.cd_nom = %s"""
+    lr = dict()
+    lr = utils.sqltoDictWithParams(sql, param, db.cur)
+    if len(lr)>0:
+        lr = lr[0]
+    db.closeAll()
+    return Response(flask.json.dumps({'lr': lr, 'protection': protection}), mimetype='application/json')

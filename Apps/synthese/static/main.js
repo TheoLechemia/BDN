@@ -60,14 +60,14 @@ function appCtrl (proxy){
   }
 
 
-  ctrl.updateCurrentListObs = function(id_synthese){
-    
-    ctrl.currentListObs = id_synthese;
+  ctrl.updateCurrentListObs = function(geojsonProperties){
+    ctrl.currentListObs = geojsonProperties.id_synthese;
+    ctrl.currentCd_nom = geojsonProperties.cd_nom;
   }
 
-  ctrl.updateCurrentLeafletObs = function(id_synthese){
-    console.log("update with: "+ id_synthese);
-    ctrl.currentLeafletObs = id_synthese;
+  ctrl.updateCurrentLeafletObs = function(geojsonProperties){
+    ctrl.currentLeafletObs = geojsonProperties.id_synthese;
+    ctrl.currentCd_nom = geojsonProperties.cd_nom;
   }
 
   ctrl.exportShape = function(form){
@@ -90,3 +90,4 @@ angularInstance.component('app', {
 require('./formObs.js')(angularInstance);
 require('./map.js')(angularInstance);
 require('./listObs.js')(angularInstance);
+require('./detailObs/detailObs.js')(angularInstance);

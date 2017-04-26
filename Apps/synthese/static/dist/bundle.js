@@ -63,11 +63,39 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = function(angularInstance){
+
+	__webpack_require__(5)(angularInstance);
+	__webpack_require__(7)(angularInstance);
+	__webpack_require__(6)(angularInstance);
+
+
+	function detailObsController(){
+	}
+
+
+
+var detailObsTemplate = 'synthese/templates/detailObs.html';
+
+	angularInstance.component('detailObs', {
+	  controller : detailObsController,
+	  templateUrl : detailObsTemplate,
+	  bindings : {
+	  	'cdNom' : '<',
+	  	'idSynthese' : '<',
+	  }
+	});
+}//END WEBPACK
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports) {
 
 module.exports = function(angularInstance){
@@ -292,7 +320,7 @@ angularInstance.component('formObs', {
 }// END WEBPACK
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports) {
 
 module.exports = function(angularInstance){
@@ -368,7 +396,7 @@ angularInstance.component('listObs', {
 }
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports) {
 
 module.exports = function(angularInstance){
@@ -393,7 +421,7 @@ module.exports = function(angularInstance){
 		layer.on({
 			click : function(){
 				// update the propertie in the app controller
-				mapCtrl.mainController.updateCurrentListObs(feature.properties.id);
+				mapCtrl.mainController.updateCurrentListObs(feature.properties);
 				// set the style and popup
 				if (selectLayer != undefined){
 						selectLayer.setStyle(originStyle)
@@ -578,7 +606,7 @@ module.exports = function(angularInstance){
 }
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports) {
 
 module.exports = function(angularInstance){
@@ -618,13 +646,113 @@ proxy = angularInstance.factory('proxy', function proxy($http) {
 }
 
 /***/ }),
-/* 4 */
+/* 5 */
+/***/ (function(module, exports) {
+
+module.exports = function(angularInstance){
+
+	function observationController($http){
+		var obsCtrl = this;
+		obsCtrl.currentObsDetails = undefined;
+
+		obsCtrl.loadObsDetails = function(id_synthese){
+			$http.get(configuration.URL_APPLICATION+"synthese/detailsObs/"+id_synthese).then(function(response){
+				obsCtrl.currentObsDetails = response.data;
+			})
+		}
+
+		obsCtrl.$onChanges = function(changes){
+			if(changes){
+				console.log("changes");
+				if(changes.idSynthese.currentValue != undefined){
+					console.log(changes);
+					this.loadObsDetails(changes.idSynthese.currentValue);
+				}
+			}
+		}
+	}// END CONTROLLER
+
+
+
+var observationTemplate = 'synthese/templates/observation.html';
+
+	angularInstance.component('observation', {
+	  controller : observationController,
+	  templateUrl : observationTemplate,
+	  bindings : {
+	  	'idSynthese' : '<',
+	  }
+	});
+}//END WEBPACK
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = function(angularInstance){
+
+	function reglementationController($http){
+	}
+
+
+
+var reglementationTemplate = 'synthese/templates/reglementation.html';
+
+	angularInstance.component('reglementation', {
+	  controller : reglementationController,
+	  templateUrl : reglementationTemplate,
+	  bindings : {
+	  	'cdNom' : '<',
+	  }
+	});
+}//END WEBPACK
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+module.exports = function(angularInstance){
+
+	function taxonomieController($http){
+		taxCtrl = this;
+
+		taxCtrl.loadTaxonomieDetails = function(cdNom){
+			$http.get(configuration.URL_APPLICATION+"synthese/detailsTaxonomie/"+cdNom).then(function(response){
+				taxCtrl.currentTaxonomieDetails = response.data;
+			});
+		}
+
+		taxCtrl.$onChanges = function(changes){
+			if(changes){
+				console.log("changes");
+				if(changes.cdNom.currentValue != undefined){
+					this.loadTaxonomieDetails(changes.cdNom.currentValue);
+				}
+			}
+		}
+	}//END CONTROLLER
+
+
+
+var taxonomieTemplate = 'synthese/templates/taxonomie.html';
+
+	angularInstance.component('taxonomie', {
+	  controller : taxonomieController,
+	  templateUrl : taxonomieTemplate,
+	  bindings : {
+	  	'cdNom' : '<',
+	  }
+	});
+}//END WEBPACK
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var angularInstance = angular.module("app", ['ui.bootstrap', 'leaflet-directive', 'ngRoute']);
 
 
-__webpack_require__(3)(angularInstance);
+__webpack_require__(4)(angularInstance);
 
 angularInstance.controller("headerCtrl", function($scope){
 
@@ -683,14 +811,14 @@ function appCtrl (proxy){
   }
 
 
-  ctrl.updateCurrentListObs = function(id_synthese){
-    
-    ctrl.currentListObs = id_synthese;
+  ctrl.updateCurrentListObs = function(geojsonProperties){
+    ctrl.currentListObs = geojsonProperties.id_synthese;
+    ctrl.currentCd_nom = geojsonProperties.cd_nom;
   }
 
-  ctrl.updateCurrentLeafletObs = function(id_synthese){
-    console.log("update with: "+ id_synthese);
-    ctrl.currentLeafletObs = id_synthese;
+  ctrl.updateCurrentLeafletObs = function(geojsonProperties){
+    ctrl.currentLeafletObs = geojsonProperties.id_synthese;
+    ctrl.currentCd_nom = geojsonProperties.cd_nom;
   }
 
   ctrl.exportShape = function(form){
@@ -710,9 +838,10 @@ angularInstance.component('app', {
 });
 
 
-__webpack_require__(0)(angularInstance);
-__webpack_require__(2)(angularInstance);
 __webpack_require__(1)(angularInstance);
+__webpack_require__(3)(angularInstance);
+__webpack_require__(2)(angularInstance);
+__webpack_require__(0)(angularInstance);
 
 /***/ })
 /******/ ]);

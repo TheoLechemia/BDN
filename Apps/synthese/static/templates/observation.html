@@ -1,0 +1,13 @@
+<div ng-if="$ctrl.currentObsDetails != undefined"> 
+	<p>
+		Taxon: <b> {{$ctrl.currentObsDetails.nom_vern}} | {{$ctrl.currentObsDetails.lb_nom}} </b> 
+	</p>
+	<p>
+		Observation de:   <b>{{$ctrl.currentObsDetails.observateur}} </b>  ({{$ctrl.currentObsDetails.nom_organisme}}) le {{$ctrl.currentObsDetails.date}}
+	</p>
+	<p> 
+	Sur la commune de: <b> {{$ctrl.currentObsDetails.nom_commune}} </b>
+	</p>
+
+	<p> Dans le cadre du protocole:  <b> "{{$ctrl.currentObsDetails.protocole}}" </b> </p>
+</div>

@@ -20,7 +20,7 @@ module.exports = function(angularInstance){
 		layer.on({
 			click : function(){
 				// update the propertie in the app controller
-				mapCtrl.mainController.updateCurrentListObs(feature.properties.id);
+				mapCtrl.mainController.updateCurrentListObs(feature.properties);
 				// set the style and popup
 				if (selectLayer != undefined){
 						selectLayer.setStyle(originStyle)
