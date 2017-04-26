@@ -320,9 +320,6 @@ def detailsReglementation(cd_nom):
             FROM taxonomie.taxref_liste_rouge_fr r
             JOIN taxonomie.bib_liste_rouge br ON br.id_statut = r.id_categorie_france
             WHERE r.cd_nom = %s"""
-    lr = dict()
     lr = utils.sqltoDictWithParams(sql, param, db.cur)
-    if len(lr)>0:
-        lr = lr[0]
     db.closeAll()
     return Response(flask.json.dumps({'lr': lr, 'protection': protection}), mimetype='application/json')

@@ -1,3 +1,23 @@
-<h3> Ma réglementation </h3>
+<p> <b> Réglementations: </b> </p>
 
-{{$ctrl.currentRegDetails}}
+<div ng-if="$ctrl.currentRegDetails.protection.length == 0">
+	<p> Aucune réglentation pour ce taxon
+</div>
+
+<!-- <p>{{$ctrl.currentRegDetails.protection.length == 0 ? Aucune protection pour ce taxon : Liste des protection(s) pour ce taxon}}</p> -->
+
+<div ng-repeat="protection in $ctrl.currentRegDetails.protection">
+	<p> <a href="{{protection.url}}"> - {{protection.arrete}} </a> 
+		 ({{protection.type_protection}})
+	</p>
+	
+</div>
+
+<p> <b> Listes rouges: </b> </p>
+
+<div ng-if="$ctrl.currentRegDetails.lr.length == 0">
+	<p> Ce taxon ne figure sur aucune liste rouge
+</div>
+<div ng-repeat="lr in $ctrl.currentRegDetails.lr">
+	<p> Taxon classé "{{lr.type_statut}}" sur {{lr.liste_rouge_source}}
+</p>
