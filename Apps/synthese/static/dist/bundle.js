@@ -1,41 +1,41 @@
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-/******/
+
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-/******/
+
 /******/ 		// Check if module is in cache
 /******/ 		if(installedModules[moduleId])
 /******/ 			return installedModules[moduleId].exports;
-/******/
+
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
 /******/ 			l: false,
 /******/ 			exports: {}
 /******/ 		};
-/******/
+
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
+
 /******/ 		// Flag the module as loaded
 /******/ 		module.l = true;
-/******/
+
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/
-/******/
+
+
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-/******/
+
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-/******/
+
 /******/ 	// identity function for calling harmony imports with the correct context
 /******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
+
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -46,7 +46,7 @@
 /******/ 			});
 /******/ 		}
 /******/ 	};
-/******/
+
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
 /******/ 	__webpack_require__.n = function(module) {
 /******/ 		var getter = module && module.__esModule ?
@@ -55,13 +55,13 @@
 /******/ 		__webpack_require__.d(getter, 'a', getter);
 /******/ 		return getter;
 /******/ 	};
-/******/
+
 /******/ 	// Object.prototype.hasOwnProperty.call
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
+
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-/******/
+
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
@@ -355,9 +355,9 @@ function listObsCtrl ($uibModal, $http){
 		}
 	}
 
-	listCtrl.zoom = function(id_synthese){
-		this.mainController.updateCurrentLeafletObs(id_synthese);
-		this.mainController.updateCurrentListObs(id_synthese);
+	listCtrl.zoom = function(geojsonProperties){
+		this.mainController.updateCurrentLeafletObs(geojsonProperties);
+		this.mainController.updateCurrentListObs(geojsonProperties);
 	}
 
 	listCtrl.isCurrentObs = function(id, row_id_synthese){
@@ -420,7 +420,7 @@ module.exports = function(angularInstance){
 		layersDict[feature.properties.id] = layer;
 		layer.on({
 			click : function(){
-				// update the propertie in the app controller
+				// update the properties in the app controller
 				mapCtrl.mainController.updateCurrentListObs(feature.properties);
 				// set the style and popup
 				if (selectLayer != undefined){
@@ -457,7 +457,7 @@ module.exports = function(angularInstance){
 				//bind the popup
 				if(selectLayer instanceof L.Polygon){
 					table = "<p>"+selectLayer.feature.properties.nb_observation+" observation(s)</p><table class='table'><thead><tr> <th>Observateur </th> <th>Nom </th>  <th>Date</th></tr></thead> <tbody>"
-					selectLayer.feature.properties.listIdSyn.forEach(function(obs, index){
+					selectLayer.feature.properties.id_synthese.forEach(function(obs, index){
 						table+="<tr> <td>"+selectLayer.feature.properties.observateurs[index]+" </td> <td>"+selectLayer.feature.properties.lb_nom[index]+" </td> <td> "+selectLayer.feature.properties.date[index]+"</td> </tr>"
 					})
 					table+="</tbody> </table>"
@@ -485,7 +485,7 @@ module.exports = function(angularInstance){
 		        zoom = map.getZoom();
 		        // latlng is different between polygons and point
 		        var latlng;
-		        if(selectLayer.feature.geometry.type == "MultiPolygon"){
+		        if(selectLayer instanceof L.Polygon){
 		        	latlng = selectLayer._bounds._northEast;
 		        }
 		        else {
@@ -545,19 +545,19 @@ module.exports = function(angularInstance){
 					properties = {'code_maille' : currentIdMaille,
 								   'nb_observation' : 1,
 								   'id' : currentFeature.properties.id,
-								   'listIdSyn': [currentFeature.properties.id_synthese],
+								   'id_synthese': [currentFeature.properties.id_synthese],
 								   'lb_nom': [currentFeature.properties.lb_nom],
+								   'cd_nom': [currentFeature.properties.cd_nom],
 								   'observateurs': [currentFeature.properties.observateur],
 								   'date' : [currentFeature.properties.date]}
 					var j = 0;
 					while(j < copyGeojson.length){
 						if (i != j && copyGeojson[j].properties.id === currentIdMaille){
 
-							console.log("copyGeojson")
-							console.log(copyGeojson);
 							properties.nb_observation++;
-							properties.listIdSyn.push(copyGeojson[j].properties.id_synthese);
-							properties.lb_nom.push(copyGeojson[j].properties.lb_nom); 
+							properties.id_synthese.push(copyGeojson[j].properties.id_synthese);
+							properties.lb_nom.push(copyGeojson[j].properties.lb_nom);
+							properties.cd_nom.push(copyGeojson[j].properties.cd_nom); 
 							properties.observateurs.push(copyGeojson[j].properties.observateur);
 							properties.date.push(copyGeojson[j].properties.date);
 							//si il y etait deja on peut le remover
@@ -828,13 +828,19 @@ function appCtrl (proxy){
 
 
   ctrl.updateCurrentListObs = function(geojsonProperties){
-    ctrl.currentListObs = geojsonProperties.id_synthese;
-    ctrl.currentCd_nom = geojsonProperties.cd_nom;
+    console.log("geojsonProperties: ")
+    console.log(geojsonProperties)
+    ctrl.currentListObs = geojsonProperties.id;
+    
+    // pour la recherche sur le detail taxon on prend le premier ID et le premier cd_nom si c'est une maille
+    ctrl.currentCd_nom = geojsonProperties.cd_nom instanceof Array ? geojsonProperties.cd_nom[0] : geojsonProperties.cd_nom;
+    ctrl.currentIdSynthese = geojsonProperties.id_synthese instanceof Array ? geojsonProperties.id_synthese[0]:geojsonProperties.id_synthese
   }
 
   ctrl.updateCurrentLeafletObs = function(geojsonProperties){
-    ctrl.currentLeafletObs = geojsonProperties.id_synthese;
-    ctrl.currentCd_nom = geojsonProperties.cd_nom;
+    ctrl.currentLeafletObs = geojsonProperties.id;
+    ctrl.currentCd_nom = geojsonProperties.cd_nom instanceof Array ? geojsonProperties.cd_nom[0] : geojsonProperties.cd_nom;
+    ctrl.currentIdSynthese = geojsonProperties.id_synthese instanceof Array ? geojsonProperties.id_synthese[0]:geojsonProperties.id_synthese
   }
 
   ctrl.exportShape = function(form){

@@ -30,9 +30,9 @@ function listObsCtrl ($uibModal, $http){
 		}
 	}
 
-	listCtrl.zoom = function(id_synthese){
-		this.mainController.updateCurrentLeafletObs(id_synthese);
-		this.mainController.updateCurrentListObs(id_synthese);
+	listCtrl.zoom = function(geojsonProperties){
+		this.mainController.updateCurrentLeafletObs(geojsonProperties);
+		this.mainController.updateCurrentListObs(geojsonProperties);
 	}
 
 	listCtrl.isCurrentObs = function(id, row_id_synthese){

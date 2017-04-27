@@ -61,13 +61,19 @@ function appCtrl (proxy){
 
 
   ctrl.updateCurrentListObs = function(geojsonProperties){
-    ctrl.currentListObs = geojsonProperties.id_synthese;
-    ctrl.currentCd_nom = geojsonProperties.cd_nom;
+    console.log("geojsonProperties: ")
+    console.log(geojsonProperties)
+    ctrl.currentListObs = geojsonProperties.id;
+    
+    // pour la recherche sur le detail taxon on prend le premier ID et le premier cd_nom si c'est une maille
+    ctrl.currentCd_nom = geojsonProperties.cd_nom instanceof Array ? geojsonProperties.cd_nom[0] : geojsonProperties.cd_nom;
+    ctrl.currentIdSynthese = geojsonProperties.id_synthese instanceof Array ? geojsonProperties.id_synthese[0]:geojsonProperties.id_synthese
   }
 
   ctrl.updateCurrentLeafletObs = function(geojsonProperties){
-    ctrl.currentLeafletObs = geojsonProperties.id_synthese;
-    ctrl.currentCd_nom = geojsonProperties.cd_nom;
+    ctrl.currentLeafletObs = geojsonProperties.id;
+    ctrl.currentCd_nom = geojsonProperties.cd_nom instanceof Array ? geojsonProperties.cd_nom[0] : geojsonProperties.cd_nom;
+    ctrl.currentIdSynthese = geojsonProperties.id_synthese instanceof Array ? geojsonProperties.id_synthese[0]:geojsonProperties.id_synthese
   }
 
   ctrl.exportShape = function(form){
