@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "truc",
   "main": "Apps/synthese/static/main.js",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "html-loader": "^0.4.5",
     "webpack": "^2.2.1"
   }
 }

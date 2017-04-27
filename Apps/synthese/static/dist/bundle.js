@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 8);
+/******/ 	return __webpack_require__(__webpack_require__.s = 9);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -734,22 +734,26 @@ var reglementationTemplate = 'synthese/templates/reglementation.html';
 
 /***/ }),
 /* 7 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function(angularInstance){
 
+	__webpack_require__(8)(angularInstance);
+
 	function taxonomieController($http){
 		taxCtrl = this;
+		taxCtrl.showSpinner = false;
 
 		taxCtrl.loadTaxonomieDetails = function(cdNom){
+			taxCtrl.showSpinner = true;
 			$http.get(configuration.URL_APPLICATION+"synthese/detailsTaxonomie/"+cdNom).then(function(response){
+				taxCtrl.showSpinner = false;
 				taxCtrl.currentTaxonomieDetails = response.data;
 			});
 		}
 
 		taxCtrl.$onChanges = function(changes){
 			if(changes){
-				console.log("changes");
 				if(changes.cdNom.currentValue != undefined){
 					this.loadTaxonomieDetails(changes.cdNom.currentValue);
 				}
@@ -772,6 +776,25 @@ var taxonomieTemplate = 'synthese/templates/taxonomie.html';
 
 /***/ }),
 /* 8 */
+/***/ (function(module, exports) {
+
+module.exports = function(angularInstance){
+
+	var template = 'synthese/spinner/spinner.html';
+
+	angularInstance.component('spinner', {
+
+	  'templateUrl' :template ,
+	  'bindings':{
+	  	'showSpinner': '<'
+	  }
+
+
+	});
+}
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var angularInstance = angular.module("app", ['ui.bootstrap', 'leaflet-directive', 'ngRoute']);
