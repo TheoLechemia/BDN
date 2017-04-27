@@ -19,7 +19,6 @@ function appCtrl (proxy){
 
     });
   
-
   proxy.loadTaxons('Tout').then(function(response){
       ctrl.taxonslist = response.data;
       ctrl.TaxonsFaune = ctrl.taxonslist.filter(function(t){
@@ -74,12 +73,6 @@ function appCtrl (proxy){
     ctrl.currentLeafletObs = geojsonProperties.id;
     ctrl.currentCd_nom = geojsonProperties.cd_nom instanceof Array ? geojsonProperties.cd_nom[0] : geojsonProperties.cd_nom;
     ctrl.currentIdSynthese = geojsonProperties.id_synthese instanceof Array ? geojsonProperties.id_synthese[0]:geojsonProperties.id_synthese
-  }
-
-  ctrl.exportShape = function(form){
-    proxy.exportShapeFile(form).then(function(response){
-      window.location =configuration.URL_APPLICATION+'synthese/uploads/'+response.data;       
-    })
   }
 
 

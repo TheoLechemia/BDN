@@ -68,6 +68,46 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports) {
+
+module.exports = function(angularInstance){
+
+proxy = angularInstance.factory('proxy', function proxy($http) {
+		return{
+			lastObs: function(){
+	            return $http.get(configuration.URL_APPLICATION+"synthese/lastObs");
+				},
+			sendData : function(data){
+				return $http.post(configuration.URL_APPLICATION+"synthese/getObs", data)
+			},
+
+			loadTaxons: function(protocole){
+				return $http.get(configuration.URL_APPLICATION+"synthese/loadTaxons/"+protocole)
+			},
+			loadCommunes: function(){
+				return $http.get(configuration.URL_APPLICATION+"synthese/loadCommunes")
+			},
+			loadForets: function(){
+				return $http.get(configuration.URL_APPLICATION+"synthese/loadForets")
+			},
+			loadTypologgie : function(){
+				return $http.get(configuration.URL_APPLICATION+"synthese/loadTypologgie")
+			},
+			exportShapeFile : function(data){
+				return $http.post(configuration.URL_APPLICATION+"synthese/export", data)
+			},
+			loadTaxonomyHierachy : function(rang_fils, rang_pere, rang_grand_pere, value_rang_grand_pere, value){
+				return $http.get(configuration.URL_APPLICATION +"synthese/loadTaxonomyHierachy/"+rang_fils+"/"+rang_pere+"/"+rang_grand_pere+"/"+value_rang_grand_pere+"/"+value)
+			},
+			loadProtocole: function(){
+				return $http.get(configuration.URL_APPLICATION+"synthese/loadProtocoles")
+			}			
+		}
+	  });
+}
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function(angularInstance){
@@ -95,7 +135,7 @@ var detailObsTemplate = 'synthese/templates/detailObs.html';
 }//END WEBPACK
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports) {
 
 module.exports = function(angularInstance){
@@ -320,13 +360,15 @@ angularInstance.component('formObs', {
 }// END WEBPACK
 
 /***/ }),
-/* 2 */
-/***/ (function(module, exports) {
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
 
 module.exports = function(angularInstance){
 
+__webpack_require__(0)(angularInstance);
 
-function listObsCtrl ($uibModal, $http){
+
+function listObsCtrl ($uibModal, $http, proxy){
 	listCtrl = this;
 	listCtrl.currentPoint = null;
 
@@ -353,28 +395,35 @@ function listObsCtrl ($uibModal, $http){
 					}
 			}
 		}
-	}
+	};
 
 	listCtrl.zoom = function(geojsonProperties){
 		this.mainController.updateCurrentLeafletObs(geojsonProperties);
 		this.mainController.updateCurrentListObs(geojsonProperties);
-	}
+	};
 
 	listCtrl.isCurrentObs = function(id, row_id_synthese){
 			return id == row_id_synthese;	
-	}
+	};
 
 	listCtrl.selected = 'point';
 
 	listCtrl.isSelected = function(list){
 		return this.selected === list;
-	}
+	};
 
 	listCtrl.changeList = function(list){
 		this.currentList = this.geojson[list];
 		this.selected = list;
-	}
-}
+	};
+
+	listCtrl.exportShape = function(geojson){
+	    proxy.exportShapeFile(geojson).then(function(response){
+	      window.location =configuration.URL_APPLICATION+'synthese/uploads/'+response.data;       
+	    })
+  	};
+
+}// END CONTROLLER
 
 templateLastObs = 'synthese/templates/listObs.html';
 
@@ -396,7 +445,7 @@ angularInstance.component('listObs', {
 }
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports) {
 
 module.exports = function(angularInstance){
@@ -606,46 +655,6 @@ module.exports = function(angularInstance){
 }
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-module.exports = function(angularInstance){
-
-proxy = angularInstance.factory('proxy', function proxy($http) {
-		return{
-			lastObs: function(){
-	            return $http.get(configuration.URL_APPLICATION+"synthese/lastObs");
-				},
-			sendData : function(data){
-				return $http.post(configuration.URL_APPLICATION+"synthese/getObs", data)
-			},
-
-			loadTaxons: function(protocole){
-				return $http.get(configuration.URL_APPLICATION+"synthese/loadTaxons/"+protocole)
-			},
-			loadCommunes: function(){
-				return $http.get(configuration.URL_APPLICATION+"synthese/loadCommunes")
-			},
-			loadForets: function(){
-				return $http.get(configuration.URL_APPLICATION+"synthese/loadForets")
-			},
-			loadTypologgie : function(){
-				return $http.get(configuration.URL_APPLICATION+"synthese/loadTypologgie")
-			},
-			exportShapeFile : function(data){
-				return $http.post(configuration.URL_APPLICATION+"synthese/export", data)
-			},
-			loadTaxonomyHierachy : function(rang_fils, rang_pere, rang_grand_pere, value_rang_grand_pere, value){
-				return $http.get(configuration.URL_APPLICATION +"synthese/loadTaxonomyHierachy/"+rang_fils+"/"+rang_pere+"/"+rang_grand_pere+"/"+value_rang_grand_pere+"/"+value)
-			},
-			loadProtocole: function(){
-				return $http.get(configuration.URL_APPLICATION+"synthese/loadProtocoles")
-			}			
-		}
-	  });
-}
-
-/***/ }),
 /* 5 */
 /***/ (function(module, exports) {
 
@@ -768,7 +777,7 @@ var taxonomieTemplate = 'synthese/templates/taxonomie.html';
 var angularInstance = angular.module("app", ['ui.bootstrap', 'leaflet-directive', 'ngRoute']);
 
 
-__webpack_require__(4)(angularInstance);
+__webpack_require__(0)(angularInstance);
 
 angularInstance.controller("headerCtrl", function($scope){
 
@@ -786,7 +795,6 @@ function appCtrl (proxy){
 
     });
   
-
   proxy.loadTaxons('Tout').then(function(response){
       ctrl.taxonslist = response.data;
       ctrl.TaxonsFaune = ctrl.taxonslist.filter(function(t){
@@ -843,12 +851,6 @@ function appCtrl (proxy){
     ctrl.currentIdSynthese = geojsonProperties.id_synthese instanceof Array ? geojsonProperties.id_synthese[0]:geojsonProperties.id_synthese
   }
 
-  ctrl.exportShape = function(form){
-    proxy.exportShapeFile(form).then(function(response){
-      window.location =configuration.URL_APPLICATION+'synthese/uploads/'+response.data;       
-    })
-  }
-
 
 }
 
@@ -860,10 +862,10 @@ angularInstance.component('app', {
 });
 
 
-__webpack_require__(1)(angularInstance);
-__webpack_require__(3)(angularInstance);
 __webpack_require__(2)(angularInstance);
-__webpack_require__(0)(angularInstance);
+__webpack_require__(4)(angularInstance);
+__webpack_require__(3)(angularInstance);
+__webpack_require__(1)(angularInstance);
 
 /***/ })
 /******/ ]);

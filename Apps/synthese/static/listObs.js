@@ -1,7 +1,9 @@
 module.exports = function(angularInstance){
 
+require('./services/proxy.js')(angularInstance);
 
-function listObsCtrl ($uibModal, $http){
+
+function listObsCtrl ($uibModal, $http, proxy){
 	listCtrl = this;
 	listCtrl.currentPoint = null;
 
@@ -28,28 +30,35 @@ function listObsCtrl ($uibModal, $http){
 					}
 			}
 		}
-	}
+	};
 
 	listCtrl.zoom = function(geojsonProperties){
 		this.mainController.updateCurrentLeafletObs(geojsonProperties);
 		this.mainController.updateCurrentListObs(geojsonProperties);
-	}
+	};
 
 	listCtrl.isCurrentObs = function(id, row_id_synthese){
 			return id == row_id_synthese;	
-	}
+	};
 
 	listCtrl.selected = 'point';
 
 	listCtrl.isSelected = function(list){
 		return this.selected === list;
-	}
+	};
 
 	listCtrl.changeList = function(list){
 		this.currentList = this.geojson[list];
 		this.selected = list;
-	}
-}
+	};
+
+	listCtrl.exportShape = function(geojson){
+	    proxy.exportShapeFile(geojson).then(function(response){
+	      window.location =configuration.URL_APPLICATION+'synthese/uploads/'+response.data;       
+	    })
+  	};
+
+}// END CONTROLLER
 
 templateLastObs = 'synthese/templates/listObs.html';
 

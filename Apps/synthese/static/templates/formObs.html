@@ -1,5 +1,5 @@
 
-<div class="panel panel-default" class='container-fluid typeahead-demo'>
+<div class="panel panel-default" class='container-fluid typeahead-demo' style="height: 77vh;">
 		<div class="panel-heading">
 				<h3 class="panel-title"> <b> Rechercher des observations </b> </h3>
 		</div>
@@ -150,24 +150,37 @@
 		<div class="section">
 				<div class="section-title"> Quand ?</div>
 				  <div class="form-group">
-				      <div>
+<!-- 				      <div>
 				        <p class="input-group">
 				          <input placeholder="Après le: (Date)" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.form.when.first"" is-open="$ctrl.popup.first.opened" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" max-date="$ctrl.maxDate"/>
 				          <span class="input-group-btn">
 				            <button type="button" class="btn btn-default" ng-click="$ctrl.open('first')"><i class="glyphicon glyphicon-calendar"></i></button>
 				          </span>
 				        </p>
-				      </div>
+				      </div> -->
+	                <div class='input-group date' >
+	                    <input placeholder="Après le:" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.form.when.first" is-open="$ctrl.popup.first.opened" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" ng-click="$ctrl.open('first')" max-date="$ctrl.maxDate"/>
+	                    <span class="input-group-addon">
+	                        <span  class="glyphicon glyphicon-calendar" ng-click="$ctrl.open('first')"></span>
+	                    </span>
+	                </div>
 				  </div>
-			      <div>
+	                <div class='input-group date' style="cursor: pointer;">
+	                    <input  id="firstDate" name="date" placeholder="Avant le:" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.form.when.last"" is-open="$ctrl.popup.last.opened" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" ng-click="$ctrl.open('last')" max-date="$ctrl.maxDate"/>
+	                    <span class="input-group-addon">
+	                        <span  class="glyphicon glyphicon-calendar" ng-click="$ctrl.open('last')"></span>
+	                    </span>
+	                </div>
+			</div>
+
+<!-- 			      <div>
 			        <p class="input-group">
 			          <input placeholder="Avant le: (Date)" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.form.when.last"" is-open="$ctrl.popup.last.opened" datepicker-options="dateOptions" close-text="Close" alt-input-formats="altInputFormats"  max-date = $ctrl.maxDate />
 			          <span class="input-group-btn">
 			            <button type="button" class="btn btn-default" ng-click="$ctrl.open('last')"><i class="glyphicon glyphicon-calendar"></i></button>
 			          </span>
 			        </p>
-			      </div>
-		</div>
+			      </div> -->
 		<div class="section">
 			<div class="section-title"> Qui ?</div>
 			<input  autocomplete="off" placeholder="Observateur " type="text" ng-model="$ctrl.form.observateur" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="r as r.observateur for r in $ctrl.typologie.observateurs  | limitTo:8" class="form-control"  typeahead-no-results="noResults" >

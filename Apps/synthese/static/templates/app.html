@@ -1,22 +1,19 @@
 <div class="container-fluid">
 	<div class="row">
-		<div class="col-md-2 bloc-synthese" style="padding-right: 0px;">
+		<div class="col-md-2 bloc-synthese" ">
 			<form-obs on-form-submit="$ctrl.formSubmit($event.form)" on-protocole-change="$ctrl.changeProtocole($event.protocole)" taxons="$ctrl.taxonslist" communes="$ctrl.communesList" forets="$ctrl.foretsList" typologie="$ctrl.typologie" protocoles="$ctrl.protocoles"> </form-obs>	
 		</div>
 
-		<div class="col-md-7 bloc-synthese" style="padding-right: 0px;">
+		<div class="col-md-7 bloc-synthese">
 			<map geojson='$ctrl.geojson' current-list-obs="$ctrl.currentListObs" current-leaflet-obs = "$ctrl.currentLeafletObs"> </map>
 		</div>
 
 		<div class="col-md-3 bloc-synthese" >
 			<list-obs  current-list-obs="$ctrl.currentListObs" current-leaflet-obs = "$ctrl.currentLeafletObs" geojson="$ctrl.geojson"> </list-obs>
-			<button ng-click="$ctrl.exportShape($ctrl.geojson)" type="button" class="btn btn-primary">Exportez en shapefile <span class="glyphicon glyphicon-download-alt"> </span> </button>
 		</div>	
 	</div>
 
 	<div class="row">
-
 		<detail-obs id-synthese="$ctrl.currentIdSynthese" cd-nom="$ctrl.currentCd_nom"> </detail-obs>
-
 	</div>
 </div>
