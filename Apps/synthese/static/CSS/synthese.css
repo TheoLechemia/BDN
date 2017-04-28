@@ -152,3 +152,8 @@ select{
   padding: 5px;
 }
 
+.dropdown-menu{
+  position: fixed;
+  z-index: 1500;
+  top:235px!important;
+}

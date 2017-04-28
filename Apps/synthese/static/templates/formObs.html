@@ -1,21 +1,21 @@
 <div class="panel panel-default" class='container-fluid typeahead-demo'">
 		<div class="panel-heading">
-				<div class="panel-title"> <b> Rechercher des observations </b> </div>
+				<div class="panel-title"> <b> Rechercher...</b> </div>
 		</div>
 	<form>
 		<div class="section">
 				<div class="section-title"> Quoi ?</div>
 					<div class="form-inline form-group">
 						<div class="radio">
-						  <input  class="radiotout" ng-model="$ctrl.regneRadio" class="radio" type="radio" name="optradio" value="Tout"  ng-checked="true" ng-click="$ctrl.changeProtocole('Tout')">
+						  <input  class="radiotout" ng-model="$ctrl.form.searchRegne" class="radio" type="radio" name="optradio" value="Tout"  ng-checked="true" ng-click="$ctrl.changeProtocole('Tout')">
 						  <label>Tout</label>
 						</div>			
 						<div class="radio">
-				  			<input ng-model="$ctrl.regneRadio" class="radio" type="radio" name="optradio" value="Animalia" ng-click="$ctrl.changeProtocole('Animalia')">
+				  			<input ng-model="$ctrl.form.searchRegne" class="radio" type="radio" name="optradio" value="Animalia" ng-click="$ctrl.changeProtocole('Animalia')">
 				  			<label>Faune</label>
 						</div>
 						<div class="radio">
-						  <input ng-model="$ctrl.regneRadio" class="radio" type="radio" name="optradio" value="Plantae" ng-click="$ctrl.changeProtocole('Plantae')">
+						  <input ng-model="$ctrl.form.searchRegne" class="radio" type="radio" name="optradio" value="Plantae" ng-click="$ctrl.changeProtocole('Plantae')">
 						  <label>Flore</label>
 						</div>
 					
@@ -27,7 +27,7 @@
 						<label>Taxon(s)</label>
 					 	<input id="input_lbnom" class="form-control" name="lb_nom" autocomplete="off" placeholder="Nom latin ou vernaculaire " type="text" ng-model="$ctrl.form.taxon.lb_nom" 
 					 	typeahead-editable="false"
-					 	uib-typeahead="taxon as taxon.search_name for taxon in $ctrl.search_taxons($viewValue, $ctrl.selectedProtocole) | limitTo:8"
+					 	uib-typeahead="taxon as taxon.search_name for taxon in $ctrl.search_taxons($viewValue, $ctrl.form.searchRegne) | limitTo:8"
 					 	typeahead-min-length="2" typeahead-no-results="$ctrl.noResults"
 					 	 typeahead-loading="$ctrl.loadingLbnom"
 					 	 typeahead-on-select ="$ctrl.onSelectlbNom($item, $model, $label)">
@@ -35,7 +35,6 @@
 					 	    <div ng-show="$ctrl.noResults">
 						      <i  style="color:red;" class="glyphicon glyphicon-remove"></i> Aucun résultat
 						    </div>
-					 	<p ng-show="(addObsForm.lb_nom.$invalid && !addObsForm.lb_nom.$pristine) || ($ctrl.validationAttempt && addObsForm.lb_nom.$invalid)" class="help-block">Le nom du taxon est requis</p>
 					</div>
 				
 
@@ -156,15 +155,8 @@
 		<div class="section">
 				<div class="section-title"> Quand ?</div>
 				  <div class="form-group">
-<!-- 				      <div>
-				        <p class="input-group">
-				          <input placeholder="Après le: (Date)" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.form.when.first"" is-open="$ctrl.popup.first.opened" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" max-date="$ctrl.maxDate"/>
-				          <span class="input-group-btn">
-				            <button type="button" class="btn btn-default" ng-click="$ctrl.open('first')"><i class="glyphicon glyphicon-calendar"></i></button>
-				          </span>
-				        </p>
-				      </div> -->
-	                <div class='input-group date' >
+
+	                <div class='input-group date' style="cursor: pointer;">
 	                    <input placeholder="Après le:" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.form.when.first" is-open="$ctrl.popup.first.opened" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" ng-click="$ctrl.open('first')" max-date="$ctrl.maxDate"/>
 	                    <span class="input-group-addon">
 	                        <span  class="glyphicon glyphicon-calendar" ng-click="$ctrl.open('first')"></span>
@@ -179,14 +171,6 @@
 	                </div>
 			</div>
 
-<!-- 			      <div>
-			        <p class="input-group">
-			          <input placeholder="Avant le: (Date)" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.form.when.last"" is-open="$ctrl.popup.last.opened" datepicker-options="dateOptions" close-text="Close" alt-input-formats="altInputFormats"  max-date = $ctrl.maxDate />
-			          <span class="input-group-btn">
-			            <button type="button" class="btn btn-default" ng-click="$ctrl.open('last')"><i class="glyphicon glyphicon-calendar"></i></button>
-			          </span>
-			        </p>
-			      </div> -->
 		<div class="section">
 			<div class="section-title"> Qui ?</div>
 			<input  autocomplete="off" placeholder="Observateur " type="text" ng-model="$ctrl.form.observateur" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="r as r.observateur for r in $ctrl.typologie.observateurs  | limitTo:8" class="form-control"  typeahead-no-results="noResults" >

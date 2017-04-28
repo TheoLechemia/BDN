@@ -19,16 +19,6 @@ function appCtrl (proxy){
 
     });
   
-  proxy.loadTaxons('Tout').then(function(response){
-      ctrl.taxonslist = response.data;
-      ctrl.TaxonsFaune = ctrl.taxonslist.filter(function(t){
-        return t.regne ='Animalia'
-      })
-      ctrl.TaxonsFlore = ctrl.taxonslist.filter(function(t){
-        return t.regne ='Plantae'
-      })
-    })
-
   proxy.loadCommunes().then(function(response){
       ctrl.communesList = response.data;
   })

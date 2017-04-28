@@ -55,6 +55,7 @@ function formController($http){
 
     formCtrl.onNameSubmit = function($item, $model, $label, $event){
       this.globalForm.taxon.nom_valide = $item.nom_valide;
+      this.globalForm.taxon.cd_ref = $item.cd_ref;
       console.log($item);
       console.log($model);
       console.log($label);

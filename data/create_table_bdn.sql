@@ -127,14 +127,16 @@ AFTER INSERT ON contact_flore.releve
 
 -- end trigger
 
-CREATE OR REPLACE VIEW synthese.v_search_taxons AS 
- SELECT DISTINCT s.cd_nom,
-    s.protocole,
-    t.nom_vern,
-    t.lb_nom,
-    t.regne
-   FROM synthese.releve s
-     JOIN taxonomie.taxref t ON s.cd_nom = t.cd_nom;
+CREATE VIEW synthese.v_search_taxons AS(
+SELECT DISTINCT s.cd_nom,  CONCAT(t.lb_nom, ' = ', t.nom_complet_html) AS search_name,t.nom_valide, t.lb_nom, t.regne
+FROM synthese.releve s 
+JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
+UNION
+SELECT DISTINCT s.cd_nom,  CONCAT(t.nom_vern, ' = ', t.nom_complet_html) AS search_name,t.nom_valide,t.lb_nom, t.regne
+FROM synthese.releve s 
+JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
+WHERE t.nom_vern IS NOT NULL
+);
 
 ALTER TABLE synthese.v_search_taxons
   OWNER TO onfuser;

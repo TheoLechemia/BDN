@@ -146,6 +146,7 @@ function formControler(proxy, $http, $scope){
 	// Modele du formulaire
 	formCtrl.form = {
 		'selectedProtocole': null,
+		'searchRegne': undefined,
 		'who' : null,
 		'taxon' : {'lb_nom': null},
 		'listTaxons' : [],
@@ -172,8 +173,8 @@ function formControler(proxy, $http, $scope){
 	}
 
 
-	formCtrl.search_taxons = function($viewValue, selectedProtocole) {
-		return proxy.loadTaxons($viewValue, selectedProtocole).then(function(response){
+	formCtrl.search_taxons = function($viewValue, searchRegne) {
+		return proxy.loadTaxons($viewValue, searchRegne).then(function(response){
 			return response.data;
 		})
 	}
@@ -283,6 +284,7 @@ function formControler(proxy, $http, $scope){
 		console.log('refresh');
 		this.form = {
 		'selectedProtocole': null,
+		'searchRegne': undefined,
 		'who' : null,
 		'taxon' : {'lb_nom': null },
 		'listTaxons' : [],
@@ -325,8 +327,7 @@ function formControler(proxy, $http, $scope){
     	}
   	};
 
-
-}
+}// END CONTROLLER
 
 var templateForm = 'synthese/templates/formObs.html';
 
@@ -337,7 +338,6 @@ angularInstance.component('formObs', {
   templateUrl : templateForm,
   bindings: {
   	onFormSubmit : '&',
-  	taxons : '<',
 	communes : '<',
 	forets: '<',
 	typologie : '<',
@@ -807,16 +807,6 @@ function appCtrl (proxy){
 
     });
   
-  proxy.loadTaxons('Tout').then(function(response){
-      ctrl.taxonslist = response.data;
-      ctrl.TaxonsFaune = ctrl.taxonslist.filter(function(t){
-        return t.regne ='Animalia'
-      })
-      ctrl.TaxonsFlore = ctrl.taxonslist.filter(function(t){
-        return t.regne ='Plantae'
-      })
-    })
-
   proxy.loadCommunes().then(function(response){
       ctrl.communesList = response.data;
   })
