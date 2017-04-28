@@ -28,15 +28,16 @@
     border-radius: 0;
     box-shadow: none;
   }
-  .last-obs {
+/*  .last-obs {
     display: block;
     height: 700px ;
     overflow-y: scroll;
-}
+}*/
 
  .panel .panel-info{
   margin: 5px;
  }
+
 
 
 
@@ -122,10 +123,11 @@ body {
 .bloc-synthese{
   padding-right: 0px;
   padding-left: 5px;
+
 }
 
 .panel{
-  margin-bottom: 5px;
+  margin-bottom: 0px;
 }
 
 .panel .panel-heading{
@@ -145,3 +147,8 @@ textarea {
 select{
     -webkit-appearance: none;
 }
+
+.alert {
+  padding: 5px;
+}
+

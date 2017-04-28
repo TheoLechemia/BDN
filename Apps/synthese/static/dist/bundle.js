@@ -81,8 +81,8 @@ proxy = angularInstance.factory('proxy', function proxy($http) {
 				return $http.post(configuration.URL_APPLICATION+"synthese/getObs", data)
 			},
 
-			loadTaxons: function(protocole){
-				return $http.get(configuration.URL_APPLICATION+"synthese/loadTaxons/"+protocole)
+			loadTaxons: function(expre, protocole){
+				return $http.get(configuration.URL_APPLICATION+"synthese/loadTaxons/"+expre+"/"+protocole)
 			},
 			loadCommunes: function(){
 				return $http.get(configuration.URL_APPLICATION+"synthese/loadCommunes")
@@ -147,7 +147,7 @@ function formControler(proxy, $http, $scope){
 	formCtrl.form = {
 		'selectedProtocole': null,
 		'who' : null,
-		'taxon' : {'lb_nom': null, 'nom_vern': null, 'cd_nom' : null },
+		'taxon' : {'lb_nom': null},
 		'listTaxons' : [],
 		'where' : {'code_insee': null, 'nom': null},
 		'when' : {'first': null, 'last': null},
@@ -167,11 +167,16 @@ function formControler(proxy, $http, $scope){
 	}
 
 	// à l'envoie du formulaire, on le passe au module pere: APP qui fait la requete ajax sur les geojson et les passe a toute l'appli
-	this.submitForm = function(form){
+	formCtrl.submitForm = function(form){
 		this.onFormSubmit({$event: {form: form}})
 	}
 
 
+	formCtrl.search_taxons = function($viewValue, selectedProtocole) {
+		return proxy.loadTaxons($viewValue, selectedProtocole).then(function(response){
+			return response.data;
+		})
+	}
 
 	//RADIO REGNE
 	formCtrl.regneRadio = 'current';
@@ -188,7 +193,7 @@ function formControler(proxy, $http, $scope){
 		else{
 			currentProtocole = "Tout"
 		}
-		this.onProtocoleChange({$event:{protocole:currentProtocole}})
+		this.onProtocoleChange({$event:{'protocole':currentProtocole}})
 	}
 
 
@@ -245,25 +250,10 @@ function formControler(proxy, $http, $scope){
 	// et ajout à la liste des taxons selectionnés
 		formCtrl.showNewTaxons = false;
 		formCtrl.newTaxons = []
-	 formCtrl.onSelectNomVern = function ($item, $model, $label) {
-	 	   //$("#input_lbnom").val($item.lb_nom);
-	 	   this.form.listTaxons.push($item.cd_nom);
-
-	 	   	 if (this.showNewTaxons == false){
-				this.showNewTaxons = !this.showNewTaxons;
-			}
-			this.newTaxons.push({'name':this.form.taxon.lb_nom, 'cd_nom': this.form.taxon.cd_nom});
-
-			setTimeout(function(){
-			$("#input_lbnom").val('');
-			 $("#input_nomvern").val('');
-			}, 1000)
-	}
-
 
 	 formCtrl.onSelectlbNom = function ($item, $model, $label) {
-	 	   $("#input_nomvern").val($item.nom_vern);
 	 	   this.form.listTaxons.push($item.cd_nom);
+	 	   this.form.taxon.lb_nom = $item.lb_nom;
 
 	 	   	if (this.showNewTaxons == false){
 				this.showNewTaxons = !this.showNewTaxons;
@@ -274,7 +264,6 @@ function formControler(proxy, $http, $scope){
 
 			setTimeout(function(){
 			$("#input_lbnom").val('');
-			 $("#input_nomvern").val('');
 			}, 1000)
 	}
 	
@@ -295,7 +284,7 @@ function formControler(proxy, $http, $scope){
 		this.form = {
 		'selectedProtocole': null,
 		'who' : null,
-		'taxon' : {'lb_nom': null, 'nom_vern': null, 'cd_nom' : null },
+		'taxon' : {'lb_nom': null },
 		'listTaxons' : [],
 		'where' : {'code_insee': null, 'nom': null},
 		'when' : {'first': null, 'last': null},

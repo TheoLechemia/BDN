@@ -87,11 +87,11 @@ def getObs():
     if flask.request.method == 'POST':
         geojsonMaille ={ "type": "FeatureCollection",  "features" : list() }
         geojsonPoint ={ "type": "FeatureCollection",  "features" : list() }
-        sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur, st.nom_structure
+        sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur, st.nom_organisme
               FROM synthese.releve s
               LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
-              JOIN utilisateur.bib_structure st ON st.id_structure = s.id_structure"""
+              JOIN utilisateurs.bib_organismes st ON st.id_organisme = s.id_structure"""
         sqlAndParams = utils.buildSQL(sql, "synthese")
 
         db.cur.execute(sqlAndParams['sql'], sqlAndParams['params'])
@@ -113,15 +113,25 @@ def getObs():
 
 ######FORM#########
 #charge le bons taxons pour la recherche par nom latin et vernaculaire en fonction du protocole choisi
-@synthese.route('/loadTaxons/<protocole>', methods=['GET', 'POST'])
-def loadTaxons(protocole):
-    db = getConnexion()
-    if protocole == "Tout":
-        sql = """SELECT * FROM synthese.v_search_taxons"""
-    else:
-        curProtocole = "'"+protocole+"'"
-        sql = "SELECT * FROM synthese.v_search_taxons WHERE regne = "+curProtocole
-    res = utils.sqltoDict(sql, db.cur)
+@synthese.route('/loadTaxons/<expr>/<protocole>', methods=['GET', 'POST'])
+def loadTaxons(expr, protocole):
+    db=getConnexion()
+    if protocole == "undefined" or protocole == 'Tout':
+        sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
+                SELECT cd_nom, search_name, nom_valide, lb_nom from synthese.v_search_taxons
+                WHERE search_name ILIKE %s
+                ORDER BY search_name ASC 
+                LIMIT 20) r"""
+        params = ["%"+expr+"%"]
+    else:       
+        sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
+                    SELECT cd_nom, search_name, nom_valide, lb_nom from synthese.v_search_taxons
+                    WHERE search_name ILIKE %s  AND regne = %s
+                    ORDER BY search_name ASC 
+                    LIMIT 20) r"""
+        params = ["%"+expr+"%", protocole]
+    db.cur.execute(sql, params)
+    res = db.cur.fetchone()[0]
     db.closeAll()
     return Response(flask.json.dumps(res), mimetype='application/json')
 

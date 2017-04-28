@@ -18,23 +18,20 @@
 								<p ng-show="(addObsForm.observateur.$invalid && !addObsForm.observateur.$pristine) || ($ctrl.validationAttempt && addObsForm.observateur.$invalid) " class="help-block">Le nom de l'observateur est requis</p>
 							</div>
 
-
-							<div class="form-group" ng-click="$ctrl.checkProtocole()"  >
-						 		<input name = "nom_vern" id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="$ctrl.globalForm.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.nom_vern for taxon in $ctrl.search_vern_name($viewValue, $ctrl.selectedProtocole)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="$ctrl.noResultsNomVern" typeahead-loading="$ctrl.loadingNomVern">
-						 	</div>
-
-							 	<i ng-show="$ctrl.loadingNomVern" class="glyphicon glyphicon-refresh"></i>
-						 	    <div ng-show="$ctrl.noResultsNomVern">
-							      <i  style="color:red;" class="glyphicon glyphicon-remove"></i> Aucun résultat
-							    </div>
 						
 							<div ng-click="$ctrl.checkProtocole()"  class="form-group" ng-class="{'has-error' : addObsForm.lb_nom.$invalid && !addObsForm.lb_nom.$pristine  || ($ctrl.validationAttempt && addObsForm.lb_nom.$invalid) }">
-							 	<input  name="lb_nom" autocomplete="off" placeholder="Nom scientifique " type="text" ng-model="$ctrl.globalForm.taxon" typeahead-editable="false"  uib-typeahead="taxon as taxon.lb_nom for taxon in $ctrl.search_scientist_name($viewValue, $ctrl.selectedProtocole)"  | limitTo:8" class="form-control" typeahead-min-length="2" typeahead-no-results="$ctrl.noResults"  required typeahead-loading="$ctrl.loadingLbnom">
+							 	<input class="form-control"   name="lb_nom" autocomplete="off" placeholder="Nom latin ou vernaculaire " type="text" ng-model="$ctrl.globalForm.taxon.nom_valide" 
+							 	typeahead-editable="false"  
+							 	uib-typeahead="taxon as taxon.search_name for taxon in $ctrl.search_scientist_name($viewValue, $ctrl.selectedProtocole) | limitTo:8"
+							 	typeahead-min-length="2" typeahead-no-results="$ctrl.noResults"
+							 	required 
+							 	 typeahead-loading="$ctrl.loadingLbnom"
+							 	 typeahead-on-select ="$ctrl.onNameSubmit($item, $model, $label, $event)">
 							 	<i ng-show="$ctrl.loadingLbnom" class="glyphicon glyphicon-refresh"></i>
 							 	    <div ng-show="$ctrl.noResults">
 								      <i  style="color:red;" class="glyphicon glyphicon-remove"></i> Aucun résultat
 								    </div>
-							 	<p ng-show="(addObsForm.lb_nom.$invalid && !addObsForm.lb_nom.$pristine) || ($ctrl.validationAttempt && addObsForm.lb_nom.$invalid)" class="help-block">Le nom scientifique est requis</p>
+							 	<p ng-show="(addObsForm.lb_nom.$invalid && !addObsForm.lb_nom.$pristine) || ($ctrl.validationAttempt && addObsForm.lb_nom.$invalid)" class="help-block">Le nom du taxon est requis</p>
 							</div>
 
 							    <div class="form-group" >

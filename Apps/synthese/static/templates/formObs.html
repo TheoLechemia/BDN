@@ -1,7 +1,6 @@
-
-<div class="panel panel-default" class='container-fluid typeahead-demo' style="height: 77vh;">
+<div class="panel panel-default" class='container-fluid typeahead-demo'">
 		<div class="panel-heading">
-				<h3 class="panel-title"> <b> Rechercher des observations </b> </h3>
+				<div class="panel-title"> <b> Rechercher des observations </b> </div>
 		</div>
 	<form>
 		<div class="section">
@@ -22,12 +21,23 @@
 					
 					</div>
 					
-				<div class="form-group">
-				<label>Taxon(s)</label>
-			 		<input id="input_lbnom" autocomplete="off" placeholder="Nom Latin " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.lb_nom for taxon in $ctrl.taxons | filter:{lb_nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectlbNom($item, $model, $label)" >
 				
-				 	<input id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in $ctrl.taxons | filter:{nom_vern:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectNomVern($item, $model, $label)" >
-				</div>
+<!-- 			 		<input id="input_lbnom" autocomplete="off" placeholder="Nom Latin ou vernaculaire " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.search_name for taxon in $ctrl.taxons | filter:{lb_nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectlbNom($item, $model, $label)"> -->
+					<div >
+						<label>Taxon(s)</label>
+					 	<input id="input_lbnom" class="form-control" name="lb_nom" autocomplete="off" placeholder="Nom latin ou vernaculaire " type="text" ng-model="$ctrl.form.taxon.lb_nom" 
+					 	typeahead-editable="false"
+					 	uib-typeahead="taxon as taxon.search_name for taxon in $ctrl.search_taxons($viewValue, $ctrl.selectedProtocole) | limitTo:8"
+					 	typeahead-min-length="2" typeahead-no-results="$ctrl.noResults"
+					 	 typeahead-loading="$ctrl.loadingLbnom"
+					 	 typeahead-on-select ="$ctrl.onSelectlbNom($item, $model, $label)">
+					 	<i ng-show="$ctrl.loadingLbnom" class="glyphicon glyphicon-refresh"></i>
+					 	    <div ng-show="$ctrl.noResults">
+						      <i  style="color:red;" class="glyphicon glyphicon-remove"></i> Aucun résultat
+						    </div>
+					 	<p ng-show="(addObsForm.lb_nom.$invalid && !addObsForm.lb_nom.$pristine) || ($ctrl.validationAttempt && addObsForm.lb_nom.$invalid)" class="help-block">Le nom du taxon est requis</p>
+					</div>
+				
 
 				<div class="alert alert-warning" ng-show="$ctrl.showNewTaxons" class="ng-hide"> 
 					<b> Taxon(s) recherché(s): </b>
@@ -114,10 +124,6 @@
 							  <option value=""> - Sélectionner un type de menace - </option> 
 
 						</select>
-
-
-
-
 				      <div class="modal-footer">
 				        <button type="button" class="btn btn-success" data-dismiss="modal" ng-click="$ctrl.onTaxonomieChange()">Valider</button>
 				      </div>
@@ -190,8 +196,8 @@
 		
 
 	      <div class="form-inline form-group" style="margin-top: 5px;">
-		  	 <button type="button" class="btn btn-danger formbutton " uib-tooltip="Raffraichir la sélection" ng-click="$ctrl.onRefreshEvent()"> <span class="glyphicon glyphicon-remove"> </span>  </button>
-		   	<button type="submit" type="button" class="btn btn btn-success formbutton" ng-click="$ctrl.submitForm($ctrl.form)"> Rechercher </button>
+		  	 <button type="button" class="btn btn-xs btn-danger formbutton " uib-tooltip="Raffraichir la sélection" ng-click="$ctrl.onRefreshEvent()"> <span class="glyphicon glyphicon-remove"> </span>  </button>
+		   	<button type="submit" type="button" class="btn btn-xs btn-success formbutton" ng-click="$ctrl.submitForm($ctrl.form)"> Rechercher </button>
 		  </div>
 		 </div>
 

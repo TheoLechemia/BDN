@@ -242,22 +242,53 @@ VALUES (1, 'Marin'), (2, 'Eau douce'), (3, 'Terrestre'), (4,'Marin et eau douce'
 
 
 -- Creation des vues de la liste des taxons personnalisée pour la structure: ICI la liste des taxons antillais / faune et flore
-CREATE VIEW taxonomie.taxons_contact_flore AS(
-SELECT taxonomie.find_cdref(cd_nom) AS cd_ref, nom_vern, lb_nom
-FROM taxonomie.import_taxref
-WHERE (mar != 'A' OR gua != 'A' OR sm != 'A' OR sb != 'A') AND regne = 'Plantae'
-);
+--CREATE VIEW taxonomie.taxons_contact_flore AS(
+--SELECT taxonomie.find_cdref(cd_nom) AS cd_ref, nom_vern, lb_nom
+--FROM taxonomie.import_taxref
+--WHERE (mar != 'A' OR gua != 'A' OR sm != 'A' OR sb != 'A') AND regne = 'Plantae'
+--);
 
-ALTER TABLE taxonomie.taxons_contact_flore
-  OWNER TO onfuser;
+CREATE MATERIALIZED VIEW taxonomie.taxons_contact_faune AS (
 
-CREATE VIEW taxonomie.taxons_contact_faune AS(
-SELECT taxonomie.find_cdref(cd_nom) AS cd_ref, nom_vern, lb_nom
-FROM taxonomie.import_taxref
-WHERE (mar != 'A' OR gua != 'A' OR sm != 'A' OR sb != 'A') AND regne = 'Animalia'
+SELECT taxonomie.find_cdref(t3.cd_nom) AS cd_ref,nom_valide, CONCAT(t3.lb_nom, ' = ', t3.nom_complet_html) AS search_name
+from taxonomie.cor_nom_liste t1
+JOIN taxonomie.bib_noms t2 ON t1.id_nom = t2.id_nom
+JOIN taxonomie.taxref t3 ON t3.cd_nom = t2.cd_nom
+WHERE t1.id_liste = 1001
+
+UNION
+SELECT taxonomie.find_cdref(t3.cd_nom),nom_valide, CONCAT(t3.nom_vern, ' = ', t3.nom_complet_html) AS search_name
+from taxonomie.cor_nom_liste t1
+JOIN taxonomie.bib_noms t2 ON t1.id_nom = t2.id_nom
+JOIN taxonomie.taxref t3 ON t3.cd_nom = t2.cd_nom
+WHERE t1.id_liste = 1001 AND t3.nom_vern IS NOT NULL
 );
 
 ALTER TABLE taxonomie.taxons_contact_faune
+  OWNER TO onfuser;
+
+--CREATE VIEW taxonomie.taxons_contact_faune AS(
+--SELECT taxonomie.find_cdref(cd_nom) AS cd_ref, nom_vern, lb_nom
+--FROM taxonomie.import_taxref
+--WHERE (mar != 'A' OR gua != 'A' OR sm != 'A' OR sb != 'A') AND regne = 'Animalia'
+--);
+CREATE MATERIALIZED VIEW taxonomie.taxons_contact_flore AS (
+
+SELECT taxonomie.find_cdref(t3.cd_nom) AS cd_ref, nom_valide, CONCAT(t3.lb_nom, ' = ', t3.nom_complet_html) AS search_name
+from taxonomie.cor_nom_liste t1
+JOIN taxonomie.bib_noms t2 ON t1.id_nom = t2.id_nom
+JOIN taxonomie.taxref t3 ON t3.cd_nom = t2.cd_nom
+WHERE t1.id_liste = 1002
+
+UNION
+SELECT taxonomie.find_cdref(t3.cd_nom),nom_valide, CONCAT(t3.nom_vern, ' = ', t3.nom_complet_html) AS search_name
+from taxonomie.cor_nom_liste t1
+JOIN taxonomie.bib_noms t2 ON t1.id_nom = t2.id_nom
+JOIN taxonomie.taxref t3 ON t3.cd_nom = t2.cd_nom
+WHERE t1.id_liste = 1002 AND t3.nom_vern IS NOT NULL
+);
+
+ALTER TABLE taxonomie.taxons_contact_flore
   OWNER TO onfuser;
 
 CREATE TABLE taxonomie.bib_liste_rouge (

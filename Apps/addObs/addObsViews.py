@@ -43,23 +43,9 @@ def addObs_index():
 def search_scientist_name(table, expr):
     db=getConnexion()
     sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
-                SELECT cd_ref, lb_nom, nom_vern from taxonomie.taxons_"""+table+"""
-                WHERE lb_nom ILIKE %s  
-                ORDER BY lb_nom ASC 
-                LIMIT 20) r"""
-    params = ["%"+expr+"%"]
-    db.cur.execute(sql, params)
-    res = db.cur.fetchone()[0]
-    db.closeAll()
-    return Response(flask.json.dumps(res), mimetype='application/json')
-
-@addObs.route('/search_vern_name/<table>/<expr>', methods=['GET'])
-def search_vern_name(table, expr):
-    db=getConnexion()
-    sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
-                SELECT cd_ref, lb_nom, nom_vern from taxonomie.taxons_"""+table+""" 
-                WHERE nom_vern ILIKE  %s 
-                ORDER BY nom_vern ASC
+                SELECT cd_ref, search_name, nom_valide from taxonomie.taxons_"""+table+"""
+                WHERE search_name ILIKE %s  
+                ORDER BY search_name ASC 
                 LIMIT 20) r"""
     params = ["%"+expr+"%"]
     db.cur.execute(sql, params)

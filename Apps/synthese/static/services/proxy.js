@@ -9,8 +9,8 @@ proxy = angularInstance.factory('proxy', function proxy($http) {
 				return $http.post(configuration.URL_APPLICATION+"synthese/getObs", data)
 			},
 
-			loadTaxons: function(protocole){
-				return $http.get(configuration.URL_APPLICATION+"synthese/loadTaxons/"+protocole)
+			loadTaxons: function(expre, protocole){
+				return $http.get(configuration.URL_APPLICATION+"synthese/loadTaxons/"+expre+"/"+protocole)
 			},
 			loadCommunes: function(){
 				return $http.get(configuration.URL_APPLICATION+"synthese/loadCommunes")

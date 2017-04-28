@@ -48,10 +48,17 @@ function formController($http){
     }
 
   formCtrl.search_scientist_name = function(expre, selectedProtocole){
-    console.log(selectedProtocole);
     return $http.get(configuration.URL_APPLICATION+"addObs/search_scientist_name/"+selectedProtocole.nom_schema+"/"+expre).then(function(response){ 
       return response.data;
     })
+    }
+
+    formCtrl.onNameSubmit = function($item, $model, $label, $event){
+      this.globalForm.taxon.nom_valide = $item.nom_valide;
+      console.log($item);
+      console.log($model);
+      console.log($label);
+      console.log($event);
     }
 
   formCtrl.isLoading = true;
