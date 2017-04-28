@@ -39,8 +39,8 @@ def addObs_index():
 
 
 
-@addObs.route('/search_scientist_name/<table>/<expr>', methods=['GET'])
-def search_scientist_name(table, expr):
+@addObs.route('/search_taxon_name/<table>/<expr>', methods=['GET'])
+def search_taxon_name(table, expr):
     db=getConnexion()
     sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
                 SELECT cd_ref, search_name, nom_valide from taxonomie.taxons_"""+table+"""

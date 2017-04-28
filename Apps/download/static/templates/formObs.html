@@ -1,3 +1,5 @@
+{{$ctrl.form}}
+
 <div class="col-md-8 bloc-synthese" style="padding-right: 0px;">
 	<div class="panel panel-default" class='container-fluid typeahead-demo'>
 			<div class="panel-heading">
@@ -15,11 +17,19 @@
 						
 					</div>
 						
-					<div class="form-group" ng-click="$ctrl.checkProtocole()">
-					<label>Taxon(s)</label>
-				 		<input id="input_lbnom" autocomplete="off" placeholder="Nom Latin " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.lb_nom for taxon in $ctrl.taxons | filter:{lb_nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectlbNom($item, $model, $label)" >
 					
-					 	<input id="input_nomvern" autocomplete="off" placeholder="Nom vernaculaire " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.nom_vern for taxon in $ctrl.taxons | filter:{nom_vern:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectNomVern($item, $model, $label)" >
+					<div class="form-group" ng-click="$ctrl.checkProtocole()">
+						<label>Taxon(s) test</label>
+					 	<input id="input_lbnom" class="form-control" name="lb_nom" autocomplete="off" placeholder="Nom latin ou vernaculaire " type="text" ng-model="$ctrl.form.taxon.lb_nom" 
+					 	typeahead-editable="false"
+					 	uib-typeahead="taxon as taxon.search_name for taxon in $ctrl.search_taxons( $ctrl.form.selectedProtocole.nom_schema, $viewValue) | limitTo:8"
+					 	typeahead-min-length="2" typeahead-no-results="$ctrl.noResults"
+					 	 typeahead-loading="$ctrl.loadingLbnom"
+					 	 typeahead-on-select ="$ctrl.onSelectlbNom($item, $model, $label)">
+					 	<i ng-show="$ctrl.loadingLbnom" class="glyphicon glyphicon-refresh"></i>
+					 	    <div ng-show="$ctrl.noResults">
+						      <i  style="color:red;" class="glyphicon glyphicon-remove"></i> Aucun résultat
+						    </div>
 					</div>
 
 					<div class="alert alert-warning" ng-show="$ctrl.showNewTaxons" class="ng-hide"> 

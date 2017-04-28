@@ -38,15 +38,29 @@ def index():
     db.closeAll()
     return render_template('indexDownload.html', protocoles = protocoles, structures = structures, page_title=u"Télécharger des données", configuration=config)
 
-@download.route('/loadTaxons/<protocole>', methods=['GET', 'POST'])
-def loadTaxons(protocole):
-    db = getConnexion()
-    if protocole == "Tout":
-        sql = """SELECT * FROM synthese.v_search_taxons"""
-    else:
-        curProtocole = "'"+protocole+"'"
-        sql = "SELECT * FROM synthese.v_search_taxons WHERE protocole = "+curProtocole
-    res = utils.sqltoDict(sql, db.cur)
+# @download.route('/loadTaxons/<protocole>', methods=['GET', 'POST'])
+# def loadTaxons(protocole):
+#     db = getConnexion()
+#     if protocole == "Tout":
+#         sql = """SELECT * FROM synthese.v_search_taxons"""
+#     else:
+#         curProtocole = "'"+protocole+"'"
+#         sql = "SELECT * FROM synthese.v_search_taxons WHERE protocole = "+curProtocole
+#     res = utils.sqltoDict(sql, db.cur)
+#     db.closeAll()
+#     return Response(json.dumps(res), mimetype='application/json')
+
+@download.route('/search_taxon_name/<protocole>/<expr>', methods=['GET'])
+def search_taxon_name(protocole, expr):
+    db=getConnexion()
+    sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
+                SELECT cd_ref, search_name, nom_valide, lb_nom from taxonomie.taxons_"""+protocole+"""
+                WHERE search_name ILIKE %sAND cd_ref=cd_nom AND cd_ref IN (SELECT DISTINCT cd_nom FROM synthese.releve )  
+                ORDER BY search_name ASC 
+                LIMIT 20) r"""
+    params = ["%"+expr+"%"]
+    db.cur.execute(sql, params)
+    res = db.cur.fetchone()[0]
     db.closeAll()
     return Response(json.dumps(res), mimetype='application/json')
 
@@ -67,21 +81,36 @@ def getObs():
         reformatedParams = list()
         stringTupple = str()
         for p in params:
+            print 'LAAAAAAAAA'
+            print type(p)
             if type(p) is int or type(p) is float:
                 reformatedParams.append(p)
             if type(p) is tuple:
-                if len(p) ==1:
+                print 'LONGUEUUUUUR'
+                print len(p)
+                print p
+                if len(p)==1:
                     stringTupple = str(p).replace(',','')
+                    print 'STRIIING TUPLE'
+                    print stringTupple
                     reformatedParams.append(stringTupple)
             if type(p) is str or type(p) is unicode:
                 reformatedParams.append("'"+p+"'")
 
+        
+
         paramtersPoint = list(reformatedParams)
+        print 
         paramtersPoint.insert(0, 'layer_point')
         paramtersMaille = list(reformatedParams)
         paramtersMaille.insert(0, 'layer_poly')
         paramtersCSV = list(reformatedParams)
         paramtersCSV.insert(0, 'to_csv')
+
+        print 'LAAAAAAAAAA'
+        print reformatedParams
+        print dictSQL['sql']
+        print params
 
         sql_point = dictSQL['sql']%tuple(paramtersPoint)
         sql_poly = dictSQL['sql']%tuple(paramtersMaille)

@@ -14,8 +14,8 @@ proxy = angularInstance.factory('proxy', function proxy($http) {
 				return $http.post(CONFIGURATION.URL_APPLICATION+"download/getObs", data)
 			},
 
-			loadTaxons: function(protocole){
-				return $http.get(CONFIGURATION.URL_APPLICATION+"download/loadTaxons/"+protocole)
+			loadTaxons: function(protocole, expr){
+				return $http.get(CONFIGURATION.URL_APPLICATION+"download/search_taxon_name/"+protocole+"/"+expr)
 			},
 			loadCommunes: function(){
 				return $http.get(CONFIGURATION.URL_APPLICATION+"synthese/loadCommunes")
@@ -69,37 +69,23 @@ function appCtrl (proxy){
     ctrl.protocoles = response.data;
   })
 
+
   ctrl.formSubmit = function(form){
     ctrl.form = form;
     console.log(form);
-/*    proxy.sendData(form).then(function(response){
-    	setTimeout(function(){
 
-    	}, 5000);
-    	    
-      ctrl.geojson = response.data;
-      nbObs = ctrl.geojson.point.features.length+ctrl.geojson.maille.features.length
-      ctrl.nbObs = nbObs+' observation(s)'
-    });*/
     proxy.sendData(form).then(function(response){
     	window.location =CONFIGURATION.URL_APPLICATION+'download/uploads/'+response.data;       
     })
   }
 
   ctrl.changeProtocole = function(protocole){
-  	console.log(protocole);
   	table_field = protocole.bib_champs;
-  	console.log(table_field);
 
   	proxy.bindNewValues(table_field).then(function(response){
   		ctrl.fields = response.data;
   	})
-    proxy.loadTaxons(protocole.nom_schema).then(function(response){
-      ctrl.taxonslist = response.data;
-    })
   }
-
-
 
 
 }
@@ -123,7 +109,7 @@ function formControler(proxy, $http, $scope){
 	formCtrl.form = {
 		'selectedProtocole': null,
 		'who' : null,
-		'taxon' : {'lb_nom': null, 'nom_vern': null, 'cd_nom' : null },
+		'taxon' : {'lb_nom': null },
 		'listTaxons' : [],
 		'where' : {'code_insee': null, 'nom': null},
 		'when' : {'first': null, 'last': null},
@@ -144,6 +130,14 @@ function formControler(proxy, $http, $scope){
 
 	formCtrl.child = {'protocoleForm':{}};
 
+	formCtrl.search_taxons = function(selectedProtocole, expr ){
+	    return proxy.loadTaxons(selectedProtocole, expr).then(function(response){ 
+	      return response.data;
+	    });
+    }
+
+
+
 	// à l'envoie du formulaire, on le passe au module pere: APP qui fait la requete ajax sur les geojson et les passe a toute l'appli
 	formCtrl.submitForm = function(){
 		form = {'globalForm': this.form, 'protocoleForm': this.child.protocoleForm} 
@@ -161,6 +155,11 @@ function formControler(proxy, $http, $scope){
 	})
 	// changement de protocole, change les données de recherche des taxons (faune, flore) depuis le module pere APP
 	formCtrl.changeProtocole = function(protocole){
+		this.form.taxon = {};
+		this.form.listTaxons = [];
+		this.newTaxons = [];
+		this.showNewTaxons = false;
+
 		this.child={'protocoleForm': {}};
 		this.selectedProtocole = protocole;
 		if(protocole){
@@ -198,41 +197,24 @@ function formControler(proxy, $http, $scope){
 
 
 
-	//synchronisation des deux inputs et ajout du cd_nom selectionné dans la liste de cd_nom du formulaire
-	// et ajout à la liste des taxons selectionnés
+	// ajout à la liste des taxons selectionnés
 		formCtrl.showNewTaxons = false;
 		formCtrl.newTaxons = []
-	 formCtrl.onSelectNomVern = function ($item, $model, $label) {
-	 	   //$("#input_lbnom").val($item.lb_nom);
-	 	   this.form.listTaxons.push($item.cd_nom);
-
-	 	   	 if (this.showNewTaxons == false){
-				this.showNewTaxons = !this.showNewTaxons;
-			}
-			this.newTaxons.push({'name':this.form.taxon.lb_nom, 'cd_nom': this.form.taxon.cd_nom});
-
-			setTimeout(function(){
-			$("#input_lbnom").val('');
-			 $("#input_nomvern").val('');
-			}, 1000)
-	}
-
 
 	 formCtrl.onSelectlbNom = function ($item, $model, $label) {
-	 	   $("#input_nomvern").val($item.nom_vern);
-	 	   this.form.listTaxons.push($item.cd_nom);
+	 	this.form.taxon.lb_nom = $item.lb_nom;
+ 		this.form.listTaxons.push($item.cd_ref);
+ 	   	if (this.showNewTaxons == false){
+			this.showNewTaxons = !this.showNewTaxons;
+		}
+		this.newTaxons.push({'name':$item.lb_nom, 'cd_nom': $item.cd_ref});
 
-	 	   	if (this.showNewTaxons == false){
-				this.showNewTaxons = !this.showNewTaxons;
-			}
-			this.newTaxons.push({'name':this.form.taxon.lb_nom, 'cd_nom': this.form.taxon.cd_nom});
+		// on vide les inputs
 
-			// on vide les inputs
-
-			setTimeout(function(){
-			$("#input_lbnom").val('');
-			 $("#input_nomvern").val('');
-			}, 1000)
+		setTimeout(function(){
+		$("#input_lbnom").val('');
+		 $("#input_nomvern").val('');
+		}, 1000)
 
 	}
 	

@@ -41,14 +41,10 @@ function formController($http){
   };
 
 
-  formCtrl.search_vern_name = function(expre, selectedProtocole){
-    return $http.get(configuration.URL_APPLICATION+"addObs/search_vern_name/"+selectedProtocole.nom_schema+"/"+expre).then(function(response){ 
-      return response.data;
-    })
-    }
 
-  formCtrl.search_scientist_name = function(expre, selectedProtocole){
-    return $http.get(configuration.URL_APPLICATION+"addObs/search_scientist_name/"+selectedProtocole.nom_schema+"/"+expre).then(function(response){ 
+
+  formCtrl.search_taxon_name = function(expre, selectedProtocole){
+    return $http.get(configuration.URL_APPLICATION+"addObs/search_taxon_name/"+selectedProtocole.nom_schema+"/"+expre).then(function(response){ 
       return response.data;
     })
     }
@@ -56,10 +52,6 @@ function formController($http){
     formCtrl.onNameSubmit = function($item, $model, $label, $event){
       this.globalForm.taxon.nom_valide = $item.nom_valide;
       this.globalForm.taxon.cd_ref = $item.cd_ref;
-      console.log($item);
-      console.log($model);
-      console.log($label);
-      console.log($event);
     }
 
   formCtrl.isLoading = true;

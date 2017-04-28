@@ -82,7 +82,7 @@ CREATE TABLE contact_flore.releve
   diffusable boolean,
   nb_pied_approx character varying(15),
   nb_pied integer,
-  boutons_flo boolean,
+  btn_floraux boolean,
   floraison boolean,
   fruit_maturation  boolean,
   dissemination boolean,
@@ -200,7 +200,7 @@ INSERT INTO contact_flore.bib_champs_contact_flore (id_champ, nom_champ, valeur,
 (1, 'nb_pied', '{"values":[]}', 'spec_1', 'Nombre de pied', 'number'),
 (2,'nb_pied_approx', '{"values":["1 à 10", "11 à 100", "Plus de 100"]}' ,'spec_2', 'Nombre de pied approximatif', 'select'),
 (3,'stade_dev', '{"values":["Juvénile", "Adulte", "Sénéscent"]}','spec_3', 'Stade de développement', 'select'),
-(4,'boutons_flo', '{"values":[]}','spec_4', 'Boutons floraux', 'checkbox'),
+(4,'btn_floraux', '{"values":[]}','spec_4', 'Boutons floraux', 'checkbox'),
 (5,'floraison', '{"values":[]}', 'spec_5', 'Floraison', 'checkbox'),
 (6,'fruit_maturation','{"values":[]}', 'spec_6', 'Fruit mature', 'checkbox' ),
 (7,'dissemination', '{"values":[]}', 'spec_7' ,'Dissémination', 'checkbox' );
@@ -252,14 +252,14 @@ VALUES (1, 'Marin'), (2, 'Eau douce'), (3, 'Terrestre'), (4,'Marin et eau douce'
 
 CREATE MATERIALIZED VIEW taxonomie.taxons_contact_faune AS (
 
-SELECT taxonomie.find_cdref(t3.cd_nom) AS cd_ref,nom_valide, CONCAT(t3.lb_nom, ' = ', t3.nom_complet_html) AS search_name
+SELECT taxonomie.find_cdref(t3.cd_nom) AS cd_ref, t3.cd_nom, nom_valide, lb_nom, CONCAT(t3.lb_nom, ' = ', t3.nom_complet_html) AS search_name
 from taxonomie.cor_nom_liste t1
 JOIN taxonomie.bib_noms t2 ON t1.id_nom = t2.id_nom
 JOIN taxonomie.taxref t3 ON t3.cd_nom = t2.cd_nom
 WHERE t1.id_liste = 1001
 
 UNION
-SELECT taxonomie.find_cdref(t3.cd_nom),nom_valide, CONCAT(t3.nom_vern, ' = ', t3.nom_complet_html) AS search_name
+SELECT taxonomie.find_cdref(t3.cd_nom),t3.cd_nom, nom_valide,  lb_nom, CONCAT(t3.nom_vern, ' = ', t3.nom_complet_html) AS search_name
 from taxonomie.cor_nom_liste t1
 JOIN taxonomie.bib_noms t2 ON t1.id_nom = t2.id_nom
 JOIN taxonomie.taxref t3 ON t3.cd_nom = t2.cd_nom
@@ -276,14 +276,14 @@ ALTER TABLE taxonomie.taxons_contact_faune
 --);
 CREATE MATERIALIZED VIEW taxonomie.taxons_contact_flore AS (
 
-SELECT taxonomie.find_cdref(t3.cd_nom) AS cd_ref, nom_valide, CONCAT(t3.lb_nom, ' = ', t3.nom_complet_html) AS search_name
+SELECT taxonomie.find_cdref(t3.cd_nom) AS cd_ref, t3.cd_nom, nom_valide, lb_nom, CONCAT(t3.lb_nom, ' = ', t3.nom_complet_html) AS search_name
 from taxonomie.cor_nom_liste t1
 JOIN taxonomie.bib_noms t2 ON t1.id_nom = t2.id_nom
 JOIN taxonomie.taxref t3 ON t3.cd_nom = t2.cd_nom
 WHERE t1.id_liste = 1002
 
 UNION
-SELECT taxonomie.find_cdref(t3.cd_nom),nom_valide, CONCAT(t3.nom_vern, ' = ', t3.nom_complet_html) AS search_name
+SELECT taxonomie.find_cdref(t3.cd_nom), t3.cd_nom, nom_valide,lb_nom, CONCAT(t3.nom_vern, ' = ', t3.nom_complet_html) AS search_name
 from taxonomie.cor_nom_liste t1
 JOIN taxonomie.bib_noms t2 ON t1.id_nom = t2.id_nom
 JOIN taxonomie.taxref t3 ON t3.cd_nom = t2.cd_nom
@@ -338,16 +338,16 @@ VALUES(1, 'admin', 'admin', 3, 1 );
 
 
 
-CREATE TABLE utilisateur.bib_structure(
+CREATE TABLE utilisateurs.bib_organismes(
 id_structure integer,
 nom_structure character varying,
 CONSTRAINT bib_structure_PK PRIMARY KEY (id_structure)
 );
 
-ALTER TABLE utilisateur.bib_structure
+ALTER TABLE utilisateurs.bib_organismes
   OWNER TO onfuser;
 
-INSERT INTO utilisateur.bib_structure
+INSERT INTO utilisateurs.bib_organismes
 VALUES(1, 'ONF'), (2, 'Réserves');
 
 CREATE TABLE utilisateur.bib_role(
@@ -438,7 +438,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_poly AS
     f.ccod_frt,
     m.geom,
     m.code_1km,
-    s.nom_structure,
+    s.nom_organisme,
     f.id_structure,
     f.id_synthese,
     f.type_obs,
@@ -454,7 +454,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_poly AS
    FROM contact_faune.releve f
    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
    JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text 
-   JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure
+   JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
    WHERE f.valide=true AND loc_exact = false;
 
    ALTER VIEW contact_faune.layer_poly
@@ -476,7 +476,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
     f.altitude,
     f.commentaire,
     f.geom_point,
-    s.nom_structure,
+    s.nom_organisme,
     f.id_structure,
     f.id_synthese,
     f.type_obs,
@@ -488,11 +488,9 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
     f.nb_jeune,
     f.trace
 
-
-    
    FROM contact_faune.releve f
    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
-   JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure
+   JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
   WHERE f.valide=true AND f.loc_exact = TRUE;
 
   ALTER VIEW contact_faune.layer_point
@@ -513,18 +511,21 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
     f.altitude,
     f.geom_point,
     f.commentaire,
-    s.nom_structure,
+    s.nom_organisme,
     f.id_structure,
     f.id_synthese,
-    f.abondance,
     f.nb_pied_approx,
     f.nb_pied,
+    f.btn_floraux,
+    f.floraison ,
+    f.fruit_maturation ,
+    f.dissemination,
     f.stade_dev
 
 
    FROM contact_flore.releve f
    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
-   JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure
+   JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
   WHERE f.loc_exact = TRUE AND f.valide = TRUE;
 
   ALTER VIEW contact_flore.layer_point
@@ -549,10 +550,13 @@ CREATE OR REPLACE VIEW contact_flore.layer_poly AS
     f.commentaire,
     m.geom,
     m.code_1km,
-    s.nom_structure,
+    s.nom_organisme,
     f.id_structure,
     f.id_synthese,
-    f.abondance,
+    f.btn_floraux,
+    f.floraison ,
+    f.fruit_maturation ,
+    f.dissemination,
     f.nb_pied_approx,
     f.nb_pied,
     f.stade_dev
@@ -560,7 +564,7 @@ CREATE OR REPLACE VIEW contact_flore.layer_poly AS
    FROM contact_flore.releve f
     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
     JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text
-    JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure
+    JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
      WHERE f.valide = TRUE AND f.loc_exact = FALSE;
 
     ALTER VIEW contact_flore.layer_poly
@@ -604,7 +608,7 @@ CREATE OR REPLACE VIEW contact_faune.to_csv AS
     f.altitude,
     f.geom_point,
     f.commentaire,
-    s.nom_structure,
+    s.nom_organisme,
     f.id_structure,
     f.id_synthese,
     f.type_obs,
@@ -619,7 +623,7 @@ CREATE OR REPLACE VIEW contact_faune.to_csv AS
      JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
      LEFT JOIN coord_point cp ON cp.id_obs = f.id_obs
      LEFT JOIN coord_maille cm ON cm.id_obs = f.id_obs
-     JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure;
+     JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme;
 
 ALTER TABLE contact_faune.to_csv
   OWNER TO onfuser;
@@ -664,10 +668,13 @@ CREATE OR REPLACE VIEW contact_flore.to_csv AS
     f.altitude,
     f.geom_point,
     f.commentaire,
-    s.nom_structure,
+    s.nom_organisme,
     f.id_structure,
     f.id_synthese,
-    f.abondance,
+    f.btn_floraux,
+    f.floraison ,
+    f.fruit_maturation ,
+    f.dissemination,
     f.nb_pied_approx,
     f.nb_pied,
     f.stade_dev
@@ -675,7 +682,7 @@ CREATE OR REPLACE VIEW contact_flore.to_csv AS
      JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
      LEFT JOIN coord_point cp ON cp.id_obs = f.id_obs
      LEFT JOIN coord_maille cm ON cm.id_obs = f.id_obs
-     JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure;
+     JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_structure;
 
 ALTER TABLE contact_flore.to_csv
   OWNER TO onfuser;
@@ -718,14 +725,14 @@ CREATE OR REPLACE VIEW synthese.to_csv AS
     f.ccod_frt,
     f.altitude,
     f.geom_point,
-    s.nom_structure,
+    s.nom_organisme,
     f.id_structure,
     f.id_synthese
    FROM synthese.releve f
      JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
      LEFT JOIN coord_point cp ON cp.id_synthese = f.id_synthese
      LEFT JOIN coord_maille cm ON cm.id_synthese = f.id_synthese
-     JOIN utilisateur.bib_structure s ON f.id_structure = s.id_structure;
+     JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme;
 
 ALTER TABLE synthese.to_csv
   OWNER TO onfuser;

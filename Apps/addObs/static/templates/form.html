@@ -21,7 +21,7 @@
 				<div ng-click="$ctrl.checkProtocole()"  class="form-group" ng-class="{'has-error' : addObsForm.lb_nom.$invalid && !addObsForm.lb_nom.$pristine  || ($ctrl.validationAttempt && addObsForm.lb_nom.$invalid) }">
 				 	<input class="form-control"   name="lb_nom" autocomplete="off" placeholder="Nom latin ou vernaculaire " type="text" ng-model="$ctrl.globalForm.taxon.nom_valide" 
 				 	typeahead-editable="false"  
-				 	uib-typeahead="taxon as taxon.search_name for taxon in $ctrl.search_scientist_name($viewValue, $ctrl.selectedProtocole) | limitTo:8"
+				 	uib-typeahead="taxon as taxon.search_name for taxon in $ctrl.search_taxon_name($viewValue, $ctrl.selectedProtocole) | limitTo:8"
 				 	typeahead-min-length="2" typeahead-no-results="$ctrl.noResults"
 				 	required 
 				 	 typeahead-loading="$ctrl.loadingLbnom"
