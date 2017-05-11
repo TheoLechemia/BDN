@@ -278,6 +278,28 @@ def buildSQL(sql, app):
             firstParam = False
             params.append(value)
 
-    print 'LAAAAAAAAAAAA SQL'
-    print sql
     return {'params': params, 'sql' :sql}
+
+def buildGeojsonWithParams(res):
+    geojsonMaille = { "type": "FeatureCollection",  "features" : list()}
+    geojsonPoint = { "type": "FeatureCollection",  "features" : list()}
+    for r in res:
+        date = r[5].strftime("%Y/%m/%d")
+        geometry = None
+        #r[9] = loc_exact: check if its point or maille
+        if r[9] == True:
+            mypropertiesPoint = {'nom_vern': r[4], 'lb_nom':r[2], 'cd_nom': r[3], 'date': date, 'protocole': r[6], 'observateur': r[10], 'structure': r[11], 'id_synthese': r[1], 'id' : r[1]}
+            try:
+                geometry = ast.literal_eval( r[0])
+            except ValueError:
+                pass
+            geojsonPoint['features'].append({"type": "Feature", "properties": mypropertiesPoint, "geometry": geometry })
+        else:
+            myPropertiesMaille = {'nom_vern': r[4], 'lb_nom':r[2], 'cd_nom': r[3], 'date': date, 'protocole': r[6], 'observateur': r[10], 'structure': r[11], 'id_synthese': r[1], 'id' : r[8]}
+            try:
+                geometry = ast.literal_eval( r[7])
+            except ValueError:
+                pass
+            geojsonMaille['features'].append({"type": "Feature", "properties": myPropertiesMaille, "geometry": geometry })
+
+    return {'point': geojsonPoint, 'maille': geojsonMaille}

@@ -13,7 +13,6 @@ from werkzeug.exceptions import HTTPException, NotFound
 import geojson2shp
 from ..auth import check_auth
 
-#synthese = flask.Blueprint('synthese', __name__)
 synthese = flask.Blueprint('synthese', __name__, static_url_path="/synthese", static_folder="static", template_folder="templates")
 
 
@@ -50,7 +49,7 @@ def synthese_index():
 
 
 
-@synthese.route('/lastObs')
+@synthese.route('/lastObs', methods=['GET'])
 @nocache
 def lastObs():
     db = getConnexion()
@@ -63,25 +62,13 @@ def lastObs():
               LIMIT 50"""
     db.cur.execute(sql)
     res = db.cur.fetchall()
-    geojsonMaille = { "type": "FeatureCollection",  "features" : list()}
-    geojsonPoint = { "type": "FeatureCollection",  "features" : list()}
-    for r in res:
-        date = r[5].strftime("%Y/%m/%d")
-        mypropertiesPoint = {'nom_vern': r[4], 'lb_nom':r[2], 'cd_nom': r[3], 'date': date, 'protocole': r[6], 'observateur': r[10], 'structure': r[11], 'id_synthese': r[1], 'id' : r[1]}
-        myPropertiesMaille = {'nom_vern': r[4], 'lb_nom':r[2], 'cd_nom': r[3], 'date': date, 'protocole': r[6], 'observateur': r[10], 'structure': r[11], 'id_synthese': r[1], 'id' : r[8]}
-
-        #r[9] = loc_exact: check if its point or maille
-        if r[9] == True:
-            geojsonPoint['features'].append({"type": "Feature", "properties": mypropertiesPoint, "geometry": ast.literal_eval( r[0]) })
-        else:
-            geojsonMaille['features'].append({"type": "Feature", "properties": myPropertiesMaille, "geometry": ast.literal_eval( r[7]) })
-
+    geojsons = utils.buildGeojsonWithParams(res)                   
     db.closeAll()
-    return Response(flask.json.dumps({'point':geojsonPoint,'maille':geojsonMaille}), mimetype='application/json')
+    return Response(flask.json.dumps({'point':geojsons['point'],'maille':geojsons['maille']}), mimetype='application/json')
 
 
 
-@synthese.route('/getObs', methods=['GET', 'POST'])
+@synthese.route('/getObs', methods=['POST'])
 def getObs():
     db = getConnexion()    
     if flask.request.method == 'POST':
@@ -97,19 +84,9 @@ def getObs():
         db.cur.execute(sqlAndParams['sql'], sqlAndParams['params'])
         res = db.cur.fetchall()
         myproperties = dict()
-        for r in res:
-            date = r[5].strftime("%Y/%m/%d")
-            #id du point = id_synthese,  id de la maille = son code maille
-            mypropertiesPoint = {'nom_vern': r[4], 'lb_nom':r[2], 'cd_nom': r[3], 'date': date, 'protocole': r[6], 'observateur': r[10], 'structure': r[11], 'id_synthese': r[1],'id' : r[1], 'test': 'lalalala' }
-            myPropertiesMaille = {'nom_vern': r[4], 'lb_nom':r[2], 'cd_nom': r[3], 'date': date, 'protocole': r[6], 'observateur': r[10], 'structure': r[11], 'id_synthese': r[1], 'id' : r[8], 'test': 'lalalalal' }
-            #r[9] = loc_exact: check if its point or maille
-            if r[9]:
-                geojsonPoint['features'].append({"type": "Feature", "properties": mypropertiesPoint, "geometry": ast.literal_eval( r[0]) })
-            else:
-                geojsonMaille['features'].append({"type": "Feature", "properties": myPropertiesMaille, "geometry": ast.literal_eval( r[7]) })
+        geojsons = utils.buildGeojsonWithParams(res)
     db.closeAll()
-    print geojsonPoint
-    return Response(flask.json.dumps({'point':geojsonPoint,'maille':geojsonMaille}), mimetype='application/json')
+    return Response(flask.json.dumps({'point':geojsons['point'],'maille':geojsons['maille']}), mimetype='application/json')
 
 ######FORM#########
 #charge le bons taxons pour la recherche par nom latin et vernaculaire en fonction du protocole choisi

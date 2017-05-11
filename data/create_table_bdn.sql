@@ -682,7 +682,7 @@ CREATE OR REPLACE VIEW contact_flore.to_csv AS
      JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
      LEFT JOIN coord_point cp ON cp.id_obs = f.id_obs
      LEFT JOIN coord_maille cm ON cm.id_obs = f.id_obs
-     JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_structure;
+     JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme;
 
 ALTER TABLE contact_flore.to_csv
   OWNER TO onfuser;
