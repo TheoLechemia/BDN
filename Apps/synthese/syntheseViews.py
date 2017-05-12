@@ -56,8 +56,8 @@ def lastObs():
     sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur, u.nom_organisme
               FROM synthese.releve s
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
-              JOIN utilisateurs.bib_organismes u ON u.id_organisme = s.id_structure
-              LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
+              LEFT JOIN utilisateurs.bib_organismes u ON u.id_organisme = s.id_structure
+              LEFT JOIN layers.mailles_1_2 l ON s.code_maille = l.id_maille
               ORDER BY date DESC
               LIMIT 50"""
     db.cur.execute(sql)
@@ -76,9 +76,9 @@ def getObs():
         geojsonPoint ={ "type": "FeatureCollection",  "features" : list() }
         sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur, st.nom_organisme
               FROM synthese.releve s
-              LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
+              LEFT JOIN layers.mailles_1_2 l ON s.code_maille = l.id_maille
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
-              JOIN utilisateurs.bib_organismes st ON st.id_organisme = s.id_structure"""
+              LEFT JOIN utilisateurs.bib_organismes st ON st.id_organisme = s.id_structure"""
         sqlAndParams = utils.buildSQL(sql, "synthese")
 
         db.cur.execute(sqlAndParams['sql'], sqlAndParams['params'])
@@ -268,7 +268,7 @@ def detailsObs(id_synthese):
           FROM synthese.releve s
           JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
           JOIN layers.commune c ON c.code_insee = s.insee
-          JOIN utilisateurs.bib_organismes u ON s.id_structure=u.id_organisme
+          LEFT JOIN utilisateurs.bib_organismes u ON s.id_structure=u.id_organisme
           WHERE s.id_synthese = %s"""
     param = [id_synthese]
     res = utils.sqltoDictWithParams(sql, param, db.cur)

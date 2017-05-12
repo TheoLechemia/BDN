@@ -143,9 +143,7 @@ function formController($http){
 
   formCtrl.onSwitchLayer = function(){
     this.globalForm.loc_exact = !this.globalForm.loc_exact;
-    console.log(this.showCoord);
     this.showCoord = !this.showCoord;
-    console.log(this.showCoord);  
   }
 
   formCtrl.onCodeMailleChange = function(code){
@@ -180,11 +178,7 @@ angularInstance.component('formAdd', {
 });
 
 
-
-
-
-
-function mapController($http, $scope){
+function mapController($http, $scope, leafletData){
   mapCtrl = this;
   var originStyle = {
     "color": "#000000",
@@ -199,16 +193,8 @@ var selectedStyle = {
 
 
 
-var saveGeojsonMaille = {};
-mapCtrl.geojsonMaille = {};
-
-// load Mailles
-
-$http.get(configuration.URL_APPLICATION+'addObs/loadMailles').success(function(data){
-  console.log(data)
-  saveGeojsonMaille['data'] = data;
-  saveGeojsonMaille['style'] = originStyle;
-})
+  var saveGeojsonMaille = {};
+  mapCtrl.geojsonMaille = {};
 
 
 
@@ -235,10 +221,37 @@ $http.get(configuration.URL_APPLICATION+'addObs/loadMailles').success(function(d
 
   // EVENT
 
-  // init marker
+var currentMaille = null;
+var loc_exact = true;
+
+//load the maille of the current boudingBox with Ajax
+  function loadMailles(){
+        leafletData.getMap("map").then(
+        function (map) {
+            if (map.getZoom() >= 13 && !loc_exact) {
+              bounds = map.getBounds()
+              boundingBox = bounds.toBBoxString();
+              if(currentMaille){
+                map.removeLayer(currentMaille);
+              }
+              $http.get(configuration.URL_APPLICATION+'addObs/load_bounding_box_mailles/'+boundingBox).then(function(response){
+                  currentMaille = {};
+                  currentMaille['data'] = response.data;
+                  currentMaille['style'] = originStyle;
+                  mapCtrl.geojsonMaille = currentMaille;
+              })
+            };
+        }
+    );
+  }
+
+// on move end, reload mailles
+  $scope.$on('leafletDirectiveMap.moveend', function(e, args){
+    loadMailles();
+  })
 
 
-   $scope.$on('leafletDirectiveMarker.drag', function(e, args) {
+  $scope.$on('leafletDirectiveMarker.drag', function(e, args) {
       var coord = {'lat':args.leafletObject._latlng.lat, 'lng':args.leafletObject._latlng.lng }
       mapCtrl.updateCoordinates({
         $event : {'coord' :coord}
@@ -251,12 +264,10 @@ $http.get(configuration.URL_APPLICATION+'addObs/loadMailles').success(function(d
 
    selectedMaille = null;
    $scope.$on('leafletDirectiveGeoJson.click', function(e, args) {
-
-    var code_maille = args.model.properties.code_1km;
+    var id_maille = args.model.properties.id_maille;
     mapCtrl.updateCodeMaille({
-      $event : {'code' :code_maille}
+      $event : {'code' :id_maille}
     })
-
     //set style
       if (!selectedMaille){
           args.leafletObject.setStyle(selectedStyle)
@@ -269,11 +280,12 @@ $http.get(configuration.URL_APPLICATION+'addObs/loadMailles').success(function(d
       
     });
 
-  var loc_exact = true;
+
   mapCtrl.switchMaille = function(){
+    loc_exact = false;
     this.markers={};
+    loadMailles();
     this.switchLayer();
-    mapCtrl.geojsonMaille = saveGeojsonMaille;
   }
 
   mapCtrl.switchPoint = function(){

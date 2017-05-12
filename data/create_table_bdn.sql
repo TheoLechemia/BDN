@@ -1,7 +1,10 @@
 CREATE TABLE synthese.releve
 (
   id_synthese serial,
+  id_lot integer,
   protocole character varying(50) NOT NULL,
+  id_projet character varying,
+  id_sous_projet character varying,
   observateur character varying(100) NOT NULL,
   date date NOT NULL,
   cd_nom integer NOT NULL,
@@ -11,6 +14,7 @@ CREATE TABLE synthese.releve
   geom_point geometry(Point,32620),
   ccod_frt character varying(50),
   code_maille character varying,
+  precision character varying,
   loc_exact boolean,
   id_structure integer,
   diffusable boolean,
@@ -26,11 +30,15 @@ ALTER TABLE synthese.releve
 CREATE TABLE contact_faune.releve
 (
   id_obs serial NOT NULL,
+  id_lot integer,
   id_synthese integer,
+  id_projet character varying,
+  id_sous_projet character varying,
   observateur character varying(100) NOT NULL,
   date date NOT NULL,
   cd_nom integer NOT NULL,
   geom_point geometry(Point,32620),
+  precision character varying,
   insee character varying(10),
   altitude integer,
   commentaire character varying(150),
@@ -65,11 +73,15 @@ ALTER TABLE contact_faune.releve
 CREATE TABLE contact_flore.releve
 (
   id_obs serial NOT NULL,
+  id_lot integer,
   id_synthese integer,
+  id_projet character varying,
+  id_sous_projet character varying,
   observateur character varying(100) NOT NULL,
   date date NOT NULL,
   cd_nom integer NOT NULL,
   geom_point geometry(Point,32620),
+  precision character varying,
   insee character varying(10),
   altitude integer,
   commentaire character varying(150),
@@ -106,8 +118,8 @@ CREATE OR REPLACE FUNCTION synthese.tr_protocole_to_synthese() RETURNS TRIGGER A
     DECLARE protocoleid INTEGER;
     BEGIN
  
-    INSERT INTO synthese.releve (protocole, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, loc_exact, code_maille, id_structure, diffusable) 
-    VALUES(tg_table_schema, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.loc_exact, new.code_maille, new.id_structure, new.diffusable) RETURNING new.id_obs INTO protocoleid;
+    INSERT INTO synthese.releve (protocole, id_projet, id_sous_projet, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, precision, loc_exact, code_maille, id_structure, diffusable) 
+    VALUES(tg_table_schema, new.id_projet, new.id_sous_projet, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.precision, new.loc_exact, new.code_maille, new.id_structure, new.diffusable) RETURNING new.id_obs INTO protocoleid;
     SELECT INTO newid currval('synthese.releve_id_synthese_seq');
     EXECUTE format('
     UPDATE %s.%s SET id_synthese = %s WHERE id_obs=%s;', TG_TABLE_SCHEMA, TG_TABLE_NAME, newid, protocoleid);
@@ -736,3 +748,30 @@ CREATE OR REPLACE VIEW synthese.to_csv AS
 
 ALTER TABLE synthese.to_csv
   OWNER TO onfuser;
+
+
+CREATE TABLE import (
+id_obs integer,
+id_projet integer,
+id_sous_projet character varying,
+id_sous_projet_2 character varying,
+x integer,
+y integer,
+cd_ref integer,
+taxon_valide text,
+precision character varying,
+observateur character varying,
+date date,
+publication character varying,
+auteurs_publication character varying,
+collections character varying,
+phenologie character varying,
+nombre character varying
+)
+
+
+INSERT INTO contact_flore.releve (id_lot, id_projet, id_sous_projet, geom_point, cd_nom, precision, observateur, date, nb_pied, loc_exact, insee, ccod_frt)
+SELECT i.id_obs, i.id_sous_projet, i.id_sous_projet_2, ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), i.cd_ref, i.precision, i.observateur,i.date, i.nombre, TRUE, c.code_insee, f.ccod_frt
+FROM import i
+LEFT JOIN layers.commune c ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), c.geom)
+LEFT JOIN layers.perimetre_forets f ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), f.geom)
