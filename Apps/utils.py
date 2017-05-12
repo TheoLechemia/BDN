@@ -161,7 +161,7 @@ def getFormParameters(app):
     habitat = data['habitat']['id']
     protection = data['protection']
     lr = data['lr']['id_statut']
-    structure = data['structure']['id_structure']
+    structure = data['structure']['id_organisme']
     observateur = data['observateur']['observateur']
 
 
@@ -216,27 +216,27 @@ def buildSQL(sql, app):
         sql += " t.group2_inpn = %s"
         params.append(formParameters['group2_inpn'])
     if formParameters['habitat']:
-        firstParam = False
         sql = askFirstParame(sql, firstParam)
+        firstParam = False
         sql += 't.habitat = %s'
         params.append(str(formParameters['habitat']))
     if formParameters['protection']:
-        firstParam = False
         sql = askFirstParame(sql, firstParam)
+        firstParam = False
         sql += 's.cd_nom IN (SELECT cd_nom from taxonomie.protection)'
     if formParameters['lr']:
-        firstParam = False
         sql = askFirstParame(sql,firstParam)
+        firstParam = False
         sql += 's.cd_nom IN (SELECT cd_nom from taxonomie.liste_rouge WHERE statut = %s)'
         params.append(formParameters['lr'])
     if formParameters['structure']:
-        firstParam = False
         sql = askFirstParame(sql,firstParam)
+        firstParam = False
         sql += 's.id_structure = %s'
         params.append(formParameters['structure'])
     if formParameters['observateur']:
-        firstParam = False
         sql = askFirstParame(sql,firstParam)
+        firstParam = False
         sql += 's.observateur = %s'
         params.append(formParameters['observateur'])
 
@@ -277,7 +277,9 @@ def buildSQL(sql, app):
             sql+= key+"= %s"
             firstParam = False
             params.append(value)
-
+    print 'LAAAAAAAA'
+    print sql
+    print params
     return {'params': params, 'sql' :sql}
 
 def buildGeojsonWithParams(res):

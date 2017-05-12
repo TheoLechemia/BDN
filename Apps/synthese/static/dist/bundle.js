@@ -147,7 +147,6 @@ function formControler(proxy, $http, $scope){
 	formCtrl.form = {
 		'selectedProtocole': null,
 		'searchRegne': undefined,
-		'who' : null,
 		'taxon' : {'lb_nom': null},
 		'listTaxons' : [],
 		'where' : {'code_insee': null, 'nom': null},
@@ -164,7 +163,7 @@ function formControler(proxy, $http, $scope){
 		'protection':null,
 		'lr':{'id_statut':null, 'type_statut':null},
 		'observateur': {'observateur':null},
-		'structure': {'id_structure': null, 'nom_structure': null},
+		'structure': {'id_organisme': null, 'nom_structure': null},
 	}
 
 	// à l'envoie du formulaire, on le passe au module pere: APP qui fait la requete ajax sur les geojson et les passe a toute l'appli
@@ -285,7 +284,6 @@ function formControler(proxy, $http, $scope){
 		this.form = {
 		'selectedProtocole': null,
 		'searchRegne': undefined,
-		'who' : null,
 		'taxon' : {'lb_nom': null },
 		'listTaxons' : [],
 		'where' : {'code_insee': null, 'nom': null},
@@ -302,7 +300,7 @@ function formControler(proxy, $http, $scope){
 		'protection':null,
 		'lr':{'id_statut':null, 'type_statut':null},
 		'observateur': {'observateur':null},
-		'structure': {'id_structure': null, 'nom_structure': null},
+		'structure': {'id_organisme': null, 'nom_structure': null},
 		}
 
 		this.newTaxons = [];

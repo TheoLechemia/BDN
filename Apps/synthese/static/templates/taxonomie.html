@@ -2,7 +2,7 @@
 
 <div ng-hide = "$ctrl.showSpinner">
 	<p style='color: blue;'> 
-		<b> {{$ctrl.currentTaxonomieDetails.nom_vern}} | {{$ctrl.currentTaxonomieDetails.nom_valide}} </b>
+		<a target="_blank" href= https://inpn.mnhn.fr/espece/cd_nom/{{$ctrl.currentTaxonomieDetails.cd_nom}}><b>  {{$ctrl.currentTaxonomieDetails.nom_vern}} | {{$ctrl.currentTaxonomieDetails.nom_valide}}  </b></a>
 	 </p>
 	 <p>
 	 	 Groupe: <b> {{$ctrl.currentTaxonomieDetails.group1_inpn}} </b> - Ordre : <b>{{$ctrl.currentTaxonomieDetails.ordre}} </b> - Famille : <b>{{$ctrl.currentTaxonomieDetails.famille}} </b>

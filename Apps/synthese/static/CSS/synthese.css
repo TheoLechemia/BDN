@@ -157,3 +157,9 @@ select{
   z-index: 1500;
   top:235px!important;
 }
+
+.ng-valid-date + ul{
+  position: fixed;
+  z-index: 1500;
+  top:235px!important;
+}

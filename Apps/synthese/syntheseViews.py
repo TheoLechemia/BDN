@@ -76,7 +76,7 @@ def getObs():
         geojsonPoint ={ "type": "FeatureCollection",  "features" : list() }
         sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur, st.nom_organisme
               FROM synthese.releve s
-              LEFT JOIN layers.mailles_1_2 l ON s.code_maille = l.id_maille
+              LEFT JOIN layers.maille_1_2 l ON s.code_maille = l.id_maille
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
               LEFT JOIN utilisateurs.bib_organismes st ON st.id_organisme = s.id_structure"""
         sqlAndParams = utils.buildSQL(sql, "synthese")
@@ -282,7 +282,7 @@ def detailsObs(id_synthese):
 @synthese.route('/detailsTaxonomie/<cd_nom>/', methods=['GET'])
 def detailsTaxonomie(cd_nom):
     db = getConnexion()
-    sql= """SELECT nom_vern, nom_valide, group1_inpn, ordre, famille
+    sql= """SELECT nom_vern, nom_valide, group1_inpn, ordre, famille, cd_nom
             FROM taxonomie.taxref
             WHERE cd_nom = %s"""
     param = [cd_nom]
