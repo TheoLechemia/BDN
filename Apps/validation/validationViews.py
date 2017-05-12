@@ -40,7 +40,7 @@ def mapValidation(protocole):
     sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur
               FROM synthese.releve s
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
-              LEFT JOIN layers.mailles_1k l ON s.code_maille = l.code_1km
+              LEFT JOIN layers.maille_1_2 l ON s.code_maille = l.id_maille
               WHERE s.valide = false AND s.protocole = %s AND id_structure = %s"""
     param = [protocole, id_structure]
     db.cur.execute(sql, param)
@@ -58,9 +58,17 @@ def mapValidation(protocole):
 
         #r[9] = loc_exact: check if its point or maille
         if r[9] == True:
-            geojson['features'].append({"type": "Feature", "properties": mypropertiesPoint, "geometry": ast.literal_eval( r[0]) })
+            try:
+                geometry = ast.literal_eval( r[0])
+            except ValueError:
+                geometry = None
+            geojson['features'].append({"type": "Feature", "properties": mypropertiesPoint, "geometry": geometry })
         else:
-            geojson['features'].append({"type": "Feature", "properties": myPropertiesMaille, "geometry": ast.literal_eval( r[7]) })
+            try:
+                geometry = ast.literal_eval( r[7])
+            except ValueError:
+                    geometry = None
+            geojson['features'].append({"type": "Feature", "properties": myPropertiesMaille, "geometry": geometry })
     db.closeAll()
     return render_template('mapValidation.html', configuration=config, taxList=res, geojson=geojson, protocole=protocole, page_title=u"Interface de validation des données")
 

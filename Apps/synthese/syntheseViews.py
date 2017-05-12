@@ -57,7 +57,7 @@ def lastObs():
               FROM synthese.releve s
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
               LEFT JOIN utilisateurs.bib_organismes u ON u.id_organisme = s.id_structure
-              LEFT JOIN layers.mailles_1_2 l ON s.code_maille = l.id_maille
+              LEFT JOIN layers.maille_1_2 l ON s.code_maille = l.id_maille
               ORDER BY date DESC
               LIMIT 50"""
     db.cur.execute(sql)
