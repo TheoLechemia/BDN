@@ -10,7 +10,7 @@ meta = flask.Blueprint('meta', __name__, static_url_path="/meta", static_folder=
 
 
 @meta.route("/")
-@check_auth(3)
+@check_auth(1)
 def meta_index():
     return flask.render_template('metaIndex.html', configuration=config, page_title=u"Gestion des projets de la BDN")
 
@@ -52,8 +52,8 @@ def editProject():
         fullTableName = nom_schema+".releve"
         #UPDATE table bib_projet
         sql = """UPDATE synthese.bib_projet
-                 SET service_onf = %s, partenaires = %s, subvention_commande = %s, duree = %s, initiateur = %s, commentaire = %s"""
-        params = [projectForm['service_onf'], projectForm['partenaires'], projectForm['subvention_commande'], projectForm['duree'], projectForm['initiateur'], projectForm['commentaire']]
+                 SET service_onf = %s, partenaires = %s, subvention_commande = %s, duree = %s, initiateur = %s, producteur = %s, commentaire = %s"""
+        params = [projectForm['service_onf'], projectForm['partenaires'], projectForm['subvention_commande'], projectForm['duree'], projectForm['initiateur'], projectForm['producteur'], projectForm['commentaire']]
         db.cur.execute(sql, params)
         db.conn.commit()
 
@@ -108,19 +108,20 @@ def addProject():
             nom_table = 'releve'
             template = 'addObs/'+nom_schema+'.html'
             bib_champs = nom_schema+'.'+'bib_champs_'+nom_schema
-            utils.createProject(db, projectForm,fieldForm)
+            utils.createProject(db, projectForm, fieldForm)
+        print 'LAAAAAAAAAAA'
 
         #insert dans bib_projet
-        sql = """INSERT INTO synthese.bib_projet(nom_projet, theme_principal, service_onf, partenaires,subvention_commande, duree, initiateur, commentaire, table_independante, saisie_possible, nom_schema, nom_table, template, bib_champs ) 
+        sql = """INSERT INTO synthese.bib_projet(nom_projet, theme_principal, service_onf, partenaires,subvention_commande, duree, initiateur, producteur, commentaire, table_independante, saisie_possible, nom_schema, nom_table, template, bib_champs ) 
               VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
-        params = [projectForm['nom_projet'], projectForm['theme_principal'], projectForm['service'], projectForm['partenaires'], projectForm['subvention_commande'], projectForm['duree'], projectForm['initiateur'], projectForm['commentaire'], projectForm['table_independante'],\
+        params = [projectForm['nom_projet'], projectForm['theme_principal'], projectForm['service'], projectForm['partenaires'], projectForm['subvention_commande'], projectForm['duree'], projectForm['initiateur'], projectForm['producteur'], projectForm['commentaire'], projectForm['table_independante'],\
                  saisie_possible, nom_schema, nom_table, template, bib_champs ]
         db.cur.execute(sql, params)
         db.conn.commit()
         #update le template de saisie
-        print 'UPDATEEEEEEEE template'
-        utils.createTemplate(nom_schema, fieldForm)
-        print 'ENDDDDDDDDDDDDDDD UPDATEEEEEEEE template'
-        db.closeAll()
+        # print 'UPDATEEEEEEEE template'
+        # utils.createTemplate(nom_schema, fieldForm)
+        # print 'ENDDDDDDDDDDDDDDD UPDATEEEEEEEE template'
+        # db.closeAll()
 
         return  Response(flask.json.dumps('success'), mimetype='application/json')

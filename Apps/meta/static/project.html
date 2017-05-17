@@ -26,6 +26,8 @@
 				<input type="number" class="form-control" ng-model='$ctrl.projet.duree' placeholder="Duree">
 				<label> Initiateur</label>
 				<input type="text" class="form-control" ng-model='$ctrl.projet.initiateur' placeholder="Inititeur">
+				<label> Producteur </label>
+				<input type="text" class="form-control" ng-model='$ctrl.form.producteur' placeholder="Producteur">
 				<label> Commentaire</label>
 				<input type="text" class="form-control" ng-model='$ctrl.projet.commentaire' placeholder="Commentaire">
 
@@ -42,6 +44,10 @@
 </div>
 
 <div ng-if="!$ctrl.projet.table_independante">
-	<h4> Ce projet ne dispose pas de formulaire de saisie ni de table séparée.
+	<h4> Ce projet est rattaché à la table 'Synthese'.
+	</h4>
+</div>
+<div ng-if="!$ctrl.projet.saisie_possible">
+	<h4> Ce projet ne dispose pas de formulaire de saisie.
 	</h4>
 </div>

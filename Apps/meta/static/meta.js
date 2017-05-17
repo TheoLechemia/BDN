@@ -33,6 +33,7 @@ function metaController ($http){
 		'subvention_commande': null,
 		'duree': null,
 		'initiateur': null,
+		'producteur': null,
 		'commentaire': null,
 		'table_independante': "False"
 	};
@@ -52,7 +53,7 @@ function metaController ($http){
 
 }// END CONTROLLER
 
-templateMeta = 'meta/meta/meta.html';
+templateMeta = configuration.URL_APPLICATION+'meta/meta/meta.html';
 angularApp.component('metaApp', {
 
   controller : metaController,
@@ -72,7 +73,7 @@ function listProtController($http){
 	})
 }
 
-template = 'meta/meta/liste_proj.html';
+template = configuration.URL_APPLICATION+'meta/meta/liste_proj.html';
 angularApp.component('listProj', {
 
   controller :listProtController ,
@@ -84,7 +85,7 @@ angularApp.component('listProj', {
 
 
 // Une fiche projet
-template = 'meta/meta/project.html'
+template = configuration.URL_APPLICATION+'meta/meta/project.html'
 angularApp.component('project', {
 
   controller :projectController ,
@@ -129,7 +130,7 @@ function projectController($stateParams, $http){
 }// END CONTROLLER
 
 
-template = 'meta/meta/formulaire.html'
+template = configuration.URL_APPLICATION+'meta/meta/formulaire.html'
 angularApp.component('formulaire', {
 
   controller :formController ,
@@ -144,7 +145,7 @@ angularApp.component('formulaire', {
 function formController(){
 	formCtrl = this;
 	formCtrl.type_widget = ['checkbox', 'radio', 'text', 'number', 'select']
-	formCtrl.db_type = ['text', 'integer', 'float', 'boolean'];
+	formCtrl.db_type = ['character varying', 'integer', 'float', 'boolean'];
 	formCtrl.newFields = [];
 
 

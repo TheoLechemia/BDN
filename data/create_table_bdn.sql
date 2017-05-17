@@ -163,6 +163,7 @@ CREATE TABLE synthese.bib_projet
   subvention_commande character varying,
   duree integer,
   initiateur character varying,
+  producteur character varying,
   commentaire text,
   table_independante boolean,
   saisie_possible boolean,
