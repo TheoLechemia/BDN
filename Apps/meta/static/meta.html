@@ -1,0 +1,45 @@
+<div class="col-sm-3">
+	<div class="panel panel-default" >
+		<div class="section">
+
+			<div class="form-group">
+
+				<input type="text" class="form-control" ng-model='$ctrl.form.nom_projet' placeholder="Nom du projet">
+
+				<input type="text" class="form-control" ng-model='$ctrl.form.nom_bdd' placeholder="Nom de la table en BDD (pas d'espace ni de caractère spéciaux">
+
+				<input type="text" class="form-control" ng-model='$ctrl.form.theme_principal' placeholder="Thême principal">
+
+				<input type="text" class="form-control" ng-model='$ctrl.form.service_onf' placeholder="Service ONF">
+
+			</div>
+
+			<div class="form-group">
+				<input type="text" class="form-control" ng-model='$ctrl.form.partenaires' placeholder="Partenaires">
+
+				<input type="text" class="form-control" ng-model='$ctrl.form.subvention_commande' placeholder="Subvention / Commande">
+
+				<input type="number" class="form-control" ng-model='$ctrl.form.duree' placeholder="Duree">
+
+				<input type="text" class="form-control" ng-model='$ctrl.form.initiateur' placeholder="Inititeur">
+
+				<input type="text" class="form-control" ng-model='$ctrl.form.commentaire' placeholder="Commentaire">
+
+			</div>
+				
+			Ce projet doit-il disposer d'une table séparée (modèle de donnée particulier) ou s'insere-t-il dans la table 'Synthese' ?
+			<div class="form-group">
+				<input type="radio" ng-model='$ctrl.form.table_independante' checked value="True"> Oui
+				<input type="radio" ng-model='$ctrl.form.table_independante' value= "False"> Non
+			</div>
+
+			<button class="btn btn-success" ng-click='$ctrl.sendData()'> Valider</button>
+		</div>
+	</div>
+</div>
+<div ng-if="$ctrl.form.table_independante == 'True'">
+	<formulaire form="$ctrl.fieldForm"> </formulaire>
+</div>
+
+
+

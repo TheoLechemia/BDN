@@ -108,7 +108,6 @@ function formControler(proxy, $http, $scope){
 	// Modele du formulaire
 	formCtrl.form = {
 		'selectedProtocole': null,
-		'who' : null,
 		'taxon' : {'lb_nom': null },
 		'listTaxons' : [],
 		'where' : {'code_insee': null, 'nom': null},
@@ -125,7 +124,7 @@ function formControler(proxy, $http, $scope){
 		'protection':null,
 		'lr':{'id_statut':null, 'type_statut':null},
 		'observateur': {'observateur':null},
-		'structure': {'id_structure': null, 'nom_structure': null},
+		'structure': {'id_organisme': null, 'nom_structure': null},
 	}
 
 	formCtrl.child = {'protocoleForm':{}};
@@ -235,7 +234,6 @@ function formControler(proxy, $http, $scope){
 		this.child = {'protocoleForm': {}};
 		this.form = {
 		'selectedProtocole': null,
-		'who' : null,
 		'taxon' : {'lb_nom': null, 'nom_vern': null, 'cd_nom' : null },
 		'listTaxons' : [],
 		'where' : {'code_insee': null, 'nom': null},
@@ -252,7 +250,7 @@ function formControler(proxy, $http, $scope){
 		'protection':null,
 		'lr':{'id_statut':null, 'type_statut':null},
 		'observateur': {'observateur':null},
-		'structure': {'id_structure': null, 'nom_structure': null},
+		'structure': {'id_organisme': null, 'nom_structure': null},
 		}
 
 		this.newTaxons = [];

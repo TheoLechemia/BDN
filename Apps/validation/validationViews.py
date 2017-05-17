@@ -23,7 +23,7 @@ validation = Blueprint('validation', __name__, static_url_path="/validation", st
 def indexValidation():
     db = getConnexion()
 
-    sql = "SELECT array_to_json(array_agg(row_to_json(row))) FROM (SELECT * FROM synthese.bib_protocole) row"
+    sql = "SELECT array_to_json(array_agg(row_to_json(row))) FROM (SELECT * FROM synthese.bib_projet WHERE saisie_possible = TRUE) row"
     db.cur.execute(sql)
     protocoles = db.cur.fetchone()[0]
     db.closeAll()
@@ -32,22 +32,25 @@ def indexValidation():
     
 
 
-@validation.route("/<protocole>")
+@validation.route("/<int:id_projet>")
 @check_auth(3)
-def mapValidation(protocole):
+def mapValidation(id_projet):
     db = getConnexion()
     id_structure = session['id_structure']
-    sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, s.protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur
+    sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, p.nom_bdd AS protocole, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur
               FROM synthese.releve s
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
               LEFT JOIN layers.maille_1_2 l ON s.code_maille = l.id_maille
-              WHERE s.valide = false AND s.protocole = %s AND id_structure = %s"""
-    param = [protocole, id_structure]
+              JOIN synthese.bib_projet p ON p.id_projet = s.id_projet 
+              WHERE s.valide = false AND s.id_projet = %s AND id_structure = %s"""
+    param = [id_projet, id_structure]
     db.cur.execute(sql, param)
     res = db.cur.fetchall()
     geojson = { "type": "FeatureCollection",  "features" : list()}
     nom_vern = unicode()
+    protocole = str()
     for r in res:
+        protocole = r[6]
         if r[4] == None:
             nom_vern = '-'
         else:

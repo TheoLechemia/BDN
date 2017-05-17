@@ -1,11 +1,8 @@
-var angularInstance = angular.module("app", ['ui.bootstrap', 'leaflet-directive', 'ngRoute']);
+var angularInstance = angular.module("app", ['ui.bootstrap', 'leaflet-directive']);
 
 
 require('./services/proxy.js')(angularInstance);
 
-angularInstance.controller("headerCtrl", function($scope){
-
- })
 
 
 template = 'synthese/templates/app.html';

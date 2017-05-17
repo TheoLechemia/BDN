@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title></title>
+
+<!-- Angular -->
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0-rc.2/angular.min.js"></script>
+    <script src="//unpkg.com/angular-ui-router@1.0.0-rc.1/release/angular-ui-router.js"></script>
+
+    <!-- <script data-require="angular-ui-router@*" data-semver="0.2.10" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script> -->
+
+
+<!-- Jquery -->
+  
+    
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+ <!-- GLOBAL CSS -->
+  <link rel="stylesheet" href= " {{url_for('static', filename='css/main.css')}} " >
+  <!-- SYNTHESE CSS -->
+<link rel="stylesheet" href= " {{url_for('synthese.static', filename='CSS/synthese.css')}} " >
+
+
+
+</head>
+<base href="/liste">
+<body>
+
+ {% include 'navbar.html' %}
+<div class="container-fluid">
+  <div ng-app="app" >
+    <ui-view></ui-view>
+  </div>
+</div>
+
+
+<script type="text/javascript"> var configuration = {{configuration|tojson}} </script>
+
+<script src="{{url_for('meta.static', filename='meta.js')}}"></script>
+
+</body>
+</html>

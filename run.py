@@ -12,6 +12,8 @@ from Apps.addObs.addObsViews import addObs
 
 from Apps.download.downloadViews import download
 
+from Apps.meta.metaViews import meta
+
 from flask.ext.compress import Compress
 
 
@@ -29,6 +31,8 @@ app.register_blueprint(validation, url_prefix='/validation')
 app.register_blueprint(addObs, url_prefix='/addObs')
 
 app.register_blueprint(download, url_prefix='/download')
+
+app.register_blueprint(meta	, url_prefix='/meta')
 
 
 if __name__ == "__main__":

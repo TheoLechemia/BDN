@@ -99,7 +99,7 @@ def getboundingMaille(limit):
 @addObs.route('/loadProtocoles', methods=['GET', 'POST'])
 def getProtocoles():
     db = getConnexion()
-    sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM synthese.bib_protocole) p"
+    sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM synthese.bib_projet WHERE table_independante = TRUE) p"
     db.cur.execute(sql)
     return Response(flask.json.dumps(db.cur.fetchone()[0]), mimetype='application/json')
 
@@ -149,8 +149,9 @@ def submitObs():
         comm_loc = flask.request.json['general']['comm_loc']
         protocoleObject = flask.request.json['protocole']
 
-        fullTableName = protocoleObject['nom_complet']
+        fullTableName = protocoleObject['nom_schema']+"."+protocoleObject['nom_table']
         protocoleName = protocoleObject['nom_table']
+        id_projet = protocoleObject['id_projet']
 
 
         #prend le centroide de maille pour intersecter avec la foret et l'insee
@@ -194,16 +195,16 @@ def submitObs():
         id_structure = session['id_structure']
         valide= False
 
-        generalValues = [observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc]
+        generalValues = [id_projet,observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc]
 
 
         ###protocole 
-        stringInsert = "INSERT INTO "+fullTableName+"(observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc"
+        stringInsert = "INSERT INTO "+fullTableName+"(id_projet, observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc"
         stringValues = ""
         if loc_exact:
-            stringValues = "VALUES (%s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s, %s"
+            stringValues = "VALUES (%s, %s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s, %s"
         else:
-            stringValues = "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s"
+            stringValues = "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s"
         keys = getParmeters()['keys']
         values = getParmeters()['values']
         for k in keys:

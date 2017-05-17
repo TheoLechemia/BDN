@@ -1,0 +1,37 @@
+<h3> Liste des projets </h3>
+<div class="panel panel-default" >
+	<div class="section">
+		<table class="table">
+			<thead>
+				<tr>
+				    <th>Nom du projet</th>
+				    <th>Thême principal</th>
+				    <th>Service</th>
+				    <th>Partenaires</th>
+				    <th>Subvention - commande</th>
+				    <th>Duréee</th>
+				    <th>Initiateur</th>
+				    <th> </th>
+			  	</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="projet in $ctrl.projets">
+					<td> {{projet.nom_projet}} </td>
+					<td> {{projet.theme_principal}} </td>
+					<td> {{projet.service_onf}} </td>
+					<td> {{projet.partenaires}} </td>
+					<td> {{projet.subvention_commande}} </td>
+					<td> {{projet.duree}} </td>
+					<td> {{projet.initiateur}} </td>
+
+					<td> <a ui-sref="editProject({id: {{projet.id_projet}} })") >  <span class="glyphicon glyphicon-pencil">  </span></td>
+				</tr>
+
+			</tbody>
+		</table>
+
+
+		
+	</div>
+</div>
+<a ui-sref="addProject">  <button class="btn btn-success" ng-click='swithView()'> Ajouter un projet</button> </a>

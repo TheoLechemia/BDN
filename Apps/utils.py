@@ -4,8 +4,9 @@ import psycopg2.extras
 import zipfile
 import os
 import flask
-import config
+from config import config
 import ast
+from database import *
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 UPLOAD_FOLDER = CURRENT_DIR+'\uploads'
@@ -305,3 +306,113 @@ def buildGeojsonWithParams(res):
             geojsonMaille['features'].append({"type": "Feature", "properties": myPropertiesMaille, "geometry": geometry })
 
     return {'point': geojsonPoint, 'maille': geojsonMaille}
+
+
+def createTemplate(schemaName, fieldForm):
+    print 'OHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH'
+    htmlFileName = config['APP_DIR']+"/addObs/static/"+schemaName+'.html'
+    print 'LAAAA'
+    print htmlFileName
+    htmlFile = open(htmlFileName, "w")
+
+    htmlContent = """<div class='form-group'> 
+                """
+
+    integerInput = "<input class='form-control' type='number' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}'  name='{0}'> \n"
+    simpleTextInput = "<input class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}'  name='{0}'> \n"
+    booleanInput = """<div'> 
+                        <select class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}'  > \n
+                          <option value=""> -{0}- </option> 
+                          <option value="True">  Oui  </option> \n
+                          <option value="False">  Non  </option> \n
+                        </select>\n
+                      </div> \n"""
+    listInput = "<div> <select class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}' ng-options='choice as choice for choice in $ctrl.fields.{0}' > <option value=""> - {0} - </option> </select>  </div> \n"
+    for r in fieldForm:
+        if r['type_widget'] == 'number':
+            write  =  integerInput.format(r['nom_champ'])
+            htmlFile.write(write)
+        if r['type_widget'] == 'text':
+            write  =  simpleTextInput.format(r['nom_champ'])
+            htmlFile.write(write)
+        if r['type_widget'] == 'radio':
+            write  =  booleanInput.format(r['nom_champ'])
+            htmlFile.write(write)
+        if r['type_widget'] == "select" :
+            write = listInput.format(r['nom_champ'])
+            htmlFile.write(write)
+    htmlFile.close()
+
+
+
+def createProject(db, projectForm, fieldForm):
+    schemaName = projectForm['nom_bdd']
+    nom_table = 'releve'
+    fullName = schemaName+"."+nom_table
+    template = 'addObs/'+schemaName+'.html'
+    bib_champs = schemaName+'.'+'bib_champs_'+schemaName
+
+    sql = " CREATE SCHEMA "+schemaName+" AUTHORIZATION "+ database['USER']
+    db.cur.execute(sql)
+    db.conn.commit()
+
+    stringCreate = """CREATE TABLE """+fullName+""" 
+    (
+      id_obs serial CONSTRAINT """+schemaName+"""_PK PRIMARY KEY,
+      id_synthese integer,
+      id_projet integer,
+      id_sous_projet integer,
+      observateur character varying(100) NOT NULL,
+      date date NOT NULL,
+      cd_nom integer NOT NULL,
+      geom_point geometry(Point,"""+str(config['MAP']['PROJECTION'])+"""),
+      insee character varying(10),
+      altitude integer,
+      commentaire character varying(150),
+      comm_loc character varying(150),
+      valide boolean,
+      ccod_frt character varying(50),
+      loc_exact boolean,
+      code_maille character varying(20),
+      id_structure integer,"""
+
+    addPermission = "ALTER TABLE "+fullName+" OWNER TO "+database['USER']+";"
+
+    for r in fieldForm:
+        stringCreate+=" "+ r['nom_champ']+" "+r['db_type']+","
+    stringCreate = stringCreate[0:-1]+");"
+    stringCreate += addPermission
+    db.cur.execute(stringCreate)
+    db.conn.commit()
+
+    #TRIGGER
+    trigger = """CREATE TRIGGER tr_"""+schemaName+"""_to_synthese
+            AFTER INSERT ON """+fullName+"""
+            FOR EACH ROW EXECUTE PROCEDURE synthese.tr_protocole_to_synthese();"""
+    db.cur.execute(trigger)
+    db.conn.commit()
+
+    #BIB_CHAMPS
+    sql = """CREATE TABLE """+bib_champs+"""
+        (
+          id_champ integer NOT NULL,
+          no_spec character varying,
+          nom_champ character varying,
+          valeur text,
+          lib_champ character varying,
+          type_widget character varying,
+          db_type character varying,
+          CONSTRAINT bib_fa_primary_key PRIMARY KEY (id_champ)
+        )"""
+    db.cur.execute(sql)
+    addPermission = "ALTER TABLE "+bib_champs+" OWNER TO "+database['USER']+";"
+    db.cur.execute(addPermission)
+    db.conn.commit()
+
+
+    for r in fieldForm:
+        sql = "INSERT INTO """+bib_champs+" VALUES(%s, %s, %s, %s, %s, %s, %s)"
+        params = [r['id_champ'], r['no_spec'], r['nom_champ'], r['valeur'], r['lib_champ'], r['type_widget'], r['db_type']]
+        db.cur.execute(sql, params)
+        db.conn.commit()
+

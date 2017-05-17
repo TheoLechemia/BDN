@@ -784,14 +784,11 @@ module.exports = function(angularInstance){
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var angularInstance = angular.module("app", ['ui.bootstrap', 'leaflet-directive', 'ngRoute']);
+var angularInstance = angular.module("app", ['ui.bootstrap', 'leaflet-directive']);
 
 
 __webpack_require__(0)(angularInstance);
 
-angularInstance.controller("headerCtrl", function($scope){
-
- })
 
 
 template = 'synthese/templates/app.html';

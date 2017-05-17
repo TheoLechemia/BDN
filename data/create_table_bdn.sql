@@ -2,9 +2,8 @@ CREATE TABLE synthese.releve
 (
   id_synthese serial,
   id_lot integer,
-  protocole character varying(50) NOT NULL,
-  id_projet character varying,
-  id_sous_projet character varying,
+  id_projet integer,
+  id_sous_projet integer,
   observateur character varying(100) NOT NULL,
   date date NOT NULL,
   cd_nom integer NOT NULL,
@@ -32,8 +31,8 @@ CREATE TABLE contact_faune.releve
   id_obs serial NOT NULL,
   id_lot integer,
   id_synthese integer,
-  id_projet character varying,
-  id_sous_projet character varying,
+  id_projet integer,
+  id_sous_projet integer,
   observateur character varying(100) NOT NULL,
   date date NOT NULL,
   cd_nom integer NOT NULL,
@@ -118,8 +117,8 @@ CREATE OR REPLACE FUNCTION synthese.tr_protocole_to_synthese() RETURNS TRIGGER A
     DECLARE protocoleid INTEGER;
     BEGIN
  
-    INSERT INTO synthese.releve (protocole, id_projet, id_sous_projet, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, precision, loc_exact, code_maille, id_structure, diffusable) 
-    VALUES(tg_table_schema, new.id_projet, new.id_sous_projet, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.precision, new.loc_exact, new.code_maille, new.id_structure, new.diffusable) RETURNING new.id_obs INTO protocoleid;
+    INSERT INTO synthese.releve (id_projet, id_sous_projet, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, precision, loc_exact, code_maille, id_structure, diffusable) 
+    VALUES( new.id_projet, new.id_sous_projet, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.precision, new.loc_exact, new.code_maille, new.id_structure, new.diffusable) RETURNING new.id_obs INTO protocoleid;
     SELECT INTO newid currval('synthese.releve_id_synthese_seq');
     EXECUTE format('
     UPDATE %s.%s SET id_synthese = %s WHERE id_obs=%s;', TG_TABLE_SCHEMA, TG_TABLE_NAME, newid, protocoleid);
@@ -154,13 +153,25 @@ ALTER TABLE synthese.v_search_taxons
   OWNER TO onfuser;
 
 
-CREATE TABLE synthese.bib_protocole (
-nom_protocole character varying CONSTRAINT bib_protocole_pk PRIMARY KEY,
-nom_schema character varying,
-nom_table character varying,
-nom_complet character varying,
-template character varying,
-bib_champs character varying
+CREATE TABLE synthese.bib_projet
+(
+  id_projet serial NOT NULL,
+  nom_projet text,
+  theme_principal character varying,
+  service_onf character varying,
+  partenaires character varying,
+  subvention_commande character varying,
+  duree integer,
+  initiateur character varying,
+  commentaire text,
+  table_independante boolean,
+  saisie_possible boolean,
+  nom_schema character varying,
+  nom_table character varying,
+  template character varying,
+  bib_champs character varying,
+  nom_bdd character varying,
+  CONSTRAINT bib_projet_pk PRIMARY KEY (id_projet)
 );
 ALTER TABLE synthese.bib_protocole
     OWNER TO onfuser;
@@ -449,7 +460,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_poly AS
     f.comm_loc,
     f.ccod_frt,
     m.geom,
-    m.code_1km,
+    m.id_maille,
     s.nom_organisme,
     f.id_structure,
     f.id_synthese,
@@ -465,8 +476,8 @@ CREATE OR REPLACE VIEW contact_faune.layer_poly AS
 
    FROM contact_faune.releve f
    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
-   JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text 
-   JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
+   JOIN layers.maille_1_2 m ON m.id_maille::text = f.code_maille::text 
+   LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
    WHERE f.valide=true AND loc_exact = false;
 
    ALTER VIEW contact_faune.layer_poly
@@ -502,7 +513,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
 
    FROM contact_faune.releve f
    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
-   JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
+   LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
   WHERE f.valide=true AND f.loc_exact = TRUE;
 
   ALTER VIEW contact_faune.layer_point
@@ -537,7 +548,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
 
    FROM contact_flore.releve f
    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
-   JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
+   LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
   WHERE f.loc_exact = TRUE AND f.valide = TRUE;
 
   ALTER VIEW contact_flore.layer_point
@@ -561,7 +572,7 @@ CREATE OR REPLACE VIEW contact_flore.layer_poly AS
     f.altitude,
     f.commentaire,
     m.geom,
-    m.code_1km,
+    m.id_maille,
     s.nom_organisme,
     f.id_structure,
     f.id_synthese,
@@ -575,8 +586,8 @@ CREATE OR REPLACE VIEW contact_flore.layer_poly AS
 
    FROM contact_flore.releve f
     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
-    JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text
-    JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
+    JOIN layers.maille_1_2 m ON m.id_maille::text = f.code_maille::text
+    LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
      WHERE f.valide = TRUE AND f.loc_exact = FALSE;
 
     ALTER VIEW contact_flore.layer_poly
@@ -595,7 +606,7 @@ CREATE OR REPLACE VIEW contact_faune.to_csv AS
             st_x(st_centroid(st_transform(m.geom, 4326))) AS x,
             st_y(st_centroid(st_transform(m.geom, 4326))) AS y
            FROM contact_faune.releve fm
-             JOIN layers.mailles_1k m ON m.code_1km::text = fm.code_maille::text
+             JOIN layers.maille_1_2 m ON m.id_maille::text = fm.code_maille::text
           WHERE fm.loc_exact = false
         )
  SELECT t.nom_vern,
@@ -635,7 +646,7 @@ CREATE OR REPLACE VIEW contact_faune.to_csv AS
      JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
      LEFT JOIN coord_point cp ON cp.id_obs = f.id_obs
      LEFT JOIN coord_maille cm ON cm.id_obs = f.id_obs
-     JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme;
+     LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme;
 
 ALTER TABLE contact_faune.to_csv
   OWNER TO onfuser;
@@ -655,7 +666,7 @@ CREATE OR REPLACE VIEW contact_flore.to_csv AS
             st_x(st_centroid(st_transform(m.geom, 4326))) AS x,
             st_y(st_centroid(st_transform(m.geom, 4326))) AS y
            FROM contact_flore.releve fm
-             JOIN layers.mailles_1k m ON m.code_1km::text = fm.code_maille::text
+             JOIN layers.maille_1_2 m ON m.id_maille::text = fm.code_maille::text
           WHERE fm.loc_exact = false
         )
  SELECT t.nom_vern,
@@ -694,7 +705,7 @@ CREATE OR REPLACE VIEW contact_flore.to_csv AS
      JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
      LEFT JOIN coord_point cp ON cp.id_obs = f.id_obs
      LEFT JOIN coord_maille cm ON cm.id_obs = f.id_obs
-     JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme;
+     LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme;
 
 ALTER TABLE contact_flore.to_csv
   OWNER TO onfuser;
@@ -714,7 +725,7 @@ CREATE OR REPLACE VIEW synthese.to_csv AS
             st_x(st_centroid(st_transform(m.geom, 4326))) AS x,
             st_y(st_centroid(st_transform(m.geom, 4326))) AS y
            FROM synthese.releve fm
-             JOIN layers.mailles_1k m ON m.code_1km::text = fm.code_maille::text
+             JOIN layers.maille_1_2 m ON m.id_maille::text = fm.code_maille::text
           WHERE fm.loc_exact = false
         )
  SELECT t.nom_vern,
@@ -744,7 +755,7 @@ CREATE OR REPLACE VIEW synthese.to_csv AS
      JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
      LEFT JOIN coord_point cp ON cp.id_synthese = f.id_synthese
      LEFT JOIN coord_maille cm ON cm.id_synthese = f.id_synthese
-     JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme;
+     LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme;
 
 ALTER TABLE synthese.to_csv
   OWNER TO onfuser;

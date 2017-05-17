@@ -220,7 +220,6 @@ booleanInput = """<div'>
 listInput = "<div> <select class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}' ng-options='choice as choice for choice in $ctrl.fields.{0}' > <option value=""> - {0} - </option> </select>  </div> \n"
 
 for r in column_name_and_type:
-    print r['htmlType']
     if r['htmlType'] == 'Entier' or r['htmlType'] == 'Reel' :
         write  =  integerInput.format(r['name'])
         htmlFile.write(write)

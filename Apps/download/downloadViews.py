@@ -26,7 +26,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def index():
     db = getConnexion()
 
-    sql = "SELECT array_to_json(array_agg(row_to_json(row))) FROM (SELECT * FROM synthese.bib_protocole) row"
+    sql = "SELECT array_to_json(array_agg(row_to_json(row))) FROM (SELECT * FROM synthese.bib_projet) row"
     db.cur.execute(sql)
     protocoles = db.cur.fetchone()[0]
 
@@ -100,7 +100,6 @@ def getObs():
         
 
         paramtersPoint = list(reformatedParams)
-        print 
         paramtersPoint.insert(0, 'layer_point')
         paramtersMaille = list(reformatedParams)
         paramtersMaille.insert(0, 'layer_poly')
@@ -110,7 +109,7 @@ def getObs():
         print 'LAAAAAAAAAA'
         print reformatedParams
         print dictSQL['sql']
-        print params
+        print paramtersPoint
 
         sql_point = dictSQL['sql']%tuple(paramtersPoint)
         sql_poly = dictSQL['sql']%tuple(paramtersMaille)

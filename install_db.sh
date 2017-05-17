@@ -1,4 +1,4 @@
-#!/bin/bash
+  #!/bin/bash
 
 dos2unix settings.ini
 

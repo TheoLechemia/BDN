@@ -46,7 +46,7 @@
 			<h3> Choisissez un protocole </h3>
 
 				{% for p in protocoles %}
-					<a href="{{ url_for('validation.mapValidation',protocole=p.nom_schema) }}" class="btn btn-success"> {{p.nom_protocole}} </a>
+					<a href="{{ url_for('validation.mapValidation',id_projet=p.id_projet) }}" class="btn btn-success"> {{p.nom_projet}} </a>
 				{% endfor %}
 		</div>
 	</div>

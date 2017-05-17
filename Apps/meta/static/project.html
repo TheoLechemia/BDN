@@ -1,0 +1,47 @@
+<div class="col-sm-3">
+<h3> Projet: {{$ctrl.projet.nom_projet}} </h3>
+	<div class="panel panel-default" >
+		<div class="section">
+
+		
+
+			<div class="form-group">
+				<label> Nom du projet </label>
+				<input type="text" class="form-control" ng-model='$ctrl.projet.nom_projet' placeholder="Nom du projet"  disabled>
+
+				<input type="text" class="form-control" ng-model='$ctrl.projet.nom_bdd' placeholder="Nom de la table en BDD (pas d'espace ni de caractère spéciaux"  disabled>
+				<label> Thême principal</label>
+				<input type="text" class="form-control" ng-model='$ctrl.projet.theme_principal' placeholder="Thême principal">
+				<label> Service ONF</label>
+				<input type="text" class="form-control" ng-model='$ctrl.projet.service_onf' placeholder="Service ONF">
+
+			</div>
+
+			<div class="form-group">
+				<label> Partenaire</label>
+				<input type="text" class="form-control" ng-model='$ctrl.projet.partenaires' placeholder="Partenaires">
+				<label> Commande - subvention </label>
+				<input type="text" class="form-control" ng-model='$ctrl.projet.subvention_commande' placeholder="Subvention / Commande">
+				<label> Durée</label>
+				<input type="number" class="form-control" ng-model='$ctrl.projet.duree' placeholder="Duree">
+				<label> Initiateur</label>
+				<input type="text" class="form-control" ng-model='$ctrl.projet.initiateur' placeholder="Inititeur">
+				<label> Commentaire</label>
+				<input type="text" class="form-control" ng-model='$ctrl.projet.commentaire' placeholder="Commentaire">
+
+			</div>
+
+			<button class="btn btn-success" ng-click='$ctrl.editProject()'> Editer</button>
+
+		</div>
+	</div>
+</div>
+
+<div ng-if="$ctrl.projet.table_independante">
+	<formulaire form="$ctrl.formulaire"> </formulaire>
+</div>
+
+<div ng-if="!$ctrl.projet.table_independante">
+	<h4> Ce projet ne dispose pas de formulaire de saisie ni de table séparée.
+	</h4>
+</div>
