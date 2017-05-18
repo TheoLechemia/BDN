@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import os
+
 database = {
 'DATABASE_NAME' : "NAME",
 
@@ -13,6 +15,7 @@ database = {
 }
 
 config = {
+'APP_DIR': os.path.abspath(os.path.dirname(__file__)),
 'URL_APPLICATION': 'MYURL',
 #ID de l'application dans userhub
 'ID_APPLICATION': 3,
