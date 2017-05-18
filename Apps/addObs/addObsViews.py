@@ -77,9 +77,6 @@ def getMaille():
 @addObs.route('/load_bounding_box_mailles/<limit>', methods=['GET'])
 def getboundingMaille(limit):
     db = getConnexion()
-    sql = 'SELECT ST_TRANSFORM(ST_MakeEnvelope('+limit+', 4326),32620);'
-    db.cur.execute(sql)
-    bounding = db.cur.fetchone()
     sql = """ SELECT row_to_json(fc)
               FROM ( SELECT 
                 'FeatureCollection' AS type, 
@@ -88,15 +85,16 @@ def getboundingMaille(limit):
                     SELECT 'Feature' AS type,
                    ST_ASGeoJSON(ST_TRANSFORM(m.geom,4326))::json As geometry,
                    row_to_json((SELECT l FROM(SELECT id_maille) AS l)) AS properties
-                   FROM layers.maille_1_2 AS m WHERE m.taille_maille='1' AND ST_Within(m.geom,ST_TRANSFORM(ST_MakeEnvelope("""+limit+""", 4326),32620))  ) AS f)
+                   FROM layers.maille_1_2 AS m WHERE m.taille_maille='1' AND ST_Within(m.geom,ST_TRANSFORM(ST_MakeEnvelope(%s, %s, %s, %s, 4326),32620))  ) AS f)
                 AS fc; """
-    db.cur.execute(sql)
+    params = limit.split(',')
+    db.cur.execute(sql, params)
     res = db.cur.fetchone()
     db.closeAll()
     return Response(flask.json.dumps(res), mimetype='application/json')
 
 
-@addObs.route('/loadProtocoles', methods=['GET', 'POST'])
+@addObs.route('/loadProtocoles', methods=['GET'])
 def getProtocoles():
     db = getConnexion()
     sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM synthese.bib_projet WHERE saisie_possible = TRUE) p"
@@ -104,18 +102,28 @@ def getProtocoles():
     return Response(flask.json.dumps(db.cur.fetchone()[0]), mimetype='application/json')
 
 
+def checkForInjection(param):
+    injection = False
+    dieWords = ['DROP', 'DELETE', 'SELECT']
+    for word in dieWords:
+        if word in param or word.lower() in param:
+            injection = True
+    return injection
 
 @addObs.route('/loadValues/<protocole>', methods=['GET'])
 def getValues(protocole):
     db=getConnexion()
-    sql = "SELECT * FROM "+protocole
-    db.cur.execute(sql)
-    res = db.cur.fetchall()
-    finalDict = dict()
-    for r in res:
-        dictValues = ast.literal_eval(r[3])
-        finalDict[r[2]] = dictValues['values']
-    return Response(flask.json.dumps(finalDict), mimetype='application/json')
+    if checkForInjection(protocole):
+        return Response(flask.json.dumps("Tu crois que tu vas m'injecter"), mimetype='application/json')
+    else:
+        sql = "SELECT * FROM "+protocole
+        db.cur.execute(sql)
+        res = db.cur.fetchall()
+        finalDict = dict()
+        for r in res:
+            dictValues = ast.literal_eval(r[3])
+            finalDict[r[2]] = dictValues['values']
+        return Response(flask.json.dumps(finalDict), mimetype='application/json')
 
 
 def getParmeters():
