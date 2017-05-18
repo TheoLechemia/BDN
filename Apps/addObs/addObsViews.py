@@ -104,7 +104,7 @@ def getProtocoles():
 
 def checkForInjection(param):
     injection = False
-    dieWords = ['DROP', 'DELETE', 'SELECT']
+    dieWords = ['DROP', 'DELETE', 'INSERT']
     for word in dieWords:
         if word in param or word.lower() in param:
             injection = True
@@ -114,7 +114,7 @@ def checkForInjection(param):
 def getValues(protocole):
     db=getConnexion()
     if checkForInjection(protocole):
-        return Response(flask.json.dumps("Tu crois que tu vas m'injecter"), mimetype='application/json')
+        return Response(flask.json.dumps("Tu crois que tu vas m'injecter ??"), mimetype='application/json')
     else:
         sql = "SELECT * FROM "+protocole
         db.cur.execute(sql)
