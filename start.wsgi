@@ -34,7 +34,7 @@ from Apps.addObs.addObsViews import addObs
 
 from Apps.download.downloadViews import download
 
-
+from Apps.meta.metaViews import meta
 
 
 application.register_blueprint(main)
@@ -50,3 +50,5 @@ application.register_blueprint(errorsbp)
 application.register_blueprint(addObs,url_prefix='/addObs')
 
 application.register_blueprint(download, url_prefix='/download')
+
+application.register_blueprint(meta	, url_prefix='/meta')
