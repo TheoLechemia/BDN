@@ -4,7 +4,7 @@ CREATE TABLE synthese.releve
   id_lot integer,
   id_projet integer,
   id_sous_projet integer,
-  observateur character varying(100) NOT NULL,
+  observateur text NOT NULL,
   date date NOT NULL,
   cd_nom integer NOT NULL,
   insee character varying(10),
@@ -17,6 +17,7 @@ CREATE TABLE synthese.releve
   loc_exact boolean,
   id_structure integer,
   diffusable boolean,
+  commentaire text,
   CONSTRAINT synthese_pkey PRIMARY KEY (id_synthese),
   CONSTRAINT cd_nom FOREIGN KEY (cd_nom)
       REFERENCES taxonomie.taxref (cd_nom) MATCH SIMPLE
@@ -173,7 +174,7 @@ CREATE TABLE synthese.bib_projet
   nom_bdd character varying,
   CONSTRAINT bib_projet_pk PRIMARY KEY (id_projet)
 );
-ALTER TABLE synthese.bib_protocole
+ALTER TABLE synthese.bib_projet
     OWNER TO onfuser;
 
 
@@ -728,7 +729,9 @@ CREATE OR REPLACE VIEW synthese.to_csv AS
              JOIN layers.maille_1_2 m ON m.id_maille::text = fm.code_maille::text
           WHERE fm.loc_exact = false
         )
- SELECT t.nom_vern,
+ SELECT
+    p.nom_projet,
+    t.nom_vern,
     t.lb_nom,
     f.observateur,
     f.date,
@@ -755,7 +758,8 @@ CREATE OR REPLACE VIEW synthese.to_csv AS
      JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
      LEFT JOIN coord_point cp ON cp.id_synthese = f.id_synthese
      LEFT JOIN coord_maille cm ON cm.id_synthese = f.id_synthese
-     LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme;
+     LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
+     JOIN synthese.bib_projet p ON p.id_projet = f.id_projet;
 
 ALTER TABLE synthese.to_csv
   OWNER TO onfuser;
@@ -777,12 +781,14 @@ publication character varying,
 auteurs_publication character varying,
 collections character varying,
 phenologie character varying,
-nombre character varying
+nombre integer,
+commentaire character varying 
 )
 
 
-INSERT INTO contact_flore.releve (id_lot, id_projet, id_sous_projet, geom_point, cd_nom, precision, observateur, date, nb_pied, loc_exact, insee, ccod_frt)
-SELECT i.id_obs, i.id_sous_projet, i.id_sous_projet_2, ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), i.cd_ref, i.precision, i.observateur,i.date, i.nombre, TRUE, c.code_insee, f.ccod_frt
+INSERT INTO synthese.releve (id_lot, id_projet, id_sous_projet, id_sous_projet_2, geom_point, cd_nom, precision, observateur, date, nombre, loc_exact, insee, ccod_frt, valide, diffusable, id_structure)
+SELECT i.id_obs,i.id_projet, i.id_sous_projet, i.id_sous_projet_2, ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), i.cd_ref, i.precision, i.observateur,i.date, i.nombre, TRUE, c.code_insee, f.ccod_frt, TRUE, TRUE, 2
 FROM import i
 LEFT JOIN layers.commune c ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), c.geom)
 LEFT JOIN layers.perimetre_forets f ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), f.geom)
+

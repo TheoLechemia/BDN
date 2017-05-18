@@ -73,7 +73,7 @@ def getMaille():
     db.closeAll()
     return Response(flask.json.dumps(res), mimetype='application/json')
 
-
+#charge les mailles de la bounding box courante de la carte
 @addObs.route('/load_bounding_box_mailles/<limit>', methods=['GET'])
 def getboundingMaille(limit):
     db = getConnexion()
@@ -99,7 +99,7 @@ def getboundingMaille(limit):
 @addObs.route('/loadProtocoles', methods=['GET', 'POST'])
 def getProtocoles():
     db = getConnexion()
-    sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM synthese.bib_projet WHERE table_independante = TRUE) p"
+    sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM synthese.bib_projet WHERE saisie_possible = TRUE) p"
     db.cur.execute(sql)
     return Response(flask.json.dumps(db.cur.fetchone()[0]), mimetype='application/json')
 
