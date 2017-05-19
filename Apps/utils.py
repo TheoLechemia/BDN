@@ -416,3 +416,11 @@ def createProject(db, projectForm, fieldForm):
         db.cur.execute(sql, params)
         db.conn.commit()
 
+
+def checkForInjection(param):
+    injection = False
+    dieWords = ['DROP', 'DELETE', 'INSERT', 'UPDATE', '#', 'CREATE', '\\']
+    for word in dieWords:
+        if word in param or word.lower() in param:
+            injection = True
+    return injection

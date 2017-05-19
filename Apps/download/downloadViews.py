@@ -14,6 +14,8 @@ from datetime import datetime
 import os
 import csv
 
+from psycopg2 import sql as psysql
+
 
 download = Blueprint('download', __name__, static_url_path="/download", static_folder="static", template_folder="templates")
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -53,16 +55,25 @@ def index():
 @download.route('/search_taxon_name/<protocole>/<expr>', methods=['GET'])
 def search_taxon_name(protocole, expr):
     db=getConnexion()
-    sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
-                SELECT cd_ref, search_name, nom_valide, lb_nom from taxonomie.taxons_"""+protocole+"""
-                WHERE search_name ILIKE %sAND cd_ref=cd_nom AND cd_ref IN (SELECT DISTINCT cd_nom FROM synthese.releve )  
-                ORDER BY search_name ASC 
-                LIMIT 20) r"""
-    params = ["%"+expr+"%"]
-    db.cur.execute(sql, params)
-    res = db.cur.fetchone()[0]
-    db.closeAll()
-    return Response(json.dumps(res), mimetype='application/json')
+    tableTaxon = "taxons_"+protocole
+    expr = "%"+expr+"%"
+    if utils.checkForInjection(protocole):
+        return Response(flask.json.dumps("Tu crois que tu vas m'injecter ??"), mimetype='application/json')
+    else:
+        sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
+                    SELECT cd_ref, search_name, nom_valide, lb_nom from taxonomie.{tbl}
+                    WHERE search_name ILIKE %s AND cd_ref=cd_nom AND cd_ref IN (SELECT DISTINCT cd_nom FROM synthese.releve )  
+                    ORDER BY search_name ASC 
+                    LIMIT 20) r"""
+
+        formatedSql = psysql.SQL(sql).format(tbl=psysql.Identifier(tableTaxon)).as_string(db.cur)
+        print 'LAAAAA'
+        print formatedSql
+        params = [expr]
+        db.cur.execute(formatedSql, params)
+        res = db.cur.fetchone()[0]
+        db.closeAll()
+        return Response(json.dumps(res), mimetype='application/json')
 
 
 
@@ -73,25 +84,22 @@ def getObs():
         schemaReleve = 'synthese'
         if request.json['globalForm']['selectedProtocole']:
             schemaReleve = request.json['globalForm']['selectedProtocole']['nom_schema']
-        sql = " SELECT * FROM "+schemaReleve+".%s s "
+        sql = " SELECT * FROM {sch}.%s s "
+        sql = psysql.SQL(sql).format(sch=psysql.Identifier(schemaReleve)).as_string(db.cur)
+        
 
         dictSQL = utils.buildSQL(sql, 'download')
-        # params = tuple(dictSQL['params'])
         params = dictSQL['params']
         reformatedParams = list()
         stringTupple = str()
         for p in params:
-            print 'LAAAAAAAAA'
-            print type(p)
             if type(p) is int or type(p) is float:
                 reformatedParams.append(p)
             if type(p) is tuple:
-                print 'LONGUEUUUUUR'
                 print len(p)
                 print p
                 if len(p)==1:
                     stringTupple = str(p).replace(',','')
-                    print 'STRIIING TUPLE'
                     print stringTupple
                     reformatedParams.append(stringTupple)
             if type(p) is str or type(p) is unicode:

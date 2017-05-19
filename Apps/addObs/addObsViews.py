@@ -9,6 +9,7 @@ from ..database import *
 from ..initApp import app
 from ..auth import check_auth
 import ast
+from psycopg2 import sql as psysql
 
 
 addObs = flask.Blueprint('addObs', __name__,static_url_path="/addObs", static_folder="static", template_folder="templates")
@@ -102,22 +103,19 @@ def getProtocoles():
     return Response(flask.json.dumps(db.cur.fetchone()[0]), mimetype='application/json')
 
 
-def checkForInjection(param):
-    injection = False
-    dieWords = ['DROP', 'DELETE', 'INSERT']
-    for word in dieWords:
-        if word in param or word.lower() in param:
-            injection = True
-    return injection
-
 @addObs.route('/loadValues/<protocole>', methods=['GET'])
 def getValues(protocole):
     db=getConnexion()
-    if checkForInjection(protocole):
+    if utils.checkForInjection(protocole):
         return Response(flask.json.dumps("Tu crois que tu vas m'injecter ??"), mimetype='application/json')
     else:
-        sql = "SELECT * FROM "+protocole
-        db.cur.execute(sql)
+        schema_name = protocole.split('.')[0]
+        table_name = protocole.split('.')[1]
+        sql = "SELECT * FROM {sch}.{tbl}"
+        formatedSql = psysql.SQL(sql).format(sch=psysql.Identifier(schema_name), tbl=psysql.Identifier(table_name) ).as_string(db.cur)
+        print 'LAAAAAAAA'
+        print formatedSql
+        db.cur.execute(formatedSql)
         res = db.cur.fetchall()
         finalDict = dict()
         for r in res:

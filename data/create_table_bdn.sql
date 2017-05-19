@@ -75,7 +75,7 @@ CREATE TABLE contact_flore.releve
   id_obs serial NOT NULL,
   id_lot integer,
   id_synthese integer,
-  id_projet character varying,
+  id_projet integer,
   id_sous_projet character varying,
   observateur character varying(100) NOT NULL,
   date date NOT NULL,
