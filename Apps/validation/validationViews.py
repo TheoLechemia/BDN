@@ -8,6 +8,7 @@ from werkzeug.wrappers import Response
 from ..auth import check_auth
 import ast
 from flask import session
+from psycopg2 import sql as psysql
 
 import sys
 reload(sys)
@@ -119,7 +120,7 @@ def validate():
                  UPDATE {schm].releve
                  SET valide = TRUE 
                  WHERE id_synthese IN %s ;"""
-        formatedQuery = psysql.SQL(sql).format(schm=psysql.Identifier(protocole)).as_string(db.cur)
+        formatedQuery = psysql.SQL(query).format(schm=psysql.Identifier(protocole)).as_string(db.cur)
         param = [tupleSynth, tupleSynth]
         db.cur.execute(formatedQuery, param)
 
