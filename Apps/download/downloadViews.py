@@ -60,6 +60,8 @@ def search_taxon_name(protocole, expr):
     if utils.checkForInjection(protocole):
         return Response(flask.json.dumps("Tu crois que tu vas m'injecter ??"), mimetype='application/json')
     else:
+        # print 'LAAAAAAAAAAAAA'
+        # print psysql.SQL("select * from {tbl} where {id} = %s").format(tbl=psysql.Identifier('people'), id=psysql.Identifier('id')).as_string(db.cur)
         sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
                     SELECT cd_ref, search_name, nom_valide, lb_nom from taxonomie.{tbl}
                     WHERE search_name ILIKE %s AND cd_ref=cd_nom AND cd_ref IN (SELECT DISTINCT cd_nom FROM synthese.releve )  
@@ -67,8 +69,6 @@ def search_taxon_name(protocole, expr):
                     LIMIT 20) r"""
 
         formatedSql = psysql.SQL(sql).format(tbl=psysql.Identifier(tableTaxon)).as_string(db.cur)
-        print 'LAAAAA'
-        print formatedSql
         params = [expr]
         db.cur.execute(formatedSql, params)
         res = db.cur.fetchone()[0]
@@ -84,9 +84,7 @@ def getObs():
         schemaReleve = 'synthese'
         if request.json['globalForm']['selectedProtocole']:
             schemaReleve = request.json['globalForm']['selectedProtocole']['nom_schema']
-        sql = " SELECT * FROM {sch}.%s s "
-        sql = psysql.SQL(sql).format(sch=psysql.Identifier(schemaReleve)).as_string(db.cur)
-        
+        sql = " SELECT * FROM "+schemaReleve+".%s s "
 
         dictSQL = utils.buildSQL(sql, 'download')
         params = dictSQL['params']

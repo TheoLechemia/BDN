@@ -125,7 +125,6 @@ def addProject():
             template = 'addObs/'+nom_schema+'.html'
             bib_champs = nom_schema+'.'+'bib_champs_'+nom_schema
             utils.createProject(db, projectForm, fieldForm)
-        print 'LAAAAAAAAAAA'
 
         #insert dans bib_projet
         sql = """INSERT INTO synthese.bib_projet(nom_projet, theme_principal, service_onf, partenaires,subvention_commande, duree, initiateur, producteur, commentaire, table_independante, saisie_possible, nom_schema, nom_table, template, bib_champs ) 

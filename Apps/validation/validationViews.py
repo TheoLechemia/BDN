@@ -88,8 +88,9 @@ def deleteRow(id_synt, protocole):
     param = [id_synt]
     db.cur.execute(sql, param) 
 
-    sql = "DELETE FROM "+protocole+".releve WHERE id_synthese = %s; "
-    db.cur.execute(sql, param) 
+    query = "DELETE FROM {schm}.releve WHERE id_synthese = %s; "
+    formatedQuery = psysql.SQL(sql).format(schm=psysql.Identifier(protocole)).as_string(db.cur)
+    db.cur.execute(formatedQuery, param) 
     db.conn.commit()
     db.closeAll()
     return json.dumps({'success':True, 'id_synthese':id_synt}), 200, {'ContentType':'application/json'}
@@ -98,13 +99,11 @@ def deleteRow(id_synt, protocole):
 @validation.route('/validate/', methods=['GET', 'POST'])
 def validate():
     db = getConnexion()
-    #id_synt = str(id_synt)
     tab = list()
     id_synt = tuple()
     if request.method == 'POST':
         id_synt = request.json['validate']
         protocole = request.json['protocole']
-        print 'lAAAAAAAAAAAAAAAAAAAAA'
         print type(id_synt)
         if type(id_synt) is list:
             intTab = list()
@@ -114,14 +113,15 @@ def validate():
         else:
             tupleSynth = tuple(int(id_synt))
 
-        sql = """UPDATE synthese.releve
+        query = """UPDATE synthese.releve
                  SET valide = TRUE
                  WHERE id_synthese IN %s ;
-                 UPDATE """+protocole+""".releve
+                 UPDATE {schm].releve
                  SET valide = TRUE 
                  WHERE id_synthese IN %s ;"""
+        formatedQuery = psysql.SQL(sql).format(schm=psysql.Identifier(protocole)).as_string(db.cur)
         param = [tupleSynth, tupleSynth]
-        db.cur.execute(sql,param)
+        db.cur.execute(formatedQuery, param)
 
         
         db.conn.commit()

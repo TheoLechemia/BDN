@@ -3,7 +3,7 @@ import os
 import flask
 from werkzeug.wrappers import Response 
 import psycopg2
-from ..config import config
+from ..config import config, secret_key
 import ast
 from .. import utils
 from ..database import *
@@ -12,6 +12,7 @@ from ..initApp import app
 from werkzeug.exceptions import HTTPException, NotFound 
 import geojson2shp
 from ..auth import check_auth
+from psycopg2 import sql as psysql
 
 synthese = flask.Blueprint('synthese', __name__, static_url_path="/synthese", static_folder="static", template_folder="templates")
 
@@ -22,7 +23,7 @@ PARENT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, os.pardir))
 UPLOAD_FOLDER = PARENT_DIR+'/static/uploads'
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.secret_key = 'Martine50='  # Change this!
+app.secret_key = secret_key
 
 from flask import make_response
 from functools import wraps, update_wrapper
@@ -163,16 +164,15 @@ def loadTypologgie():
 @synthese.route('/loadTaxonomyHierachy/<rang_fils>/<rang_pere>/<rang_grand_pere>/<value_rang_grand_pere>/<value>')
 def loadTaxonHierarchy(rang_fils, rang_pere, rang_grand_pere, value_rang_grand_pere, value):
     db = getConnexion()
-    rang_fils = '"'+rang_fils+'"'
-    rang_pere = '"'+rang_pere+'"'
-    rang_grand_pere = '"'+rang_grand_pere+'"'
     if value == 'Aucun': 
-        sql = "SELECT DISTINCT "+rang_fils+" FROM taxonomie.taxref WHERE "+rang_grand_pere+" = %s ORDER BY "+rang_fils+" ASC"
+        query = "SELECT DISTINCT {rngFils} FROM taxonomie.taxref WHERE {rngGrd} = %s ORDER BY {rngFils} ASC"
+        formatedQuery = psysql.SQL(query).format(rngFils=psysql.Identifier(rang_fils), rngGrd=psysql.Identifier(rang_grand_pere)).as_string(db.cur)
         params = [value_rang_grand_pere]
     else:
-        sql = " SELECT DISTINCT "+rang_fils+" FROM taxonomie.taxref WHERE "+rang_pere+" = %s ORDER BY "+rang_fils+" ASC"
+        query = " SELECT DISTINCT {rngFils} FROM taxonomie.taxref WHERE {rngPere} = %s ORDER BY {rngFils} ASC"
+        formatedQuery = psysql.SQL(query).format(rngFils=psysql.Identifier(rang_fils), rngPere=psysql.Identifier(rang_pere)).as_string(db.cur)
         params = [value]
-    db.cur.execute(sql, params)
+    db.cur.execute(formatedQuery, params)
     res = db.cur.fetchall()
     listTaxons = list()
     for r in res:
