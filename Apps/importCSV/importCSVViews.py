@@ -14,8 +14,8 @@ from ..auth import check_auth
 
 importCSV = Blueprint('importCSV', __name__, static_url_path="/importCSV", static_folder="static", template_folder="templates")
 
-
-
+#limit à 1mo la taille du fichier upload
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
 
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))

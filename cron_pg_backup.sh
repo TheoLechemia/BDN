@@ -11,6 +11,8 @@ YEAR=`date +%y`
 #DAILY BACKUP
 export PGPASSWORD=Martine50=;pg_dump -h localhost -U onf_admin bdn --format=c --file=/home/ubuntu/sauvegarde_bdd/DAYLY/$TODAY.backup
 
+python ./Apps/clean_ip_connexion.py
+
 #MONTHLY BACKUP
 if [ $DAY == "01" ]; then
 	rm $backup_directory/DAYLY/*

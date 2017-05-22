@@ -1,3 +1,4 @@
+#coding: utf-8
 from flask import Blueprint, render_template, flash, request, redirect, url_for, session
 from ..config import config
 from ..database import *
@@ -5,6 +6,7 @@ import psycopg2
 from .. import utils
 from ..auth import check_auth, User, loadCurrentUser
 import hashlib
+import time
 
 
 
@@ -15,30 +17,46 @@ main = Blueprint('main', __name__, static_url_path="/main", static_folder="stati
 
 @main.route('/login', methods= ['GET','POST'])
 def login():
-    if request.method == 'POST':
-        user_data = request.form
-        name = user_data['username']
-        inputPassword = user_data['password']
-        try:
-            currentUser = loadCurrentUser(name)
-        except:
-            flash("Identifiant ou mot de passe incorrect")
-            return redirect(url_for("main.login")) 
-        #checke si le pass est correct existe bien
-        encode_password = hashlib.md5(inputPassword.encode('utf8')).hexdigest()
-        if currentUser.password == encode_password:
-            session['user'] = currentUser.username
-            session['password'] = encode_password
-            session['auth_level'] = currentUser.auth_level
-            session['id_structure'] = currentUser.id_structure
-            session.permanent = True
-            return redirect(url_for("main.index"))
-        else:
-            flash('Identifiant ou mot de passe incorect')
-            return redirect(url_for("main.login"))
     if request.method == 'GET':
-        print request.url
         return render_template('login.html')
+    if request.method == 'POST':
+        db = getConnexion()
+        #IP du visiteur:
+        ip_visitor = request.remote_addr
+        query = "SELECT * FROM ip_connexion WHERE ip = %s"
+        db.cur.execute(query, [ip_visitor])
+        res = db.cur.fetchall()
+        #si cette ip c'est a echoue trop de fois, elle ne peux plus reesayer de se connecter
+        if len(res)>5:
+            flash("Vous avez échoué trop de fois, réssayer demain !")
+            return redirect(url_for("main.login"))
+        else:
+            user_data = request.form
+            name = user_data['username']
+            inputPassword = user_data['password']
+            #latence d'une seconde pour eviter les attaques
+            time.sleep(1)
+            try:
+                currentUser = loadCurrentUser(name)
+            except:
+                flash("Identifiant ou mot de passe incorrect")
+                print 'user existe pas'
+                return redirect(url_for("main.login")) 
+            #checke si le pass est correct existe bien
+            encode_password = hashlib.md5(inputPassword.encode('utf8')).hexdigest()
+            if currentUser.password == encode_password:
+                session['user'] = currentUser.username
+                session['auth_level'] = currentUser.auth_level
+                session['id_structure'] = currentUser.id_structure
+                session.permanent = True
+                return redirect(url_for("main.index"))
+            else:
+                flash('Identifiant ou mot de passe incorect')
+                print 'mot de pass incorect'
+                query = "INSERT INTO ip_connexion (ip) VALUES( %s)"
+                db.cur.execute(query, [ip_visitor])
+                db.conn.commit()
+                return redirect(url_for("main.login"))
 
 
 

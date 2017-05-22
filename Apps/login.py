@@ -29,18 +29,3 @@ def load_user(myid):
      u = db.cur.fetchone()[0]
      
     return User(u.id, u.name,u.password,u.auth_level)
-
-
-# def login_required(auth_level):
-#     def wrapper(fn):
-#         @wraps(fn)
-#         def decorated_view(*args, **kwargs):
-
-#             if not current_user.is_authenticated():
-#                return current_app.login_manager.unauthorized()
-#             urole = current_app.login_manager.reload_user().get_urole()
-#             if ( (urole != role) and (role != "ANY")):
-#                 return current_app.login_manager.unauthorized()      
-#             return fn(*args, **kwargs)
-#         return decorated_view
-#     return wrapper

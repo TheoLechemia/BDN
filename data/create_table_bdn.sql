@@ -793,3 +793,12 @@ FROM import i
 LEFT JOIN layers.commune c ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), c.geom)
 LEFT JOIN layers.perimetre_forets f ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), f.geom)
 
+
+
+CREATE TABLE ip_connexion(
+id serial CONSTRAINT ip_connexion_pk PRIMARY KEY,
+ip character varying
+);
+
+ALTER TABLE ip_connexion 
+OWNER TO onfuser;
