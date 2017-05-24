@@ -1,8 +1,9 @@
 from functools import wraps
-from flask import session
+from flask import session, make_response
 from database import *
 from config import config
-from flask import redirect, url_for, request, flash
+from flask import redirect, url_for, request, flash, request
+
 
 
 
@@ -33,7 +34,6 @@ def check_auth(level):
     def _check_auth(func):
         @wraps(func)
         def __check_auth(*args, **kwargs):
-            print request.referrer
             if 'user' in session:
                 if session['auth_level']>=level:
                     return func(*args, **kwargs)

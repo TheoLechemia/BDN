@@ -1,4 +1,4 @@
-var angularApp = angular.module("app", ['ui.router']);
+var angularApp = angular.module("app", ['ui.router', 'ngSanitize', 'toaster']);
 angularApp.config([ '$stateProvider', '$urlServiceProvider', function($stateProvider, $urlServiceProvider) {
 
 	$urlServiceProvider.rules.otherwise({ state: 'listProj' });
@@ -22,7 +22,7 @@ angularApp.config([ '$stateProvider', '$urlServiceProvider', function($stateProv
 
 
 
-function metaController ($http){
+function metaController ($http, toaster){
 	metaCtrl = this;
 	var initialForm = {
 		'nom_projet': null,
@@ -38,6 +38,7 @@ function metaController ($http){
 		'table_independante': "False"
 	};
 
+
 	metaCtrl.fieldForm = [];
 
 	metaCtrl.form = angular.copy(initialForm);
@@ -48,6 +49,9 @@ function metaController ($http){
 		$http.post(configuration.URL_APPLICATION+'meta/addProject', data).then(function(response){
 			// reset le form
 			metaCtrl.form = angular.copy(initialForm);
+
+			toaster.success({title: "OK", body:"Protocole ajouté avec succès"});
+
 		})
 	}
 
@@ -96,7 +100,7 @@ angularApp.component('project', {
 
 });
 
-function projectController($stateParams, $http){
+function projectController($stateParams, $http, toaster){
 	prjCtrl = this;
 	prjCtrl.currentValues = null;
 	
@@ -120,8 +124,11 @@ function projectController($stateParams, $http){
 		data = {'projectForm': this.projet, 'fieldForm': this.formulaire, 'nbNewField': nbNewField }
 		console.log(data);
 		$http.post(configuration.URL_APPLICATION+'meta/editProject', data).then(function(response){
-				// update le nb de field
-				prjCtrl.initialNbField = prjCtrl.formulaire.length;	
+			// update le nb de field
+			prjCtrl.initialNbField = prjCtrl.formulaire.length;	
+			toaster.success({title: "OK", body:"Protocole edité avec succès"});
+
+
 		})
 
 	}
@@ -144,7 +151,7 @@ angularApp.component('formulaire', {
 
 function formController(){
 	formCtrl = this;
-	formCtrl.type_widget = ['checkbox', 'radio', 'text', 'number', 'select']
+	formCtrl.type_widget = ['Checkbox', 'Texte', 'Nombre', 'Liste déroulante']
 	formCtrl.db_type = ['character varying', 'integer', 'float', 'boolean'];
 	formCtrl.newFields = [];
 
@@ -192,7 +199,7 @@ function formController(){
 	}
 
 	 formCtrl.validateNewForm = function(){
-  	$http.post(configuration.URL_APPLICATION+'/updateFormulaire', this.form).then(function(response){
+  		$http.post(configuration.URL_APPLICATION+'/updateFormulaire', this.form).then(function(response){
   	})
   }
 

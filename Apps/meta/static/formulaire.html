@@ -20,16 +20,16 @@
 	
 </div>
 
-<div ng-show="$ctrl.currentValues != null && $ctrl.currentField.type_widget == 'select' ">
-<div class="col-sm-3">
-	<div class="panel panel-default" >
-		<div class="section">
-				<h5> Valeurs du champ '{{$ctrl.currentField.lib_champ}}'</h5>
-				 <div ng-repeat='v in $ctrl.currentValues'>
-				  		<input class="form-control" type='text' ng-model='v.value'>
-				  </div>
-				  <button class='btn btn-primary btn-xs' ng-click='$ctrl.addValue()'> +</button>
-				  <button class='btn btn-success btn-xs' ng-click='$ctrl.validateNewValues($ctrl.currentField.id_champ)'> Valider</button>
+<div ng-show="$ctrl.currentValues != null && $ctrl.currentField.type_widget == 'Liste déroulante' ">
+	<div class="col-sm-3">
+		<div class="panel panel-default" >
+			<div class="section">
+					<h5> Valeurs du champ '{{$ctrl.currentField.lib_champ}}'</h5>
+					 <div ng-repeat='v in $ctrl.currentValues'>
+					  		<input class="form-control" type='text' ng-model='v.value'>
+					  </div>
+					  <button class='btn btn-primary btn-xs' ng-click='$ctrl.addValue()'> +</button>
+					  <button class='btn btn-success btn-xs' ng-click='$ctrl.validateNewValues($ctrl.currentField.id_champ)'> Valider</button>
 			</div>
 		</div>
 	</div>

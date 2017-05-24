@@ -7,6 +7,8 @@ import flask
 from config import config
 import ast
 from database import *
+from psycopg2 import sql as psysql
+from psycopg2.extensions import AsIs
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 UPLOAD_FOLDER = CURRENT_DIR+'\uploads'
@@ -318,28 +320,31 @@ def createTemplate(schemaName, fieldForm):
     htmlContent = """<div class='form-group'> 
                 """
 
-    integerInput = "<input class='form-control' type='number' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}'  name='{0}'> \n"
-    simpleTextInput = "<input class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}'  name='{0}'> \n"
-    booleanInput = """<div'> 
-                        <select class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}'  > \n
-                          <option value=""> -{0}- </option> 
-                          <option value="True">  Oui  </option> \n
-                          <option value="False">  Non  </option> \n
-                        </select>\n
-                      </div> \n"""
-    listInput = "<div> <select class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}' ng-options='choice as choice for choice in $ctrl.fields.{0}' > <option value=""> - {0} - </option> </select>  </div> \n"
+    integerInput = "<input class='form-control' type='number' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{1}'  name='{0}'> \n"
+    simpleTextInput = "<input class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{1}'  name='{0}'> \n"
+    # booleanInput = """<div'> 
+    #                     <select class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}'  > \n
+    #                       <option value=""> -{0}- </option> 
+    #                       <option value="True">  Oui  </option> \n
+    #                       <option value="False">  Non  </option> \n
+    #                     </select>\n
+    #                   </div> \n"""
+    checkboxInput = """<label class="sublabel"> {0} :
+                        <input type="checkbox" name="" ng-model="$ctrl.child.protocoleForm.{1}">
+                    </label>"""
+    listInput = "<div> <select class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{1}' ng-options='choice as choice for choice in $ctrl.fields.{1}' > <option value=""> - {0} - </option> </select>  </div> \n"
     for r in fieldForm:
-        if r['type_widget'] == 'number':
-            write  =  integerInput.format(r['nom_champ'])
+        if r['type_widget'] == 'Nombre':
+            write  =  integerInput.format(r['lib_champ'],r['nom_champ'])
             htmlFile.write(write)
-        if r['type_widget'] == 'text':
-            write  =  simpleTextInput.format(r['nom_champ'])
+        if r['type_widget'] == 'Texte':
+            write  =  simpleTextInput.format(r['lib_champ'],r['nom_champ'])
             htmlFile.write(write)
-        if r['type_widget'] == 'radio':
-            write  =  booleanInput.format(r['nom_champ'])
+        if r['type_widget'] == 'Checkbox':
+            write  =  checkboxInput.format(r['lib_champ'],r['nom_champ'])
             htmlFile.write(write)
-        if r['type_widget'] == "select" :
-            write = listInput.format(r['nom_champ'])
+        if r['type_widget'] == "Liste déroulante" :
+            write = listInput.format(r['lib_champ'], r['nom_champ'])
             htmlFile.write(write)
     htmlFile.close()
 
@@ -352,13 +357,16 @@ def createProject(db, projectForm, fieldForm):
     template = 'addObs/'+schemaName+'.html'
     bib_champs = schemaName+'.'+'bib_champs_'+schemaName
 
-    sql = " CREATE SCHEMA "+schemaName+" AUTHORIZATION "+ database['USER']
+    sql = " CREATE SCHEMA {sch} AUTHORIZATION {user} "
+    sql = psysql.SQL(sql).format(sch=psysql.Identifier(schemaName),user=psysql.Identifier(database['USER'])).as_string(db.cur)
     db.cur.execute(sql)
     db.conn.commit()
 
-    stringCreate = """CREATE TABLE """+fullName+""" 
+    #cree la table releve
+    pk_name = schemaName +"_PK"
+    stringCreate = """CREATE TABLE {sch}.{nom_table}
     (
-      id_obs serial CONSTRAINT """+schemaName+"""_PK PRIMARY KEY,
+      id_obs serial CONSTRAINT {pk_name} PRIMARY KEY,
       id_synthese integer,
       id_projet integer,
       id_sous_projet integer,
@@ -366,6 +374,7 @@ def createProject(db, projectForm, fieldForm):
       date date NOT NULL,
       cd_nom integer NOT NULL,
       geom_point geometry(Point,"""+str(config['MAP']['PROJECTION'])+"""),
+      precision character varying,
       insee character varying(10),
       altitude integer,
       commentaire character varying(150),
@@ -374,26 +383,44 @@ def createProject(db, projectForm, fieldForm):
       ccod_frt character varying(50),
       loc_exact boolean,
       code_maille character varying(20),
-      id_structure integer,"""
+      id_structure integer,
+      diffusable boolean,"""
 
-    addPermission = "ALTER TABLE "+fullName+" OWNER TO "+database['USER']+";"
+    formatedCreate = psysql.SQL(stringCreate).format(sch=psysql.Identifier(schemaName),nom_table=psysql.Identifier(nom_table),pk_name=psysql.Identifier(pk_name)).as_string(db.cur)
 
+    # addPermission = "ALTER TABLE "+fullName+" OWNER TO "+database['USER']+";"
+    addPermission = "ALTER TABLE {sch}.{nom_table} OWNER TO {user}"
+    addPermission = psysql.SQL(addPermission).format(sch=psysql.Identifier(schemaName),nom_table=psysql.Identifier(nom_table),user=psysql.Identifier(database['USER'])).as_string(db.cur)
+
+
+    params = []
     for r in fieldForm:
-        stringCreate+=" "+ r['nom_champ']+" "+r['db_type']+","
-    stringCreate = stringCreate[0:-1]+");"
-    stringCreate += addPermission
-    db.cur.execute(stringCreate)
+        formatedCreate+=" {champ} %s ,"
+        formatedCreate = psysql.SQL(formatedCreate).format(champ=psysql.Identifier(r['nom_champ'])).as_string(db.cur)
+        params.append(AsIs(r['db_type']))
+    formatedCreate = formatedCreate[0:-1]+");"
+    formatedCreate += addPermission
+
+    print 'LAAAAAAAAAAAA'
+    print formatedCreate
+
+    db.cur.execute(formatedCreate, params)
     db.conn.commit()
 
     #TRIGGER
-    trigger = """CREATE TRIGGER tr_"""+schemaName+"""_to_synthese
-            AFTER INSERT ON """+fullName+"""
+
+    triggerName = 'tr_'+schemaName+'_to_synthese'
+    trigger = """CREATE TRIGGER {trg_name}
+            AFTER INSERT ON {sch}.releve
             FOR EACH ROW EXECUTE PROCEDURE synthese.tr_protocole_to_synthese();"""
+    trigger = psysql.SQL(trigger).format(sch=psysql.Identifier(schemaName), trg_name=psysql.Identifier(triggerName)).as_string(db.cur)
     db.cur.execute(trigger)
     db.conn.commit()
 
     #BIB_CHAMPS
-    sql = """CREATE TABLE """+bib_champs+"""
+
+    tbl = 'bib_champs_'+schemaName
+    sql = """CREATE TABLE {sch}.{tbl}
         (
           id_champ integer NOT NULL,
           no_spec character varying,
@@ -404,6 +431,7 @@ def createProject(db, projectForm, fieldForm):
           db_type character varying,
           CONSTRAINT bib_fa_primary_key PRIMARY KEY (id_champ)
         )"""
+    sql = psysql.SQL(sql).format(sch=psysql.Identifier(schemaName),tbl=psysql.Identifier(tbl)).as_string(db.cur)
     db.cur.execute(sql)
     addPermission = "ALTER TABLE "+bib_champs+" OWNER TO "+database['USER']+";"
     db.cur.execute(addPermission)
@@ -416,6 +444,42 @@ def createProject(db, projectForm, fieldForm):
         db.cur.execute(sql, params)
         db.conn.commit()
 
+    #ajoute la liste des taxons de ce protocole dans taxhub
+    #ajout dans bib_liste
+    query = "INSERT INTO taxonomie.bib_listes (nom_liste, picto) VALUES (%s, %s)"
+    db.cur.execute(query, [projectForm['nom_projet'],'images/pictos/nopicto.gif' ])
+    db.conn.commit()
+    #prend le last id_liste
+    db.cur.execute("SELECT MAX(id_liste) FROM taxonomie.bib_listes")
+    last_id_liste = db.cur.fetchone()[0]
+    #peuple la table cor_nom_liste avec tous les taxons par defaults
+    query = """INSERT INTO taxonomie.cor_nom_liste (id_liste,id_nom)
+    SELECT %s,n.id_nom FROM taxonomie.bib_noms n """
+    db.cur.execute(query, [last_id_liste])
+    #cree la vue materialise a partir de cette liste
+    vue_name = 'taxons_'+schemaName
+    query = """CREATE MATERIALIZED VIEW taxonomie.{vue_name} AS 
+     SELECT taxonomie.find_cdref(t3.cd_nom) AS cd_ref,
+        t3.cd_nom,
+        t3.nom_valide,
+        t3.lb_nom,
+        concat(t3.lb_nom, ' = ', t3.nom_complet_html) AS search_name
+       FROM taxonomie.cor_nom_liste t1
+         JOIN taxonomie.bib_noms t2 ON t1.id_nom = t2.id_nom
+         JOIN taxonomie.taxref t3 ON t3.cd_nom = t2.cd_nom
+      WHERE t1.id_liste = %(last_id)s
+    UNION
+     SELECT taxonomie.find_cdref(t3.cd_nom) AS cd_ref,
+        t3.cd_nom,
+        t3.nom_valide,
+        t3.lb_nom,
+        concat(t3.nom_vern, ' = ', t3.nom_complet_html) AS search_name
+       FROM taxonomie.cor_nom_liste t1
+         JOIN taxonomie.bib_noms t2 ON t1.id_nom = t2.id_nom
+         JOIN taxonomie.taxref t3 ON t3.cd_nom = t2.cd_nom
+      WHERE t1.id_liste = %(last_id)s AND t3.nom_vern IS NOT NULL"""
+    query = psysql.SQL(query).format(vue_name=psysql.Identifier(vue_name)).as_string(db.cur)
+    db.cur.execute(query, {'last_id': last_id_liste})
 
 def checkForInjection(param):
     injection = False

@@ -128,15 +128,15 @@ def addProject():
 
         #insert dans bib_projet
         sql = """INSERT INTO synthese.bib_projet(nom_projet, theme_principal, service_onf, partenaires,subvention_commande, duree, initiateur, producteur, commentaire, table_independante, saisie_possible, nom_schema, nom_table, template, bib_champs ) 
-              VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+              VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
         params = [projectForm['nom_projet'], projectForm['theme_principal'], projectForm['service'], projectForm['partenaires'], projectForm['subvention_commande'], projectForm['duree'], projectForm['initiateur'], projectForm['producteur'], projectForm['commentaire'], projectForm['table_independante'],\
                  saisie_possible, nom_schema, nom_table, template, bib_champs ]
         db.cur.execute(sql, params)
         db.conn.commit()
         #update le template de saisie
-        # print 'UPDATEEEEEEEE template'
-        # utils.createTemplate(nom_schema, fieldForm)
-        # print 'ENDDDDDDDDDDDDDDD UPDATEEEEEEEE template'
-        # db.closeAll()
+        print 'UPDATEEEEEEEE template'
+        utils.createTemplate(nom_schema, fieldForm)
+        print 'ENDDDDDDDDDDDDDDD UPDATEEEEEEEE template'
+        db.closeAll()
 
         return  Response(flask.json.dumps('success'), mimetype='application/json')
