@@ -11,6 +11,8 @@ from ..auth import check_auth
 import ast
 from psycopg2 import sql as psysql
 
+from psycopg2.extensions import AsIs
+
 
 addObs = flask.Blueprint('addObs', __name__,static_url_path="/addObs", static_folder="static", template_folder="templates")
 
@@ -37,18 +39,16 @@ def addObs_index():
     return flask.render_template('addObsIndex.html', configuration=config, page_title=u"Interface de saisie des données")
 
 
-
-
-
 @addObs.route('/search_taxon_name/<table>/<expr>', methods=['GET'])
 def search_taxon_name(table, expr):
     db=getConnexion()
+    #table_name = "taxonomie.taxons_"+table
     sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
-                SELECT cd_ref, search_name, nom_valide from taxonomie.taxons_"""+table+"""
+                SELECT cd_ref, search_name, nom_valide from taxonomie.taxons_%s
                 WHERE search_name ILIKE %s  
                 ORDER BY search_name ASC 
                 LIMIT 20) r"""
-    params = ["%"+expr+"%"]
+    params = [AsIs(table), "%"+expr+"%"]
     db.cur.execute(sql, params)
     res = db.cur.fetchone()[0]
     db.closeAll()
@@ -113,8 +113,6 @@ def getValues(protocole):
         table_name = protocole.split('.')[1]
         sql = "SELECT * FROM {sch}.{tbl}"
         formatedSql = psysql.SQL(sql).format(sch=psysql.Identifier(schema_name), tbl=psysql.Identifier(table_name) ).as_string(db.cur)
-        print 'LAAAAAAAA'
-        print formatedSql
         db.cur.execute(formatedSql)
         res = db.cur.fetchall()
         finalDict = dict()
@@ -227,8 +225,6 @@ def submitObs():
             generalValues.append(v)
         params = generalValues
         sql = stringInsert+stringValues
-
-        print db.cur.mogrify(sql, params)
 
         db.cur.execute(sql, params)
         db.conn.commit()
