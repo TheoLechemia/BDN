@@ -14,7 +14,9 @@
 <link rel="stylesheet" href="{{url_for('static', filename='lib/leaflet/leaflet.css')}}" />
 <script src="{{url_for('static', filename='lib/leaflet/angular-leaflet-directive.min.js')}}"></script>
 
-
+<!-- TOASTER -->
+<script type="text/javascript" src= " {{url_for('static', filename='node_modules/angularjs-toaster/toaster.min.js')}}"></script>
+<link href="{{url_for('static', filename='node_modules/angularjs-toaster/toaster.min.css')}}"" rel="stylesheet" />
 
   <!--  ui bootstrap -->
 <script language="javascript" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.14.3.js"></script>
@@ -38,22 +40,9 @@
  {% include 'navbar.html' %}
 
   <div ng-app="app" >
+  <toaster-container toaster-options="{'close-button':true, 'position-class': 'toast-top-center', 'time-out':5000}"></toaster-container>
     <app ></app>
 </div>
-
-
-
-
-	
-
-  </div>
-		</div>
-
-
-</div> 
-
-
-
 
 
 </body>
