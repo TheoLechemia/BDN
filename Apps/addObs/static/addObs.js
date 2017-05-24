@@ -1,6 +1,6 @@
 //var app = angular.module("app", ['leaflet-directive', 'ui.bootstrap']);
 
-var angularInstance = angular.module("app", ['leaflet-directive', 'ui.bootstrap'])
+var angularInstance = angular.module("app", ['leaflet-directive', 'ui.bootstrap', 'toaster'])
 
 angularInstance.config(function($logProvider){
   $logProvider.debugEnabled(false);
@@ -29,7 +29,7 @@ angularInstance.component('app', {
 
 //#######FORMULAIRE ##############
 
-function formController($http){
+function formController($http, toaster){
   formCtrl = this;
 
 
@@ -79,14 +79,6 @@ function formController($http){
       formCtrl.isOpen = !formCtrl.isOpen;
    }
 
-  //  formCtrl.changeLng = function(){
-  //   formCtrl.globalForm.coord.lng = formCtrl.markers.main.lng;
-  //  }
-  // formCtrl.changeLat = function(){
-  //   formCtrl.globalForm.coord.lat = formCtrl.markers.main.lat;
-  //  }
-
-
 
  formCtrl.validationAttempt = false;
 
@@ -104,6 +96,7 @@ function formController($http){
           $http.post(configuration.URL_APPLICATION+'addObs/submit/', completeForm).then(function(response){
           if(response.status == 200){
             formCtrl.formSuccessfullySent = true;
+            toaster.success({title: "OK", body:"Observation enregistrée avec succès"});
             //angular.copy({},form);
             // on reset tous les champs
             var saveCoord = formCtrl.globalForm.coord;
@@ -164,7 +157,6 @@ function formController($http){
 
 }// END CTRL
 
-
 templateForm = 'addObs/templates/form.html';
 angularInstance.component('formAdd', {
 
@@ -177,8 +169,13 @@ angularInstance.component('formAdd', {
 
 });
 
+// #########################END FORMULAIRE #############################
 
-function mapController($http, $scope, leafletData){
+
+// ######################### MAP ####################################
+
+
+function mapController($http, $scope, leafletData, toaster){
   mapCtrl = this;
   var originStyle = {
     "color": "#000000",
@@ -194,13 +191,13 @@ var selectedStyle = {
 
 
   var saveGeojsonMaille = {};
-  mapCtrl.geojsonMaille = {};
-
+  this.geojsonMaille = {};
+  this.saveMarkers = {}
 
 
   mapCtrl.center = { 'lat':configuration.MAP.COORD_CENTER.Y , 'lng':configuration.MAP.COORD_CENTER.X , 'zoom':configuration.MAP.ZOOM_LEVEL }
   mapCtrl.$onInit= function(){
-    mapCtrl.markers = {
+    this.markers = {
       main: {
           lat: mapCtrl.y,
           lng: mapCtrl.x,
@@ -216,7 +213,7 @@ var selectedStyle = {
           }
       }
     }
-    var saveMarkers = mapCtrl.markers;
+    this.saveMarkers = this.markers;
   }
 
   // EVENT
@@ -282,6 +279,7 @@ var loc_exact = true;
 
 
   mapCtrl.switchMaille = function(){
+    toaster.pop({ 'type': 'info', title: "", body:"Zoomer pour afficher les mailles"});
     loc_exact = false;
     this.markers={};
     loadMailles();
@@ -292,7 +290,7 @@ var loc_exact = true;
     loc_exact = true;
     this.switchLayer();
     mapCtrl.geojsonMaille = {};
-    mapCtrl.markers = saveMarkers;
+    mapCtrl.markers = this.saveMarkers;
   }
 
   mapCtrl.$onChanges = function(changes){
