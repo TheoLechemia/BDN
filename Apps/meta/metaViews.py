@@ -134,9 +134,7 @@ def addProject():
         db.cur.execute(sql, params)
         db.conn.commit()
         #update le template de saisie
-        print 'UPDATEEEEEEEE template'
         utils.createTemplate(nom_schema, fieldForm)
-        print 'ENDDDDDDDDDDDDDDD UPDATEEEEEEEE template'
         db.closeAll()
 
         return  Response(flask.json.dumps('success'), mimetype='application/json')
