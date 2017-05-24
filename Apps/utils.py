@@ -280,9 +280,6 @@ def buildSQL(sql, app):
             sql+= key+"= %s"
             firstParam = False
             params.append(value)
-    print 'LAAAAAAAA'
-    print sql
-    print params
     return {'params': params, 'sql' :sql}
 
 def buildGeojsonWithParams(res):
@@ -388,7 +385,6 @@ def createProject(db, projectForm, fieldForm):
 
     formatedCreate = psysql.SQL(stringCreate).format(sch=psysql.Identifier(schemaName),nom_table=psysql.Identifier(nom_table),pk_name=psysql.Identifier(pk_name)).as_string(db.cur)
 
-    # addPermission = "ALTER TABLE "+fullName+" OWNER TO "+database['USER']+";"
     addPermission = "ALTER TABLE {sch}.{nom_table} OWNER TO {user}"
     addPermission = psysql.SQL(addPermission).format(sch=psysql.Identifier(schemaName),nom_table=psysql.Identifier(nom_table),user=psysql.Identifier(database['USER'])).as_string(db.cur)
 
@@ -401,8 +397,6 @@ def createProject(db, projectForm, fieldForm):
     formatedCreate = formatedCreate[0:-1]+");"
     formatedCreate += addPermission
 
-    print 'LAAAAAAAAAAAA'
-    print formatedCreate
 
     db.cur.execute(formatedCreate, params)
     db.conn.commit()
@@ -439,7 +433,8 @@ def createProject(db, projectForm, fieldForm):
 
 
     for r in fieldForm:
-        sql = "INSERT INTO """+bib_champs+" VALUES(%s, %s, %s, %s, %s, %s, %s)"
+        sql = "INSERT INTO {sch}.{tbl} VALUES(%s, %s, %s, %s, %s, %s, %s)"
+        sql = psysql.SQL(sql).format(sch=psysql.Identifier(schemaName),tbl=psysql.Identifier(tbl)).as_string(db.cur)
         params = [r['id_champ'], r['no_spec'], r['nom_champ'], r['valeur'], r['lib_champ'], r['type_widget'], r['db_type']]
         db.cur.execute(sql, params)
         db.conn.commit()
