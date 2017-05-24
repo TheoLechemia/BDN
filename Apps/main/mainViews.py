@@ -1,5 +1,5 @@
 #coding: utf-8
-from flask import Blueprint, render_template, flash, request, redirect, url_for, session
+from flask import Blueprint, render_template, flash, request, redirect, url_for, session, make_response
 from ..config import config
 from ..database import *
 import psycopg2
@@ -7,6 +7,7 @@ from .. import utils
 from ..auth import check_auth, User, loadCurrentUser
 import hashlib
 import time
+
 
 
 
@@ -18,6 +19,7 @@ main = Blueprint('main', __name__, static_url_path="/main", static_folder="stati
 @main.route('/login', methods= ['GET','POST'])
 def login():
     if request.method == 'GET':
+
         return render_template('login.html')
     if request.method == 'POST':
         db = getConnexion()
@@ -49,11 +51,12 @@ def login():
                 session['auth_level'] = currentUser.auth_level
                 session['id_structure'] = currentUser.id_structure
                 session.permanent = True
+                #ticket dans la session et le cookie
                 return redirect(url_for("main.index"))
             else:
                 flash('Identifiant ou mot de passe incorect')
                 print 'mot de pass incorect'
-                query = "INSERT INTO ip_connexion (ip) VALUES( %s)"
+                query = "INSERT INTO ip_connexion (ip) VALUES(%s)"
                 db.cur.execute(query, [ip_visitor])
                 db.conn.commit()
                 return redirect(url_for("main.login"))
@@ -81,9 +84,7 @@ def index():
 @main.route('/deconnexion')
 def deconnexion():
     if 'user' in session:
-        session.pop('user', None)
-        session.pop('password', None)
-        session.pop('auth_level', None)
+        session.clear()
     return redirect(url_for("main.login"))
 
 

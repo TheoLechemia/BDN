@@ -148,8 +148,12 @@ def submitObs():
         y = str(loc['lat'])
         point = 'POINT('+x+' '+y+')'
         code_maille = flask.request.json['general']['code_maille']
-       
 
+        if loc_exact:
+            precision = "1m"
+        else:
+            precision = 'maille 1km'
+       
         date = flask.request.json['general']['date']
         commentaire = flask.request.json['general']['commentaire']
         comm_loc = flask.request.json['general']['comm_loc']
@@ -197,20 +201,21 @@ def submitObs():
             insee = res[0]
 
 
-        #recupere l id_structure a partir de l'info stocker dans la session
+        #recupere l id_structure a partir de l'info stock dans la session
         id_structure = session['id_structure']
         valide= False
+        diffusable = True
 
-        generalValues = [id_projet,observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc]
+        generalValues = [id_projet, observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc, precision, diffusable]
 
 
         ###protocole 
-        stringInsert = "INSERT INTO "+fullTableName+"(id_projet, observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc"
-        stringValues = ""
+        stringInsert = "INSERT INTO "+fullTableName+"(id_projet, observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc, precision, diffusable"
+        stringValues = str()
         if loc_exact:
-            stringValues = "VALUES (%s, %s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s, %s"
+            stringValues = "VALUES (%s, %s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s"
         else:
-            stringValues = "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s"
+            stringValues = "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s"
         keys = getParmeters()['keys']
         values = getParmeters()['values']
         for k in keys:
@@ -222,6 +227,8 @@ def submitObs():
             generalValues.append(v)
         params = generalValues
         sql = stringInsert+stringValues
+
+        print db.cur.mogrify(sql, params)
 
         db.cur.execute(sql, params)
         db.conn.commit()

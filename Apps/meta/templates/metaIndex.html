@@ -9,8 +9,12 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0-rc.2/angular.min.js"></script>
     <script src="//unpkg.com/angular-ui-router@1.0.0-rc.1/release/angular-ui-router.js"></script>
+    <script type="text/javascript" src= " {{url_for('static', filename='node_modules/angular-sanitize/angular-sanitize.min.js')}}"></script>
+    <!-- TOASTER -->
+    <script type="text/javascript" src= " {{url_for('static', filename='node_modules/angularjs-toaster/toaster.min.js')}}"></script>
+    <link href="{{url_for('static', filename='node_modules/angularjs-toaster/toaster.min.css')}}"" rel="stylesheet" />
+     
 
-    <!-- <script data-require="angular-ui-router@*" data-semver="0.2.10" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.10/angular-ui-router.js"></script> -->
 
 
 <!-- Jquery -->
@@ -36,9 +40,11 @@
 <base href="/liste">
 <body>
 
+
  {% include 'navbar.html' %}
 <div class="container-fluid">
   <div ng-app="app" >
+     <toaster-container toaster-options="{'close-button':true, 'position-class': 'toast-top-center', 'time-out':2000}"></toaster-container>
     <ui-view></ui-view>
   </div>
 </div>
