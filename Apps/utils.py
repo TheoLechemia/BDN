@@ -327,7 +327,7 @@ def createTemplate(schemaName, fieldForm):
     #                     </select>\n
     #                   </div> \n"""
     checkboxInput = """<label class="sublabel"> {0} :
-                        <input type="checkbox" name="" ng-model="$ctrl.child.protocoleForm.{1}">
+                        <input type="checkbox" name="" ng-init="$ctrl.child.protocoleForm.{1}=false" ng-model="$ctrl.child.protocoleForm.{1}">
                     </label>"""
     listInput = "<div> <select class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{1}' ng-options='choice as choice for choice in $ctrl.fields.{1}' > <option value=""> - {0} - </option> </select>  </div> \n"
     for r in fieldForm:
