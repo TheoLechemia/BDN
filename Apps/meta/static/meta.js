@@ -52,18 +52,16 @@ function metaController ($http, toaster){
 
 		toaster.pop({type: 'wait', title: "Création du projet", body:"Cela peut prendre un peu de temps"});
 		$http.post(configuration.URL_APPLICATION+'meta/addProject', data).then(function(response){
-			if(response.status == 200) {
 			// reset le form
 			metaCtrl.form = angular.copy(initialForm);
 			toaster.clear();
 			btn.classList.remove('disabled');
 			toaster.success({title: "OK", body:"Protocole ajouté avec succès"});
-			}
-			else{
+			}, function errorCallBack(response){
+				toaster.clear();
 				toaster.error({title: "Attention", body:"Un erreur s'est produite, contactez le gestionnaire de base de données"})
-			}
 
-		})
+		});
 		
 	}
 

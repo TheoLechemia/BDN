@@ -503,8 +503,7 @@ def createViewsDownload(db, projectForm, fieldForm):
     f.commentaire,
     f.comm_loc,
     f.ccod_frt,
-    m.geom,
-    m.code_1km,
+    m.id_maille,
     s.nom_organisme,
     f.id_structure,
     f.id_synthese,
@@ -518,8 +517,8 @@ def createViewsDownload(db, projectForm, fieldForm):
 
     string_create_view_poly += """ FROM {sch}.releve f
     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
-    JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text
-    JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
+    JOIN layers.maille_1_2 m ON m.id_maille::text = f.code_maille::text
+    LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
     WHERE f.valide = TRUE AND f.loc_exact = FALSE AND f.diffusable = TRUE;"""
     string_create_view_poly = psysql.SQL(string_create_view_poly).format(sch=psysql.Identifier(schemaName)).as_string(db.cur)
 
@@ -530,8 +529,8 @@ def createViewsDownload(db, projectForm, fieldForm):
     t.lb_nom,
     f.observateur,
     f.date,
-    ST_X(ST_TRANSFORM(m.geom,4326)) AS X,
-    ST_Y(ST_TRANSFORM(m.geom,4326)) AS Y,
+    ST_X(ST_TRANSFORM(f.geom_point,4326)) AS X,
+    ST_Y(ST_TRANSFORM(f.geom_point,4326)) AS Y,
     f.precision,
     f.cd_nom,
     f.insee,
@@ -539,8 +538,7 @@ def createViewsDownload(db, projectForm, fieldForm):
     f.commentaire,
     f.comm_loc,
     f.ccod_frt,
-    m.geom,
-    m.code_1km,
+    f.geom_point,
     s.nom_organisme,
     f.id_structure,
     f.id_synthese,
@@ -554,9 +552,8 @@ def createViewsDownload(db, projectForm, fieldForm):
 
     string_create_view_point += """ FROM {sch}.releve f
     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
-    JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text
-    JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
-    WHERE f.valide = TRUE AND f.loc_exact = FALSE AND  f.diffusable = TRUE;"""
+    LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
+    WHERE f.valide = TRUE AND f.loc_exact = TRUE AND  f.diffusable = TRUE;"""
     string_create_view_point = psysql.SQL(string_create_view_point).format(sch=psysql.Identifier(schemaName)).as_string(db.cur)
 
     db.cur.execute(string_create_view_poly)
@@ -569,14 +566,14 @@ def createViewsDownload(db, projectForm, fieldForm):
              SELECT fp.id_obs,
                 st_x(st_transform(fp.geom_point, 4326)) AS x,
                 st_y(st_transform(fp.geom_point, 4326)) AS y
-               FROM contact_flore.releve fp
+               FROM {sch}.releve fp
               WHERE fp.loc_exact = true
             ), coord_maille AS (
              SELECT fm.id_obs,
                 fm.code_maille,
                 st_x(st_centroid(st_transform(m.geom, 4326))) AS x,
                 st_y(st_centroid(st_transform(m.geom, 4326))) AS y
-               FROM contact_flore.releve fm
+               FROM {sch}.releve fm
                  JOIN layers.maille_1_2 m ON m.id_maille::text = fm.code_maille::text
               WHERE fm.loc_exact = false
             )

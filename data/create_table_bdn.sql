@@ -455,6 +455,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_poly AS
     f.date,
     ST_X(ST_CENTROID(ST_TRANSFORM(m.geom,4326))) AS X,
     ST_Y(ST_CENTROID(ST_TRANSFORM(m.geom,4326))) AS Y,
+    f.precision,
     f.cd_nom,
     f.insee,
     f.altitude,
@@ -494,6 +495,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
     f.date,
     ST_X(ST_TRANSFORM(f.geom_point, 4326)) AS X,
     ST_Y(ST_TRANSFORM(f.geom_point, 4326)) AS Y,
+    f.precision,
     f.comm_loc,
     f.cd_nom,
     f.insee,
@@ -529,6 +531,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
     f.date,
     ST_X(ST_TRANSFORM(f.geom_point, 4326)) AS X,
     ST_Y(ST_TRANSFORM(f.geom_point, 4326)) AS Y,
+    f.precision,
     f.comm_loc,
     f.cd_nom,
     f.insee,
@@ -567,6 +570,7 @@ CREATE OR REPLACE VIEW contact_flore.layer_poly AS
     f.date,
     ST_X(ST_CENTROID(ST_TRANSFORM(m.geom,4326))) AS X,
     ST_Y(ST_CENTROID(ST_TRANSFORM(m.geom,4326))) AS Y,
+    f.precision,
     f.comm_loc,
     f.cd_nom,
     f.insee,
@@ -625,6 +629,7 @@ CREATE OR REPLACE VIEW contact_faune.to_csv AS
             WHEN false THEN cm.y
             ELSE NULL::double precision
         END AS y,
+    f.precision,
     f.loc_exact,
     f.comm_loc,
     f.cd_nom,
@@ -685,6 +690,7 @@ CREATE OR REPLACE VIEW contact_flore.to_csv AS
             WHEN false THEN cm.y
             ELSE NULL::double precision
         END AS y,
+    f.precision,
     f.loc_exact,
     f.comm_loc,
     f.cd_nom,
@@ -746,6 +752,7 @@ CREATE OR REPLACE VIEW synthese.to_csv AS
             WHEN false THEN cm.y
             ELSE NULL::double precision
         END AS y,
+    f.precision,
     f.loc_exact,
     f.cd_nom,
     f.insee,
