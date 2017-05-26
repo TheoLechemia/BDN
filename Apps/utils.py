@@ -483,3 +483,146 @@ def checkForInjection(param):
         if word in param or word.lower() in param:
             injection = True
     return injection
+
+
+def createViewsDownload(db, projectForm, fieldForm):
+    schemaName = projectForm['nom_bdd']
+    #POLYGONS
+    string_create_view_poly = """CREATE OR REPLACE VIEW {sch}.layer_poly AS 
+    SELECT 
+    t.nom_vern,
+    t.lb_nom,
+    f.observateur,
+    f.date,
+    ST_X(ST_CENTROID(ST_TRANSFORM(m.geom,4326))) AS X,
+    ST_Y(ST_CENTROID(ST_TRANSFORM(m.geom,4326))) AS Y,
+    f.precision,
+    f.cd_nom,
+    f.insee,
+    f.altitude,
+    f.commentaire,
+    f.comm_loc,
+    f.ccod_frt,
+    m.geom,
+    m.code_1km,
+    s.nom_organisme,
+    f.id_structure,
+    f.id_synthese,
+    f.diffusable,"""
+    string_create_view_poly = psysql.SQL(string_create_view_poly).format(sch=psysql.Identifier(schemaName)).as_string(db.cur)
+    for r in fieldForm:
+        string_create_view_poly += "f.{chm} ,"
+        string_create_view_poly = psysql.SQL(string_create_view_poly).format(chm=psysql.Identifier(r['nom_champ'])).as_string(db.cur)
+    
+    string_create_view_poly = string_create_view_poly[:-1]
+
+    string_create_view_poly += """ FROM {sch}.releve f
+    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
+    JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text
+    JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
+    WHERE f.valide = TRUE AND f.loc_exact = FALSE AND f.diffusable = TRUE;"""
+    string_create_view_poly = psysql.SQL(string_create_view_poly).format(sch=psysql.Identifier(schemaName)).as_string(db.cur)
+
+    #POINTS
+    string_create_view_point = """CREATE OR REPLACE VIEW {sch}.layer_point AS 
+    SELECT 
+    t.nom_vern,
+    t.lb_nom,
+    f.observateur,
+    f.date,
+    ST_X(ST_TRANSFORM(m.geom,4326)) AS X,
+    ST_Y(ST_TRANSFORM(m.geom,4326)) AS Y,
+    f.precision,
+    f.cd_nom,
+    f.insee,
+    f.altitude,
+    f.commentaire,
+    f.comm_loc,
+    f.ccod_frt,
+    m.geom,
+    m.code_1km,
+    s.nom_organisme,
+    f.id_structure,
+    f.id_synthese,
+    f.diffusable,"""
+    string_create_view_point = psysql.SQL(string_create_view_point).format(sch=psysql.Identifier(schemaName)).as_string(db.cur)
+    for r in fieldForm:
+        string_create_view_point += "f.{chm} ,"
+        string_create_view_point = psysql.SQL(string_create_view_point).format(chm=psysql.Identifier(r['nom_champ'])).as_string(db.cur)
+    
+    string_create_view_point = string_create_view_point[:-1]
+
+    string_create_view_point += """ FROM {sch}.releve f
+    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
+    JOIN layers.mailles_1k m ON m.code_1km::text = f.code_maille::text
+    JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
+    WHERE f.valide = TRUE AND f.loc_exact = FALSE AND  f.diffusable = TRUE;"""
+    string_create_view_point = psysql.SQL(string_create_view_point).format(sch=psysql.Identifier(schemaName)).as_string(db.cur)
+
+    db.cur.execute(string_create_view_poly)
+    db.cur.execute(string_create_view_point)
+    db.conn.commit()  
+
+    #CSV
+    create_csv = """CREATE OR REPLACE VIEW {sch}.to_csv AS 
+     WITH coord_point AS (
+             SELECT fp.id_obs,
+                st_x(st_transform(fp.geom_point, 4326)) AS x,
+                st_y(st_transform(fp.geom_point, 4326)) AS y
+               FROM contact_flore.releve fp
+              WHERE fp.loc_exact = true
+            ), coord_maille AS (
+             SELECT fm.id_obs,
+                fm.code_maille,
+                st_x(st_centroid(st_transform(m.geom, 4326))) AS x,
+                st_y(st_centroid(st_transform(m.geom, 4326))) AS y
+               FROM contact_flore.releve fm
+                 JOIN layers.maille_1_2 m ON m.id_maille::text = fm.code_maille::text
+              WHERE fm.loc_exact = false
+            )
+     SELECT t.nom_vern,
+        t.lb_nom,
+        f.observateur,
+        f.date,
+            CASE f.loc_exact
+                WHEN true THEN cp.x
+                WHEN false THEN cm.x
+                ELSE NULL::double precision
+            END AS x,
+            CASE f.loc_exact
+                WHEN true THEN cp.y
+                WHEN false THEN cm.y
+                ELSE NULL::double precision
+            END AS y,
+        f.precision,
+        f.loc_exact,
+        f.comm_loc,
+        f.cd_nom,
+        f.insee,
+        f.ccod_frt,
+        f.altitude,
+        f.geom_point,
+        f.commentaire,
+        s.nom_organisme,
+        f.id_structure,
+        f.id_synthese,
+        f.diffusable,"""
+    create_csv = psysql.SQL(create_csv).format(sch=psysql.Identifier(schemaName)).as_string(db.cur)
+
+    for r in fieldForm:
+        create_csv += "f.{chm} ,"
+        create_csv = psysql.SQL(create_csv).format(chm=psysql.Identifier(r['nom_champ'])).as_string(db.cur)
+    
+    create_csv = create_csv[:-1]
+
+    create_csv+="""FROM {sch}.releve f
+     JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
+     LEFT JOIN coord_point cp ON cp.id_obs = f.id_obs
+     LEFT JOIN coord_maille cm ON cm.id_obs = f.id_obs
+     LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme AND f.diffusable = TRUE; """
+    print create_csv
+    create_csv = psysql.SQL(create_csv).format(sch=psysql.Identifier(schemaName)).as_string(db.cur)
+
+    db.cur.execute(create_csv)
+    db.conn.commit()  
+

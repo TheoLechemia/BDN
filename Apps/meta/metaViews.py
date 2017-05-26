@@ -133,6 +133,8 @@ def addProject():
                  saisie_possible, nom_schema, nom_table, template, bib_champs ]
         db.cur.execute(sql, params)
         db.conn.commit()
+        #creation des vues pour le download
+        utils.createViewsDownload(db, projectForm, fieldForm)
         #update le template de saisie
         utils.createTemplate(nom_schema, fieldForm)
         db.closeAll()

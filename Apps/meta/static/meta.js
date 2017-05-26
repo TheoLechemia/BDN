@@ -44,15 +44,22 @@ function metaController ($http, toaster){
 	metaCtrl.form = angular.copy(initialForm);
 	console.log(metaCtrl.form);
 
-	metaCtrl.sendData = function(){
+	metaCtrl.sendData = function(e){
+		console.log(e.target)
+		btn = e.target;
+		btn.classList.add('disabled');
 		data = {'projectForm': this.form, 'fieldForm': this.fieldForm}
+
+		toaster.pop({type: 'wait', title: "Création du projet", body:"Cela peut prendre un peu de temps"});
 		$http.post(configuration.URL_APPLICATION+'meta/addProject', data).then(function(response){
 			// reset le form
 			metaCtrl.form = angular.copy(initialForm);
-
+			toaster.clear();
+			btn.classList.remove('disabled');
 			toaster.success({title: "OK", body:"Protocole ajouté avec succès"});
 
 		})
+		
 	}
 
 }// END CONTROLLER
