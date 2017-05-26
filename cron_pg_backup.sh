@@ -10,6 +10,9 @@ YEAR=`date +%y`
 
 #DAILY BACKUP
 export PGPASSWORD=Martine50=;pg_dump -h localhost -U onf_admin bdn --format=c --file=/home/ubuntu/sauvegarde_bdd/DAYLY/$TODAY.backup
+export PGPASSWORD=Martine50=;pg_dump -h localhost -U onf_admin geonatureatlas --format=c --file=/home/ubuntu/sauvegarde_atlas/DAYLY/$TODAY.backup
+export PGPASSWORD=Martine50=;pg_dump -h localhost -U onf_admin taxhubdb --format=c --file=/home/ubuntu/sauvegarde_taxhub/DAYLY/$TODAY.backup
+export PGPASSWORD=Martine50=;pg_dump -h localhost -U onf_admin userhubdb --format=c --file=/home/ubuntu/sauvegarde_userhub/DAYLY/$TODAY.backup
 
 python ./Apps/clean_ip_connexion.py
 
