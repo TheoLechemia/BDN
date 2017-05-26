@@ -84,8 +84,8 @@ def getObs():
         schemaReleve = 'synthese'
         if request.json['globalForm']['selectedProtocole']:
             schemaReleve = request.json['globalForm']['selectedProtocole']['nom_schema']
-        sql = " SELECT * FROM "+schemaReleve+".%s s "
-
+        sql = " SELECT * FROM {sch}.%s s "
+        sql = psysql.SQL(sql).format(sch=psysql.Identifier(schemaReleve)).as_string(db.cur)
         dictSQL = utils.buildSQL(sql, 'download')
         params = dictSQL['params']
         reformatedParams = list()
@@ -94,8 +94,6 @@ def getObs():
             if type(p) is int or type(p) is float:
                 reformatedParams.append(p)
             if type(p) is tuple:
-                print len(p)
-                print p
                 if len(p)==1:
                     stringTupple = str(p).replace(',','')
                     print stringTupple
@@ -112,15 +110,21 @@ def getObs():
         paramtersCSV = list(reformatedParams)
         paramtersCSV.insert(0, 'to_csv')
 
-        print 'LAAAAAAAAAA'
-        print reformatedParams
-        print dictSQL['sql']
-        print paramtersPoint
 
         sql_point = dictSQL['sql']%tuple(paramtersPoint)
         sql_poly = dictSQL['sql']%tuple(paramtersMaille)
         sql_csv = dictSQL['sql']%tuple(paramtersCSV)
 
+        if schemaReleve == 'synthese':
+            id_projet = request.json['globalForm']['selectedProtocole']['id_projet']
+            sql_point += " WHERE id_projet = {id_projet}"
+            sql_point = psysql.SQL(sql_point).format(id_projet=psysql.Identifier(id_projet)).as_string(db.cur)
+
+            sql_poly += " WHERE id_projet = {id_projet}"
+            sql_poly = psysql.SQL(sql_poly).format(id_projet=psysql.Identifier(id_projet)).as_string(db.cur)
+
+            sql_csv += " WHERE id_projet = {id_projet}"
+            sql_csv = psysql.SQL(sql_csv).format(id_projet=psysql.Identifier(id_projet)).as_string(db.cur)
 
         time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         filename = "Export_"+time
@@ -147,11 +151,20 @@ def getObs():
         #ZIP
         utils.zipItwithCSV(dirPath, True)
 
+        queryCount ="""WITH t_point AS (SELECT COUNT(*) AS nb_point FROM {sch}.layer_point),
+                        t_poly AS  (SELECT COUNT(*) AS nb_poly  FROM {sch}.layer_poly),
+                        t_total AS (SELECT COUNT(*) AS nb_csv FROM {sch}.to_csv)
+                        SELECT nb_point, nb_poly, nb_csv
+                        FROM t_point, t_poly, t_total"""
+        queryCount = psysql.SQL(queryCount).format(sch=psysql.Identifier(schemaReleve)).as_string(db.cur)
+        db.cur.execute(queryCount)
+        count = db.cur.fetchone()
 
         db.closeAll()
-        return Response(json.dumps(filename), mimetype='application/json')
+        return Response(json.dumps({'filename':filename, 'count':count}), mimetype='application/json')
 
-        #return redirect(url_for('download.uploads',filename=filename))
+
+
 
 
 

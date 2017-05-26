@@ -1,4 +1,4 @@
-var angularInstance = angular.module("app", ['ui.bootstrap']);
+var angularInstance = angular.module("app", ['ui.bootstrap', 'toaster']);
 
 angularInstance.controller("headerCtrl", function($scope){
 
@@ -47,7 +47,7 @@ proxy = angularInstance.factory('proxy', function proxy($http) {
 
 template = 'download/templates/app.html';
 
-function appCtrl (proxy){
+function appCtrl (proxy, toaster){
   var ctrl = this;
   
   ctrl.nbObs = "Les 50 dernieres observations";
@@ -75,7 +75,12 @@ function appCtrl (proxy){
     console.log(form);
 
     proxy.sendData(form).then(function(response){
-    	window.location =CONFIGURATION.URL_APPLICATION+'download/uploads/'+response.data;       
+    	console.log(response.data)
+    	count = response.data.count;
+    	console.log(response.data.count)
+    	template = "Couche de point: "+count[0]+" obsevations <br> Couche de polygone: "+count[1]+" observations <br> Total: "+count[2]+" observations";
+    	toaster.pop('success', "Observations exportées", template, null, 'trustedHtml');
+    	window.location =CONFIGURATION.URL_APPLICATION+'download/uploads/'+response.data.filename;       
     })
   }
 

@@ -12,6 +12,9 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0-rc.2/angular.min.js"></script>
 <!--  ui bootstrap -->
 <script language="javascript" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.14.3.js"></script>
+<!-- TOASTER -->
+<script type="text/javascript" src= " {{url_for('static', filename='node_modules/angularjs-toaster/toaster.min.js')}}"></script>
+<link href="{{url_for('static', filename='node_modules/angularjs-toaster/toaster.min.css')}}"" rel="stylesheet" />
 
   <!-- MY CSS -->
   <link rel="stylesheet" href= " {{url_for('static', filename='css/main.css')}} " >
@@ -23,7 +26,7 @@
 
 
  <div ng-app="app" >
-
+ 	<toaster-container toaster-options="{'close-button':true, 'position-class': 'toast-top-center', 'time-out':10000}"></toaster-container>
     <app ></app>
 </div>
 
