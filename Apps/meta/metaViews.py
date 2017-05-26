@@ -125,18 +125,19 @@ def addProject():
             template = 'addObs/'+nom_schema+'.html'
             bib_champs = nom_schema+'.'+'bib_champs_'+nom_schema
             utils.createProject(db, projectForm, fieldForm)
+            #creation des vues pour le download
+            utils.createViewsDownload(db, projectForm, fieldForm)
+            #update le template de saisie
+            utils.createTemplate(nom_schema, fieldForm)
+
 
         #insert dans bib_projet
-        sql = """INSERT INTO synthese.bib_projet(nom_projet, theme_principal, service_onf, partenaires,subvention_commande, duree, initiateur, producteur, commentaire, table_independante, saisie_possible, nom_schema, nom_table, template, bib_champs ) 
-              VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+        sql = """INSERT INTO synthese.bib_projet(nom_projet, theme_principal, service_onf, partenaires,subvention_commande, duree, initiateur, producteur, commentaire, table_independante, saisie_possible, nom_schema, nom_table, template, bib_champs, nom_bdd ) 
+              VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s)"""
         params = [projectForm['nom_projet'], projectForm['theme_principal'], projectForm['service'], projectForm['partenaires'], projectForm['subvention_commande'], projectForm['duree'], projectForm['initiateur'], projectForm['producteur'], projectForm['commentaire'], projectForm['table_independante'],\
-                 saisie_possible, nom_schema, nom_table, template, bib_champs ]
+                 saisie_possible, nom_schema, nom_table, template, bib_champs, nom_schema ]
         db.cur.execute(sql, params)
         db.conn.commit()
-        #creation des vues pour le download
-        utils.createViewsDownload(db, projectForm, fieldForm)
-        #update le template de saisie
-        utils.createTemplate(nom_schema, fieldForm)
         db.closeAll()
 
         return  Response(flask.json.dumps('success'), mimetype='application/json')

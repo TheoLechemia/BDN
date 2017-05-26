@@ -57,8 +57,11 @@ function metaController ($http, toaster){
 			toaster.clear();
 			btn.classList.remove('disabled');
 			toaster.success({title: "OK", body:"Protocole ajouté avec succès"});
+			}, function errorCallBack(response){
+				toaster.clear();
+				toaster.error({title: "Attention", body:"Un erreur s'est produite, contactez le gestionnaire de base de données"})
 
-		})
+		});
 		
 	}
 

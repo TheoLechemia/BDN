@@ -117,7 +117,7 @@ def validate():
         query = """UPDATE synthese.releve
                  SET valide = TRUE
                  WHERE id_synthese IN %s ;
-                 UPDATE {schm].releve
+                 UPDATE {schm}.releve
                  SET valide = TRUE 
                  WHERE id_synthese IN %s ;"""
         formatedQuery = psysql.SQL(query).format(schm=psysql.Identifier(protocole)).as_string(db.cur)
