@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{url_for('static', filename= 'font-awesome/css/font-awesome.min.css')}}">
 
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="{{url_for('static', filename='node_modules/jquery-easing/easing.js')}}"></script>
 	<title> BDN-WEB</title>
  <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
 	<style type="text/css">
@@ -220,11 +221,12 @@
 <script type="text/javascript">
 	var big = false;
 	function collapse(){
-		console.log('truc');
 		var widthSize = big ? '3%':'10%' 
-		$('#sidebar').animate({
-			'width': widthSize
-		});
+		$('#sidebar').animate(
+			{'width': widthSize}, 500, 'easeOutBounce'
+			//{'easing:': 'easeOutBounce'}
+			
+			);
 		var aInSiteBar = $('#sidebar span');
 		$(aInSiteBar).toggleClass('hide');
 		big = !big;
