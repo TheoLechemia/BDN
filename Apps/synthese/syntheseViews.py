@@ -46,7 +46,8 @@ def nocache(view):
 @synthese.route("/")
 @check_auth(1)
 def synthese_index():
-    return flask.render_template('indexSynthese.html', configuration=config, page_title=u"Interface de visualisation des données")
+    resp = flask.make_response(flask.render_template('indexSynthese.html', configuration=config, page_title=u"Interface de visualisation des données"))
+    return resp
 
 
 

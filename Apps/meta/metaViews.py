@@ -13,7 +13,8 @@ meta = flask.Blueprint('meta', __name__, static_url_path="/meta", static_folder=
 @meta.route("/")
 @check_auth(1)
 def meta_index():
-    return flask.render_template('metaIndex.html', configuration=config, page_title=u"Gestion des projets de la BDN")
+    resp = flask.make_response(flask.render_template('metaIndex.html', configuration=config, page_title=u"Gestion des projets de la BDN"))
+    return resp
 
 @meta.route("/listProject", methods=['GET'])
 @check_auth(3)

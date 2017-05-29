@@ -7,6 +7,7 @@ from .. import utils
 from ..auth import check_auth, User, loadCurrentUser
 import hashlib
 import time
+import random
 
 
 
@@ -44,15 +45,21 @@ def login():
                 flash("Identifiant ou mot de passe incorrect")
                 print 'user existe pas'
                 return redirect(url_for("main.login")) 
-            #checke si le pass est correct existe bien
+            #checke si le pass est correct
             encode_password = hashlib.md5(inputPassword.encode('utf8')).hexdigest()
             if currentUser.password == encode_password:
                 session['user'] = currentUser.username
                 session['auth_level'] = currentUser.auth_level
                 session['id_structure'] = currentUser.id_structure
-                session.permanent = True
                 #ticket dans la session et le cookie
-                return redirect(url_for("main.index"))
+                token = str(random.random())
+                token = hashlib.md5(token).hexdigest()
+                resp = make_response(redirect(url_for("main.index")))
+                resp.set_cookie('token', token)
+                session['token'] = token
+                print 'ORIGIIIIIIIIN'
+                print session['token']
+                return resp
             else:
                 flash('Identifiant ou mot de passe incorect')
                 print 'mot de pass incorect'
@@ -65,7 +72,10 @@ def login():
 
 @main.route('/')
 @check_auth(1)
+#@gen_token
 def index():
+    print 'SESION'
+    print session['token']
     db = getConnexion()
     stat = {}
     sql = """WITH nb_taxons AS (SELECT COUNT(DISTINCT cd_nom) as nb_tot_tax FROM synthese.releve),
@@ -78,7 +88,8 @@ def index():
     stat['nb_tot_tax'] = res[0]
     stat['nb_tot_obs'] = res[1]
     stat['nb_tot_observateurs'] = res[2]
-    return render_template('index.html', stat=stat, configuration=config)
+    resp = make_response(render_template('index.html', stat=stat, configuration=config))
+    return resp
 
 
 @main.route('/deconnexion')

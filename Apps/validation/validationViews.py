@@ -1,5 +1,5 @@
 # coding: utf-8
-from flask import render_template, json, Blueprint, request
+from flask import render_template, json, Blueprint, request, make_response
 #from ..initApp import app
 from ..config import config
 from ..database import *
@@ -28,7 +28,7 @@ def indexValidation():
     db.cur.execute(sql)
     protocoles = db.cur.fetchone()[0]
     db.closeAll()
-    return render_template('indexValidation.html', protocoles=protocoles, page_title=u"Interface de validation des données")
+    return make_response(render_template('indexValidation.html', protocoles=protocoles, page_title=u"Interface de validation des données"))
 
     
 
@@ -74,9 +74,7 @@ def mapValidation(id_projet):
                     geometry = None
             geojson['features'].append({"type": "Feature", "properties": myPropertiesMaille, "geometry": geometry })
     db.closeAll()
-    return render_template('mapValidation.html', configuration=config, taxList=res, geojson=geojson, protocole=protocole, page_title=u"Interface de validation des données")
-
-
+    return make_response(render_template('mapValidation.html', configuration=config, taxList=res, geojson=geojson, protocole=protocole, page_title=u"Interface de validation des données"))
 
 
 

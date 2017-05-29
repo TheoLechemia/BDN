@@ -1,5 +1,5 @@
 #coding: utf-8
-from flask import Flask, request, render_template, url_for, redirect, send_from_directory, flash, session, Blueprint, json
+from flask import Flask, request, render_template, url_for, redirect, send_from_directory, flash, session, Blueprint, json, make_response
 import csv2postgreSQL
 import csv
 from Apps.database import *
@@ -37,7 +37,8 @@ def allowed_file(filename):
 @check_auth(2)
 def indexImport():
     if request.method == 'GET':
-        return render_template('importCSV.html', page_title=u"Import des données naturalistes ")
+        resp = make_response(render_template('importCSV.html', page_title=u"Import des données naturalistes "))
+        return resp
     if request.method == 'POST':
         if 'file' not in request.files:
             return redirect(request.url)

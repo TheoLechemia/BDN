@@ -1,5 +1,5 @@
 # coding: utf-8
-from flask import Flask, request, render_template, url_for, redirect, send_from_directory, flash, session, Blueprint, json, Response, send_file, jsonify
+from flask import Flask, request, render_template, url_for, redirect, send_from_directory, flash, session, Blueprint, json, Response, send_file, jsonify, make_response
 
 from ..auth import check_auth
 
@@ -38,7 +38,8 @@ def index():
 
 
     db.closeAll()
-    return render_template('indexDownload.html', protocoles = protocoles, structures = structures, page_title=u"Télécharger des données", configuration=config)
+    resp = make_response(render_template('indexDownload.html', protocoles = protocoles, structures = structures, page_title=u"Télécharger des données", configuration=config))
+    return resp
 
 # @download.route('/loadTaxons/<protocole>', methods=['GET', 'POST'])
 # def loadTaxons(protocole):
