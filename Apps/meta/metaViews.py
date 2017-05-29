@@ -112,6 +112,10 @@ def addProject():
         projectForm = flask.request.json['projectForm']
         fieldForm = flask.request.json['fieldForm']
         table_indep = projectForm['table_independante']
+        saisie_possible = projectForm['saisie_possible']
+        print 'LAAAAAAAAAAAAA'
+        print saisie_possible
+        print type(saisie_possible)
         nom_schema = str()
         if table_indep == "False":
             saisie_possible = False
@@ -119,17 +123,20 @@ def addProject():
             nom_table = 'releve'
             template = None
             bib_champs = None
-        else:
-            saisie_possible = True
+        if saisie_possible == "True":
             nom_schema = projectForm['nom_bdd']
-            nom_table = 'releve'
             template = 'addObs/'+nom_schema+'.html'
+            print 'passe par laaaaaaaaaaaaaaaaaaaa'
+            utils.createTemplate(nom_schema, fieldForm)
+            utils.create_taxonomie_view(db, projectForm, fieldForm)
+        if table_indep == "True":
+            saisie_possible = True
+            nom_table = 'releve'
             bib_champs = nom_schema+'.'+'bib_champs_'+nom_schema
+            #creation du schema + table + triggers
             utils.createProject(db, projectForm, fieldForm)
             #creation des vues pour le download
             utils.createViewsDownload(db, projectForm, fieldForm)
-            #update le template de saisie
-            utils.createTemplate(nom_schema, fieldForm)
 
 
         #insert dans bib_projet

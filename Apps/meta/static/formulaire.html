@@ -1,15 +1,19 @@
-<div class="col-sm-4">
+<div class="col-sm-5">
 	<h3> Formulaire de saisie </h3>
 	<div class="panel panel-default" >
 		<div class="section">
 				<div ng-repeat="champ in $ctrl.form">
 					<div class="form-inline">
 						<div class="form-group">
-							<input placeholder="Libélé champ" class="form-control" type="" name="" ng-model="champ.lib_champ" "">
-							<input placeholder="Nom champ (BDD)" class="form-control" type="" name="" ng-model="champ.nom_champ" "">
-							<select class="form-control"  ng-model="champ.db_type" ng-options="item for item in $ctrl.db_type"></select>
-							<select class="form-control"  ng-model="champ.type_widget" ng-options="item for item in $ctrl.type_widget"></select>
-							<span ng-click= "$ctrl.showValues(champ.id_champ)" class="glyphicon glyphicon-pencil"> </span>
+							<input placeholder="Libélé champ" class="form-control" type="" name="" ng-model="champ.lib_champ" style='margin: 0px;'>
+							<input placeholder="Nom champ (BDD)" class="form-control" type="" name="" ng-model="champ.nom_champ" style='margin: 0px;'>
+							<select class="form-control"  ng-model="champ.db_type" ng-options="item for item in $ctrl.db_type">
+								<option value=''> - Type en BDD - </option> 
+							</select>
+							<select class="form-control"  ng-model="champ.type_widget" ng-options="item for item in $ctrl.type_widget">
+								<option value=''> - Type de widget - </option> 
+							</select>
+							<span ng-click= "$ctrl.showValues(champ.id_champ)" class="glyphicon glyphicon-pencil" style="cursor: pointer;"> </span>
 						</div>
 					</div>
 				</div>
@@ -22,9 +26,9 @@
 
 <div ng-show="$ctrl.currentValues != null && $ctrl.currentField.type_widget == 'Liste déroulante' ">
 	<div class="col-sm-3">
+		<h3> Valeurs du champ {{$ctrl.currentField.lib_champ}}</h3>
 		<div class="panel panel-default" >
 			<div class="section">
-					<h5> Valeurs du champ '{{$ctrl.currentField.lib_champ}}'</h5>
 					 <div ng-repeat='v in $ctrl.currentValues'>
 					  		<input class="form-control" type='text' ng-model='v.value'>
 					  </div>

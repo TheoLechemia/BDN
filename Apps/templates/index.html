@@ -93,7 +93,8 @@
   }
 
   #sidebar{
-  	width: 3%;
+  	z-index: 1000;
+  	width: 55px;
   	position: absolute;
   	height: 94vh;
   	padding-left: 0px;
@@ -221,14 +222,23 @@
 <script type="text/javascript">
 	var big = false;
 	function collapse(){
-		var widthSize = big ? '3%':'10%' 
-		$('#sidebar').animate(
-			{'width': widthSize}, 500, 'easeOutBounce'
-			//{'easing:': 'easeOutBounce'}
-			
-			);
+		if (big){
 		var aInSiteBar = $('#sidebar span');
 		$(aInSiteBar).toggleClass('hide');
+		}
+		var widthSize = big ? '55px':'240px' 
+
+		
+		$('#sidebar').animate(
+			{'width': widthSize}, 500, 'easeOutBounce',
+			 function(){
+			 	if(big){
+			 	var aInSiteBar = $('#sidebar span');
+				$(aInSiteBar).toggleClass('hide');
+			 	}
+			}
+			);
+
 		big = !big;
 	}
 

@@ -35,14 +35,21 @@ function metaController ($http, toaster){
 		'initiateur': null,
 		'producteur': null,
 		'commentaire': null,
-		'table_independante': "False"
+		'table_independante': 'False',
+		'saisie_possible': 'False'
 	};
+	metaCtrl.form = angular.copy(initialForm);
 
+	metaCtrl.bind_table_indep = function(){
+		console.log(this.form.saisie_possible)
+			if(this.form.saisie_possible == 'True'){
+				this.form.table_independante = 'True';
+		}
+	}
 
 	metaCtrl.fieldForm = [];
 
-	metaCtrl.form = angular.copy(initialForm);
-	console.log(metaCtrl.form);
+	
 
 	metaCtrl.sendData = function(e){
 		console.log(e.target)
@@ -56,7 +63,7 @@ function metaController ($http, toaster){
 			metaCtrl.form = angular.copy(initialForm);
 			toaster.clear();
 			btn.classList.remove('disabled');
-			toaster.success({title: "OK", body:"Protocole ajouté avec succès"});
+			toaster.success({title: "OK", body:"Projet ajouté avec succès"});
 			}, function errorCallBack(response){
 				toaster.clear();
 				toaster.error({title: "Attention", body:"Un erreur s'est produite, contactez le gestionnaire de base de données"})
@@ -136,7 +143,7 @@ function projectController($stateParams, $http, toaster){
 		$http.post(configuration.URL_APPLICATION+'meta/editProject', data).then(function(response){
 			// update le nb de field
 			prjCtrl.initialNbField = prjCtrl.formulaire.length;	
-			toaster.success({title: "OK", body:"Protocole edité avec succès"});
+			toaster.success({title: "OK", body:"Projet edité avec succès"});
 
 
 		})

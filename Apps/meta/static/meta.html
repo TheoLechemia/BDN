@@ -1,4 +1,5 @@
 <div class="col-sm-3">
+	<h3> Projet </h3>
 	<div class="panel panel-default" >
 		<div class="section">
 
@@ -29,10 +30,16 @@
 
 			</div>
 				
-			Ce projet doit-il disposer d'une table séparée (modèle de donnée particulier) ou s'insere-t-il dans la table 'Synthese' ?
+			Ce projet doit-il disposer d'une table séparée (modèle de données particulier) ?
 			<div class="form-group">
-				<input type="radio" ng-model='$ctrl.form.table_independante' checked value="True"> Oui
+				<input type="radio" ng-model='$ctrl.form.table_independante' value="True"> Oui
 				<input type="radio" ng-model='$ctrl.form.table_independante' value= "False"> Non
+			</div>
+
+			Ce projet doit-il disposer d'un formulaire de saisie dans l'application web
+			<div class="form-group">
+				<input type="radio" ng-model='$ctrl.form.saisie_possible' ng-click="$ctrl.bind_table_indep()"  value="True"> Oui
+				<input type="radio" ng-model='$ctrl.form.saisie_possible' ng-click="$ctrl.bind_table_indep()" value= "False"> Non
 			</div>
 
 			<button class="btn btn-success" ng-click='$ctrl.sendData($event)'> Valider</button>
@@ -41,7 +48,7 @@
 </div>
 
 
-<div ng-if="$ctrl.form.table_independante == 'True'">
+<div ng-if="$ctrl.form.saisie_possible == 'True'">
 	<formulaire form="$ctrl.fieldForm"> </formulaire>
 </div>
 

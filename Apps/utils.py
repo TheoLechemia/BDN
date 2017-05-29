@@ -313,10 +313,8 @@ def buildGeojsonWithParams(res):
 
 
 def createTemplate(schemaName, fieldForm):
-    print 'OHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH'
+    print 'enter in htmlllllllllll'
     htmlFileName = config['APP_DIR']+"/addObs/static/"+schemaName+'.html'
-    print 'LAAAA'
-    print htmlFileName
     htmlFile = open(htmlFileName, "w")
 
     htmlContent = """<div class='form-group'> 
@@ -444,8 +442,11 @@ def createProject(db, projectForm, fieldForm):
         db.cur.execute(sql, params)
         db.conn.commit()
 
+
+def create_taxonomie_view(db, projectForm, fieldForm):
     #ajoute la liste des taxons de ce protocole dans taxhub
     #ajout dans bib_liste
+    schemaName = projectForm['nom_bdd']
     query = "INSERT INTO taxonomie.bib_listes (nom_liste, picto) VALUES (%s, %s)"
     db.cur.execute(query, [projectForm['nom_projet'],'images/pictos/nopicto.gif' ])
     db.conn.commit()
@@ -622,7 +623,6 @@ def createViewsDownload(db, projectForm, fieldForm):
      LEFT JOIN coord_point cp ON cp.id_obs = f.id_obs
      LEFT JOIN coord_maille cm ON cm.id_obs = f.id_obs
      LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme AND f.diffusable = TRUE; """
-    print create_csv
     create_csv = psysql.SQL(create_csv).format(sch=psysql.Identifier(schemaName)).as_string(db.cur)
 
     db.cur.execute(create_csv)

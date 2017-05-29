@@ -36,8 +36,7 @@ def nocache(view):
 @check_auth(2)
 @nocache
 def addObs_index():
-    flask.make_response(flask.render_template('addObsIndex.html', configuration=config, page_title=u"Interface de saisie des données"))
-    return resp
+    return flask.make_response(flask.render_template('addObsIndex.html', configuration=config, page_title=u"Interface de saisie des données"))
 
 
 
