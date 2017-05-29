@@ -78,7 +78,7 @@ def index():
     stat['nb_tot_tax'] = res[0]
     stat['nb_tot_obs'] = res[1]
     stat['nb_tot_observateurs'] = res[2]
-    return render_template('index.html', stat=stat)
+    return render_template('index.html', stat=stat, configuration=config)
 
 
 @main.route('/deconnexion')
