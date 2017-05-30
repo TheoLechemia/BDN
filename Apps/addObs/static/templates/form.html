@@ -20,12 +20,12 @@
 			
 				<div ng-click="$ctrl.checkProtocole()"  class="form-group" ng-class="{'has-error' : addObsForm.lb_nom.$invalid && !addObsForm.lb_nom.$pristine  || ($ctrl.validationAttempt && addObsForm.lb_nom.$invalid) }">
 				 	<input class="form-control"   name="lb_nom" autocomplete="off" placeholder="Nom latin ou vernaculaire " type="text" ng-model="$ctrl.globalForm.taxon.nom_valide" 
-				 	typeahead-editable="false"  
-				 	uib-typeahead="taxon as taxon.search_name for taxon in $ctrl.search_taxon_name($viewValue, $ctrl.selectedProtocole) | limitTo:8"
-				 	typeahead-min-length="2" typeahead-no-results="$ctrl.noResults"
-				 	required 
-				 	 typeahead-loading="$ctrl.loadingLbnom"
-				 	 typeahead-on-select ="$ctrl.onNameSubmit($item, $model, $label, $event)">
+					 	typeahead-editable="false"  
+					 	uib-typeahead="taxon as taxon.search_name for taxon in $ctrl.search_taxon_name($viewValue, $ctrl.selectedProtocole) | limitTo:8"
+					 	typeahead-min-length="2" typeahead-no-results="$ctrl.noResults"
+					 	required 
+					 	typeahead-loading="$ctrl.loadingLbnom"
+					 	typeahead-on-select ="$ctrl.onNameSubmit($item, $model, $label, $event)">
 				 	<i ng-show="$ctrl.loadingLbnom" class="glyphicon glyphicon-refresh"></i>
 				 	    <div ng-show="$ctrl.noResults">
 					      <i  style="color:red;" class="glyphicon glyphicon-remove"></i> Aucun résultat
@@ -47,7 +47,7 @@
 				      
 				  
 				  <div ng-show="$ctrl.showCoord" class="form-group">
-					  <label> Coordonnées  </label>
+					  <label> Coordonnées (Long / Lat -  Degrés décimaux) </label>
 					  <input class="form-control" type="number" step="0.001" name="" placeholder="X" ng-model="$ctrl.globalForm.coord.lng" ng-change="$ctrl.changeLng()" >
 					  <input class="form-control" type="number" step="0.001" placeholder="Y" ng-model="$ctrl.globalForm.coord.lat" ng-change="$ctrl.changeLat()">
 				  </div>

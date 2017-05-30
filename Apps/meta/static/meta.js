@@ -38,29 +38,43 @@ function metaController ($http, toaster){
 		'table_independante': 'False',
 		'saisie_possible': 'False'
 	};
-	metaCtrl.form = angular.copy(initialForm);
+	metaCtrl.projectForm = angular.copy(initialForm);
+
+	metaCtrl.showDataModel = true;
+	dataModelFormIsValid = true;
+
+	metaCtrl.regex = new RegExp('^([a-z]+_*)*$', 'i')
 
 	metaCtrl.bind_table_indep = function(){
-		console.log(this.form.saisie_possible)
-			if(this.form.saisie_possible == 'True'){
-				this.form.table_independante = 'True';
+		console.log(this.projectForm.saisie_possible)
+			if(this.projectForm.saisie_possible == 'True'){
+				this.projectForm.table_independante = 'True';
 		}
 	}
 
 	metaCtrl.fieldForm = [];
 
+	metaCtrl.isValidChildForm = function(isValid){
+		console.log("is valid ?", isValid)
+		if(isValid){
+			this.showDataModel = !this.showDataModel
+		}
+		this.dataModelFormIsValid = isValid;
+	}
+
+
 	
 
-	metaCtrl.sendData = function(e){
-		console.log(e.target)
+	metaCtrl.sendData = function(e, form){
 		btn = e.target;
 		btn.classList.add('disabled');
-		data = {'projectForm': this.form, 'fieldForm': this.fieldForm}
+		data = {'projectForm': this.projectForm, 'fieldForm': this.fieldForm}
 
-		toaster.pop({type: 'wait', title: "Création du projet", body:"Cela peut prendre un peu de temps"});
-		$http.post(configuration.URL_APPLICATION+'meta/addProject', data).then(function(response){
+		if(form.$valid && this.dataModelFormIsValid){
+			toaster.pop({type: 'wait', title: "Création du projet", body:"Cela peut prendre un peu de temps"});
+			$http.post(configuration.URL_APPLICATION+'meta/addProject', data).then(function(response){
 			// reset le form
-			metaCtrl.form = angular.copy(initialForm);
+			metaCtrl.projectForm = angular.copy(initialForm);
 			toaster.clear();
 			btn.classList.remove('disabled');
 			toaster.success({title: "OK", body:"Projet ajouté avec succès"});
@@ -69,6 +83,15 @@ function metaController ($http, toaster){
 				toaster.error({title: "Attention", body:"Un erreur s'est produite, contactez le gestionnaire de base de données"})
 
 		});
+		}else{
+			toaster.pop({type: 'error', title: "Attention", body:"Le formulaire contient des erreurs"});
+			btn.classList.remove('disabled');
+		}
+
+		
+
+
+
 		
 	}
 
@@ -161,28 +184,28 @@ angularApp.component('formulaire', {
   templateUrl : template,
   bindings:{
   	'form': '<',
+  	'onFormValidation' : '&'
   }
 
 });
 
 
-function formController(){
+function formController(toaster){
 	formCtrl = this;
-	formCtrl.type_widget = ['Checkbox', 'Texte', 'Nombre', 'Liste déroulante']
+	formCtrl.type_widget = ['Case à cocher', 'Texte', 'Nombre', 'Liste déroulante']
 	formCtrl.db_type = ['character varying', 'integer', 'float', 'boolean'];
 	formCtrl.newFields = [];
 
+	formCtrl.regex = new RegExp('^([a-z]+_*)*$', 'i')
 
+	formCtrl.addNewField = function(validForm){
 
-	formCtrl.addNewField = function(){
-		console.log('click')
 			lastIndex = this.form.length;
 			if(lastIndex == 0){
 				nextId = 0;
 			}else{
 				nextId = this.form[lastIndex-1].id_champ + 1;
 			}
-			
 		this.form.push({'id_champ': nextId, 'lib_champ':'', 'no_spec':'spec_'+nextId, 'nom_champ':'', 'type_widget': '', 'db_type':'', 'valeur': "{\"values\":[]}"});
 	}
 
@@ -213,6 +236,16 @@ function formController(){
 		formCtrl.currentValues=inter.map(function(i){
 				return {'value': i}
 		})
+	}
+
+	formCtrl.formValidation = function(isValid){
+		if(!isValid){
+			toaster.pop({type: 'error', title: "Attention", body:"Le formulaire contient des erreurs"});
+		}else{
+			toaster.pop({type: 'succes', title: "Ok", body:"Le modèle de données a été enregistré. N'oubliez pas de créer le projet..."});
+			this.onFormValidation({'isValidForm':isValid})
+
+		}
 	}
 
 	 formCtrl.validateNewForm = function(){

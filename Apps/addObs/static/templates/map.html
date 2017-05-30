@@ -1,6 +1,6 @@
 <div class="col-sm-9">
 		<leaflet lf-center='$ctrl.center'  height="85vh" markers="$ctrl.markers" geojson=$ctrl.geojsonMaille></leaflet>
 
-		<button class="btn btn-success" ng-click="$ctrl.switchMaille()" ng-class="{'disabled': $ctrl.geojsonMaille.data != undefined }"> Mode maille</button>
+		<button class="btn btn-success" ng-click="$ctrl.switchMaille()" ng-class="{'disabled': $ctrl.geojsonMaille.data != undefined }"> Mode maille (1km)</button>
 		 <button ng-click="$ctrl.switchPoint()" class="btn btn-success" ng-class="{'disabled': $ctrl.markers.main != undefined }"> Mode point</button>	
 </div>

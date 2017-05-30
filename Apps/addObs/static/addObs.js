@@ -97,8 +97,7 @@ function formController($http, toaster){
           if(response.status == 200){
             formCtrl.formSuccessfullySent = true;
             toaster.success({title: "OK", body:"Observation enregistrée avec succès"});
-            //angular.copy({},form);
-            // on reset tous les champs
+
             var saveCoord = formCtrl.globalForm.coord;
             var saveMaille = formCtrl.globalForm.code_maille;
             var saveObservateur = formCtrl.globalForm.observateur;

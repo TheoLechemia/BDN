@@ -1,28 +1,48 @@
 <div class="col-sm-5">
-	<h3> Formulaire de saisie </h3>
+	<h3> Modèle de données </h3>
 	<div class="panel panel-default" >
 		<div class="section">
+			<form name="champForm">
 				<div ng-repeat="champ in $ctrl.form">
 					<div class="form-inline">
-						<div class="form-group">
-							<input placeholder="Libélé champ" class="form-control" type="" name="" ng-model="champ.lib_champ" style='margin: 0px;'>
-							<input placeholder="Nom champ (BDD)" class="form-control" type="" name="" ng-model="champ.nom_champ" style='margin: 0px;'>
-							<select class="form-control"  ng-model="champ.db_type" ng-options="item for item in $ctrl.db_type">
+						<div class="form-group"  ng-class="{'has-error' : champForm.lib_champ.$invalid }">
+							<input placeholder="Libélé champ" class="form-control" type="" name="lib_champ" ng-model="champ.lib_champ" style='margin: 0px;' required>
+						</div>
+						<div class="form-group"  ng-class="{'has-error' : champForm.nom_champ.$invalid}">
+							<input placeholder="Nom champ (BDD)" class="form-control" type="" name="nom_champ" ng-model="champ.nom_champ" style='margin: 0px;'
+								   required
+								   ng-pattern="$ctrl.regex">
+						</div>
+						<div class="form-group"  ng-class="{'has-error' : champForm.db_type.$invalid}">
+							<select class="form-control" name="db_type" ng-model="champ.db_type" ng-options="item for item in $ctrl.db_type" required>
 								<option value=''> - Type en BDD - </option> 
 							</select>
-							<select class="form-control"  ng-model="champ.type_widget" ng-options="item for item in $ctrl.type_widget">
+						</div>
+						<div class="form-group"  ng-class="{'has-error' : champForm.type_widget.$invalid}">
+							<select class="form-control" name="type_widget" ng-model="champ.type_widget" ng-options="item for item in $ctrl.type_widget" required>
 								<option value=''> - Type de widget - </option> 
 							</select>
-							<span ng-click= "$ctrl.showValues(champ.id_champ)" class="glyphicon glyphicon-pencil" style="cursor: pointer;"> </span>
 						</div>
+							<span ng-click= "$ctrl.showValues(champ.id_champ)" class="glyphicon glyphicon-pencil" style="cursor: pointer;"> </span>
+						
 					</div>
 				</div>
-				
+			</form>
+			<p ng-show="( champForm.lib_champ.$invalid && !champForm.lib_champ.$pristine)" class="help-block">Le nom du champ est requis</p>
+			<p ng-show="( champForm.nom_champ.$invalid && !champForm.nom_champ.$pristine)" class="help-block">Le nom en BDD ne doit pas contenir de caractere spéciaux</p>
+			<p ng-show="( champForm.db_type.$invalid && !champForm.db_type.$pristine)" class="help-block">Le type du champ est requis</p>
+			<p ng-show="( champForm.type_widget.$invalid && !champForm.type_widget.$pristine)" class="help-block">Le type du widget est requis</p>
+
+			<button class="btn btn-primary btn-xs" ng-click='$ctrl.addNewField()'> Ajouter un champ</button>
+			<button class="btn btn-success btn-xs" ng-click="$ctrl.formValidation(champForm.$valid)"> Valider</button>				
 		</div>
+
 	</div>
-	<button class="btn btn-primary" ng-click='$ctrl.addNewField()'> Ajouter un champs</button>
 	
-</div>
+
+	
+	
+</div>	
 
 <div ng-show="$ctrl.currentValues != null && $ctrl.currentField.type_widget == 'Liste déroulante' ">
 	<div class="col-sm-3">

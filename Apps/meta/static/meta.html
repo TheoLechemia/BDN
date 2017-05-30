@@ -1,56 +1,69 @@
-<div class="col-sm-3">
-	<h3> Projet </h3>
-	<div class="panel panel-default" >
-		<div class="section">
+<div class="row" >
+		<div class="col-sm-12" style="background-color: white; padding-bottom: 15px; ;" >
+					<div class="col-sm-3" >
+						<h3> Projet </h3>
+						<div class="panel panel-default" >
+							<div class="section">
+								<form name="projectForm" novalidate>
 
-			<div class="form-group">
+										<div class="form-group" ng-class="{'has-error' : projectForm.nom_projet.$invalid }">
+											<input type="text" name="nom_projet" class="form-control" ng-model='$ctrl.projectForm.nom_projet' placeholder="Nom du projet"'
+													required>
+													<p ng-show="( projectForm.nom_projet.$invalid && !projectForm.nom_projet.$pristine)" class="help-block">Le nom du projet est requis</p>
+										</div>
 
-				<input type="text" class="form-control" ng-model='$ctrl.form.nom_projet' placeholder="Nom du projet">
+										<div class="form-group" ng-class="{'has-error' : projectForm.nom_bdd.$invalid }">
+											<input type="text" name="nom_bdd" class="form-control" ng-model='$ctrl.projectForm.nom_bdd' placeholder="Nom de la table en BDD (pas d'espace ni de caractère spéciaux"
+											 		required
+											 		ng-pattern="$ctrl.regex">
+											<p ng-show="( projectForm.nom_bdd.$invalid && !projectForm.nom_bdd.$pristine)" class="help-block">Le nom en BDD ne doit pas contenir de caractère spéciaux ni d'espace</p>
+										</div>
 
-				<input type="text" class="form-control" ng-model='$ctrl.form.nom_bdd' placeholder="Nom de la table en BDD (pas d'espace ni de caractère spéciaux">
+										<input type="text" class="form-control" ng-model='$ctrl.projectForm.theme_principal' placeholder="Thême principal">
 
-				<input type="text" class="form-control" ng-model='$ctrl.form.theme_principal' placeholder="Thême principal">
+										<input type="text" class="form-control" ng-model='$ctrl.projectForm.service_onf' placeholder="Service ONF">
 
-				<input type="text" class="form-control" ng-model='$ctrl.form.service_onf' placeholder="Service ONF">
+										<input type="text"  class="form-control" ng-model='$ctrl.projectForm.partenaires' placeholder="Partenaires">
 
-			</div>
+										<input type="text" class="form-control" ng-model='$ctrl.projectForm.subvention_commande' placeholder="Subvention / Commande">
 
-			<div class="form-group">
-				<input type="text" class="form-control" ng-model='$ctrl.form.partenaires' placeholder="Partenaires">
+										<div class="form-group" ng-class="{'has-error' : projectForm.duree.$invalid && !projectForm.duree.$pristine }">
+											<input type="number" name="duree" class="form-control" ng-model='$ctrl.projectForm.duree' placeholder="Duree">
+											<p ng-show="( projectForm.duree.$invalid && !projectForm.duree.$pristine)" class="help-block">La durée doit être un entier</p>
+										</div>
 
-				<input type="text" class="form-control" ng-model='$ctrl.form.subvention_commande' placeholder="Subvention / Commande">
+										<input type="text" class="form-control" ng-model='$ctrl.projectForm.initiateur' placeholder="Inititeur">
 
-				<input type="number" class="form-control" ng-model='$ctrl.form.duree' placeholder="Duree">
+										<input type="text" class="form-control" ng-model='$ctrl.projectForm.producteur' placeholder="Producteur">
 
-				<input type="text" class="form-control" ng-model='$ctrl.form.initiateur' placeholder="Inititeur">
+										<input type="text" class="form-control" ng-model='$ctrl.projectForm.commentaire' placeholder="Commentaire">
 
-				<input type="text" class="form-control" ng-model='$ctrl.form.producteur' placeholder="Producteur">
+										
+									Ce projet doit-il disposer d'une table séparée (modèle de données particulier) ?
+									<div class="form-group">
+										<input type="radio" ng-model='$ctrl.projectForm.table_independante' value="True"> Oui
+										<input type="radio" ng-model='$ctrl.projectForm.table_independante' value= "False"> Non
+										<button class="btn btn-primary btn-xs" ng-click="$ctrl.showDataModel = !$scrl.showDataModel"  type="submit"> Editer le modèle de données</button>
+									</div>
 
-				<input type="text" class="form-control" ng-model='$ctrl.form.commentaire' placeholder="Commentaire">
+									Ce projet doit-il disposer d'un formulaire de saisie dans l'application web
+									<div class="form-group">
+										<input type="radio" ng-model='$ctrl.projectForm.saisie_possible' ng-click="$ctrl.bind_table_indep()"  value="True"> Oui
+										<input type="radio" ng-model='$ctrl.projectForm.saisie_possible' ng-click="$ctrl.bind_table_indep()" value= "False"> Non
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+						
 
-			</div>
-				
-			Ce projet doit-il disposer d'une table séparée (modèle de données particulier) ?
-			<div class="form-group">
-				<input type="radio" ng-model='$ctrl.form.table_independante' value="True"> Oui
-				<input type="radio" ng-model='$ctrl.form.table_independante' value= "False"> Non
-			</div>
 
-			Ce projet doit-il disposer d'un formulaire de saisie dans l'application web
-			<div class="form-group">
-				<input type="radio" ng-model='$ctrl.form.saisie_possible' ng-click="$ctrl.bind_table_indep()"  value="True"> Oui
-				<input type="radio" ng-model='$ctrl.form.saisie_possible' ng-click="$ctrl.bind_table_indep()" value= "False"> Non
-			</div>
+					<div ng-if="$ctrl.projectForm.table_independante == 'True' && $ctrl.showDataModel">
+						<formulaire form="$ctrl.fieldForm" on-form-validation="$ctrl.isValidChildForm(isValidForm)"> </formulaire>
+					</div>
 
-			<button class="btn btn-success" ng-click='$ctrl.sendData($event)'> Valider</button>
 		</div>
-	</div>
 </div>
-
-
-<div ng-if="$ctrl.form.saisie_possible == 'True'">
-	<formulaire form="$ctrl.fieldForm"> </formulaire>
+<div style="margin-top: 10px;"> 
+	<button class="btn btn-success" ng-click="$ctrl.sendData($event, projectForm)"  type="submit"> Créer le projet</button>
 </div>
-
-
-
