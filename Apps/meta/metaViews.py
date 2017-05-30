@@ -117,19 +117,19 @@ def addProject():
         print saisie_possible
         print type(saisie_possible)
         nom_schema = str()
-        if table_indep == "False":
+        if table_indep == False:
             saisie_possible = False
             nom_schema = 'synthese'
             nom_table = 'releve'
             template = None
             bib_champs = None
-        if saisie_possible == "True":
+        if saisie_possible == True:
             nom_schema = projectForm['nom_bdd']
             template = 'addObs/'+nom_schema+'.html'
             print 'passe par laaaaaaaaaaaaaaaaaaaa'
             utils.createTemplate(nom_schema, fieldForm)
             utils.create_taxonomie_view(db, projectForm, fieldForm)
-        if table_indep == "True":
+        if table_indep == True:
             saisie_possible = True
             nom_table = 'releve'
             bib_champs = nom_schema+'.'+'bib_champs_'+nom_schema

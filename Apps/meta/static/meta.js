@@ -86,13 +86,7 @@ function metaController ($http, toaster){
 		}else{
 			toaster.pop({type: 'error', title: "Attention", body:"Le formulaire contient des erreurs"});
 			btn.classList.remove('disabled');
-		}
-
-		
-
-
-
-		
+		}	
 	}
 
 }// END CONTROLLER
@@ -112,6 +106,7 @@ angularApp.component('metaApp', {
 
 function listProtController($http){
 	listCtrl = this;
+
 	$http.get(configuration.URL_APPLICATION+'meta/listProject').then(function(response){
 		listCtrl.projets = response.data;
 	})
@@ -129,13 +124,13 @@ angularApp.component('listProj', {
 
 
 // Une fiche projet
-template = configuration.URL_APPLICATION+'meta/meta/project.html'
 angularApp.component('project', {
 
   controller :projectController ,
-  templateUrl : template,
+  templateUrl : templateMeta,
   bindings:{
-  	'data': '<'	
+  	'data': '<',
+
   }
 
 });
@@ -143,33 +138,60 @@ angularApp.component('project', {
 function projectController($stateParams, $http, toaster){
 	prjCtrl = this;
 	prjCtrl.currentValues = null;
-	
+	this.showDataModel = true;
+
+
 	prjCtrl.$onInit = function(){
+		// ON INIT DISABLE les inputs qui le faut pas modifier
+
+		toDisable = document.getElementsByClassName('disabled');
+		Array.from(toDisable).forEach(function(el){
+			el.setAttribute('disabled', 'true');
+		})
+
+		finalButton = document.getElementById('finalButton');
+		finalButton.textContent = "Editer le projet";
+
+		//get les donnes du projet
 		$http.get(configuration.URL_APPLICATION+"meta/getProject/"+$stateParams.id).then(function(response){
-			prjCtrl.projet = response.data.projet;
-			prjCtrl.formulaire = response.data.formulaire;
+			prjCtrl.projectForm = response.data.projet;
+			prjCtrl.fieldForm = response.data.formulaire;
 			// s'il ny a pas de formulaire on initialise le formulaire commme un tableau vide;
-			if(prjCtrl.formulaire != null){
-				prjCtrl.initialNbField = prjCtrl.formulaire.length;	
+			if(prjCtrl.fieldForm != null){
+				prjCtrl.showDataModel = true;
+				//prjCtrl.projectForm.table_independante = 'True';
+				prjCtrl.initialNbField = prjCtrl.fieldForm.length;	
 			}else{
-				prjCtrl.formulaire = [];
+				prjCtrl.fieldForm = [];
 				prjCtrl.initialNbField = 0;
 			}
 		})
 	}
 
-	prjCtrl.editProject = function(){
-		var nbNewField = this.formulaire.length - this.initialNbField;
-		console.log(nbNewField)
-		data = {'projectForm': this.projet, 'fieldForm': this.formulaire, 'nbNewField': nbNewField }
+	prjCtrl.isValidChildForm = function(isValid){
+		console.log("is valid ?", isValid)
+		if(isValid){
+			this.showDataModel = !this.showDataModel
+		}
+		this.dataModelFormIsValid = isValid;
+	}
+
+	prjCtrl.sendData = function(event, form){
+		var nbNewField = this.fieldForm.length - this.initialNbField;
+		console.log(nbNewField);
+		data = {'projectForm': this.projectForm, 'fieldForm': this.fieldForm, 'nbNewField': nbNewField }	
 		console.log(data);
-		$http.post(configuration.URL_APPLICATION+'meta/editProject', data).then(function(response){
-			// update le nb de field
-			prjCtrl.initialNbField = prjCtrl.formulaire.length;	
-			toaster.success({title: "OK", body:"Projet edité avec succès"});
-
-
-		})
+		console.log(form.$valid)
+		if(form.$valid && this.dataModelFormIsValid){
+			$http.post(configuration.URL_APPLICATION+'meta/editProject', data).then(function(response){
+				// update le nb de field
+				prjCtrl.initialNbField = prjCtrl.fieldForm.length;
+				toaster.success({title: "OK", body:"Projet edité avec succès"});
+			})
+	
+		}else{
+			toaster.pop({type: 'error', title: "Attention", body:"Le formulaire contient des erreurs"});
+		}
 
 	}
 
@@ -199,13 +221,12 @@ function formController(toaster){
 	formCtrl.regex = new RegExp('^([a-z]+_*)*$', 'i')
 
 	formCtrl.addNewField = function(validForm){
-
-			lastIndex = this.form.length;
-			if(lastIndex == 0){
-				nextId = 0;
-			}else{
-				nextId = this.form[lastIndex-1].id_champ + 1;
-			}
+		lastIndex = this.form.length;
+		if(lastIndex == 0){
+			nextId = 0;
+		}else{
+			nextId = this.form[lastIndex-1].id_champ + 1;
+		}
 		this.form.push({'id_champ': nextId, 'lib_champ':'', 'no_spec':'spec_'+nextId, 'nom_champ':'', 'type_widget': '', 'db_type':'', 'valeur': "{\"values\":[]}"});
 	}
 
@@ -242,7 +263,7 @@ function formController(toaster){
 		if(!isValid){
 			toaster.pop({type: 'error', title: "Attention", body:"Le formulaire contient des erreurs"});
 		}else{
-			toaster.pop({type: 'succes', title: "Ok", body:"Le modèle de données a été enregistré. N'oubliez pas de créer le projet..."});
+			toaster.pop({type: 'succes', title: "Ok", body:"Le modèle de données a été enregistré. N'oubliez pas de créer/editer le projet..."});
 			this.onFormValidation({'isValidForm':isValid})
 
 		}

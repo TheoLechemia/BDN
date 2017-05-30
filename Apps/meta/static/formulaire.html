@@ -1,7 +1,7 @@
 <div class="col-sm-5">
 	<h3> Modèle de données </h3>
 	<div class="panel panel-default" >
-		<div class="section">
+		<div class="section white">
 			<form name="champForm">
 				<div ng-repeat="champ in $ctrl.form">
 					<div class="form-inline">
@@ -29,7 +29,7 @@
 				</div>
 			</form>
 			<p ng-show="( champForm.lib_champ.$invalid && !champForm.lib_champ.$pristine)" class="help-block">Le nom du champ est requis</p>
-			<p ng-show="( champForm.nom_champ.$invalid && !champForm.nom_champ.$pristine)" class="help-block">Le nom en BDD ne doit pas contenir de caractere spéciaux</p>
+			<p ng-show="( champForm.nom_champ.$invalid && !champForm.nom_champ.$pristine)" class="help-block">Le nom en BDD ne doit pas contenir de caractere spéciaux ni de chiffre</p>
 			<p ng-show="( champForm.db_type.$invalid && !champForm.db_type.$pristine)" class="help-block">Le type du champ est requis</p>
 			<p ng-show="( champForm.type_widget.$invalid && !champForm.type_widget.$pristine)" class="help-block">Le type du widget est requis</p>
 
@@ -48,7 +48,7 @@
 	<div class="col-sm-3">
 		<h3> Valeurs du champ {{$ctrl.currentField.lib_champ}}</h3>
 		<div class="panel panel-default" >
-			<div class="section">
+			<div class="section white">
 					 <div ng-repeat='v in $ctrl.currentValues'>
 					  		<input class="form-control" type='text' ng-model='v.value'>
 					  </div>
