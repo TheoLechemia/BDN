@@ -214,8 +214,7 @@ angularApp.component('formulaire', {
 
 function formController(toaster){
 	formCtrl = this;
-	formCtrl.type_widget = ['Case à cocher', 'Texte', 'Nombre', 'Liste déroulante']
-	formCtrl.db_type = ['character varying', 'integer', 'float', 'boolean'];
+	formCtrl.type_widget = ['Case à cocher', 'Texte', 'Entier', 'Réel','Liste déroulante']
 	formCtrl.newFields = [];
 
 	formCtrl.regex = new RegExp('^([a-z]+_*)*$', 'i')
@@ -247,7 +246,7 @@ function formController(toaster){
   	this.currentValues = null;
   }
 
-  	formCtrl.showValues = function(champ){
+  	formCtrl.showValues_and_fillDbType = function(champ){
   		if(champ.type_widget == 'Liste déroulante'){
 	  		var inter = [];
 			this.form.forEach(function(o){
@@ -260,6 +259,10 @@ function formController(toaster){
 					return {'value': i}
 			})
   		}
+
+  		console.log(this.form)
+  		this.form[champ.id_champ].db_type = cor_widget_type[champ.type_widget]
+
 	}
 
 	formCtrl.formValidation = function(isValid){
@@ -268,12 +271,19 @@ function formController(toaster){
 		}else{
 			toaster.pop({type: 'succes', title: "Ok", body:"Le modèle de données a été enregistré. N'oubliez pas de créer/editer le projet..."});
 			this.onFormValidation({'isValidForm':isValid})
-
 		}
 	}
 
 	formCtrl.deleteLastInput = function(tab){
 		tab.splice(tab.length -1, 1);
+	}
+
+	var cor_widget_type = {
+		'Case à cocher': 'boolean',
+		'Liste déroulante': 'character varying',
+		'Texte': 'character varying',
+		'Entier': 'integer',
+		'Réel': 'float'
 	}
 
 }
