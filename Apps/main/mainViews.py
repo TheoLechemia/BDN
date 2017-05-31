@@ -43,7 +43,6 @@ def login():
                 currentUser = loadCurrentUser(name)
             except:
                 flash("Identifiant ou mot de passe incorrect")
-                print 'user existe pas'
                 return redirect(url_for("main.login")) 
             #checke si le pass est correct
             encode_password = hashlib.md5(inputPassword.encode('utf8')).hexdigest()
@@ -57,12 +56,10 @@ def login():
                 resp = make_response(redirect(url_for("main.index")))
                 resp.set_cookie('token', token)
                 session['token'] = token
-                print 'ORIGIIIIIIIIN'
-                print session['token']
+
                 return resp
             else:
                 flash('Identifiant ou mot de passe incorect')
-                print 'mot de pass incorect'
                 query = "INSERT INTO ip_connexion (ip) VALUES(%s)"
                 db.cur.execute(query, [ip_visitor])
                 db.conn.commit()
@@ -74,8 +71,6 @@ def login():
 @check_auth(1)
 #@gen_token
 def index():
-    print 'SESION'
-    print session['token']
     db = getConnexion()
     stat = {}
     sql = """WITH nb_taxons AS (SELECT COUNT(DISTINCT cd_nom) as nb_tot_tax FROM synthese.releve),

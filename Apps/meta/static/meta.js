@@ -261,7 +261,7 @@ function formController(toaster){
   		}
 
   		console.log(this.form)
-  		this.form[champ.id_champ].db_type = cor_widget_type[champ.type_widget]
+  		this.form[champ.id_champ -1].db_type = cor_widget_type[champ.type_widget]
 
 	}
 

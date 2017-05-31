@@ -334,13 +334,13 @@ def createTemplate(schemaName, fieldForm):
                     </label>"""
     listInput = "<div> <select class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{1}' ng-options='choice as choice for choice in $ctrl.fields.{1}' > <option value=""> - {0} - </option> </select>  </div> \n"
     for r in fieldForm:
-        if r['type_widget'] == 'Nombre':
+        if r['type_widget'] == 'Nombre' or r['type_widget'] == 'Réel' :
             write  =  integerInput.format(r['lib_champ'],r['nom_champ'])
             htmlFile.write(write)
         if r['type_widget'] == 'Texte':
             write  =  simpleTextInput.format(r['lib_champ'],r['nom_champ'])
             htmlFile.write(write)
-        if r['type_widget'] == 'Checkbox':
+        if r['type_widget'] == 'Case à cocher':
             write  =  checkboxInput.format(r['lib_champ'],r['nom_champ'])
             htmlFile.write(write)
         if r['type_widget'] == "Liste déroulante" :
@@ -399,8 +399,7 @@ def createProject(db, projectForm, fieldForm):
         params.append(AsIs(r['db_type']))
     formatedCreate = formatedCreate[0:-1]+");"
     formatedCreate += addPermission
-
-
+    
     db.cur.execute(formatedCreate, params)
     db.conn.commit()
 

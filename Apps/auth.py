@@ -1,8 +1,7 @@
 from functools import wraps
-from flask import session, make_response
 from database import *
 from config import config
-from flask import redirect, url_for, request, flash, request
+from flask import redirect, url_for, request, flash, request, session, make_response
 import hashlib
 import random
 
@@ -39,6 +38,7 @@ def check_auth(level):
             if 'user' in session: 
                 ## on check si le token de la session et du cookie sont egaux, si oui on regenere un token
                 resp = func(*args, **kwargs)
+                token = None
                 if session['token'] == request.cookies.get('token'):
                     token = str(random.random())
                     token = hashlib.md5(token).hexdigest()
@@ -48,8 +48,11 @@ def check_auth(level):
                     if session['auth_level']>=level:
                         return resp
                     else:
+                        redirect_resp = make_response(redirect(request.referrer))
+                        redirect_resp.set_cookie('token', token)
+                        session['token'] = token
                         flash("")
-                        return redirect(request.referrer)
+                        return redirect_resp
                 #les tokens ne concorde pas, on revoie a la page de connexion
                 else:
                     return redirect(url_for("main.login"))

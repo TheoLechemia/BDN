@@ -46,18 +46,24 @@
 
 				      
 				  
-				  <div ng-show="$ctrl.showCoord" class="form-group">
+				<div ng-show="$ctrl.showCoord" class="form-group">
 					  <label> Coordonnées (Long / Lat -  Degrés décimaux) </label>
 					  <input class="form-control" type="number" step="0.001" name="" placeholder="X" ng-model="$ctrl.globalForm.coord.lng" ng-change="$ctrl.changeLng()" >
 					  <input class="form-control" type="number" step="0.001" placeholder="Y" ng-model="$ctrl.globalForm.coord.lat" ng-change="$ctrl.changeLat()">
-				  </div>
+				</div>
 
-				  <label> Champs facultatifs  </label>
-				  <input class="form-control" type="text" placeholder="Commentaire localisation" ng-model="$ctrl.globalForm.comm_loc"  >
 				  
-				  <div class="slide-animate" ng-include="$ctrl.selectedProtocole.template"></div>
+				<input class="form-control" type="text" placeholder="Commentaire localisation" ng-model="$ctrl.globalForm.comm_loc"  >
+				<input class="form-control" type="text" placeholder="Commentaire" ng-model="$ctrl.globalForm.commentaire"  >
+				  
+				 <div ng-if="$ctrl.selectedProtocole">
+					  <label> Champs spécifiques au projet  </label>
+					  <!-- CHAMP SPECIFIQUE AU PROJET -->
+					  <div class="slide-animate" ng-include="$ctrl.selectedProtocole.template"></div>
+					  <!-- FIN CHAMPS PROJET -->
+				</div>
 
-				  <input class="form-control" type="text" placeholder="Commentaire" ng-model="$ctrl.globalForm.commentaire"  >
+				  
 
 
 				<input class="btn btn-success" type="submit">
@@ -77,3 +83,4 @@
 
 
 
+{{$ctrl.selectedProtocole}}
