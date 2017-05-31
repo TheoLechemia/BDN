@@ -7,12 +7,14 @@
 <!-- Angular -->
 
 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0-rc.2/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.4/angular.min.js"></script>
     <script src="//unpkg.com/angular-ui-router@1.0.0-rc.1/release/angular-ui-router.js"></script>
     <script type="text/javascript" src= " {{url_for('static', filename='node_modules/angular-sanitize/angular-sanitize.min.js')}}"></script>
     <!-- TOASTER -->
     <script type="text/javascript" src= " {{url_for('static', filename='node_modules/angularjs-toaster/toaster.min.js')}}"></script>
     <link href="{{url_for('static', filename='node_modules/angularjs-toaster/toaster.min.css')}}"" rel="stylesheet" />
+    <!-- ANGULAR ANIMATE -->
+    <script type="text/javascript" src= " {{url_for('static', filename='node_modules/angular-animate/angular-animate.min.js')}}"></script>
      
 
 
@@ -38,11 +40,30 @@
   .section.white {
     background-color: #e7edee;
   }
-
-
   input.form-control {
     background-color: white!important;
   }
+
+  .ng-enter {
+  transition:0.5s linear all;
+  opacity:0;
+}
+
+  .ng-enter-active {
+    opacity: 1;
+}
+
+.ng-leave {
+  opacity: 1;
+  transition:0.5s linear all;
+}
+
+.ng-leave-active{
+  opacity: 0;
+}
+
+
+
 
 </style>
 

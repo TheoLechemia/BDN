@@ -3,7 +3,7 @@
 	<div class="panel panel-default" >
 		<div class="section white">
 			<form name="champForm">
-				<div ng-repeat="champ in $ctrl.form">
+				<div ng-repeat="champ in $ctrl.form" ng-animate="{enter: 'animate-enter', leave: 'animate-leave'}">
 					<div class="form-inline">
 						<div class="form-group"  ng-class="{'has-error' : champForm.lib_champ.$invalid }">
 							<input placeholder="Libélé champ" class="form-control" type="" name="lib_champ" ng-model="champ.lib_champ" style='margin: 0px;' required>
@@ -19,12 +19,12 @@
 							</select>
 						</div>
 						<div class="form-group"  ng-class="{'has-error' : champForm.type_widget.$invalid}">
-							<select class="form-control" name="type_widget" ng-model="champ.type_widget" ng-options="item for item in $ctrl.type_widget" required>
+							<select class="form-control" name="type_widget" ng-model="champ.type_widget" ng-options="item for item in $ctrl.type_widget" ng-change="$ctrl.showValues(champ)" required>
 								<option value=''> - Type de widget - </option> 
 							</select>
 						</div>
-							<span ng-click= "$ctrl.showValues(champ.id_champ)" class="glyphicon glyphicon-pencil" style="cursor: pointer;"> </span>
-							<span ng-if="$index == $ctrl.form.length -1" ng-click="$ctrl.deleteLastInput()" class="glyphicon glyphicon-remove" style="color:red; cursor:pointer; padding-left: 5px;"></span>
+							<span ng-if="champ.type_widget == 'Liste déroulante'" ng-click= "$ctrl.showValues(champ)" class="glyphicon glyphicon-pencil" style="cursor: pointer;"> </span>
+							<span ng-if="$index == $ctrl.form.length -1" ng-click="$ctrl.deleteLastInput($ctrl.form)" class="glyphicon glyphicon-remove" style="color:red; cursor:pointer; padding-left: 5px;"></span>
 						
 					</div>
 				</div>
@@ -51,8 +51,11 @@
 		<div class="panel panel-default" >
 			<div class="section white">
 					 <div ng-repeat='v in $ctrl.currentValues'>
-					  		<input class="form-control" type='text' ng-model='v.value'>
-					  </div>
+						 	<div class="form-inline">
+						  		<input class="form-control" type='text' ng-model='v.value' style="width: 90%">
+						  		<span ng-if="$index == $ctrl.currentValues.length -1" ng-click="$ctrl.deleteLastInput($ctrl.currentValues)" class="glyphicon glyphicon-remove" style="color:red; cursor:pointer;""></span>
+						  </div>
+						</div>
 					  <button class='btn btn-primary btn-xs' ng-click='$ctrl.addValue()'> +</button>
 					  <button class='btn btn-success btn-xs' ng-click='$ctrl.validateNewValues($ctrl.currentField.id_champ)'> Valider</button>
 			</div>

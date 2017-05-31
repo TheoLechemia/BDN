@@ -1,4 +1,4 @@
-var angularApp = angular.module("app", ['ui.router', 'ngSanitize', 'toaster']);
+var angularApp = angular.module("app", ['ui.router', 'ngSanitize', 'toaster', 'ngAnimate']);
 angularApp.config([ '$stateProvider', '$urlServiceProvider', function($stateProvider, $urlServiceProvider) {
 
 	$urlServiceProvider.rules.otherwise({ state: 'listProj' });
@@ -35,8 +35,8 @@ function metaController ($http, toaster){
 		'initiateur': null,
 		'producteur': null,
 		'commentaire': null,
-		'table_independante': 'False',
-		'saisie_possible': 'False'
+		'table_independante': false,
+		'saisie_possible': false
 	};
 	metaCtrl.projectForm = angular.copy(initialForm);
 
@@ -46,9 +46,8 @@ function metaController ($http, toaster){
 	metaCtrl.regex = new RegExp('^([a-z]+_*)*$', 'i')
 
 	metaCtrl.bind_table_indep = function(){
-		console.log(this.projectForm.saisie_possible)
-			if(this.projectForm.saisie_possible == 'True'){
-				this.projectForm.table_independante = 'True';
+			if(this.projectForm.saisie_possible == true){
+				this.projectForm.table_independante = true;
 		}
 	}
 
@@ -144,7 +143,7 @@ function projectController($stateParams, $http, toaster){
 	prjCtrl.$onInit = function(){
 		// ON INIT DISABLE les inputs qu'il ne faut pas modifier
 
-		var toDisable = document.getElementsByClassName('disabled');
+		var toDisable = document.getElementsByClassName('toDisable');
 		Array.from(toDisable).forEach(function(el){
 			el.setAttribute('disabled', 'true');
 		})
@@ -159,7 +158,6 @@ function projectController($stateParams, $http, toaster){
 			// s'il ny a pas de formulaire on initialise le formulaire commme un tableau vide;
 			if(prjCtrl.fieldForm != null){
 				prjCtrl.showDataModel = true;
-				//prjCtrl.projectForm.table_independante = 'True';
 				prjCtrl.initialNbField = prjCtrl.fieldForm.length;	
 			}else{
 				prjCtrl.fieldForm = [];
@@ -249,17 +247,19 @@ function formController(toaster){
   	this.currentValues = null;
   }
 
-  	formCtrl.showValues = function(id){
-		var inter = [];
-		this.form.forEach(function(o){
-				if(o.id_champ === id){
-					formCtrl.currentField = o;
-					inter = JSON.parse(o.valeur).values
-				}
+  	formCtrl.showValues = function(champ){
+  		if(champ.type_widget == 'Liste déroulante'){
+	  		var inter = [];
+			this.form.forEach(function(o){
+					if(o.id_champ === champ.id_champ){
+						formCtrl.currentField = o;
+						inter = JSON.parse(o.valeur).values
+					}
+				})
+			formCtrl.currentValues=inter.map(function(i){
+					return {'value': i}
 			})
-		formCtrl.currentValues=inter.map(function(i){
-				return {'value': i}
-		})
+  		}
 	}
 
 	formCtrl.formValidation = function(isValid){
@@ -272,8 +272,8 @@ function formController(toaster){
 		}
 	}
 
-	formCtrl.deleteLastInput = function(){
-		this.form.splice(this.form.length -1, 1);
+	formCtrl.deleteLastInput = function(tab){
+		tab.splice(tab.length -1, 1);
 	}
 
 }
