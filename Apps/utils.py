@@ -316,36 +316,35 @@ def createTemplate(schemaName, fieldForm):
     print 'enter in htmlllllllllll'
     htmlFileName = config['APP_DIR']+"/addObs/static/"+schemaName+'.html'
     htmlFile = open(htmlFileName, "w")
+    
 
-    htmlContent = """<div class='form-group'> 
-                """
+    integerInput = "<input class='form-control' type='number' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{1}'  name='{1}' {2}> \n"
+    simpleTextInput = "<input class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{1}'  name='{1}' {2}> \n"
+    checkboxInput = """<label> {0} : </label> \n
+                        <input type="checkbox" name="{1}" ng-init="$ctrl.child.protocoleForm.{1}=false" ng-model="$ctrl.child.protocoleForm.{1}" {2}> \n"""
+    listInput = "<div> <select class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{1}' name='{1}' ng-options='choice as choice for choice in $ctrl.fields.{1}' {2}> <option value=""> - {0} - </option> </select>  </div> \n"
+    
 
-    integerInput = "<input class='form-control' type='number' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{1}'  name='{0}'> \n"
-    simpleTextInput = "<input class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{1}'  name='{0}'> \n"
-    # booleanInput = """<div'> 
-    #                     <select class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{0}'  > \n
-    #                       <option value=""> -{0}- </option> 
-    #                       <option value="True">  Oui  </option> \n
-    #                       <option value="False">  Non  </option> \n
-    #                     </select>\n
-    #                   </div> \n"""
-    checkboxInput = """<label class="sublabel"> {0} :
-                        <input type="checkbox" name="" ng-init="$ctrl.child.protocoleForm.{1}=false" ng-model="$ctrl.child.protocoleForm.{1}">
-                    </label>"""
-    listInput = "<div> <select class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{1}' ng-options='choice as choice for choice in $ctrl.fields.{1}' > <option value=""> - {0} - </option> </select>  </div> \n"
+
     for r in fieldForm:
-        if r['type_widget'] == 'Nombre' or r['type_widget'] == 'Réel' :
-            write  =  integerInput.format(r['lib_champ'],r['nom_champ'])
-            htmlFile.write(write)
+        write = str()
+        if r['obligatoire']:
+            required = 'required'
+            htmlWrapper = """<div class='form-group' ng-class="{{'has-error' : addObsForm.{0}.$invalid }}" >"""
+            htmlWrapper = htmlWrapper.format(r['nom_champ'])
+        else:
+            htmlWrapper = """<div class='form-group'> \n"""
+            required = ''
+        if r['type_widget'] == 'Entier' or r['type_widget'] == 'Réel' :
+            write  =  integerInput.format(r['lib_champ'],r['nom_champ'], required)
         if r['type_widget'] == 'Texte':
-            write  =  simpleTextInput.format(r['lib_champ'],r['nom_champ'])
-            htmlFile.write(write)
+            write  =  simpleTextInput.format(r['lib_champ'],r['nom_champ'], required)
         if r['type_widget'] == 'Case à cocher':
-            write  =  checkboxInput.format(r['lib_champ'],r['nom_champ'])
-            htmlFile.write(write)
+            write  =  checkboxInput.format(r['lib_champ'],r['nom_champ'], required)
         if r['type_widget'] == "Liste déroulante" :
-            write = listInput.format(r['lib_champ'], r['nom_champ'])
-            htmlFile.write(write)
+            write = listInput.format(r['lib_champ'], r['nom_champ'], required)
+        finalWrite = htmlWrapper + write + "\n </div>"
+        htmlFile.write(finalWrite)
     htmlFile.close()
 
 
@@ -399,7 +398,6 @@ def createProject(db, projectForm, fieldForm):
         params.append(AsIs(r['db_type']))
     formatedCreate = formatedCreate[0:-1]+");"
     formatedCreate += addPermission
-    
     db.cur.execute(formatedCreate, params)
     db.conn.commit()
 
@@ -425,6 +423,7 @@ def createProject(db, projectForm, fieldForm):
           lib_champ character varying,
           type_widget character varying,
           db_type character varying,
+          obligatoire boolean,
           CONSTRAINT bib_fa_primary_key PRIMARY KEY (id_champ)
         )"""
     sql = psysql.SQL(sql).format(sch=psysql.Identifier(schemaName),tbl=psysql.Identifier(tbl)).as_string(db.cur)
@@ -435,9 +434,9 @@ def createProject(db, projectForm, fieldForm):
 
 
     for r in fieldForm:
-        sql = "INSERT INTO {sch}.{tbl} VALUES(%s, %s, %s, %s, %s, %s, %s)"
+        sql = "INSERT INTO {sch}.{tbl} VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
         sql = psysql.SQL(sql).format(sch=psysql.Identifier(schemaName),tbl=psysql.Identifier(tbl)).as_string(db.cur)
-        params = [r['id_champ'], r['no_spec'], r['nom_champ'], r['valeur'], r['lib_champ'], r['type_widget'], r['db_type']]
+        params = [r['id_champ'], r['no_spec'], r['nom_champ'], r['valeur'], r['lib_champ'], r['type_widget'], r['db_type'], r['obligatoire']]
         db.cur.execute(sql, params)
         db.conn.commit()
 

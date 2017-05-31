@@ -2,23 +2,35 @@
 	<h3> Modèle de données </h3>
 	<div class="panel panel-default" >
 		<div class="section white">
+				<div class="myLabel" style="width:100%;">
+				<div class="col-sm-3"> Libélé </div> 
+				<div class="col-sm-3"'> Nom en BDD </div> 
+				<div class="col-sm-3"'> Type du champ </div> 
+				<div class="col-sm-3"> Obligatoire</div> 
+			</div>
 			<form name="champForm">
 				<div ng-repeat="champ in $ctrl.form" ng-animate="{enter: 'animate-enter', leave: 'animate-leave'}">
 					<div class="form-inline">
 
-						<div class="form-group"  ng-class="{'has-error' : champForm.lib_champ.$invalid }" style="width: 30%">
+						<div class="form-group"  ng-class="{'has-error' : champForm.lib_champ.$invalid }" style="width: 25%">
 							<input placeholder="Libélé champ" class="form-control" type="" name="lib_champ" ng-model="champ.lib_champ" style='margin: 0px; width: 100%' required>
 						</div>
 
-						<div class="form-group"  ng-class="{'has-error' : champForm.nom_champ.$invalid}" style="width: 30%">
+						<div class="form-group"  ng-class="{'has-error' : champForm.nom_champ.$invalid}" style="width: 25%">
 							<input placeholder="Nom champ (BDD)" class="form-control" type="" name="nom_champ" ng-model="champ.nom_champ" style='margin: 0px;  width: 100%'
 								   required
 								   ng-pattern="$ctrl.regex">
 						</div>
 
-						<div class="form-group"  ng-class="{'has-error' : champForm.type_widget.$invalid}" style="width: 30%">
+						<div class="form-group"  ng-class="{'has-error' : champForm.type_widget.$invalid}" style="width: 25%">
 							<select class="form-control" name="type_widget" ng-model="champ.type_widget" ng-options="item for item in $ctrl.type_widget" ng-change="$ctrl.showValues_and_fillDbType(champ)" style="width: 100%" required>
-								<option value=''> - Type de widget - </option> 
+								<option value=''> - Type du champ - </option> 
+							</select>
+						</div>
+						<div class="form-group">
+							<select class="form-control" name="type_widget" ng-model="champ.obligatoire" ng-change="$ctrl.showValues_and_fillDbType(champ)" style="width: 100%" required>
+								<option ng-value='true'> Oui </option> 
+								<option ng-value='false'> Non </option> 
 							</select>
 						</div>
 							<span ng-if="champ.type_widget == 'Liste déroulante'" ng-click= "$ctrl.showValues_and_fillDbType(champ)" class="glyphicon glyphicon-pencil" style="cursor: pointer;"> </span>
@@ -28,7 +40,7 @@
 				</div>
 			</form>
 			<p ng-show="( champForm.lib_champ.$invalid && !champForm.lib_champ.$pristine)" class="help-block">Le nom du champ est requis</p>
-			<p ng-show="( champForm.nom_champ.$invalid && !champForm.nom_champ.$pristine)" class="help-block">Le nom en BDD ne doit pas contenir de caractere spéciaux ni de chiffre</p>
+			<p ng-show="( champForm.nom_champ.$invalid && !champForm.nom_champ.$pristine)" class="help-block">Le nom en BDD ne doit pas contenir de caractère spéciaux ni de chiffre</p>
 			<p ng-show="( champForm.type_widget.$invalid && !champForm.type_widget.$pristine)" class="help-block">Le type du widget est requis</p>
 
 			<button class="btn btn-primary btn-xs" ng-click='$ctrl.addNewField()'> Ajouter un champ</button>

@@ -12,13 +12,13 @@
         				<label class="btn btn-success" ng-model="view" uib-btn-radio="'faune'" uncheckable>Faune</label> -->
   					</div>
   				</div>
-  				<div class="form-group" ng-class="{'has-error' : addObsForm.observateur.$invalid && !addObsForm.observateur.$pristine  || ($ctrl.validationAttempt && addObsForm.observateur.$invalid)}">
+  				<div class="form-group" ng-class="{'has-error' : addObsForm.observateur.$invalid || ($ctrl.validationAttempt && addObsForm.observateur.$invalid)}">
 					<input class="form-control" type="text" name="observateur" placeholder="Observateur: NOM PRENON - en majuscule" ng-model="$ctrl.globalForm.observateur" required>
 					<p ng-show="(addObsForm.observateur.$invalid && !addObsForm.observateur.$pristine) || ($ctrl.validationAttempt && addObsForm.observateur.$invalid) " class="help-block">Le nom de l'observateur est requis</p>
 				</div>
 
 			
-				<div ng-click="$ctrl.checkProtocole()"  class="form-group" ng-class="{'has-error' : addObsForm.lb_nom.$invalid && !addObsForm.lb_nom.$pristine  || ($ctrl.validationAttempt && addObsForm.lb_nom.$invalid) }">
+				<div ng-click="$ctrl.checkProtocole()"  class="form-group" ng-class="{'has-error' : addObsForm.lb_nom.$invalid || ($ctrl.validationAttempt && addObsForm.lb_nom.$invalid) }">
 				 	<input class="form-control"   name="lb_nom" autocomplete="off" placeholder="Nom latin ou vernaculaire " type="text" ng-model="$ctrl.globalForm.taxon.nom_valide" 
 					 	typeahead-editable="false"  
 					 	uib-typeahead="taxon as taxon.search_name for taxon in $ctrl.search_taxon_name($viewValue, $ctrl.selectedProtocole) | limitTo:8"
@@ -34,7 +34,7 @@
 				</div>
 
 				    <div class="form-group" >
-		                <div class='input-group date' id='datetimepicker1' ng-class="{'has-error' : addObsForm.date.$invalid && !addObsForm.date.$pristine || ($ctrl.validationAttempt && addObsForm.date.$invalid) }">
+		                <div class='input-group date' id='datetimepicker1' ng-class="{'has-error' : addObsForm.date.$invalid || ($ctrl.validationAttempt && addObsForm.date.$invalid) }">
 		                    <input  id="firstDate" name="date" placeholder="Date de l'observation" type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="$ctrl.globalForm.date"" is-open="$ctrl.isOpen" datepicker-options="dateOptions"  close-text="Close" alt-input-formats="altInputFormats" required ng-click="$ctrl.openDate()" max-date="$ctrl.maxDate"/>
 		                    <span class="input-group-addon">
 		                        <span style="cursor: pointer;" class="glyphicon glyphicon-calendar" ng-click="$ctrl.openDate()"></span>
@@ -55,6 +55,7 @@
 				  
 				<input class="form-control" type="text" placeholder="Commentaire localisation" ng-model="$ctrl.globalForm.comm_loc"  >
 				<input class="form-control" type="text" placeholder="Commentaire" ng-model="$ctrl.globalForm.commentaire"  >
+
 				  
 				 <div ng-if="$ctrl.selectedProtocole">
 					  <label> Champs spécifiques au projet  </label>
