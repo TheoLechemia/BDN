@@ -142,9 +142,9 @@ function projectController($stateParams, $http, toaster){
 
 
 	prjCtrl.$onInit = function(){
-		// ON INIT DISABLE les inputs qui le faut pas modifier
+		// ON INIT DISABLE les inputs qu'il ne faut pas modifier
 
-		toDisable = document.getElementsByClassName('disabled');
+		var toDisable = document.getElementsByClassName('disabled');
 		Array.from(toDisable).forEach(function(el){
 			el.setAttribute('disabled', 'true');
 		})
@@ -199,6 +199,8 @@ function projectController($stateParams, $http, toaster){
 }// END CONTROLLER
 
 
+// ####### FORMULAIRE DES CHAMPS ##############
+
 template = configuration.URL_APPLICATION+'meta/meta/formulaire.html'
 angularApp.component('formulaire', {
 
@@ -223,7 +225,7 @@ function formController(toaster){
 	formCtrl.addNewField = function(validForm){
 		lastIndex = this.form.length;
 		if(lastIndex == 0){
-			nextId = 0;
+			nextId = 1;
 		}else{
 			nextId = this.form[lastIndex-1].id_champ + 1;
 		}
@@ -246,6 +248,7 @@ function formController(toaster){
   	this.form[i].valeur = JSON.stringify(inter);
   	this.currentValues = null;
   }
+
   	formCtrl.showValues = function(id){
 		var inter = [];
 		this.form.forEach(function(o){
@@ -269,10 +272,8 @@ function formController(toaster){
 		}
 	}
 
-	 formCtrl.validateNewForm = function(){
-  		$http.post(configuration.URL_APPLICATION+'/updateFormulaire', this.form).then(function(response){
-  	})
-  }
-
+	formCtrl.deleteLastInput = function(){
+		this.form.splice(this.form.length -1, 1);
+	}
 
 }
