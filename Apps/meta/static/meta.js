@@ -183,6 +183,8 @@ function projectController($stateParams, $http, toaster){
 				// update le nb de field
 				prjCtrl.initialNbField = prjCtrl.fieldForm.length;
 				toaster.success({title: "OK", body:"Projet edité avec succès"});
+			}, function errorCallBack(){
+				toaster.pop({type: 'error', title: "Attention", body:"Une erreur s'est produite, contactez le gestionnaire de BDD"});
 			})
 	
 		}else{
@@ -212,7 +214,7 @@ angularApp.component('formulaire', {
 
 function formController(toaster){
 	formCtrl = this;
-	formCtrl.type_widget = ['Case à cocher', 'Texte', 'Entier', 'Réel','Liste déroulante']
+	formCtrl.type_widget = ['Booléen', 'Texte', 'Entier', 'Réel','Liste déroulante']
 	formCtrl.newFields = [];
 
 	formCtrl.regex = new RegExp('^([a-z]+_*)*$', 'i')

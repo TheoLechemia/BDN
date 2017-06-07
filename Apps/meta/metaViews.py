@@ -18,7 +18,7 @@ def meta_index():
 
 @meta.route("/listProject", methods=['GET'])
 @check_auth(3)
-def getProjects():
+def getProjectsList():
     db = getConnexion()
     sql = 'SELECT * FROM synthese.bib_projet'
     res = utils.sqltoDict(sql, db.cur)
@@ -33,7 +33,7 @@ def getOneProject(idproject):
     sql = 'SELECT * FROM synthese.bib_projet WHERE id_projet = %s'
     res = utils.sqltoDictWithParams(sql,[idproject], db.cur)
     formulaire = None
-    if res[0]['saisie_possible']:
+    if res[0]['table_independante']:
         bib_champs = res[0]['bib_champs']
         schema_name = bib_champs.split('.')[0]
         table_name = bib_champs.split('.')[1]
@@ -54,17 +54,21 @@ def editProject():
         fieldForm = flask.request.json['fieldForm']
         nbNewField = flask.request.json['nbNewField']
 
-        bib_champs = projectForm['bib_champs']
+        bib_champs = projectForm['nom_bdd']+'.bib_champs_'+projectForm['nom_bdd']
         projet_nom_schema = projectForm['nom_schema']
         fullTableName = projet_nom_schema+".releve"
-        if utils.checkForInjection(bib_champs) or utils.checkForInjection(projet_nom_schema):
+        if utils.checkForInjection(projet_nom_schema):
             return Response(flask.json.dumps("Tu crois que tu vas m'injecter ??"), mimetype='application/json')
         else:
             #UPDATE table bib_projet
             update = """UPDATE synthese.bib_projet
-                     SET service_onf = %s, partenaires = %s, subvention_commande = %s, duree = %s, initiateur = %s, producteur = %s, commentaire = %s
+                     SET service_onf = %s, partenaires = %s, subvention_commande = %s, duree = %s, initiateur = %s, producteur = %s, commentaire = %s, bib_champs = %s
                      WHERE id_projet = %s"""
-            params = [projectForm['service_onf'], projectForm['partenaires'], projectForm['subvention_commande'], projectForm['duree'], projectForm['initiateur'], projectForm['producteur'], projectForm['commentaire'], projectForm['id_projet']]
+            print projectForm['id_projet']
+            
+            
+            params = [projectForm['service_onf'], projectForm['partenaires'], projectForm['subvention_commande'], projectForm['duree'], projectForm['initiateur'], projectForm['producteur'], projectForm['commentaire'],bib_champs, projectForm['id_projet'] ]
+            print db.cur.mogrify(update, params)
             db.cur.execute(update, params)
             db.conn.commit()
 
@@ -79,10 +83,10 @@ def editProject():
                 db.conn.commit()
                 for r in fieldForm:
                     #modif dans bib_champs
-                    query = "INSERT INTO {sch}.{tbl} VALUES(%s, %s, %s, %s, %s, %s, %s)"
+                    query = "INSERT INTO {sch}.{tbl} VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
                     query = psysql.SQL(query).format(sch=psysql.Identifier(schema_name), tbl=psysql.Identifier(table_name)).as_string(db.cur)
 
-                    params = [r['id_champ'], r['no_spec'], r['nom_champ'], r['valeur'], r['lib_champ'], r['type_widget'], r['db_type']]
+                    params = [r['id_champ'], r['no_spec'], r['nom_champ'], r['valeur'], r['lib_champ'], r['type_widget'], r['db_type'], r['obligatoire']]
                     db.cur.execute(query, params)
                     db.conn.commit()
                 #ajout des nouveaux champs dans la table releve
@@ -98,7 +102,8 @@ def editProject():
                         db.conn.commit()
                 #change le template HTML
 
-                utils.createTemplate(projet_nom_schema, fieldForm)
+            if projectForm['saisie_possible']:
+            	utils.createTemplate(projet_nom_schema, fieldForm)
 
             db.closeAll()
         return  Response(flask.json.dumps('res'), mimetype='application/json')

@@ -339,7 +339,7 @@ def createTemplate(schemaName, fieldForm):
             write  =  integerInput.format(r['lib_champ'],r['nom_champ'], required)
         if r['type_widget'] == 'Texte':
             write  =  simpleTextInput.format(r['lib_champ'],r['nom_champ'], required)
-        if r['type_widget'] == 'Case à cocher':
+        if r['type_widget'] == 'Booléen':
             write  =  checkboxInput.format(r['lib_champ'],r['nom_champ'], required)
         if r['type_widget'] == "Liste déroulante" :
             write = listInput.format(r['lib_champ'], r['nom_champ'], required)
