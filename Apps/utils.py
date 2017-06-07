@@ -366,36 +366,38 @@ def createProject(db, projectForm, fieldForm):
     stringCreate = """CREATE TABLE {sch}.{nom_table}
     (
       id_obs serial CONSTRAINT {pk_name} PRIMARY KEY,
+      id_releve character varying,
       id_synthese integer,
       id_projet integer,
-      id_sous_projet integer,
+      id_sous_projet character varying,
+      id_sous_projet_2 character varying,
       observateur character varying(100) NOT NULL,
       date date NOT NULL,
       cd_nom integer NOT NULL,
       geom_point geometry(Point,"""+str(config['MAP']['PROJECTION'])+"""),
       precision character varying,
+      loc_exact boolean,
+      code_maille character varying(20),
       insee character varying(10),
+      ccod_frt character varying(50),
       altitude integer,
       commentaire character varying(150),
       comm_loc character varying(150),
       valide boolean,
-      ccod_frt character varying(50),
-      loc_exact boolean,
-      code_maille character varying(20),
       id_structure integer,
       diffusable boolean,"""
 
     formatedCreate = psysql.SQL(stringCreate).format(sch=psysql.Identifier(schemaName),nom_table=psysql.Identifier(nom_table),pk_name=psysql.Identifier(pk_name)).as_string(db.cur)
 
-    addPermission = "ALTER TABLE {sch}.{nom_table} OWNER TO {user}"
-    addPermission = psysql.SQL(addPermission).format(sch=psysql.Identifier(schemaName),nom_table=psysql.Identifier(nom_table),user=psysql.Identifier(database['USER'])).as_string(db.cur)
-
-
-    params = []
+    params = list()
     for r in fieldForm:
         formatedCreate+=" {champ} %s ,"
         formatedCreate = psysql.SQL(formatedCreate).format(champ=psysql.Identifier(r['nom_champ'])).as_string(db.cur)
         params.append(AsIs(r['db_type']))
+
+    addPermission = "ALTER TABLE {sch}.{nom_table} OWNER TO {user}"
+    addPermission = psysql.SQL(addPermission).format(sch=psysql.Identifier(schemaName),nom_table=psysql.Identifier(nom_table),user=psysql.Identifier(database['USER'])).as_string(db.cur)
+
     formatedCreate = formatedCreate[0:-1]+");"
     formatedCreate += addPermission
     db.cur.execute(formatedCreate, params)

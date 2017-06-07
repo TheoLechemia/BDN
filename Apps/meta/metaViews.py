@@ -116,39 +116,34 @@ def addProject():
         db = getConnexion()
         projectForm = flask.request.json['projectForm']
         fieldForm = flask.request.json['fieldForm']
-        table_indep = projectForm['table_independante']
-        saisie_possible = projectForm['saisie_possible']
-        print 'LAAAAAAAAAAAAA'
-        print saisie_possible
-        print type(saisie_possible)
+        template = str()
         nom_schema = str()
-        if table_indep == False:
-            saisie_possible = False
+        if not projectForm['table_independante']:
             nom_schema = 'synthese'
             nom_table = 'releve'
             template = None
             bib_champs = None
-        if saisie_possible == True:
-            nom_schema = projectForm['nom_bdd']
-            template = 'addObs/'+nom_schema+'.html'
-            print 'passe par laaaaaaaaaaaaaaaaaaaa'
-            utils.createTemplate(nom_schema, fieldForm)
-            utils.create_taxonomie_view(db, projectForm, fieldForm)
-        if table_indep == True:
+        else:
             saisie_possible = True
             nom_table = 'releve'
+            nom_schema = projectForm['nom_bdd']
             bib_champs = nom_schema+'.'+'bib_champs_'+nom_schema
             #creation du schema + table + triggers
             utils.createProject(db, projectForm, fieldForm)
             #creation des vues pour le download
             utils.createViewsDownload(db, projectForm, fieldForm)
+        if projectForm['saisie_possible']:
+            template = 'addObs/'+nom_schema+'.html'
+            utils.createTemplate(nom_schema, fieldForm)
+            utils.create_taxonomie_view(db, projectForm, fieldForm)
+
 
 
         #insert dans bib_projet
         sql = """INSERT INTO synthese.bib_projet(nom_projet, theme_principal, service_onf, partenaires,subvention_commande, duree, initiateur, producteur, commentaire, table_independante, saisie_possible, nom_schema, nom_table, template, bib_champs, nom_bdd ) 
               VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, %s)"""
         params = [projectForm['nom_projet'], projectForm['theme_principal'], projectForm['service'], projectForm['partenaires'], projectForm['subvention_commande'], projectForm['duree'], projectForm['initiateur'], projectForm['producteur'], projectForm['commentaire'], projectForm['table_independante'],\
-                 saisie_possible, nom_schema, nom_table, template, bib_champs, nom_schema ]
+                 projectForm['saisie_possible'], nom_schema, nom_table, template, bib_champs, nom_schema ]
         db.cur.execute(sql, params)
         db.conn.commit()
         db.closeAll()
