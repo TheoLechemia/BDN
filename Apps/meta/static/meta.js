@@ -286,4 +286,5 @@ function formController(toaster){
 		'Réel': 'float'
 	}
 
+
 }

@@ -7,6 +7,10 @@
 <!-- Angular -->
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0-rc.2/angular.min.js"></script>
 
+<!-- TOASTER -->
+<script type="text/javascript" src= " {{url_for('static', filename='node_modules/angularjs-toaster/toaster.min.js')}}"></script>
+<link href="{{url_for('static', filename='node_modules/angularjs-toaster/toaster.min.css')}}"" rel="stylesheet" />
+
 
 <!-- Jquery -->
   
@@ -38,8 +42,10 @@
  {% include 'navbar.html' %}
 
 <div ng-app="app" >
-
-    <app ></app>
+    <toaster-container toaster-options="{'close-button':true, 'position-class': 'toast-top-center', 'time-out':500000000}" ></toaster-container>
+    <app >
+        
+    </app>
 </div>
 {% with messages = get_flashed_messages() %}
   {% if messages %}

@@ -22,10 +22,12 @@
 								   ng-pattern="$ctrl.regex">
 						</div>
 						<div class="form-group"  ng-class="{'has-error' : champForm.type_widget.$invalid}" style="width: 25%">
-							<select class="form-control" name="type_widget" ng-model="champ.type_widget" ng-init='champ.type_widget = null' ng-options="item for item in $ctrl.type_widget" ng-change="$ctrl.showValues_and_fillDbType(champ)" style="width: 100%" required>
+							<select class="form-control" name="type_widget" ng-model="champ.type_widget" ng-options="item for item in $ctrl.type_widget" ng-change="$ctrl.showValues_and_fillDbType(champ)" style="width: 100%" required>
 								<option value=''> - Type du champ - </option> 
 							</select>
 						</div>
+
+							<input type="hidden" name="">
 						<div class="form-group">
 							<select class="form-control" name="obligatoire" ng-model="champ.obligatoire" ng-change="$ctrl.showValues_and_fillDbType(champ)" style="width: 100%" required>
 								<option ng-value='true'> Oui </option> 
@@ -37,6 +39,7 @@
 						
 					</div>
 				</div>
+
 			</form>
 			<p ng-show="( champForm.lib_champ.$invalid && !champForm.lib_champ.$pristine)" class="help-block">Le nom du champ est requis</p>
 			<p ng-show="( champForm.nom_champ.$invalid && !champForm.nom_champ.$pristine)" class="help-block">Le nom en BDD ne doit pas contenir de caractère spéciaux ni de chiffre</p>
@@ -48,7 +51,6 @@
 
 	</div>
 	
-
 </div>	
 
 <div ng-show="$ctrl.currentValues != null && $ctrl.currentField.type_widget == 'Liste déroulante' ">
