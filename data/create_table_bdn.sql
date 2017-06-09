@@ -139,18 +139,25 @@ AFTER INSERT ON contact_flore.releve
 
 -- end trigger
 
-CREATE VIEW synthese.v_search_taxons AS(
-SELECT DISTINCT s.cd_nom,  CONCAT(t.lb_nom, ' = ', t.nom_complet_html) AS search_name,t.nom_valide, t.lb_nom, t.regne
-FROM synthese.releve s 
-JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
+CREATE MATERIALIZED VIEW synthese.vm_search_taxons AS 
+ SELECT DISTINCT s.cd_nom,
+    concat(t.lb_nom, ' = ', t.nom_complet_html) AS search_name,
+    t.nom_valide,
+    t.lb_nom,
+    t.regne
+   FROM synthese.releve s
+     JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
 UNION
-SELECT DISTINCT s.cd_nom,  CONCAT(t.nom_vern, ' = ', t.nom_complet_html) AS search_name,t.nom_valide,t.lb_nom, t.regne
-FROM synthese.releve s 
-JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
-WHERE t.nom_vern IS NOT NULL
-);
-
-ALTER TABLE synthese.v_search_taxons
+ SELECT DISTINCT s.cd_nom,
+    concat(t.nom_vern, ' = ', t.nom_complet_html) AS search_name,
+    t.nom_valide,
+    t.lb_nom,
+    t.regne
+   FROM synthese.releve s
+     JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
+  WHERE t.nom_vern IS NOT NULL
+WITH DATA;
+ALTER TABLE synthese.vm_search_taxons
   OWNER TO onfuser;
 
 
@@ -177,6 +184,19 @@ CREATE TABLE synthese.bib_projet
 );
 ALTER TABLE synthese.bib_projet
     OWNER TO onfuser;
+
+CREATE OR REPLACE FUNCTION synthese.refresh_vm_search_taxons() RETURNS TRIGGER AS $refresh_vm_search_taxons$
+    BEGIN
+ 
+   REFRESH MATERIALIZED VIEW synthese.vm_search_taxons;
+  
+    END;
+$refresh_vm_search_taxons$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER tr_refresh_vm_search_taxons
+AFTER INSERT ON synthese.releve
+    FOR EACH ROW EXECUTE PROCEDURE synthese.refresh_vm_search_taxons();
 
 
 INSERT INTO synthese.bib_protocole VALUES

@@ -173,7 +173,8 @@
 
 		<div class="section">
 			<div class="section-title"> Qui ?</div>
-			<input  autocomplete="off" placeholder="Observateur " type="text" ng-model="$ctrl.form.observateur" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="r as r.observateur for r in $ctrl.typologie.observateurs  | limitTo:8" class="form-control"  typeahead-no-results="noResults" >
+			<input  autocomplete="off" placeholder="Observateur " type="text" ng-model="$ctrl.form.observateur" typeahead-min-length="1" uib-typeahead="r as r.observateur for r in $ctrl.typologie.observateurs | filter:{observateur:$viewValue}  | limitTo:8" class="form-control">
+
 			<select class="form-control" ng-model="$ctrl.form.structure" ng-options="r.nom_organisme for r in $ctrl.typologie.structures">
 				<option value=""> - Structure - </option> 
 			</select>
@@ -189,5 +190,3 @@
 	</form>
 
 </div>
-
-
