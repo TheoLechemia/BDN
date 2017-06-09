@@ -1,7 +1,7 @@
 <h3> Liste des projets </h3>
 <div class="panel panel-default" >
 	<div class="section">
-		<table class="table">
+		<table class="table table-striped">
 			<thead>
 				<tr>
 				    <th>Nom du projet</th>
@@ -11,6 +11,7 @@
 				    <th>Subvention - commande</th>
 				    <th>Duréee</th>
 				    <th>Initiateur</th>
+				    <th>Type de données </th>
 				    <th> </th>
 			  	</tr>
 			</thead>
@@ -23,14 +24,14 @@
 					<td> {{projet.subvention_commande}} </td>
 					<td> {{projet.duree}} </td>
 					<td> {{projet.initiateur}} </td>
+					<td ng-if="projet.table_independante === true"> Données complexe </td>
+					<td ng-if="projet.table_independante === false"> Données simple </td>
 
 					<td> <a ui-sref="editProject({id: {{projet.id_projet}} })") >  <span class="glyphicon glyphicon-pencil">  </span></td>
 				</tr>
 
 			</tbody>
 		</table>
-
-
 		
 	</div>
 </div>

@@ -1,7 +1,7 @@
 <div class="row" >
 		<div class="col-sm-12" style="background-color: white; padding-bottom: 15px; ;" >
 					<div class="col-sm-3" >
-						<h3> Projet </h3>
+						<h3> Projet {{$ctrl.projectForm.nom_projet}} </h3>
 						<div class="panel panel-default" >
 							<div class="section white">
 								<form name="projectForm" novalidate>
@@ -39,7 +39,7 @@
 										<input type="text" class="form-control" ng-model='$ctrl.projectForm.commentaire' placeholder="Commentaire">
 
 										
-									Ce projet doit-il disposer d'une table séparée (modèle de données particulier) ?
+									Ce projet doit-il disposer d'une table séparée (Oui = données complexe, non = données simple) ?
 									<div class="form-group">
 										<input type="radio" class="toDisable" ng-model='$ctrl.projectForm.table_independante' ng-value="true"> Oui
 										<input type="radio" class="toDisable" ng-model='$ctrl.projectForm.table_independante' ng-value= "false"> Non
@@ -60,6 +60,15 @@
 
 					<div ng-if="$ctrl.projectForm.table_independante && $ctrl.showDataModel">
 						<formulaire form="$ctrl.fieldForm" on-form-validation="$ctrl.isValidChildForm(isValidForm)"> </formulaire>
+					</div>
+
+					<div ng-if="!$ctrl.projectForm.table_independante">
+						<h4> Ce projet est rattaché à la table 'Synthese'.
+						</h4>
+					</div>
+					<div ng-if="!$ctrl.projectForm.saisie_possible">
+						<h4> Ce projet ne dispose pas de formulaire de saisie.
+						</h4>
 					</div>
 
 		</div>	
