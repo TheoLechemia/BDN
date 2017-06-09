@@ -82,9 +82,8 @@ def getObs():
               LEFT JOIN layers.maille_1_2 l ON s.code_maille = l.id_maille
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
               LEFT JOIN utilisateurs.bib_organismes st ON st.id_organisme = s.id_structure
-              JOIN synthese.bib_projet p ON s.id_projet = p.id_projet"""
+              LEFT JOIN synthese.bib_projet p ON s.id_projet = p.id_projet"""
         sqlAndParams = utils.buildSQL(sql, "synthese")
-
         db.cur.execute(sqlAndParams['sql'], sqlAndParams['params'])
         res = db.cur.fetchall()
         myproperties = dict()

@@ -31,9 +31,16 @@ function formControler(proxy, $http, $scope){
 		this.onFormSubmit({$event: {form: form}})
 	}
 
-
+	var promise = null;
 	formCtrl.search_taxons = function($viewValue, searchRegne) {
-		return proxy.loadTaxons($viewValue, searchRegne).then(function(response){
+/*		if(promise){
+			console.log('pormise not null')
+			promise.cancel()
+		}*/
+		promise = proxy.loadTaxons($viewValue, searchRegne);
+		promise._httpTimeout.resolve
+		
+		return promise.then(function(response){
 			return response.data;
 		})
 	}

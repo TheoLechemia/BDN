@@ -122,8 +122,10 @@ function formController($http, toaster){
           form.lb_nom.$pristine = true;
           form.date.$pristine = true;
           formCtrl.validationAttempt = false;
-
     })
+    }
+    else{
+       toaster.error({title: "Attention", body:"Le formulaie est incomplet ou comporte des erreurs"})
     }
   }// END onSubmit
 

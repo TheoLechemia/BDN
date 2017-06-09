@@ -264,7 +264,7 @@ def buildSQL(sql, app):
     if formParameters['firstDate'] and formParameters['lastDate'] :
         firstParam = False
         sql = askFirstParame(sql, firstParam)
-        sql = sql + "( s.date >= %s OR s.date <= %s )"
+        sql = sql + "( s.date >= %s AND s.date <= %s )"
         params.append(formParameters['firstDate'])
         params.append(formParameters['lastDate'])
     elif formParameters['firstDate']:

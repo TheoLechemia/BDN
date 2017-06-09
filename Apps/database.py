@@ -1,4 +1,4 @@
-from .config import database
+from config import database
 import psycopg2
 import psycopg2.extras
 
