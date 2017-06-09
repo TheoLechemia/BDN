@@ -24,8 +24,8 @@
 					<td> {{projet.subvention_commande}} </td>
 					<td> {{projet.duree}} </td>
 					<td> {{projet.initiateur}} </td>
-					<td ng-if="projet.table_independante === true"> Données complexe </td>
-					<td ng-if="projet.table_independante === false"> Données simple </td>
+					<td ng-if="projet.table_independante === true"> Données complexes </td>
+					<td ng-if="projet.table_independante === false"> Données simples </td>
 
 					<td> <a ui-sref="editProject({id: {{projet.id_projet}} })") >  <span class="glyphicon glyphicon-pencil">  </span></td>
 				</tr>

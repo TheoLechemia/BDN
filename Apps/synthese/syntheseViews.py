@@ -98,14 +98,14 @@ def loadTaxons(expr, protocole):
     db=getConnexion()
     if protocole == "undefined" or protocole == 'Tout':
         sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
-                SELECT cd_nom, search_name, nom_valide, lb_nom from synthese.v_search_taxons
+                SELECT cd_nom, search_name, nom_valide, lb_nom from synthese.vm_search_taxons
                 WHERE search_name ILIKE %s
                 ORDER BY search_name ASC 
                 LIMIT 20) r"""
         params = ["%"+expr+"%"]
     else:       
         sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
-                    SELECT cd_nom, search_name, nom_valide, lb_nom from synthese.v_search_taxons
+                    SELECT cd_nom, search_name, nom_valide, lb_nom from synthese.vm_search_taxons
                     WHERE search_name ILIKE %s  AND regne = %s
                     ORDER BY search_name ASC 
                     LIMIT 20) r"""
