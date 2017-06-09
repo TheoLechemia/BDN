@@ -36,7 +36,7 @@ function appCtrl (proxy, toaster){
       console.log(response.data.point.features.length);
       console.log(response.data.maille.features.length);
 
-      if(response.data.point.features.length + response.data.maille.features.length  < 5000){
+      if(response.data.point.features.length + response.data.maille.features.length  < 8000){
           ctrl.geojson = response.data;
           nbObs = ctrl.geojson.point.features.length+ctrl.geojson.maille.features.length
           ctrl.nbObs = nbObs+' observation(s)';

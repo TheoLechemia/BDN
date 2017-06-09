@@ -262,19 +262,19 @@ def buildSQL(sql, app):
         params.append(str(formParameters['foret']))
     #date
     if formParameters['firstDate'] and formParameters['lastDate'] :
-        firstParam = False
         sql = askFirstParame(sql, firstParam)
+        firstParam = False
         sql = sql + "( s.date >= %s AND s.date <= %s )"
         params.append(formParameters['firstDate'])
         params.append(formParameters['lastDate'])
     elif formParameters['firstDate']:
-        firstParam = False
         sql = askFirstParame(sql,firstParam)
+        firstParam = False
         sql = sql +" s.date >= %s"
         params.append(formParameters['firstDate'])
     elif formParameters['lastDate']:
-        firstParam = False
         sql = askFirstParame(sql,firstParam)
+        firstParam = False
         sql = sql + " s.date <= %s "
         params.append(formParameters['lastDate'])
 
