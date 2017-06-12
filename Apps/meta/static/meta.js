@@ -161,6 +161,7 @@ function projectController($stateParams, $http, toaster){
 				prjCtrl.fieldForm = [];
 				prjCtrl.initialNbField = 0;
 			}
+			console.log(prjCtrl.initialNbField);
 		})
 	}
 

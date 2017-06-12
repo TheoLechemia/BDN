@@ -68,7 +68,6 @@ def editProject():
             
             
             params = [projectForm['service_onf'], projectForm['partenaires'], projectForm['subvention_commande'], projectForm['duree'], projectForm['initiateur'], projectForm['producteur'], projectForm['commentaire'],bib_champs, projectForm['id_projet'] ]
-            print db.cur.mogrify(update, params)
             db.cur.execute(update, params)
             db.conn.commit()
 
@@ -101,10 +100,11 @@ def editProject():
                         db.cur.execute(query)
                         db.conn.commit()
                 #change le template HTML
-            deleteView = """DROP MATERIALIZED VIEW {tbl}.to_csv;
-                            DROP MATERIALIZED VIEW {tbl}.layer_poly
-                            DROP MATERIALIZED VIEW {tbl}.layer_point"""
+            deleteView = """DROP VIEW {tbl}.to_csv;
+                            DROP VIEW {tbl}.layer_poly;
+                            DROP VIEW {tbl}.layer_point;"""
             deleteView = psysql.SQL(deleteView).format(tbl=psysql.Identifier(schema_name)).as_string(db.cur)
+            print deleteView
             db.cur.execute(deleteView)
             db.conn.commit()
             utils.createViewsDownload(db, projectForm, fieldForm)
