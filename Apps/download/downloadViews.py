@@ -53,6 +53,13 @@ def index():
 #     db.closeAll()
 #     return Response(json.dumps(res), mimetype='application/json')
 
+@download.route('/loadProtocoles', methods=['GET'])
+def getProtocoles():
+    db = getConnexion()
+    sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM synthese.bib_projet) p"
+    db.cur.execute(sql)
+    return Response(json.dumps(db.cur.fetchone()[0]), mimetype='application/json')
+
 @download.route('/search_taxon_name/<protocole>/<expr>', methods=['GET'])
 def search_taxon_name(protocole, expr):
     db=getConnexion()
@@ -61,16 +68,15 @@ def search_taxon_name(protocole, expr):
     if utils.checkForInjection(protocole):
         return Response(flask.json.dumps("Tu crois que tu vas m'injecter ??"), mimetype='application/json')
     else:
-        # print 'LAAAAAAAAAAAAA'
-        # print psysql.SQL("select * from {tbl} where {id} = %s").format(tbl=psysql.Identifier('people'), id=psysql.Identifier('id')).as_string(db.cur)
         sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
-                    SELECT cd_ref, search_name, nom_valide, lb_nom from taxonomie.{tbl}
-                    WHERE search_name ILIKE %s AND cd_ref=cd_nom AND cd_ref IN (SELECT DISTINCT cd_nom FROM synthese.releve )  
-                    ORDER BY search_name ASC 
-                    LIMIT 20) r"""
+                SELECT cd_nom, search_name, nom_valide, lb_nom from taxonomie.{tbl}
+                WHERE search_name ILIKE %s
+                ORDER BY search_name ASC 
+                LIMIT 20) r"""
 
         formatedSql = psysql.SQL(sql).format(tbl=psysql.Identifier(tableTaxon)).as_string(db.cur)
         params = [expr]
+
         db.cur.execute(formatedSql, params)
         res = db.cur.fetchone()[0]
         db.closeAll()

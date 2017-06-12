@@ -33,7 +33,7 @@ proxy = angularInstance.factory('proxy', function proxy($http) {
 				return $http.get(CONFIGURATION.URL_APPLICATION +"synthese/loadTaxonomyHierachy/"+rang_fils+"/"+rang_pere+"/"+rang_grand_pere+"/"+value_rang_grand_pere+"/"+value)
 			},
 			loadProtocole: function(){
-				return $http.get(CONFIGURATION.URL_APPLICATION+"addObs/loadProtocoles")
+				return $http.get(CONFIGURATION.URL_APPLICATION+"download/loadProtocoles")
 			},
 			bindNewValues : function(table_field){
  				return $http.get(CONFIGURATION.URL_APPLICATION+"addObs/loadValues/"+table_field)
@@ -87,9 +87,12 @@ function appCtrl (proxy, toaster){
   ctrl.changeProtocole = function(protocole){
   	table_field = protocole.bib_champs;
 
-  	proxy.bindNewValues(table_field).then(function(response){
+  	if (protocole.table_independante){
+  		proxy.bindNewValues(table_field).then(function(response){
   		ctrl.fields = response.data;
   	})
+  	}
+
   }
 
 

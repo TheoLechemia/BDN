@@ -453,7 +453,7 @@ def create_taxonomie_view(db, projectForm, fieldForm):
     #prend le last id_liste
     db.cur.execute("SELECT MAX(id_liste) FROM taxonomie.bib_listes")
     last_id_liste = db.cur.fetchone()[0]
-    #peuple la table cor_nom_liste avec tous les taxons par defaults
+    #peuple la table cor_nom_liste avec tous les taxons par defaults de bib_nom = donc que les taxons antillais
     query = """INSERT INTO taxonomie.cor_nom_liste (id_liste,id_nom)
     SELECT %s,n.id_nom FROM taxonomie.bib_noms n """
     db.cur.execute(query, [last_id_liste])
