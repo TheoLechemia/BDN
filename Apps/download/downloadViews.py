@@ -41,46 +41,40 @@ def index():
     resp = make_response(render_template('indexDownload.html', protocoles = protocoles, structures = structures, page_title=u"Télécharger des données", configuration=config))
     return resp
 
-# @download.route('/loadTaxons/<protocole>', methods=['GET', 'POST'])
-# def loadTaxons(protocole):
-#     db = getConnexion()
-#     if protocole == "Tout":
-#         sql = """SELECT * FROM synthese.v_search_taxons"""
-#     else:
-#         curProtocole = "'"+protocole+"'"
-#         sql = "SELECT * FROM synthese.v_search_taxons WHERE protocole = "+curProtocole
-#     res = utils.sqltoDict(sql, db.cur)
-#     db.closeAll()
-#     return Response(json.dumps(res), mimetype='application/json')
+
 
 @download.route('/loadProtocoles', methods=['GET'])
 def getProtocoles():
     db = getConnexion()
-    sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM synthese.bib_projet) p"
+    sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM synthese.bib_projet ORDER BY id_projet ASC) p"
     db.cur.execute(sql)
     return Response(json.dumps(db.cur.fetchone()[0]), mimetype='application/json')
 
-@download.route('/search_taxon_name/<protocole>/<expr>', methods=['GET'])
-def search_taxon_name(protocole, expr):
+@download.route('/search_taxon_name/<int:id_projet>/<expr>', methods=['GET'])
+def search_taxon_name(id_projet, expr):
     db=getConnexion()
-    tableTaxon = "taxons_"+protocole
     expr = "%"+expr+"%"
-    if utils.checkForInjection(protocole):
-        return Response(flask.json.dumps("Tu crois que tu vas m'injecter ??"), mimetype='application/json')
-    else:
+    if id_projet != 0:
         sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
-                SELECT cd_nom, search_name, nom_valide, lb_nom from taxonomie.{tbl}
-                WHERE search_name ILIKE %s
+                SELECT DISTINCT cd_nom, search_name, nom_valide, lb_nom from taxonomie.taxons_synthese
+                WHERE search_name ILIKE %s AND id_projet = %s
                 ORDER BY search_name ASC 
                 LIMIT 20) r"""
-
-        formatedSql = psysql.SQL(sql).format(tbl=psysql.Identifier(tableTaxon)).as_string(db.cur)
+        params = [expr, id_projet]
+        print db.cur.mogrify(sql, params)
+        db.cur.execute(sql, params)
+    else:
+        sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
+        SELECT DISTINCT cd_nom, search_name, nom_valide, lb_nom from taxonomie.taxons_synthese
+        WHERE search_name ILIKE %s
+        ORDER BY search_name ASC 
+        LIMIT 20) r"""
         params = [expr]
-
-        db.cur.execute(formatedSql, params)
-        res = db.cur.fetchone()[0]
-        db.closeAll()
-        return Response(json.dumps(res), mimetype='application/json')
+        print db.cur.mogrify(sql, params)
+        db.cur.execute(sql, params)
+    res = db.cur.fetchone()[0]
+    db.closeAll()
+    return Response(json.dumps(res), mimetype='application/json')
 
 
 
@@ -88,9 +82,7 @@ def search_taxon_name(protocole, expr):
 def getObs():
     db = getConnexion()
     if request.method == 'POST':
-        schemaReleve = 'synthese'
-        if request.json['globalForm']['selectedProtocole']:
-            schemaReleve = request.json['globalForm']['selectedProtocole']['nom_schema']
+        schemaReleve = request.json['globalForm']['selectedProtocole']['nom_schema']
         sql = " SELECT * FROM {sch}.%s s "
         sql = psysql.SQL(sql).format(sch=psysql.Identifier(schemaReleve)).as_string(db.cur)
         dictSQL = utils.buildSQL(sql, 'download')
@@ -123,14 +115,14 @@ def getObs():
         sql_csv = dictSQL['sql']%tuple(paramtersCSV)
 
         if schemaReleve == 'synthese':
-            id_projet = request.json['globalForm']['selectedProtocole']['id_projet']
-            sql_point += " WHERE id_projet = {id_projet}"
+            id_projet = str(request.json['globalForm']['selectedProtocole']['id_projet'])
+            sql_point += " AND id_projet = {id_projet}"
             sql_point = psysql.SQL(sql_point).format(id_projet=psysql.Identifier(id_projet)).as_string(db.cur)
 
-            sql_poly += " WHERE id_projet = {id_projet}"
+            sql_poly += " AND id_projet = {id_projet}"
             sql_poly = psysql.SQL(sql_poly).format(id_projet=psysql.Identifier(id_projet)).as_string(db.cur)
 
-            sql_csv += " WHERE id_projet = {id_projet}"
+            sql_csv += " AND id_projet = {id_projet}"
             sql_csv = psysql.SQL(sql_csv).format(id_projet=psysql.Identifier(id_projet)).as_string(db.cur)
 
         time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')

@@ -496,6 +496,7 @@ def createViewsDownload(db, projectForm, fieldForm):
     #POLYGONS
     string_create_view_poly = """CREATE OR REPLACE VIEW {sch}.layer_poly AS 
     SELECT 
+    f.id_projet,
     t.nom_vern,
     t.lb_nom,
     f.observateur,
@@ -531,6 +532,7 @@ def createViewsDownload(db, projectForm, fieldForm):
     #POINTS
     string_create_view_point = """CREATE OR REPLACE VIEW {sch}.layer_point AS 
     SELECT 
+    f.id_projet,
     t.nom_vern,
     t.lb_nom,
     f.observateur,
@@ -583,7 +585,9 @@ def createViewsDownload(db, projectForm, fieldForm):
                  JOIN layers.maille_1_2 m ON m.id_maille::text = fm.code_maille::text
               WHERE fm.loc_exact = false
             )
-     SELECT t.nom_vern,
+     SELECT 
+     f.id_projet,
+     t.nom_vern,
         t.lb_nom,
         f.observateur,
         f.date,

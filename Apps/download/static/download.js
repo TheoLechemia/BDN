@@ -14,8 +14,8 @@ proxy = angularInstance.factory('proxy', function proxy($http) {
 				return $http.post(CONFIGURATION.URL_APPLICATION+"download/getObs", data)
 			},
 
-			loadTaxons: function(protocole, expr){
-				return $http.get(CONFIGURATION.URL_APPLICATION+"download/search_taxon_name/"+protocole+"/"+expr)
+			loadTaxons: function(id_projet, expr){
+				return $http.get(CONFIGURATION.URL_APPLICATION+"download/search_taxon_name/"+id_projet+"/"+expr)
 			},
 			loadCommunes: function(){
 				return $http.get(CONFIGURATION.URL_APPLICATION+"synthese/loadCommunes")
@@ -137,8 +137,8 @@ function formControler(proxy, $http, $scope){
 
 	formCtrl.child = {'protocoleForm':{}};
 
-	formCtrl.search_taxons = function(selectedProtocole, expr ){
-	    return proxy.loadTaxons(selectedProtocole, expr).then(function(response){ 
+	formCtrl.search_taxons = function(id_projet, expr){
+	    return proxy.loadTaxons(id_projet,expr).then(function(response){ 
 	      return response.data;
 	    });
     }
@@ -209,12 +209,13 @@ function formControler(proxy, $http, $scope){
 		formCtrl.newTaxons = []
 
 	 formCtrl.onSelectlbNom = function ($item, $model, $label) {
+	 	console.log($item);
 	 	this.form.taxon.lb_nom = $item.lb_nom;
- 		this.form.listTaxons.push($item.cd_ref);
+ 		this.form.listTaxons.push($item.cd_nom);
  	   	if (this.showNewTaxons == false){
 			this.showNewTaxons = !this.showNewTaxons;
 		}
-		this.newTaxons.push({'name':$item.lb_nom, 'cd_nom': $item.cd_ref});
+		this.newTaxons.push({'name':$item.lb_nom, 'cd_nom': $item.cd_nom});
 
 		// on vide les inputs
 
@@ -267,7 +268,7 @@ function formControler(proxy, $http, $scope){
 
 	  formCtrl.checkProtocole  = function(){
 	    if(formCtrl.selectedProtocole == undefined){
-	      alert("Selectionner un protocole")
+	      alert("Selectionner un projet")
 	    };
 	  }
 

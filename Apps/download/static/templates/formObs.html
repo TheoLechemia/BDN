@@ -10,7 +10,6 @@
 						<label> Projet</label>
 				    	<select class="form-control" ng-model="$ctrl.form.selectedProtocole" ng-change="$ctrl.changeProtocole($ctrl.form.selectedProtocole)" ng-options="row.nom_projet for row in $ctrl.protocoles">
 				    		<option value=""> - Selectionner un projet - </option>
-				    		<!-- <option value="Tous"> Tous</option> -->
 				    	</select>
 						
 					</div>
@@ -20,7 +19,7 @@
 						<label>Taxon(s) test</label>
 					 	<input id="input_lbnom" class="form-control" name="lb_nom" autocomplete="off" placeholder="Nom latin ou vernaculaire " type="text" ng-model="$ctrl.form.taxon.lb_nom" 
 					 	typeahead-editable="false"
-					 	uib-typeahead="taxon as taxon.search_name for taxon in $ctrl.search_taxons( $ctrl.form.selectedProtocole.nom_schema, $viewValue) | limitTo:8"
+					 	uib-typeahead="taxon as taxon.search_name for taxon in $ctrl.search_taxons($ctrl.selectedProtocole.id_projet, $viewValue) | limitTo:8"
 					 	typeahead-min-length="2" typeahead-no-results="$ctrl.noResults"
 					 	 typeahead-loading="$ctrl.loadingLbnom"
 					 	 typeahead-on-select ="$ctrl.onSelectlbNom($item, $model, $label)">
@@ -38,14 +37,6 @@
 					</div>
 			</div>
 
-					
-
-			<!-- </div> -->
-
-
-			 <!-- <button type="submit" type="button" class="btn btn-success" "> <span class="glyphicon glyphicon-plus"> </span> </button> -->
-			
-			<!-- <div class="panel panel-default"> -->
 			<div class="section">
 					<div class="section-title"> Où ?</div>
 
@@ -115,3 +106,4 @@
 	</div>
 </div>
 
+{{$ctrl.form.listTaxons}}

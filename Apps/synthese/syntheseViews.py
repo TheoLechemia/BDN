@@ -84,6 +84,7 @@ def getObs():
               LEFT JOIN utilisateurs.bib_organismes st ON st.id_organisme = s.id_structure
               LEFT JOIN synthese.bib_projet p ON s.id_projet = p.id_projet"""
         sqlAndParams = utils.buildSQL(sql, "synthese")
+        print db.cur.mogrify(sqlAndParams['sql'], sqlAndParams['params'])
         db.cur.execute(sqlAndParams['sql'], sqlAndParams['params'])
         res = db.cur.fetchall()
         myproperties = dict()
@@ -98,14 +99,14 @@ def loadTaxons(expr, protocole):
     db=getConnexion()
     if protocole == "undefined" or protocole == 'Tout':
         sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
-                SELECT cd_nom, search_name, nom_valide, lb_nom from synthese.vm_search_taxons
+                SELECT DISTINCT cd_nom, search_name, nom_valide, lb_nom from taxonomie.taxons_synthese
                 WHERE search_name ILIKE %s
                 ORDER BY search_name ASC 
                 LIMIT 20) r"""
         params = ["%"+expr+"%"]
     else:       
         sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
-                    SELECT cd_nom, search_name, nom_valide, lb_nom from synthese.vm_search_taxons
+                    SELECT DISTINCT cd_nom, search_name, nom_valide, lb_nom from taxonomie.taxons_synthese
                     WHERE search_name ILIKE %s  AND regne = %s
                     ORDER BY search_name ASC 
                     LIMIT 20) r"""

@@ -101,9 +101,14 @@ def editProject():
                         db.cur.execute(query)
                         db.conn.commit()
                 #change le template HTML
-
-            if projectForm['saisie_possible']:
-            	utils.createTemplate(projet_nom_schema, fieldForm)
+            deleteView = """DROP MATERIALIZED VIEW {tbl}.to_csv;
+                            DROP MATERIALIZED VIEW {tbl}.layer_poly
+                            DROP MATERIALIZED VIEW {tbl}.layer_point"""
+            deleteView = psysql.SQL(deleteView).format(tbl=psysql.Identifier(schema_name)).as_string(db.cur)
+            db.cur.execute(deleteView)
+            db.conn.commit()
+            utils.createViewsDownload(db, projectForm, fieldForm)
+            utils.createTemplate(schema_name, fieldForm)
 
             db.closeAll()
         return  Response(flask.json.dumps('res'), mimetype='application/json')
@@ -132,12 +137,10 @@ def addProject():
             utils.createProject(db, projectForm, fieldForm)
             #creation des vues pour le download
             utils.createViewsDownload(db, projectForm, fieldForm)
-        if projectForm['saisie_possible']:
             template = 'addObs/'+nom_schema+'.html'
             utils.createTemplate(nom_schema, fieldForm)
+        if projectForm['saisie_possible']:
             utils.create_taxonomie_view(db, projectForm, fieldForm)
-
-
 
         #insert dans bib_projet
         sql = """INSERT INTO synthese.bib_projet(nom_projet, theme_principal, service_onf, partenaires,subvention_commande, duree, initiateur, producteur, commentaire, table_independante, saisie_possible, nom_schema, nom_table, template, bib_champs, nom_bdd ) 

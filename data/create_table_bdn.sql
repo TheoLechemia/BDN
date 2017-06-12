@@ -139,12 +139,13 @@ AFTER INSERT ON contact_flore.releve
 
 -- end trigger
 
-CREATE MATERIALIZED VIEW synthese.vm_search_taxons AS 
+CREATE MATERIALIZED VIEW taxonomie.taxons_synthese AS 
  SELECT DISTINCT s.cd_nom,
     concat(t.lb_nom, ' = ', t.nom_complet_html) AS search_name,
     t.nom_valide,
     t.lb_nom,
-    t.regne
+    t.regne,
+    s.id_projet
    FROM synthese.releve s
      JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
 UNION
@@ -152,14 +153,15 @@ UNION
     concat(t.nom_vern, ' = ', t.nom_complet_html) AS search_name,
     t.nom_valide,
     t.lb_nom,
-    t.regne
+    t.regne,
+    s.id_projet
    FROM synthese.releve s
      JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
   WHERE t.nom_vern IS NOT NULL
 WITH DATA;
-ALTER TABLE synthese.vm_search_taxons
-  OWNER TO onfuser;
 
+ALTER TABLE taxonomie.taxons_synthese
+  OWNER TO onfuser;
 
 CREATE TABLE synthese.bib_projet
 (
@@ -469,6 +471,7 @@ WITH (format 'csv', header 'true', delimiter E';');
 
 CREATE OR REPLACE VIEW contact_faune.layer_poly AS 
  SELECT 
+    f.id_projet,
     t.nom_vern,
     t.lb_nom,
     f.observateur,
@@ -509,6 +512,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_poly AS
 
 CREATE OR REPLACE VIEW contact_faune.layer_point AS 
  SELECT 
+    f.id_projet,
     t.nom_vern,
     t.lb_nom,
     f.observateur,
@@ -545,6 +549,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
 
   CREATE OR REPLACE VIEW contact_flore.layer_point AS 
  SELECT 
+    f.id_projet,
     t.nom_vern,
     t.lb_nom,
     f.observateur,
@@ -583,6 +588,7 @@ CREATE OR REPLACE VIEW contact_faune.layer_point AS
 
 CREATE OR REPLACE VIEW contact_flore.layer_poly AS 
  SELECT 
+    f.id_projet,
     t.nom_vern,
     t.lb_nom,
     f.id_obs,
@@ -635,7 +641,9 @@ CREATE OR REPLACE VIEW contact_faune.to_csv AS
              JOIN layers.maille_1_2 m ON m.id_maille::text = fm.code_maille::text
           WHERE fm.loc_exact = false
         )
- SELECT t.nom_vern,
+ SELECT
+    f.id_projet,
+    t.nom_vern,
     t.lb_nom,
     f.observateur,
     f.date,
@@ -696,7 +704,9 @@ CREATE OR REPLACE VIEW contact_flore.to_csv AS
              JOIN layers.maille_1_2 m ON m.id_maille::text = fm.code_maille::text
           WHERE fm.loc_exact = false
         )
- SELECT t.nom_vern,
+ SELECT
+    f.id_projet,
+    t.nom_vern,
     t.lb_nom,
     f.observateur,
     f.date,
@@ -739,6 +749,64 @@ ALTER TABLE contact_flore.to_csv
   OWNER TO onfuser;
 
 
+CREATE OR REPLACE VIEW synthese.layer_poly AS 
+ SELECT 
+    f.id_projet,
+    t.nom_vern,
+    t.lb_nom,
+    f.observateur,
+    f.date,
+    ST_X(ST_CENTROID(ST_TRANSFORM(m.geom,4326))) AS X,
+    ST_Y(ST_CENTROID(ST_TRANSFORM(m.geom,4326))) AS Y,
+    f.precision,
+    f.cd_nom,
+    f.insee,
+    f.ccod_frt,
+    f.altitude,
+    m.geom,
+    m.id_maille,
+    s.nom_organisme,
+    f.id_structure,
+    f.id_synthese
+
+   FROM synthese.releve f
+    JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
+    JOIN layers.maille_1_2 m ON m.id_maille::text = f.code_maille::text
+    LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
+     WHERE f.valide = TRUE AND f.loc_exact = FALSE;
+
+    ALTER VIEW contact_flore.layer_poly
+    OWNER TO onfuser;
+
+  CREATE OR REPLACE VIEW synthese.layer_point AS 
+ SELECT 
+    f.id_projet,
+    t.nom_vern,
+    t.lb_nom,
+    f.observateur,
+    f.date,
+    ST_X(ST_TRANSFORM(f.geom_point, 4326)) AS X,
+    ST_Y(ST_TRANSFORM(f.geom_point, 4326)) AS Y,
+    f.precision,
+    f.cd_nom,
+    f.insee,
+    f.ccod_frt,
+    f.altitude,
+    f.geom_point,
+    s.nom_organisme,
+    f.id_structure,
+    f.id_synthese
+
+
+   FROM synthese.releve f
+   JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
+   LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
+  WHERE f.loc_exact = TRUE AND f.valide = TRUE;
+
+  ALTER VIEW contact_flore.layer_point
+  OWNER TO onfuser;
+
+
 
 CREATE OR REPLACE VIEW synthese.to_csv AS 
  WITH coord_point AS (
@@ -757,6 +825,7 @@ CREATE OR REPLACE VIEW synthese.to_csv AS
           WHERE fm.loc_exact = false
         )
  SELECT
+    f.id_projet,
     p.nom_projet,
     t.nom_vern,
     t.lb_nom,
