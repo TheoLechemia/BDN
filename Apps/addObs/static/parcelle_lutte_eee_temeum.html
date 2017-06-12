@@ -1,0 +1,19 @@
+<div class='form-group' ng-class="{'has-error' : addObsForm.site.$invalid }" ><input class='form-control' type='text' placeholder='Site' ng-model='$ctrl.child.protocoleForm.site'  name='site' required> 
+
+ </div><div class='form-group' ng-class="{'has-error' : addObsForm.parcelle.$invalid }" ><input class='form-control' type='text' placeholder='Parcelle' ng-model='$ctrl.child.protocoleForm.parcelle'  name='parcelle' required> 
+
+ </div><div class='form-group' ng-class="{'has-error' : addObsForm.A_inf_10cm.$invalid }" ><input class='form-control' type='text' placeholder='A (<10cm) code présence' ng-model='$ctrl.child.protocoleForm.A_inf_10cm'  name='A_inf_10cm' required> 
+
+ </div><div class='form-group' ng-class="{'has-error' : addObsForm.B_10cm_1m.$invalid }" ><input class='form-control' type='text' placeholder='B (10 cm -1 m) code présence' ng-model='$ctrl.child.protocoleForm.B_10cm_1m'  name='B_10cm_1m' required> 
+
+ </div><div class='form-group' ng-class="{'has-error' : addObsForm.C_1m_10cm.$invalid }" ><input class='form-control' type='text' placeholder='C (1m-10 cm DBH) nombre individus' ng-model='$ctrl.child.protocoleForm.C_1m_10cm'  name='C_1m_10cm' required> 
+
+ </div><div class='form-group' ng-class="{'has-error' : addObsForm.D_sup_10cm.$invalid }" ><input class='form-control' type='text' placeholder='D (> 10 cm DBH) nombre individus' ng-model='$ctrl.child.protocoleForm.D_sup_10cm'  name='D_sup_10cm' required> 
+
+ </div><div class='form-group' ng-class="{'has-error' : addObsForm.type_bio.$invalid }" ><input class='form-control' type='text' placeholder='Type bio' ng-model='$ctrl.child.protocoleForm.type_bio'  name='type_bio' required> 
+
+ </div><div class='form-group' ng-class="{'has-error' : addObsForm.plante.$invalid }" ><label> Planté : </label> 
+
+                        <input type="checkbox" name="plante" ng-init="$ctrl.child.protocoleForm.plante=false" ng-model="$ctrl.child.protocoleForm.plante" required> 
+
+ </div>

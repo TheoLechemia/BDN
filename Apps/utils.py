@@ -132,10 +132,8 @@ def zipItwithCSV(dirPath, maille):
 
     zf.write(dirPath+"_csv.csv", os.path.basename(dirPath+"_csv.csv"))
 
-firstParam = True
 def askFirstParame(sql, firstParam):
     if firstParam:
-        firstParam = False
         sql = sql+" WHERE "
     else:
         sql = sql + " AND "
@@ -285,7 +283,7 @@ def buildSQL(sql, app):
             sql+= key+"= %s"
             firstParam = False
             params.append(value)
-    return {'params': params, 'sql' :sql}
+    return {'params': params, 'sql' :sql, 'firstParam': firstParam}
 
 def buildGeojsonWithParams(res):
     geojsonMaille = { "type": "FeatureCollection",  "features" : list()}

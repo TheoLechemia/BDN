@@ -57,17 +57,16 @@ def editProject():
         bib_champs = projectForm['nom_bdd']+'.bib_champs_'+projectForm['nom_bdd']
         projet_nom_schema = projectForm['nom_schema']
         fullTableName = projet_nom_schema+".releve"
+        template = 'addObs/'+projet_nom_schema+'.html'
         if utils.checkForInjection(projet_nom_schema):
             return Response(flask.json.dumps("Tu crois que tu vas m'injecter ??"), mimetype='application/json')
         else:
             #UPDATE table bib_projet
             update = """UPDATE synthese.bib_projet
-                     SET service_onf = %s, partenaires = %s, subvention_commande = %s, duree = %s, initiateur = %s, producteur = %s, commentaire = %s, bib_champs = %s
+                     SET service_onf = %s, partenaires = %s, subvention_commande = %s, duree = %s, initiateur = %s, producteur = %s, commentaire = %s, template = %s
                      WHERE id_projet = %s"""
-            print projectForm['id_projet']
-            
-            
-            params = [projectForm['service_onf'], projectForm['partenaires'], projectForm['subvention_commande'], projectForm['duree'], projectForm['initiateur'], projectForm['producteur'], projectForm['commentaire'],bib_champs, projectForm['id_projet'] ]
+                        
+            params = [projectForm['service_onf'], projectForm['partenaires'], projectForm['subvention_commande'], projectForm['duree'], projectForm['initiateur'], projectForm['producteur'], projectForm['commentaire'], template, projectForm['id_projet']  ]
             db.cur.execute(update, params)
             db.conn.commit()
 
@@ -100,9 +99,9 @@ def editProject():
                         db.cur.execute(query)
                         db.conn.commit()
                 #change le template HTML
-            deleteView = """DROP VIEW {tbl}.to_csv;
-                            DROP VIEW {tbl}.layer_poly;
-                            DROP VIEW {tbl}.layer_point;"""
+            deleteView = """DROP VIEW IF EXISTS {tbl}.to_csv;
+                            DROP VIEW IF EXISTS {tbl}.layer_poly;
+                            DROP VIEW IF EXISTS {tbl}.layer_point;"""
             deleteView = psysql.SQL(deleteView).format(tbl=psysql.Identifier(schema_name)).as_string(db.cur)
             print deleteView
             db.cur.execute(deleteView)

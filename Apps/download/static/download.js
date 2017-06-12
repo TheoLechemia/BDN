@@ -75,11 +75,7 @@ function appCtrl (proxy, toaster){
     console.log(form);
 
     proxy.sendData(form).then(function(response){
-    	console.log(response.data)
-    	count = response.data.count;
-    	console.log(response.data.count)
-    	template = "Couche de point: "+count[0]+" obsevations <br> Couche de polygone: "+count[1]+" observations <br> Total: "+count[2]+" observations";
-    	toaster.pop('success', "Observations exportées", template, null, 'trustedHtml');
+    	toaster.pop('success', "Observations exportées avec succès", null, 'trustedHtml');
     	window.location =CONFIGURATION.URL_APPLICATION+'download/uploads/'+response.data.filename;       
     })
   }

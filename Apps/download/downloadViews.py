@@ -42,11 +42,10 @@ def index():
     return resp
 
 
-
 @download.route('/loadProtocoles', methods=['GET'])
 def getProtocoles():
     db = getConnexion()
-    sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM synthese.bib_projet ORDER BY id_projet ASC) p"
+    sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM synthese.bib_projet ORDER BY id_projet DESC) p"
     db.cur.execute(sql)
     return Response(json.dumps(db.cur.fetchone()[0]), mimetype='application/json')
 
@@ -54,7 +53,8 @@ def getProtocoles():
 def search_taxon_name(id_projet, expr):
     db=getConnexion()
     expr = "%"+expr+"%"
-    if id_projet != 0:
+    #tous les projets = 99999
+    if id_projet != 99999:
         sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
                 SELECT DISTINCT cd_nom, search_name, nom_valide, lb_nom from taxonomie.taxons_synthese
                 WHERE search_name ILIKE %s AND id_projet = %s
@@ -109,21 +109,26 @@ def getObs():
         paramtersCSV = list(reformatedParams)
         paramtersCSV.insert(0, 'to_csv')
 
-
+        firstParam = dictSQL['firstParam']
         sql_point = dictSQL['sql']%tuple(paramtersPoint)
         sql_poly = dictSQL['sql']%tuple(paramtersMaille)
         sql_csv = dictSQL['sql']%tuple(paramtersCSV)
 
         if schemaReleve == 'synthese':
-            id_projet = str(request.json['globalForm']['selectedProtocole']['id_projet'])
-            sql_point += " AND id_projet = {id_projet}"
-            sql_point = psysql.SQL(sql_point).format(id_projet=psysql.Identifier(id_projet)).as_string(db.cur)
+            id_projet = request.json['globalForm']['selectedProtocole']['id_projet']
+            sql_point = utils.askFirstParame(sql_point,firstParam)
+            sql_point += " id_projet = %s"
+            sql_point = db.cur.mogrify(sql_point, [id_projet])
 
-            sql_poly += " AND id_projet = {id_projet}"
-            sql_poly = psysql.SQL(sql_poly).format(id_projet=psysql.Identifier(id_projet)).as_string(db.cur)
+            sql_poly = utils.askFirstParame(sql_poly,firstParam)
+            sql_poly += " id_projet = %s"
+            sql_poly = db.cur.mogrify(sql_poly, [id_projet])
 
-            sql_csv += " AND id_projet = {id_projet}"
-            sql_csv = psysql.SQL(sql_csv).format(id_projet=psysql.Identifier(id_projet)).as_string(db.cur)
+            sql_csv = utils.askFirstParame(sql_csv,firstParam)
+            sql_csv += " id_projet = %s"
+            sql_csv = db.cur.mogrify(sql_csv, [id_projet])
+
+
 
         time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         filename = "Export_"+time
@@ -132,6 +137,13 @@ def getObs():
         poly_path = dirPath+"_maille"
         csv_path = dirPath+"_csv.csv"
         debug = dirPath+"_debug"
+
+        file = open(dirPath+'log.txt', 'w')
+        file.write(sql_point)
+        file.write(sql_poly)
+        file.write(sql_csv)
+        file.close()
+
 
         #construction de la requete a partir du formulaire envoye
         ###POINT###
@@ -150,17 +162,8 @@ def getObs():
         #ZIP
         utils.zipItwithCSV(dirPath, True)
 
-        queryCount ="""WITH t_point AS (SELECT COUNT(*) AS nb_point FROM {sch}.layer_point),
-                        t_poly AS  (SELECT COUNT(*) AS nb_poly  FROM {sch}.layer_poly),
-                        t_total AS (SELECT COUNT(*) AS nb_csv FROM {sch}.to_csv)
-                        SELECT nb_point, nb_poly, nb_csv
-                        FROM t_point, t_poly, t_total"""
-        queryCount = psysql.SQL(queryCount).format(sch=psysql.Identifier(schemaReleve)).as_string(db.cur)
-        db.cur.execute(queryCount)
-        count = db.cur.fetchone()
-
         db.closeAll()
-        return Response(json.dumps({'filename':filename, 'count':count}), mimetype='application/json')
+        return Response(json.dumps({'filename':filename}), mimetype='application/json')
 
 
 
