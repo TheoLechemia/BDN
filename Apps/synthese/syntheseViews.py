@@ -86,7 +86,7 @@ def getObs():
               LEFT JOIN utilisateurs.bib_organismes st ON st.id_organisme = s.id_structure
               LEFT JOIN synthese.bib_projet p ON s.id_projet = p.id_projet"""
         sqlAndParams = utils.buildSQL(sql, "synthese")
-        print db.cur.mogrify(sqlAndParams['sql'], sqlAndParams['params'])
+
         db.cur.execute(sqlAndParams['sql'], sqlAndParams['params'])
         res = db.cur.fetchall()
         myproperties = dict()
@@ -212,7 +212,7 @@ def export():
 
         #on zipe le tout
         utils.zipIt(completePath, maille)
-        #on retourne le nom du dossier creer, dans la reponse du poste
+        #on retourne le nom du dossier creer, dans la reponse du post
         return Response(flask.json.dumps(filename), mimetype='application/json')
     return Response(flask.json.dumps("from_get"), mimetype='application/json')
 

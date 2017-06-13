@@ -138,12 +138,6 @@ def getObs():
         csv_path = dirPath+"_csv.csv"
         debug = dirPath+"_debug"
 
-        file = open(dirPath+'log.txt', 'w')
-        file.write(sql_point)
-        file.write(sql_poly)
-        file.write(sql_csv)
-        file.close()
-
 
         #construction de la requete a partir du formulaire envoye
         ###POINT###
