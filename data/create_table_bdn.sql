@@ -187,18 +187,23 @@ CREATE TABLE synthese.bib_projet
 ALTER TABLE synthese.bib_projet
     OWNER TO onfuser;
 
-CREATE OR REPLACE FUNCTION synthese.refresh_vm_search_taxons() RETURNS TRIGGER AS $refresh_vm_search_taxons$
+INSERT INTO synthese.bib_projet(id_projet, nom_projet, table_independante, saisie_possible, nom_schema, nom_table, nom_bdd )
+VALUES (99999, 'Tous les projets', FALSE, FALSE, 'synthese', 'releve', 'synthese');
+
+--trigger pur raffraichir la vm taxonomie.taxons_synthese;
+CREATE OR REPLACE FUNCTION synthese.refresh_taxons_synthese() RETURNS TRIGGER AS $refresh_taxons_synthese$
     BEGIN
  
-   REFRESH MATERIALIZED VIEW synthese.vm_search_taxons;
+   REFRESH MATERIALIZED VIEW taxonomie.taxons_synthese;
+   RETURN NULL;
   
     END;
-$refresh_vm_search_taxons$ LANGUAGE plpgsql;
+$refresh_taxons_synthese$ LANGUAGE plpgsql;
 
 
-CREATE TRIGGER tr_refresh_vm_search_taxons
+CREATE TRIGGER tr_refresh_vm_taxons_syntese
 AFTER INSERT ON synthese.releve
-    FOR EACH ROW EXECUTE PROCEDURE synthese.refresh_vm_search_taxons();
+    FOR EACH ROW EXECUTE PROCEDURE synthese.refresh_taxons_synthese();
 
 
 INSERT INTO synthese.bib_protocole VALUES
