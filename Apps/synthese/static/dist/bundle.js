@@ -353,7 +353,7 @@ module.exports = function(angularInstance){
 __webpack_require__(0)(angularInstance);
 
 
-function listObsCtrl ($uibModal, $http, proxy){
+function listObsCtrl ($uibModal, $http, proxy, toaster){
 	listCtrl = this;
 	listCtrl.currentPoint = null;
 
@@ -403,7 +403,10 @@ function listObsCtrl ($uibModal, $http, proxy){
 	};
 
 	listCtrl.exportShape = function(geojson){
+		toaster.pop({type: 'wait', title: "", body:"Recherche des observations en cours"});
 	    proxy.exportShapeFile(geojson).then(function(response){
+	    toaster.clear();
+	    toaster.pop({type: 'success', title: "", body:"Les observations ont bien été téléchargées"});
 	      window.location =configuration.URL_APPLICATION+'synthese/uploads/'+response.data;       
 	    })
   	};
@@ -823,7 +826,6 @@ function appCtrl (proxy, toaster){
           ctrl.geojson = response.data;
           nbObs = ctrl.geojson.point.features.length+ctrl.geojson.maille.features.length
           ctrl.nbObs = nbObs+' observation(s)';
-          co
       }else{
         toaster.pop({ 'type': 'error', title: "", body:"Nombre d'observations trop important: affinez la recherche"});
       }

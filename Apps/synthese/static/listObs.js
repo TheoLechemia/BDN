@@ -3,7 +3,7 @@ module.exports = function(angularInstance){
 require('./services/proxy.js')(angularInstance);
 
 
-function listObsCtrl ($uibModal, $http, proxy){
+function listObsCtrl ($uibModal, $http, proxy, toaster){
 	listCtrl = this;
 	listCtrl.currentPoint = null;
 
@@ -53,7 +53,10 @@ function listObsCtrl ($uibModal, $http, proxy){
 	};
 
 	listCtrl.exportShape = function(geojson){
+		toaster.pop({type: 'wait', title: "", body:"Recherche des observations en cours"});
 	    proxy.exportShapeFile(geojson).then(function(response){
+	    toaster.clear();
+	    toaster.pop({type: 'success', title: "", body:"Les observations ont bien été téléchargées"});
 	      window.location =configuration.URL_APPLICATION+'synthese/uploads/'+response.data;       
 	    })
   	};

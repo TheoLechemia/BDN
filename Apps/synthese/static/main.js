@@ -39,7 +39,6 @@ function appCtrl (proxy, toaster){
           ctrl.geojson = response.data;
           nbObs = ctrl.geojson.point.features.length+ctrl.geojson.maille.features.length
           ctrl.nbObs = nbObs+' observation(s)';
-          co
       }else{
         toaster.pop({ 'type': 'error', title: "", body:"Nombre d'observations trop important: affinez la recherche"});
       }
