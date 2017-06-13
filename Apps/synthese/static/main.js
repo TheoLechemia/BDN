@@ -33,8 +33,7 @@ function appCtrl (proxy, toaster){
     toaster.pop({type: 'wait', title: "", body:"Recherche des observations en cours"});
     proxy.sendData(form).then(function(response){
       toaster.clear();
-      console.log(response.data.point.features.length);
-      console.log(response.data.maille.features.length);
+
 
       if(response.data.point.features.length + response.data.maille.features.length  < 8000){
           ctrl.geojson = response.data;
@@ -48,12 +47,6 @@ function appCtrl (proxy, toaster){
     }, function errorCallBack(){
       toaster.pop({ 'type': 'error', title: "", body:"Une erreur est survenue, merci de faire remonter le bug au gestionnaire de BDD"});
     });
-  }
-
-  ctrl.changeProtocole = function(protocole){
-    proxy.loadTaxons(protocole).then(function(response){
-      ctrl.taxonslist = response.data;
-    })
   }
 
 

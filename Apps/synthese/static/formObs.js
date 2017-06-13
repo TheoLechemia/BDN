@@ -31,11 +31,11 @@ function formControler(proxy, $http, $scope){
 		this.onFormSubmit({$event: {form: form}})
 	}
 
-	var promise = null;
-	formCtrl.search_taxons = function($viewValue, searchRegne) {
-		promise = proxy.loadTaxons($viewValue, searchRegne);
-		return promise.then(function(response){
-			return response.data;
+	formCtrl.search_taxons = function($viewValue, id_projet) {
+		if(id_projet === undefined) id_projet = 99999;
+		return proxy.loadTaxons($viewValue, id_projet)
+			.then(function(response){
+				return response.data;
 		})
 	}
 
@@ -50,9 +50,6 @@ function formControler(proxy, $http, $scope){
 	this.changeProtocole = function(protocole){
 		if(protocole){
 			currentProtocole = protocole
-		}
-		else{
-			currentProtocole = "Tout"
 		}
 		this.onProtocoleChange({$event:{'protocole':currentProtocole}})
 	}

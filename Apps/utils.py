@@ -184,14 +184,16 @@ def buildSQL(sql, app):
     firstParam = True
     #recuperation des parametres
     formParameters = getFormParameters(app)
-    #si ça vient de la synthese on recherche le protocole, sinon non
+    #si ça vient de la synthese on recherche le projet, sinon non
     if app == "synthese":
         if formParameters['protocole']:
-            currentProtocole = formParameters['protocole']['nom_schema']
-            sql = askFirstParame(sql, firstParam)
-            sql+="s.protocole = %s"
-            params.append(currentProtocole)
-            firstParam=False
+            id_projet = formParameters['protocole']['id_projet']
+            #si id projet est dif de 'tous les projet'
+            if id_projet != 99999:
+                sql = askFirstParame(sql, firstParam)
+                sql+="s.id_projet = %s"
+                params.append(id_projet)
+                firstParam=False
     if len(formParameters['listTaxons']) > 0:
         sql = askFirstParame(sql, firstParam)
         firstParam = False
@@ -293,14 +295,14 @@ def buildGeojsonWithParams(res):
         geometry = None
         #r[9] = loc_exact: check if its point or maille
         if r[9] == True:
-            mypropertiesPoint = {'nom_vern': r[4], 'lb_nom':r[2], 'cd_nom': r[3], 'date': date, 'protocole': r[6], 'observateur': r[10], 'structure': r[11], 'id_synthese': r[1], 'id' : r[1]}
+            mypropertiesPoint = {'nom_vern': r[4], 'lb_nom':r[2], 'cd_nom': r[3], 'date': date, 'projet': r[6], 'observateur': r[10], 'structure': r[11], 'id_synthese': r[1], 'id' : r[1], 'producteur': r[11], 'precision': r[12]}
             try:
                 geometry = ast.literal_eval( r[0])
             except ValueError:
                 pass
             geojsonPoint['features'].append({"type": "Feature", "properties": mypropertiesPoint, "geometry": geometry })
         else:
-            myPropertiesMaille = {'nom_vern': r[4], 'lb_nom':r[2], 'cd_nom': r[3], 'date': date, 'protocole': r[6], 'observateur': r[10], 'structure': r[11], 'id_synthese': r[1], 'id' : r[8]}
+            myPropertiesMaille = {'nom_vern': r[4], 'lb_nom':r[2], 'cd_nom': r[3], 'date': date, 'projet': r[6], 'observateur': r[10], 'structure': r[11], 'id_synthese': r[1], 'id' : r[8], 'producteur': r[11], 'precision': r[12]}
             try:
                 geometry = ast.literal_eval( r[7])
             except ValueError:

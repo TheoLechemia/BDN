@@ -77,7 +77,7 @@ def getObs():
     if flask.request.method == 'POST':
         geojsonMaille ={ "type": "FeatureCollection",  "features" : list() }
         geojsonPoint ={ "type": "FeatureCollection",  "features" : list() }
-        sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, p.nom_projet, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur, st.nom_organisme
+        sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, p.nom_projet, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)), s.code_maille, s.loc_exact, s.observateur, st.nom_organisme, s.precision
               FROM synthese.releve s
               LEFT JOIN layers.maille_1_2 l ON s.code_maille = l.id_maille
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
@@ -93,25 +93,28 @@ def getObs():
     return Response(flask.json.dumps({'point':geojsons['point'],'maille':geojsons['maille']}), mimetype='application/json')
 
 ######FORM#########
-#charge le bons taxons pour la recherche par nom latin et vernaculaire en fonction du protocole choisi
-@synthese.route('/loadTaxons/<expr>/<protocole>', methods=['GET', 'POST'])
-def loadTaxons(expr, protocole):
+#charge le bons taxons pour la recherche par nom latin et vernaculaire en fonction du projet choisi
+@synthese.route('/loadTaxons/<expr>/<int:id_projet>', methods=['GET', 'POST'])
+def loadTaxons(expr, id_projet):
     db=getConnexion()
-    if protocole == "undefined" or protocole == 'Tout':
+    expr = "%"+expr+"%"
+    #tous les projets = 99999
+    if id_projet != 99999:
         sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
                 SELECT DISTINCT cd_nom, search_name, nom_valide, lb_nom from taxonomie.taxons_synthese
-                WHERE search_name ILIKE %s
+                WHERE search_name ILIKE %s AND id_projet = %s
                 ORDER BY search_name ASC 
                 LIMIT 20) r"""
-        params = ["%"+expr+"%"]
-    else:       
+        params = [expr, id_projet]
+        db.cur.execute(sql, params)
+    else:
         sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
-                    SELECT DISTINCT cd_nom, search_name, nom_valide, lb_nom from taxonomie.taxons_synthese
-                    WHERE search_name ILIKE %s  AND regne = %s
-                    ORDER BY search_name ASC 
-                    LIMIT 20) r"""
-        params = ["%"+expr+"%", protocole]
-    db.cur.execute(sql, params)
+        SELECT DISTINCT cd_nom, search_name, nom_valide, lb_nom from taxonomie.taxons_synthese
+        WHERE search_name ILIKE %s
+        ORDER BY search_name ASC 
+        LIMIT 20) r"""
+        params = [expr]
+        db.cur.execute(sql, params)
     res = db.cur.fetchone()[0]
     db.closeAll()
     return Response(flask.json.dumps(res), mimetype='application/json')
@@ -119,7 +122,7 @@ def loadTaxons(expr, protocole):
 @synthese.route('/loadProtocoles', methods=['GET', 'POST'])
 def getProtocoles():
     db = getConnexion()
-    sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM synthese.bib_projet) p"
+    sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM synthese.bib_projet ORDER BY id_projet DESC) p"
     db.cur.execute(sql)
     return Response(flask.json.dumps(db.cur.fetchone()[0]), mimetype='application/json')
 

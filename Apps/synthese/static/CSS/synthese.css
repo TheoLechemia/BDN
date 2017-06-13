@@ -104,10 +104,6 @@ box-shadow: 0 1px 2px #c8d1d3;
   margin-left: 50px;
 }
 
-/*#input_lbnom {
-  margin-bottom: 5px!important;
-  padding: 6px 12px!important;
-}*/
 
 select{
   padding: 6px 12px!important;
@@ -155,7 +151,7 @@ select{
 #input_lbnom + ul{
   position: fixed;
   z-index: 1500;
-  top:235px!important;
+  top:250px!important;
 }
 
 .ng-valid-date + ul{

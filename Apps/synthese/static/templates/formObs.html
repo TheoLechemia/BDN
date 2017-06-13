@@ -5,29 +5,16 @@
 	<form>
 		<div class="section">
 				<div class="section-title"> Quoi ?</div>
-					<div class="form-inline form-group">
-						<div class="radio">
-						  <input  class="radiotout" ng-model="$ctrl.form.searchRegne" class="radio" type="radio" name="optradio" value="Tout"  ng-checked="true" ng-click="$ctrl.changeProtocole('Tout')">
-						  <label>Tout</label>
-						</div>			
-						<div class="radio">
-				  			<input ng-model="$ctrl.form.searchRegne" class="radio" type="radio" name="optradio" value="Animalia" ng-click="$ctrl.changeProtocole('Animalia')">
-				  			<label>Faune</label>
-						</div>
-						<div class="radio">
-						  <input ng-model="$ctrl.form.searchRegne" class="radio" type="radio" name="optradio" value="Plantae" ng-click="$ctrl.changeProtocole('Plantae')">
-						  <label>Flore</label>
-						</div>
-					
+					<div class="form-group">
+						<select class="form-control" ng-model="$ctrl.form.selectedProtocole" ng-change="$ctrl.changeProtocole($ctrl.form.selectedProtocole)" ng-options="row.nom_projet for row in $ctrl.protocoles">
+				    		<option value=""> - Selectionner un projet - </option>
+				    	</select>
 					</div>
-					
-				
-<!-- 			 		<input id="input_lbnom" autocomplete="off" placeholder="Nom Latin ou vernaculaire " type="text" ng-model="$ctrl.form.taxon" typeahead-editable="false" typeahead-min-length="1" uib-typeahead="taxon as taxon.search_name for taxon in $ctrl.taxons | filter:{lb_nom:$viewValue} | limitTo:8" class="form-control" typeahead-min-length="0" typeahead-no-results="noResults" ng-change="$ctrl.fillTaxonEvent()" typeahead-on-select="$ctrl.onSelectlbNom($item, $model, $label)"> -->
 					<div >
 						<label>Taxon(s)</label>
 					 	<input id="input_lbnom" class="form-control" name="lb_nom" autocomplete="off" placeholder="Nom latin ou vernaculaire " type="text" ng-model="$ctrl.form.taxon.lb_nom" 
 					 	typeahead-editable="false"
-					 	uib-typeahead="taxon as taxon.search_name for taxon in $ctrl.search_taxons($viewValue, $ctrl.form.searchRegne) | limitTo:8"
+					 	uib-typeahead="taxon as taxon.search_name for taxon in $ctrl.search_taxons($viewValue, $ctrl.form.selectedProtocole.id_projet) | limitTo:8"
 					 	typeahead-min-length="2" typeahead-no-results="$ctrl.noResults"
 					 	 typeahead-loading="$ctrl.loadingLbnom"
 					 	 typeahead-on-select ="$ctrl.onSelectlbNom($item, $model, $label)">
