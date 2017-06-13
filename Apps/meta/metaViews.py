@@ -20,7 +20,7 @@ def meta_index():
 @check_auth(3)
 def getProjectsList():
     db = getConnexion()
-    sql = 'SELECT * FROM synthese.bib_projet'
+    sql = 'SELECT * FROM synthese.bib_projet ORDER BY id_projet DESC'
     res = utils.sqltoDict(sql, db.cur)
     db.closeAll()
     return  Response(flask.json.dumps(res), mimetype='application/json')
