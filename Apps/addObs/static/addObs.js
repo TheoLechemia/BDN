@@ -94,7 +94,6 @@ function formController($http, toaster){
 
     if (form.$valid){
           $http.post(configuration.URL_APPLICATION+'addObs/submit/', completeForm).then(function(response){
-          if(response.status == 200){
             formCtrl.formSuccessfullySent = true;
             toaster.success({title: "OK", body:"Observation enregistrée avec succès"});
 
@@ -113,7 +112,6 @@ function formController($http, toaster){
                    }
 
           formCtrl.child.protocoleForm = {};
-          }
           setTimeout(function(){
             formCtrl.formSuccessfullySent = false;
              }, 200);
@@ -122,6 +120,8 @@ function formController($http, toaster){
           form.lb_nom.$pristine = true;
           form.date.$pristine = true;
           formCtrl.validationAttempt = false;
+    }, function erroCallBack(){
+    	toaster.error({title: "Attention", body:"Une erreur s'est produite, merci de faire remonter le bug au gestionnaire de BDD"})
     })
     }
     else{
