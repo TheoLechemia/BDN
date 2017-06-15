@@ -21,7 +21,16 @@ CREATE TABLE synthese.releve
   CONSTRAINT synthese_pkey PRIMARY KEY (id_synthese),
   CONSTRAINT cd_nom FOREIGN KEY (cd_nom)
       REFERENCES taxonomie.taxref (cd_nom) MATCH SIMPLE
-      ON UPDATE CASCADE ON DELETE SET NULL
+      ON UPDATE CASCADE ON DELETE SET NULL,
+ CONSTRAINT code_maille_fk FOREIGN KEY (code_maille)
+ 	REFERENCES layers.maille_1_2 (id_maille) MATCH SIMPLE
+ 	ON UPDATE CASCADE,
+ CONSTRAINT ccod_frt_fk FOREIGN KEY (ccod_frt)
+      REFERENCES layers.perimetre_forets (ccod_frt) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT insee_fk FOREIGN KEY (insee)
+      REFERENCES layers.commune (code_insee) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE NO ACTION
 );
 ALTER TABLE synthese.releve
   OWNER TO onfuser;
@@ -63,7 +72,16 @@ CREATE TABLE contact_faune.releve
   CONSTRAINT cd_nom FOREIGN KEY (cd_nom)
       REFERENCES taxonomie.taxref (cd_nom) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE SET NULL,
-  CONSTRAINT fa_id_synthese UNIQUE (id_synthese)
+  CONSTRAINT fa_id_synthese UNIQUE (id_synthese),
+   CONSTRAINT code_maille_fk FOREIGN KEY (code_maille)
+ 	REFERENCES layers.maille_1_2 (id_maille) MATCH SIMPLE
+ 	ON UPDATE CASCADE,
+ CONSTRAINT ccod_frt_fk FOREIGN KEY (ccod_frt)
+      REFERENCES layers.perimetre_forets (ccod_frt) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT insee_fk FOREIGN KEY (insee)
+      REFERENCES layers.commune (code_insee) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE NO ACTION
 );
 
 
@@ -104,7 +122,16 @@ CREATE TABLE contact_flore.releve
   CONSTRAINT cd_nom FOREIGN KEY (cd_nom)
       REFERENCES taxonomie.taxref (cd_nom) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE SET NULL,
-  CONSTRAINT fl_id_synthese UNIQUE (id_synthese)
+  CONSTRAINT fl_id_synthese UNIQUE (id_synthese),
+   CONSTRAINT code_maille_fk FOREIGN KEY (code_maille)
+ 	REFERENCES layers.maille_1_2 (id_maille) MATCH SIMPLE
+ 	ON UPDATE CASCADE,
+ CONSTRAINT ccod_frt_fk FOREIGN KEY (ccod_frt)
+      REFERENCES layers.perimetre_forets (ccod_frt) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE NO ACTION,
+  CONSTRAINT insee_fk FOREIGN KEY (insee)
+      REFERENCES layers.commune (code_insee) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE NO ACTION
 );
   ALTER TABLE contact_flore.releve
     OWNER TO onfuser;

@@ -42,6 +42,10 @@ then
 echo "Création de la BDD..."
 
   sudo -u postgres psql -c "CREATE USER $user_bdn WITH PASSWORD '$user_bdn_pass'"
+  sudo -u postgres psql -c "CREATE USER bdn_superuser WITH PASSWORD 'super_userMartine50=';"
+
+  sudo -u postgres psql -c "ALTER ROLE bdn_superuser Superuser;"
+
   sudo -n -u postgres -s createdb -O $user_bdn $db_name
 
   echo "Ajout de postGIS et pgSQL à la base de données"
@@ -53,7 +57,7 @@ echo "Création de la BDD..."
   sudo -n -u postgres -s psql -d $db_name -c "CREATE SCHEMA taxonomie AUTHORIZATION $user_bdn;"
   sudo -n -u postgres -s psql -d $db_name -c "CREATE SCHEMA layers AUTHORIZATION $user_bdn;"
   sudo -n -u postgres -s psql -d $db_name -c "CREATE SCHEMA fdw AUTHORIZATION $user_bdn;"
-    sudo -n -u postgres -s psql -d $db_name -c "CREATE SCHEMA utilisateur AUTHORIZATION $user_bdn;"
+  sudo -n -u postgres -s psql -d $db_name -c "CREATE SCHEMA utilisateur AUTHORIZATION $user_bdn;"
 
 
 
@@ -90,20 +94,20 @@ echo "Creation des tables spatiales"
 
  sudo -n -u postgres -s shp2pgsql -W "LATIN1" -s $projection -D -I ./data/layers/COMMUNE.shp layers.commune | sudo -n -u postgres -s psql -d $db_name
 
- sudo -n -u postgres -s psql -d $db_name -c " GRANT SELECT ON layers.commune TO $user_bdn;"
- sudo -n -u postgres -s psql -d $db_name -c "GRANT USAGE, SELECT ON SEQUENCE layers.commune_gid_seq TO $user_bdn;"
+sudo -n -u postgres -s psql -d $db_name -c "ALTER TABLE layers.commune OWNER TO $user_bdn;"
+sudo -n -u postgres -s psql -d $db_name -c "ALTER TABLE layers.commune DROP PRIMARY KEY commune_pkey; ALTER TABLE layers.commune ADD CONSTRAINT commune_pkey PRIMARY KEY (code_insee);"
  
 
 
 sudo -n -u postgres -s shp2pgsql -W "LATIN1" -s $projection -D -I ./data/layers/perimetre_forets.shp layers.perimetre_forets | sudo -n -u postgres -s psql -d $db_name
-sudo -n -u postgres -s psql -d $db_name -c " GRANT SELECT ON layers.perimetre_forets TO $user_bdn;"
-sudo -n -u postgres -s psql -d $db_name -c "GRANT USAGE, SELECT ON SEQUENCE layers.perimetre_forets_gid_seq TO $user_bdn;"
+sudo -n -u postgres -s psql -d $db_name -c "ALTER TABLE layers.perimetre_forets OWNER TO $user_bdn;"
+sudo -n -u postgres -s psql -d $db_name -c "ALTER TABLE layers.perimetre_forets DROP PRIMARY KEY perimetre_forets_pkey; ALTER TABLE layers.perimetre_forets ADD CONSTRAINT perimetre_forets_pkey PRIMARY KEY (ccod_frt);"
 
-sudo -n -u postgres -s shp2pgsql -W "LATIN1" -s $projection -D -I ./data/layers/GLP_UTM20N1X1.shp layers.mailles_1k | sudo -n -u postgres -s psql -d $db_name
-sudo -n -u postgres -s psql -d $db_name -c " GRANT SELECT ON layers.mailles_1k TO $user_bdn;"
-sudo -n -u postgres -s psql -d $db_name -c "GRANT USAGE, SELECT ON SEQUENCE layers.mailles_1k_gid_seq TO $user_bdn;"
 
-sudo -n -u postgres -s psql -d $db_name -c " ALTER TABLE layers.mailles_1k RENAME code_10km TO code_1km;"
+sudo -n -u postgres -s shp2pgsql -W "LATIN1" -s $projection -D -I ./data/layers/mailles_1_2.shp layers.maille_1_2 | sudo -n -u postgres -s psql -d $db_name
+sudo -n -u postgres -s psql -d $db_name -c "ALTER TABLE layers.maille_1_2 OWNER TO $user_bdn;"
+sudo -n -u postgres -s psql -d $db_name -c "ALTER TABLE layers.maille_1_2 DROP PRIMARY KEY maille_1_2_pkey; ALTER TABLE layers.maille_1_2 ADD CONSTRAINT maille_1_2_pkey PRIMARY KEY (id_maille);"
+
 
 sudo sed -i -e "s/onfuser/$user_bdn/g" /tmp/create_table_bdn.sql
 sudo sed -i -e "s/32620/$projection/g" /tmp/create_table_bdn.sql

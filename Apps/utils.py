@@ -397,10 +397,22 @@ def createProject(db, projectForm, fieldForm):
         formatedCreate = psysql.SQL(formatedCreate).format(champ=psysql.Identifier(r['nom_champ'])).as_string(db.cur)
         params.append(AsIs(r['db_type']))
 
+    #on rajoute les contraintes 
+    formatedCreate += """ CONSTRAINT code_maille_fk FOREIGN KEY (code_maille)
+    REFERENCES layers.maille_1_2 (id_maille) MATCH SIMPLE
+    ON UPDATE CASCADE ON DELETE NO ACTION,
+    CONSTRAINT ccod_frt_fk FOREIGN KEY (ccod_frt)
+      REFERENCES layers.perimetre_forets (ccod_frt) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE NO ACTION,
+    CONSTRAINT insee_fk FOREIGN KEY (insee)
+      REFERENCES layers.commune (code_insee) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE NO ACTION"""
+
+    #on ferme l'instruction
+    formatedCreate +=");"
+    #ajout des permissions
     addPermission = "ALTER TABLE {sch}.{nom_table} OWNER TO {user}"
     addPermission = psysql.SQL(addPermission).format(sch=psysql.Identifier(schemaName),nom_table=psysql.Identifier(nom_table),user=psysql.Identifier(database['USER'])).as_string(db.cur)
-
-    formatedCreate = formatedCreate[0:-1]+");"
     formatedCreate += addPermission
     db.cur.execute(formatedCreate, params)
     db.conn.commit()
