@@ -398,9 +398,12 @@ def createProject(db, projectForm, fieldForm):
         params.append(AsIs(r['db_type']))
 
     #on rajoute les contraintes 
-    formatedCreate += """ CONSTRAINT code_maille_fk FOREIGN KEY (code_maille)
-    REFERENCES layers.maille_1_2 (id_maille) MATCH SIMPLE
-    ON UPDATE CASCADE ON DELETE NO ACTION,
+    formatedCreate += """  CONSTRAINT cd_nom FOREIGN KEY (cd_nom)
+      REFERENCES taxonomie.taxref (cd_nom) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT code_maille_fk FOREIGN KEY (code_maille)
+        REFERENCES layers.maille_1_2 (id_maille) MATCH SIMPLE
+        ON UPDATE CASCADE ON DELETE NO ACTION,
     CONSTRAINT ccod_frt_fk FOREIGN KEY (ccod_frt)
       REFERENCES layers.perimetre_forets (ccod_frt) MATCH SIMPLE
       ON UPDATE CASCADE ON DELETE NO ACTION,
