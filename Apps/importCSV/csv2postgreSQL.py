@@ -117,9 +117,6 @@ def csv2PG(file):
             stringValues+=");"
 
             sql = stringInsert+stringValues
-            file = open(r'C:\Users\tl90744\Documents\poubelle\logQuery.log', 'w')
-            file.write(db.cur.mogrify(sql, generalValues))
-            file.close()
             db.cur.execute(sql, generalValues)
             db.conn.commit()
 
