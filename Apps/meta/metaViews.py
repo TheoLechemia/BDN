@@ -11,13 +11,13 @@ meta = flask.Blueprint('meta', __name__, static_url_path="/meta", static_folder=
 
 
 @meta.route("/")
-@check_auth(3)
+@check_auth(1)
 def meta_index():
     resp = flask.make_response(flask.render_template('metaIndex.html', configuration=config, page_title=u"Gestion des projets de la BDN"))
     return resp
 
 @meta.route("/listProject", methods=['GET'])
-@check_auth(3)
+@check_auth(1)
 def getProjectsList():
     db = getConnexion()
     sql = 'SELECT * FROM synthese.bib_projet ORDER BY id_projet DESC'
@@ -46,7 +46,7 @@ def getOneProject(idproject):
 
 
 @meta.route("/editProject", methods=['POST'])
-@check_auth(3)
+@check_auth(6)
 def editProject():
     if flask.request.method == 'POST':
         db = getConnexion()
@@ -114,7 +114,7 @@ def editProject():
 
 
 @meta.route("/addProject", methods=['POST'])
-@check_auth(3)
+@check_auth(6)
 def addProject():
     if flask.request.method == 'POST':
         db = getConnexion()

@@ -43,6 +43,9 @@ def check_auth(level):
                     token = str(random.random())
                     token = hashlib.md5(token).hexdigest()
                     resp.set_cookie('token', token)
+                    print 'AUTH LEVEEEEEEEEEEEL'
+                    print session['auth_level']
+                    resp.set_cookie('auth_level', str(session['auth_level']))
                     session['token'] = token
                     #on check le niveau d authentification
                     if session['auth_level']>=level:

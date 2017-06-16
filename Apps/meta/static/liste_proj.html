@@ -27,7 +27,7 @@
 					<td ng-if="projet.table_independante === true"> Données complexes </td>
 					<td ng-if="projet.table_independante === false"> Données simples </td>
 
-					<td> <a ui-sref="editProject({id: {{projet.id_projet}} })") >  <span class="glyphicon glyphicon-pencil">  </span></td>
+					<td> <a ui-sref="editProject({id: {{projet.id_projet}} })") >  <button ng-class="$ctrl.authLevel <6 ? 'disabled': 'null'" class="btn btn-success btn-xs">  <span class="glyphicon glyphicon-pencil">  </span> </button> </a></td>
 				</tr>
 
 			</tbody>
@@ -35,4 +35,4 @@
 		
 	</div>
 </div>
-<a ui-sref="addProject">  <button class="btn btn-success" ng-click='swithView()'> Ajouter un projet</button> </a>
+<a ui-sref="addProject">  <button ng-class="$ctrl.authLevel <6 ? 'disabled': 'null'" class="btn btn-success" ng-click='swithView()'> Ajouter un projet</button> </a>

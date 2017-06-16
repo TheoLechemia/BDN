@@ -1,4 +1,4 @@
-var angularApp = angular.module("app", ['ui.router', 'ngSanitize', 'toaster', 'ngAnimate']);
+var angularApp = angular.module("app", ['ui.router', 'ngSanitize', 'toaster', 'ngAnimate', 'ngCookies']);
 angularApp.config([ '$stateProvider', '$urlServiceProvider', function($stateProvider, $urlServiceProvider) {
 
 	$urlServiceProvider.rules.otherwise({ state: 'listProj' });
@@ -101,8 +101,13 @@ angularApp.component('metaApp', {
 // LISTE DES PROTOCOLES
 
 
-function listProtController($http){
+function listProtController($http, $cookies){
 	listCtrl = this;
+
+	listCtrl.$onInit = function(){
+		this.authLevel = parseInt($cookies.get('auth_level'));
+		console.log(this.authLevel);
+	}
 
 	$http.get(configuration.URL_APPLICATION+'meta/listProject').then(function(response){
 		listCtrl.projets = response.data;
