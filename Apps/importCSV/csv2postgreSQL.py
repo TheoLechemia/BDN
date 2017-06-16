@@ -6,28 +6,28 @@ from flask import session
 from Apps.database import *
 from ..config import config
 
-def getSpec(specNumber, row, interpretationDict):
-    stringList = row[specNumber].split('#')
-    print stringList
-    value = None
-    #si le champs n'est pas vide on recupere l'id situe apres le #
-    if len(stringList) != 1:
-        specInt = int(stringList[1])
-        try:
-            value = interpretationDict[specNumber][specInt]
-            #if value = '': ce n'est pas un champs a choix mutliple, on recupere juste le nombre rentre avec le #
-        except KeyError:
-            print "Une erreur est survenue, vérifier le tableau de conversion des champs generiques"
-            value = stringList[1]
-    print value
-    return value
+# def getSpec(specNumber, row, interpretationDict):
+#     stringList = row[specNumber].split('#')
+#     print stringList
+#     value = None
+#     #si le champs n'est pas vide on recupere l'id situe apres le #
+#     if len(stringList) != 1:
+#         specInt = int(stringList[1])
+#         try:
+#             value = interpretationDict[specNumber][specInt]
+#             #if value = '': ce n'est pas un champs a choix mutliple, on recupere juste le nombre rentre avec le #
+#         except KeyError:
+#             print "Une erreur est survenue, vérifier le tableau de conversion des champs generiques"
+#             value = stringList[1]
+#     print value
+#     return value
 
-def getSpec_without_dict(specNumber, row):
-    tabInter = row[specNumber].split('#')
-    value = None
-    if len(tabInter) != 1:
-        value = tabInter[1]
-    return value
+# def getSpec_without_dict(specNumber, row):
+#     tabInter = row[specNumber].split('#')
+#     value = None
+#     if len(tabInter) != 1:
+#         value = tabInter[1]
+#     return value
 
 def csv2PG(file):
     db = getConnexion()
@@ -44,18 +44,22 @@ def csv2PG(file):
 
         for row in reader:
             ###COMMUN###
-            #recupere les bib champs du protocole de la ligne et construit le dict pour interprete les champs
-            if inputProtocole != row['protocole']:
-                inputProtocole =  row['protocole']
-                fullTableName = inputProtocole+".releve"
+            #recupere les infos sur le projet de la ligne
+            sql = """SELECT id_projet, nom_schema from synthese.bib_projet
+					WHERE nom_projet = %(input)s OR nom_schema = %(input)s """
+            db.cur.execute(sql, {'input':row['protocole']}) 
+            res = db.cur.fetchone()
+            id_projet = res[0]
+            inputProtocole = res[1]
+            fullTableName = inputProtocole+".releve"
 
-                #la liste des champs avec les spec
-                sql = "SELECT no_spec, nom_champ FROM "+inputProtocole+".bib_champs_"+inputProtocole
-                db.cur.execute(sql)
-                res = db.cur.fetchall()
-                fieldList= list()
-                for r in res:
-                    fieldList.append({'spec_name': r[0], 'field_name': r[1]})
+            #recupere les bib champs du protocole de la ligne
+            sql = "SELECT no_spec, nom_champ FROM "+inputProtocole+".bib_champs_"+inputProtocole
+            db.cur.execute(sql)
+            res = db.cur.fetchall()
+            fieldList= list()
+            for r in res:
+                fieldList.append({'spec_name': r[0], 'field_name': r[1]})
 
             observateur = row['observateur_nom']+" "+ row['observateur_prenom']
             protocole = row['protocole']
@@ -93,10 +97,10 @@ def csv2PG(file):
             loc_exact = True
             code_maille = None
 
-            stringInsert = "INSERT INTO "+fullTableName+" (observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc, diffusable"
-            stringValues = " VALUES (%s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s, %s, %s"
+            stringInsert = "INSERT INTO "+fullTableName+"(id_projet, observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc, diffusable"
+            stringValues = " VALUES (%s, %s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s, %s, %s"
 
-            generalValues = [observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc, True]
+            generalValues = [id_projet, observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc, True]
             for field in fieldList:
 
                 tabInter = row[field['spec_name']].split('#')
@@ -113,6 +117,9 @@ def csv2PG(file):
             stringValues+=");"
 
             sql = stringInsert+stringValues
+            file = open(r'C:\Users\tl90744\Documents\poubelle\logQuery.log', 'w')
+            file.write(db.cur.mogrify(sql, generalValues))
+            file.close()
             db.cur.execute(sql, generalValues)
             db.conn.commit()
 
