@@ -43,7 +43,8 @@ def mapValidation(id_projet):
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
               LEFT JOIN layers.maille_1_2 l ON s.code_maille = l.id_maille
               JOIN synthese.bib_projet p ON p.id_projet = s.id_projet 
-              WHERE s.valide = false AND s.id_projet = %s AND id_structure = %s"""
+              WHERE s.valide = false AND s.id_projet = %s AND id_structure = %s
+              ORDER BY s.date DESC"""
     param = [id_projet, id_structure]
     db.cur.execute(sql, param)
     res = db.cur.fetchall()
@@ -88,7 +89,7 @@ def deleteRow(id_synt, protocole):
     db.cur.execute(sql, param) 
 
     query = "DELETE FROM {schm}.releve WHERE id_synthese = %s; "
-    formatedQuery = psysql.SQL(sql).format(schm=psysql.Identifier(protocole)).as_string(db.cur)
+    formatedQuery = psysql.SQL(query).format(schm=psysql.Identifier(protocole)).as_string(db.cur)
     db.cur.execute(formatedQuery, param) 
     db.conn.commit()
     db.closeAll()

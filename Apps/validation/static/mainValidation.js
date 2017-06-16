@@ -13,7 +13,6 @@ $(document).ready( function () {
 
 	// tooltip initialization
 	  $('[data-toggle="tooltip"]').tooltip();
-	  console.log('tooltip it')
 
 	// uncheck all checkbox
 	$(".check").prop('checked', false);
@@ -56,7 +55,6 @@ var selectedStyle = {
 		   'weight':3
 		};
 
- console.log(observations)
  
  function generateLayerFromGeojson(observations){
  	currentGeojsonLayer = L.geoJson(observations, {
@@ -113,25 +111,20 @@ L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/
 
       	row = this.parentElement;
       	id_synthese = $(row).attr("idSynthese");
-      	console.log(id_synthese);
-      	console.log(dictLayer);
          $(row).siblings().removeClass('currentRow');
          $(row).addClass('currentRow');
 
         selectLayer = dictLayer[id_synthese];
-        console.log(selectLayer);
 
         if (selectLayer != undefined) {
 	        selectLayer.setStyle(selectedStyle);
 
 	        if (selectLayer instanceof L.Polygon) {
-	        	console.log(selectLayer._bounds._northEast);
 	        	current_lat_lng = selectLayer._bounds._northEast;
 	        }
 	        else{
 	        	current_lat_lng = selectLayer._latlng;
 	        }
-	        console.log(current_lat_lng);
 	        if(map.getZoom() > 13){
 				map.setView(current_lat_lng);
 			} else {
