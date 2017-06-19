@@ -444,6 +444,9 @@ module.exports = function(angularInstance){
 		mapCtrl = this;
 		var selectLayer;
 		layersDict = {};
+		console.log("ohohhhhhhhhhhhhhhhhhh")
+		console.log(configuration.MAP.LAYERS);
+		this.layers = configuration.MAP.LAYERS;
 
 
 		mapCtrl.center = {

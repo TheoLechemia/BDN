@@ -91,9 +91,29 @@ function bindMarkers(feature, layer){
 }
 
 
+var baseMaps = {
+            OpenStreetMap: L.tileLayer('http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png', {
+                // tslint:disable-next-line:max-line-length
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
+            }),
+            Satelite: L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGhlb2xlY2hlbWlhIiwiYSI6ImNpa29lODhvejAwYTl3MGxzZGY0aHc0NXIifQ.fEujW2fUlRuUk9PHfPdKIg', {
+                // tslint:disable-next-line:max-line-length
+                attribution: 'MapBox'
+            }),
+            OpenStreetMap2: L.tileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+                // tslint:disable-next-line:max-line-length
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+            })
+};
+
 var currentGeoJson;
-var map = L.map('map').setView([configuration.MAP.COORD_CENTER.Y, configuration.MAP.COORD_CENTER.X],configuration.MAP.ZOOM_LEVEL );
-L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGhlb2xlY2hlbWlhIiwiYSI6ImNpa29lODhvejAwYTl3MGxzZGY0aHc0NXIifQ.fEujW2fUlRuUk9PHfPdKIg').addTo(map);
+var map = L.map('map', {
+	'center': [configuration.MAP.COORD_CENTER.Y, configuration.MAP.COORD_CENTER.X],
+	'zoom': configuration.MAP.ZOOM_LEVEL,
+	'layers': [baseMaps.OpenStreetMap]
+});
+
+L.control.layers(baseMaps).addTo(map);
 
 
   	// display geojson

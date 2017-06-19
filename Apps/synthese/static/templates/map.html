@@ -1,4 +1,9 @@
 <div class="panel panel-default"">
-	<leaflet center="$ctrl.center" width="100%" height="77vh" geojson="$ctrl.geojsonToDirective" geojson-nested="true" ></leaflet>
+	<leaflet center="$ctrl.center" layers="$ctrl.layers" width="100%" height="77vh" geojson="$ctrl.geojsonToDirective" geojson-nested="true" >
+		<layercontrol order="normal"  auto-hide-opacity="true" show-groups="true"
+            title="Layer Manager" base-title="Base Layers" overlays-title="Overlays Layers">
+            	
+        </layercontrol>
+	</leaflet>
 </div>
 
