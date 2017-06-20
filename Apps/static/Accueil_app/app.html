@@ -1,0 +1,70 @@
+<div class="sidebar-offcanvas" id="sidebar" role="navigation" style="margin-top: -50px;">
+    <ul class="nav">
+      <li class="active" onclick="collapse()"> <a href="#"> <i class="fa fa-bars" aria-hidden="true"></i> </a> </li>
+      <li><a href= {{url_for('meta.meta_index')}} ><i class="fa fa-book" aria-hidden="true"></i> <span class="hide innerText"> Gestion des projets </span></a></li>
+      <li><a target="_blank" href="http://213.32.79.141/taxhub"><i class="fa fa-leaf" aria-hidden="true"></i> <span class="hide innerText"> Gestion des taxons </span></a></li>
+      <li><a target="_blank" href="http://213.32.79.141/atlas"><i class="fa fa-map" aria-hidden="true"></i> <span class="hide innerText"> Atlas de la biodiversité </span></a></li>              
+    </ul>
+</div>
+<div class="row">
+              <div style="width: 70%; margin-left:15%">
+                <div style="width: 100%">
+                  <div class="col-lg-3 panel panel-index " style=";">  
+                      <a href="{{url_for('addObs.addObs_index')}}"  > 
+                        <i class="fa fa-pencil-square-o " style="font-size: 150px;"> </i>
+                      </a>
+                      <h4>Saisir des données</h4>
+                  </div><!-- /.col-lg-4 -->
+
+                    <div class="col-lg-3 panel panel-index" >
+                      <a  href="{{url_for('validation.indexValidation')}}" >
+                        <i class="fa fa-check-circle-o"  style="font-size: 150px;"> </i>
+                      </a>
+                      <h4>Interface de validation </h4>
+                    </div><!-- /.col-lg-4 -->
+                    <div class="col-lg-3 panel panel-index" >  
+                      <a href="{{url_for('download.index')}}"  > 
+                        <i class="fa fa-cloud-download " style="font-size: 150px;"> </i>
+                      </a>
+                      <h4>Exporter des données</h4>
+                    </div><!-- /.col-lg-4 -->
+                    <div class="col-lg-3 panel panel-index">
+                      <a  href="{{url_for('synthese.synthese_index')}}">
+                       <i class="fa fa-search "  style="font-size: 150px;"> </i> 
+                      </a>
+                      <h4>Synthese faune - flore </h4>
+                    </div><!-- /.col-lg-4 -->
+                </div>
+            </div>
+</div><!-- /.row -->
+     
+<div class="row" style="height: 80px;"> </div>
+
+	<div style="width: 70%; margin-left:37%; font-family: Lucida Console; text-decoration: underline;"> <strong><h3>La BDN en quelques chiffres</h3></strong> </div>
+	<div style="width: 70%; margin-left:22%;  ">
+	       
+	      <div class="row">
+	     
+	        <div style="text-align: center;" >
+
+	            <div class ="col-lg-3 col-md-3 col-sm-12 col-xs-12 panel panel-default" style="cursor: default;">
+	                <span class="glyphicon glyphicon-search"></span>
+	                <h1> {{$ctrl.stat.nb_tot_obs}} </h1>
+	                <h4> observations</h4>
+	                
+	            </div>
+	            <div class ="col-lg-3 col-md-3 col-sm-12 col-xs-12 panel panel-default"  ui-sref="listeTaxons">
+	                <span class="glyphicon glyphicon-leaf"></span>
+	                <h1> {{$ctrl.stat.nb_tot_tax}}</h1>
+	                <h4> espèces</h4>
+
+	            </div>
+	            <div class ="col-lg-3 col-md-3 col-sm-12 col-xs-12 panel panel-default" style="cursor: default;">
+	                <span class="glyphicon glyphicon-user"> </span>
+	                <h1>{{$ctrl.stat.nb_tot_observateurs}}</h1>
+	                <h4> observateurs</h4>
+
+	            </div>
+	          </div>
+	      </div>
+</div>

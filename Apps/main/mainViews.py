@@ -1,5 +1,5 @@
 #coding: utf-8
-from flask import Blueprint, render_template, flash, request, redirect, url_for, session, make_response
+from flask import Blueprint, render_template, flash, request, redirect, url_for, session, make_response, json
 from ..config import config
 from ..database import *
 import psycopg2
@@ -8,6 +8,7 @@ from ..auth import check_auth, User, loadCurrentUser
 import hashlib
 import time
 import random
+from werkzeug.wrappers import Response 
 
 
 
@@ -69,10 +70,15 @@ def login():
 
 @main.route('/')
 @check_auth(1)
-#@gen_token
 def index():
+    resp = make_response(render_template('index.html', configuration=config))
+    return resp
+
+@main.route('/getStats', methods=['GET'])
+@check_auth(1)
+def getStat():
     db = getConnexion()
-    stat = {}
+    stat = dict()
     sql = """WITH nb_taxons AS (SELECT COUNT(DISTINCT cd_nom) as nb_tot_tax FROM synthese.releve),
                   nb_obs AS (SELECT COUNT(*) as nb_tot_obs FROM synthese.releve ),
                   nb_observateur AS (SELECT COUNT(DISTINCT observateur) as nb_tot_observateurs FROM synthese.releve)
@@ -83,8 +89,25 @@ def index():
     stat['nb_tot_tax'] = res[0]
     stat['nb_tot_obs'] = res[1]
     stat['nb_tot_observateurs'] = res[2]
-    resp = make_response(render_template('index.html', stat=stat, configuration=config))
-    return resp
+    db.closeAll()
+    return Response(json.dumps(stat), mimetype='application/json')
+
+@main.route('/getAllTaxons', methods=['GET'])
+def getAllTaxons():
+    print 'LAAAAAAAAAAAAAAAAA'
+    db = getConnexion()
+    sql = """SELECT DISTINCT s.cd_nom, count(s.cd_nom), lb_nom, nom_vern
+            FROM synthese.releve s
+            JOIN taxonomie.taxref t ON s.cd_nom = t.cd_nom
+            GROUP BY s.cd_nom, lb_nom, nom_vern """
+    db.cur.execute(sql)
+    res = db.cur.fetchall()
+    listTaxons = list()
+    for r in res:
+        inter = {'cd_nom': r[0], 'nb':r[1], 'lb_nom':r[2], 'nom_vern': r[3]}
+        listTaxons.append(inter)
+    return Response(json.dumps(listTaxons), mimetype='application/json')
+
 
 
 @main.route('/deconnexion')

@@ -100,7 +100,7 @@ var baseMaps = {
                 // tslint:disable-next-line:max-line-length
                 attribution: 'MapBox'
             }),
-            OpenStreetMap2: L.tileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+            OpenStreetMap2: L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 // tslint:disable-next-line:max-line-length
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
             })

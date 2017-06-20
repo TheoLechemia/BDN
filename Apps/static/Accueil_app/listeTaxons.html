@@ -1,0 +1,18 @@
+<div class="panel-body">
+	<div class="section" style="background-color: white;">
+		<table ng-table="$ctrl.tableParams" class="table" show-filter="true" class="table table-condensed table-bordered table-striped">
+		    <tr ng-repeat="taxon in $data">
+		        <td title="'Cd_nom'">
+		            {{taxon.cd_nom}}</td>
+		        <td title="'Nom latin'" filter="{ lb_nom: 'text'}" sortable="'lb_nom'">
+		            {{taxon.lb_nom}}</td>
+		        <td title="'Nom vernaculaire'" filter="{ nom_vern: 'text'}" sortable="'nom_vern'">
+		            {{taxon.nom_vern}}</td>
+		        <td title="'Nombre observation'" filter="{ nb: 'number'}" sortable="'nb'">
+		            {{taxon.nb}}</td>
+		        <td >
+		            <a href="http://213.32.79.141/atlas/espece/{{taxon.cd_nom}}"> <button class="btn btn-success btn-xs"> <span class="glyphicon glyphicon-eye-open"></span>  </button> </a> </td>
+		    </tr>
+		</table>
+	</div>
+</div>
