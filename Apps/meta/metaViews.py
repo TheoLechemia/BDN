@@ -103,7 +103,6 @@ def editProject():
                             DROP VIEW IF EXISTS {tbl}.layer_poly;
                             DROP VIEW IF EXISTS {tbl}.layer_point;"""
             deleteView = psysql.SQL(deleteView).format(tbl=psysql.Identifier(schema_name)).as_string(db.cur)
-            print deleteView
             db.cur.execute(deleteView)
             db.conn.commit()
             utils.createViewsDownload(db, projectForm, fieldForm)

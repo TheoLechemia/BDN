@@ -12,24 +12,25 @@
 				<div ng-repeat="champ in $ctrl.form" ng-animate="{enter: 'animate-enter', leave: 'animate-leave'}">
 					<div class="form-inline">
 
-						<div class="form-group"  ng-class="{'has-error' : champForm.lib_champ.$invalid }" style="width: 25%">
-							<input placeholder="Libélé champ" class="form-control" type="" name="lib_champ" ng-model="champ.lib_champ" style='margin: 0px; width: 100%' required>
+						<div class="form-group"  ng-class="{'has-error' : champForm.lib_champ.$invalid }" style="width: 25%" >
+							<input placeholder="Libélé champ" class="form-control" type="" name="lib_champ" ng-model="champ.lib_champ" style='margin: 0px; width: 100%' required ng-disabled="{{champ.new === undefined}}">
 						</div>
 
 						<div class="form-group"  ng-class="{'has-error' : champForm.nom_champ.$invalid}" style="width: 25%">
 							<input placeholder="Nom champ (BDD)" class="form-control" type="" name="nom_champ" ng-model="champ.nom_champ" style='margin: 0px;  width: 100%'
 								   required
-								   ng-pattern="$ctrl.regex">
+								   ng-pattern="$ctrl.regex"
+								   ng-disabled="{{champ.new === undefined}}">
 						</div>
 						<div class="form-group"  ng-class="{'has-error' : champForm.type_widget.$invalid}" style="width: 25%">
-							<select class="form-control" name="type_widget" ng-model="champ.type_widget" ng-options="item for item in $ctrl.type_widget" ng-change="$ctrl.showValues_and_fillDbType(champ)" style="width: 100%" required>
+							<select class="form-control" name="type_widget" ng-model="champ.type_widget" ng-options="item for item in $ctrl.type_widget" ng-change="$ctrl.showValues_and_fillDbType(champ)" style="width: 100%" required ng-disabled="{{champ.new === undefined}}">
 								<option value=''> - Type du champ - </option> 
 							</select>
 						</div>
 
 							<input type="hidden" name="">
 						<div class="form-group">
-							<select class="form-control" name="obligatoire" ng-model="champ.obligatoire" ng-change="$ctrl.showValues_and_fillDbType(champ)" style="width: 100%" required>
+							<select class="form-control" name="obligatoire" ng-model="champ.obligatoire" ng-change="$ctrl.showValues_and_fillDbType(champ)" style="width: 100%" required ng-disabled="{{champ.new === undefined}}">
 								<option ng-value='true'> Oui </option> 
 								<option ng-value='false'> Non </option> 
 							</select>

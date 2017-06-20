@@ -232,7 +232,7 @@ function formController(toaster){
 		}else{
 			nextId = this.form[lastIndex-1].id_champ + 1;
 		}
-		this.form.push({'id_champ': nextId, 'lib_champ':'', 'no_spec':'spec_'+nextId, 'nom_champ':'', 'type_widget': '', 'db_type':'', 'valeur': "{\"values\":[]}", 'obligatoire': false});
+		this.form.push({'id_champ': nextId, 'lib_champ':'', 'no_spec':'spec_'+nextId, 'nom_champ':'', 'type_widget': '', 'db_type':'', 'valeur': "{\"values\":[]}", 'obligatoire': false, 'new':true});
 	}
 
 	formCtrl.addValue = function(){
