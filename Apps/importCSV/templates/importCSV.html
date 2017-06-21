@@ -26,16 +26,22 @@
 
 
 <div class="page-container">
-	<div class="alert alert-warning" style="position: absolute;">
-		<span class="glyphicon glyphicon-info-sign"> </span> Le fichier importé doit être un fichier CSV issu de l'application ObservNat
-	</div>
 
 
-	<div class="col-md-2 col-md-offset-4 panel panel-default" style="text-align: center; margin-top: 15%; margin-left: 40%;">
+
+	<div class="col-md-4 col-md-offset-4 panel panel-default" style="text-align: center; margin-top: 15%; margin-left: 35%;">
 		<form action="" enctype=multipart/form-data method='POST'>
 			<h3> Selectionner votre fichier CSV </h3> <br>
 			<div class="form-group" >
-				<input type="file" name="file" /> <br/> 
+			<label> Type de fichier </label>
+				<select class="form-control" name="inputFile">
+					<option value="observnat"> Fichier d'ObservNat</option>
+					<option value="excel"> Fichier Excel </option>
+				</select>
+			</div>
+			<div class="form-group">
+			<label> Emplacement du fichier </label>
+				<input class="form-control" type="file" name="file" /> <br/> 
 			</div>
 			<div class="form-group">
 				<!-- <input type="submit" value="Envoyer"> -->

@@ -44,7 +44,7 @@
 
 			</form>
 			<p ng-show="( champForm.lib_champ.$invalid && !champForm.lib_champ.$pristine)" class="help-block">Le nom du champ est requis</p>
-			<p ng-show="( champForm.nom_champ.$invalid && !champForm.nom_champ.$pristine)" class="help-block">Le nom en BDD ne doit pas contenir de caractère spéciaux ni de chiffre</p>
+			<p ng-show="( champForm.nom_champ.$invalid && !champForm.nom_champ.$pristine)" class="help-block">Le nom en BDD ne doit pas contenir de caractère spéciaux, de majuscule ni de chiffre</p>
 			<p ng-show="( champForm.type_widget.$invalid && !champForm.type_widget.$pristine)" class="help-block">Le type du champ est requis</p>
 
 			<button class="btn btn-primary btn-xs" ng-click='$ctrl.addNewField()'> Ajouter un champ</button>

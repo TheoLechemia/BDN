@@ -1,6 +1,8 @@
 #coding: utf-8
 from flask import Flask, request, render_template, url_for, redirect, send_from_directory, flash, session, Blueprint, json, make_response
+import csv2postgreSQL_carnet_terrain
 import csv2postgreSQL
+
 import csv
 from Apps.database import *
 
@@ -50,10 +52,14 @@ def indexImport():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             #write in postgres
-            csv2postgreSQL.csv2PG(UPLOAD_FOLDER+'/'+filename)
-            flash('Fichier ajoute avec succes')
+            file_type = request.form['inputFile']
+            trace = str()
+            if file_type == 'observnat':
+                trace = csv2postgreSQL.csv2PG(UPLOAD_FOLDER+'/'+filename)
+            if file_type == "excel":  
+                trace = csv2postgreSQL_carnet_terrain.csv2PG(UPLOAD_FOLDER+'/'+filename)
+            flash(trace)
             return redirect(request.url)
-            #return redirect(url_for('importCSV.uploaded_fileCSV', filename=filename))
         else:
             flash("Le fichier n'est pas au format .CSV")
             os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))

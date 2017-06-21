@@ -11,12 +11,11 @@
 													required>
 													<p ng-show="( projectForm.nom_projet.$invalid && !projectForm.nom_projet.$pristine)" class="help-block">Le nom du projet est requis</p>
 										</div>
-
 										<div class="form-group" ng-class="{'has-error' : projectForm.nom_bdd.$invalid }">
 											<input type="text" name="nom_bdd" class="form-control toDisable" ng-model='$ctrl.projectForm.nom_bdd' placeholder="Nom de la table en BDD (pas d'espace ni de caractère spéciaux"
 											 		required
 											 		ng-pattern="$ctrl.regex">
-											<p ng-show="( projectForm.nom_bdd.$invalid && !projectForm.nom_bdd.$pristine)" class="help-block">Le nom en BDD ne doit pas contenir de caractère spéciaux ni d'espace</p>
+											<p ng-show="( projectForm.nom_bdd.$invalid && !projectForm.nom_bdd.$pristine)" class="help-block">Le nom en BDD ne doit pas contenir de caractère spéciaux, de majuscule ou d'espace</p>
 										</div>
 
 										<input type="text" class="form-control" ng-model='$ctrl.projectForm.theme_principal' placeholder="Thême principal">

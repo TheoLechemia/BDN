@@ -41,7 +41,7 @@ function metaController ($http, toaster){
 	metaCtrl.showDataModel = true;
 	dataModelFormIsValid = true;
 
-	metaCtrl.regex = new RegExp('^([a-z]+(_*[0-9]*)*)+$', 'i')
+	metaCtrl.regex = new RegExp('^([a-z]+(_*[0-9]*)*)+$')
 
 	metaCtrl.bind_table_indep = function(){
 			if(this.projectForm.saisie_possible == true){
@@ -223,7 +223,7 @@ function formController(toaster){
 	formCtrl.type_widget = ['Booléen', 'Texte', 'Entier', 'Réel','Liste déroulante']
 	formCtrl.newFields = [];
 
-	formCtrl.regex = new RegExp('^([a-z]+(_*[0-9]*)*)+$', 'i')
+	formCtrl.regex = new RegExp('^([a-z]+(_*[0-9]*)*)+$')
 
 	formCtrl.addNewField = function(validForm){
 		lastIndex = this.form.length;
