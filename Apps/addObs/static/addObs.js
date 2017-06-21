@@ -57,7 +57,6 @@ function formController($http, toaster){
   formCtrl.isLoading = true;
   formCtrl.showCoord = true;
 
-
    formCtrl.globalForm = {
     'coord' : {'lat': configuration.MAP.COORD_CENTER.Y, 'lng':configuration.MAP.COORD_CENTER.X },
     'loc_exact' : true,
@@ -188,8 +187,6 @@ var selectedStyle = {
   'color':'#ff0000',
    'weight':3
   }
-
-  console.log(configuration.MAP.LAYERS)
 
     this.layers = configuration.MAP.LAYERS;
 
