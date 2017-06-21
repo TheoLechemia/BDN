@@ -18,6 +18,7 @@ CREATE TABLE synthese.releve
   id_structure integer,
   diffusable boolean,
   commentaire text,
+  comm_loc text,
   CONSTRAINT synthese_pkey PRIMARY KEY (id_synthese),
   CONSTRAINT cd_nom FOREIGN KEY (cd_nom)
       REFERENCES taxonomie.taxref (cd_nom) MATCH SIMPLE
