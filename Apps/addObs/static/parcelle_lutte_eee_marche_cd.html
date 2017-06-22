@@ -12,8 +12,21 @@
 
  </div><div class='form-group' ng-class="{'has-error' : addObsForm.type_bio.$invalid }" ><input class='form-control' type='text' placeholder='Type bio' ng-model='$ctrl.child.protocoleForm.type_bio'  name='type_bio' required> 
 
- </div><div class='form-group' ng-class="{'has-error' : addObsForm.plante.$invalid }" ><label> Planté : </label> 
+ </div>
 
-                        <input type="checkbox" name="plante" ng-init="$ctrl.child.protocoleForm.plante=false" ng-model="$ctrl.child.protocoleForm.plante" required> 
+ <div class='form-group' ng-class="{'has-error' : addObsForm.plante.$invalid }" >
+ <label> Planté : </label> 
+
+                        <!-- <input type="checkbox" name="plante" ng-init="$ctrl.child.protocoleForm.plante=false" ng-model="$ctrl.child.protocoleForm.plante" required>  -->
+                        <select ng-model="$ctrl.child.protocoleForm.plante"> 
+                        	<option value=""> </option>
+                        	<option ng-value="true"> Oui</option>
+                        	<option ng-value="false"> Non</option>
+                        </select>
 
  </div>
+
+
+ {{$ctrl.child.protocoleForm}}
+
+ 

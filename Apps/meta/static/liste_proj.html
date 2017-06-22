@@ -4,6 +4,7 @@
 		<table class="table table-striped">
 			<thead>
 				<tr>
+					<th> Id projet </th>
 				    <th>Nom du projet</th>
 				    <th>Thême principal</th>
 				    <th>Service</th>
@@ -17,6 +18,7 @@
 			</thead>
 			<tbody>
 				<tr ng-repeat="projet in $ctrl.projets">
+					<td> {{projet.id_projet}}
 					<td> {{projet.nom_projet}} </td>
 					<td> {{projet.theme_principal}} </td>
 					<td> {{projet.service_onf}} </td>

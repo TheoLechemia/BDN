@@ -15,6 +15,7 @@ import os
 import csv
 
 from psycopg2 import sql as psysql
+import sys
 
 
 download = Blueprint('download', __name__, static_url_path="/download", static_folder="static", template_folder="templates")
@@ -70,7 +71,6 @@ def search_taxon_name(id_projet, expr):
         ORDER BY search_name ASC 
         LIMIT 20) r"""
         params = [expr]
-        print db.cur.mogrify(sql, params)
         db.cur.execute(sql, params)
     res = db.cur.fetchone()[0]
     db.closeAll()
@@ -87,32 +87,44 @@ def getObs():
         sql = psysql.SQL(sql).format(sch=psysql.Identifier(schemaReleve)).as_string(db.cur)
         dictSQL = utils.buildSQL(sql, 'download')
         params = dictSQL['params']
-        reformatedParams = list()
-        stringTupple = str()
-        for p in params:
-            if type(p) is int or type(p) is float:
-                reformatedParams.append(p)
-            if type(p) is tuple:
-                if len(p)==1:
-                    stringTupple = str(p).replace(',','')
-                    print stringTupple
-                    reformatedParams.append(stringTupple)
-            if type(p) is str or type(p) is unicode:
-                reformatedParams.append("'"+p+"'")
+        # reformatedParams = list()
+        # stringTupple = str()
+        # for p in params:
+        #     if type(p) is int or type(p) is float:
+        #         reformatedParams.append(p)
+        #     if type(p) is tuple:
+        #         if len(p)==1:
+        #             stringTupple = str(p).replace(',','')
+        #             reformatedParams.append(stringTupple)
+        #     if type(p) is str or type(p) is unicode:
+        #         reformatedParams.append("'"+p+"'")
+        #     if type(p) is bool:
+        #         reformatedParams.append(p)
+
+        # paramtersPoint = list(reformatedParams)
+        # paramtersPoint.insert(0, 'layer_point')
+        # paramtersMaille = list(reformatedParams)
+        # paramtersMaille.insert(0, 'layer_poly')
+        # paramtersCSV = list(reformatedParams)
+        # paramtersCSV.insert(0, 'to_csv')
+        # paramtersPoint.insert(0, 'layer_point')
+        # paramtersMaille.insert(0, 'layer_poly')
+        # paramtersCSV.insert(0, 'to_csv')
 
         
+        print >>sys.stderr, 'LAAAAAAAAAAAAAA'
+        params = params.insert(0, 'layer_point')
+        print >>sys.stderr, db.cur.mogrify(dictSQL['sql'], params)
+        sql_point = db.cur.mogrify(dictSQL['sql'], params.insert(0, 'layer_point'))
+        sql_poly = db.cur.mogrify(dictSQL['sql'], params.insert(0, 'layer_poly'))
+        sql_csv = db.cur.mogrify(dictSQL['sql'], params.insert(0, 'to_csv'))
 
-        paramtersPoint = list(reformatedParams)
-        paramtersPoint.insert(0, 'layer_point')
-        paramtersMaille = list(reformatedParams)
-        paramtersMaille.insert(0, 'layer_poly')
-        paramtersCSV = list(reformatedParams)
-        paramtersCSV.insert(0, 'to_csv')
 
-        firstParam = dictSQL['firstParam']
-        sql_point = dictSQL['sql']%tuple(paramtersPoint)
-        sql_poly = dictSQL['sql']%tuple(paramtersMaille)
-        sql_csv = dictSQL['sql']%tuple(paramtersCSV)
+
+        # firstParam = dictSQL['firstParam']
+        # sql_point = dictSQL['sql']%tuple(paramtersPoint)
+        # sql_poly = dictSQL['sql']%tuple(paramtersMaille)
+        # sql_csv = dictSQL['sql']%tuple(paramtersCSV)
 
         if schemaReleve == 'synthese':
             id_projet = request.json['globalForm']['selectedProtocole']['id_projet']

@@ -166,8 +166,6 @@ function findInArray(tab_id, id_observation){
 
 
 function deletePoint(arrayDelete){
-	console.log(arrayDelete);
-      	
 	    currentGeoJson.features = currentGeoJson.features.filter(function(point){
 	    	return findInArray(arrayDelete, point.properties.id_synthese);
 
@@ -202,11 +200,16 @@ $('.validate').click(function(){
 });
 
 var id;
+var protocole;
 $('.delete').click(function(){
 	row = this.parentElement;
 	id = $(row).attr("idSynthese");
 	protocole = $(row).attr("protocole");
-	$('#confirmDelete').click(function(){
+	console.log('click sur delete')
+
+});
+$('#confirmDelete').click(function(){
+		console.log('click sur valider le delete')
 			$.ajax({
 			  type: "GET",
 			  url: configuration.URL_APPLICATION+"validation/delete/"+id+"/"+protocole
@@ -217,10 +220,7 @@ $('.delete').click(function(){
 		idArray = [];
 		idArray.push(id);
 		deletePoint(idArray);
-	})		
-});
-
-
+})		
 
 
 
@@ -229,8 +229,6 @@ var checkList = new Set();
 $('.check').change(function(){	
 	
 	// enable or disable the validate button
-	
-
 		row = this.parentElement.parentElement;
 		id = $(row).attr('idsynthese')
 		if(this.checked){
