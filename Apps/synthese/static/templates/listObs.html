@@ -22,6 +22,9 @@
 					<td>  {{obs.properties.lb_nom}} </td>
 					<td> {{obs.properties.date}}  </td>
 					<td ng-click="$ctrl.zoom(obs.properties)"> <span class="glyphicon glyphicon-search " style="cursor:pointer;"> </span> </td>
+					<td> <span ng-if="obs.properties.valide" class="glyphicon glyphicon-ok " style="color:green"> </span>
+					     <span ng-if="!obs.properties.valide" class="glyphicon glyphicon-remove" style="color:red"> </span>   
+					</td>
 				</tr>
 			</tbody>
 		</table>

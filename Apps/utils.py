@@ -296,7 +296,7 @@ def buildGeojsonWithParams(res):
         #r[9] = loc_exact: check if its point or maille
         if r[9] == True:
             mypropertiesPoint = {'nom_vern': r[4], 'lb_nom':r[2], 'cd_nom': r[3], 'date': date, 'projet': r[6], 'observateur': r[10], 'structure': r[11], 'id_synthese': r[1], 'id' : r[1],
-                                 'producteur': r[11], 'precision': r[12], 'ccod_frt': r[13], 'altitude': r[14]}
+                                 'producteur': r[11], 'precision': r[12], 'ccod_frt': r[13], 'altitude': r[14], 'valide': r[15], 'diffusable': r[16]}
             try:
                 geometry = ast.literal_eval( r[0])
             except ValueError:
@@ -304,7 +304,7 @@ def buildGeojsonWithParams(res):
             geojsonPoint['features'].append({"type": "Feature", "properties": mypropertiesPoint, "geometry": geometry })
         else:
             myPropertiesMaille = {'nom_vern': r[4], 'lb_nom':r[2], 'cd_nom': r[3], 'date': date, 'projet': r[6], 'observateur': r[10], 'structure': r[11], 'id_synthese': r[1], 'id' : r[8],
-             'producteur': r[11], 'precision': r[12], 'ccod_frt': r[13], 'altitude': r[14]}
+             'producteur': r[11], 'precision': r[12], 'ccod_frt': r[13], 'altitude': r[14], 'valide': r[15], 'diffusable': r[16]}
             try:
                 geometry = ast.literal_eval( r[7])
             except ValueError:

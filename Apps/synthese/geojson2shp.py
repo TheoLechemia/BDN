@@ -45,29 +45,30 @@ def export(FileName, geojson, geomType):
     layerDefinition = outLayer.GetLayerDefn()
 
     for f in geojson['features']:
-        #create a feature
-        feature = ogr.Feature(outLayer.GetLayerDefn())
-        #fill the fields
-        for i in range(layerDefinition.GetFieldCount()):
-            newFieldName = layerDefinition.GetFieldDefn(i).GetName()
-            oldFieldName = fielListName[i]
-            fieldContent = f['properties'][oldFieldName]
-            if type(fieldContent) is unicode:
-                fieldContent = f['properties'][oldFieldName].encode('utf-8')
-                fieldContent = str(fieldContent)
-            if type(fieldContent) is list:
-                fieldContent = str(fieldContent[0].encode('utf-8'))
-            if type(fieldContent) is int:
-                fieldContent = str(fieldContent)
-            feature.SetField(newFieldName, str(fieldContent))
-        #get the geom
-        geometry = convertUnicodeToString(f['geometry'], geomType)
-        print geometry
+        if f['properties']['valide'] and f['properties']['diffusable']:
+            #create a feature
+            feature = ogr.Feature(outLayer.GetLayerDefn())
+            #fill the fields
+            for i in range(layerDefinition.GetFieldCount()):
+                newFieldName = layerDefinition.GetFieldDefn(i).GetName()
+                oldFieldName = fielListName[i]
+                fieldContent = f['properties'][oldFieldName]
+                if type(fieldContent) is unicode:
+                    fieldContent = f['properties'][oldFieldName].encode('utf-8')
+                    fieldContent = str(fieldContent)
+                if type(fieldContent) is list:
+                    fieldContent = str(fieldContent[0].encode('utf-8'))
+                if type(fieldContent) is int:
+                    fieldContent = str(fieldContent)
+                feature.SetField(newFieldName, str(fieldContent))
+            #get the geom
+            geometry = convertUnicodeToString(f['geometry'], geomType)
+            print geometry
 
-        point = ogr.CreateGeometryFromJson(str(geometry))
-        print point
-        point.Transform(coordTransform) 
-        feature.SetGeometry(point)
-        #create the feature in the layer
-        outLayer.CreateFeature(feature)
-        feature.Destroy()
+            point = ogr.CreateGeometryFromJson(str(geometry))
+            print point
+            point.Transform(coordTransform) 
+            feature.SetGeometry(point)
+            #create the feature in the layer
+            outLayer.CreateFeature(feature)
+            feature.Destroy()

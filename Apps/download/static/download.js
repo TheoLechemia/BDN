@@ -75,8 +75,10 @@ function appCtrl (proxy, toaster){
     console.log(form);
 
     proxy.sendData(form).then(function(response){
-    	toaster.pop('success', "Observations exportées avec succès", null, 'trustedHtml');
+    	toaster.pop('success', "Observations exportées avec succès... Les données vont être téléchargées...", null, 'trustedHtml');
     	window.location =CONFIGURATION.URL_APPLICATION+'download/uploads/'+response.data.filename;       
+    }, function errorCallBack(){
+    	toaster.pop('error', "Une erreur est survenue, merci de faire remonter le bug au gestionnaire de BDD", null, 'trustedHtml');
     })
   }
 

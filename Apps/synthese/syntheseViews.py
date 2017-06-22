@@ -56,7 +56,7 @@ def synthese_index():
 def lastObs():
     db = getConnexion()
     sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, p.nom_projet, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)),
-                     s.code_maille, s.loc_exact, s.observateur, u.nom_organisme, s.precision, s.ccod_frt, s.altitude
+                     s.code_maille, s.loc_exact, s.observateur, u.nom_organisme, s.precision, s.ccod_frt, s.altitude, s.valide, s.diffusable
               FROM synthese.releve s
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
               LEFT JOIN utilisateurs.bib_organismes u ON u.id_organisme = s.id_structure
@@ -79,7 +79,7 @@ def getObs():
         geojsonMaille ={ "type": "FeatureCollection",  "features" : list() }
         geojsonPoint ={ "type": "FeatureCollection",  "features" : list() }
         sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, p.nom_projet, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)),
-                     s.code_maille, s.loc_exact, s.observateur, st.nom_organisme, s.precision, s.ccod_frt, s.altitude
+                     s.code_maille, s.loc_exact, s.observateur, st.nom_organisme, s.precision, s.ccod_frt, s.altitude, s.diffusable
               FROM synthese.releve s
               LEFT JOIN layers.maille_1_2 l ON s.code_maille = l.id_maille
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
