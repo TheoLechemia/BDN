@@ -83,48 +83,21 @@ def getObs():
     db = getConnexion()
     if request.method == 'POST':
         schemaReleve = request.json['globalForm']['selectedProtocole']['nom_schema']
-        sql = " SELECT * FROM {sch}.%s s "
-        sql = psysql.SQL(sql).format(sch=psysql.Identifier(schemaReleve)).as_string(db.cur)
-        dictSQL = utils.buildSQL(sql, 'download')
-        params = dictSQL['params']
-        # reformatedParams = list()
-        # stringTupple = str()
-        # for p in params:
-        #     if type(p) is int or type(p) is float:
-        #         reformatedParams.append(p)
-        #     if type(p) is tuple:
-        #         if len(p)==1:
-        #             stringTupple = str(p).replace(',','')
-        #             reformatedParams.append(stringTupple)
-        #     if type(p) is str or type(p) is unicode:
-        #         reformatedParams.append("'"+p+"'")
-        #     if type(p) is bool:
-        #         reformatedParams.append(p)
+        tables = ['layer_point', 'layer_poly', 'to_csv']
+        sqlTab = list()
+        params = list()
+        #on construit trois fois le SQL pour chacune des tables (meme si les parametres ne changent pas, le nom de la table change...)
+        for t in tables:
+            sql = " SELECT * FROM {sch}.{tbl} s "
+            sql = psysql.SQL(sql).format(sch=psysql.Identifier(schemaReleve),tbl=psysql.Identifier(t)).as_string(db.cur)
+            dictSQL = utils.buildSQL(sql, 'download')
+            params = dictSQL['params']
+            sqlTab.append(dictSQL['sql'])
 
-        # paramtersPoint = list(reformatedParams)
-        # paramtersPoint.insert(0, 'layer_point')
-        # paramtersMaille = list(reformatedParams)
-        # paramtersMaille.insert(0, 'layer_poly')
-        # paramtersCSV = list(reformatedParams)
-        # paramtersCSV.insert(0, 'to_csv')
-        # paramtersPoint.insert(0, 'layer_point')
-        # paramtersMaille.insert(0, 'layer_poly')
-        # paramtersCSV.insert(0, 'to_csv')
+        sql_point = db.cur.mogrify(sqlTab[0], params)
+        sql_poly = db.cur.mogrify(sqlTab[1], params)
+        sql_csv = db.cur.mogrify(sqlTab[2], params)
 
-        
-        print >>sys.stderr, 'LAAAAAAAAAAAAAA'
-        params = params.insert(0, 'layer_point')
-        print >>sys.stderr, db.cur.mogrify(dictSQL['sql'], params)
-        sql_point = db.cur.mogrify(dictSQL['sql'], params.insert(0, 'layer_point'))
-        sql_poly = db.cur.mogrify(dictSQL['sql'], params.insert(0, 'layer_poly'))
-        sql_csv = db.cur.mogrify(dictSQL['sql'], params.insert(0, 'to_csv'))
-
-
-
-        # firstParam = dictSQL['firstParam']
-        # sql_point = dictSQL['sql']%tuple(paramtersPoint)
-        # sql_poly = dictSQL['sql']%tuple(paramtersMaille)
-        # sql_csv = dictSQL['sql']%tuple(paramtersCSV)
 
         if schemaReleve == 'synthese':
             id_projet = request.json['globalForm']['selectedProtocole']['id_projet']

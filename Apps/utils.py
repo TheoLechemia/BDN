@@ -323,10 +323,13 @@ def createTemplate(schemaName, fieldForm):
     integerInput = "<input class='form-control' type='number' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{1}'  name='{1}' {2}> \n"
     simpleTextInput = "<input class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{1}'  name='{1}' {2}> \n"
     checkboxInput = """<label> {0} : </label> \n
-                        <input type="checkbox" name="{1}" ng-init="$ctrl.child.protocoleForm.{1}=false" ng-model="$ctrl.child.protocoleForm.{1}" {2}> \n"""
+                        <select class='form-control' ng-model = "$ctrl.child.protocoleForm.{1}" name='{1}' {2}>
+                            <option value=""> </option>
+                            <option ng-value="true"> Oui</option>
+                            <option ng-value="false"> Non</option>
+                        </select>"""
     listInput = "<div> <select class='form-control' type='text' placeholder='{0}' ng-model='$ctrl.child.protocoleForm.{1}' name='{1}' ng-options='choice as choice for choice in $ctrl.fields.{1}' {2}> <option value=""> - {0} - </option> </select>  </div> \n"
     
-
 
     for r in fieldForm:
         write = str()
