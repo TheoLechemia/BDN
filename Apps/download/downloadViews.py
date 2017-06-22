@@ -62,7 +62,6 @@ def search_taxon_name(id_projet, expr):
                 ORDER BY search_name ASC 
                 LIMIT 20) r"""
         params = [expr, id_projet]
-        print db.cur.mogrify(sql, params)
         db.cur.execute(sql, params)
     else:
         sql = """ SELECT array_to_json(array_agg(row_to_json(r))) FROM(
@@ -98,6 +97,7 @@ def getObs():
         sql_poly = db.cur.mogrify(sqlTab[1], params)
         sql_csv = db.cur.mogrify(sqlTab[2], params)
 
+        print >>sys.stderr, sql_poly
 
         if schemaReleve == 'synthese':
             id_projet = request.json['globalForm']['selectedProtocole']['id_projet']
