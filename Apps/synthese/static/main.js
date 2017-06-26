@@ -44,6 +44,7 @@ function appCtrl (proxy, toaster){
       }
 
     }, function errorCallBack(){
+      toaster.clear();
       toaster.pop({ 'type': 'error', title: "", body:"Une erreur est survenue, merci de faire remonter le bug au gestionnaire de BDD"});
     });
   }

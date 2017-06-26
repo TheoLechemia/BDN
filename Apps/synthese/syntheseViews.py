@@ -79,14 +79,13 @@ def getObs():
         geojsonMaille ={ "type": "FeatureCollection",  "features" : list() }
         geojsonPoint ={ "type": "FeatureCollection",  "features" : list() }
         sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, p.nom_projet, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)),
-                     s.code_maille, s.loc_exact, s.observateur, st.nom_organisme, s.precision, s.ccod_frt, s.altitude, s.diffusable
+                     s.code_maille, s.loc_exact, s.observateur, st.nom_organisme, s.precision, s.ccod_frt, s.altitude,s.valide, s.diffusable
               FROM synthese.releve s
               LEFT JOIN layers.maille_1_2 l ON s.code_maille = l.id_maille
               JOIN taxonomie.taxref t ON t.cd_nom = s.cd_nom
               LEFT JOIN utilisateurs.bib_organismes st ON st.id_organisme = s.id_structure
               LEFT JOIN synthese.bib_projet p ON s.id_projet = p.id_projet"""
         sqlAndParams = utils.buildSQL(sql, "synthese")
-
         db.cur.execute(sqlAndParams['sql'], sqlAndParams['params'])
         res = db.cur.fetchall()
         myproperties = dict()
