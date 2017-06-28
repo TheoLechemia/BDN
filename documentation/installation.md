@@ -14,7 +14,7 @@ Cloner le dépôt
 
 ### Installation de la base de données
 Copier le fichier setting.ini.sample en settings.ini et le remplir en suivant les instructions  
-`cp ./settings.ini.sample ./settings.ini`
+`cp ./settings.ini.sample ./settings.ini`  
 `nano ./settings.ini`  
 Mettre le fichier de liste rouge de l'UICN correspondant à sa région dans `./data` s'il en existe un, et renseigner le chemin correct vers ce fichier dans `settings.ini`  
 Lancer le script de création de la BDD  
