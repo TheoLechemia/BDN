@@ -13,8 +13,11 @@ Cloner le dépôt
 `./install_app.sh`  
 
 ### Installation de la base de données
-Remplir au préalable le fichier `/home/<USER>/BDN/settings.ini.sample`  
-Mettre le fichier de liste rouge de l'UICN correspondant à sa région dans `./data` s'il en existe un, et renseigner le chemin correct vers ce fichier dans `settings.ini`
+Copier le fichier setting.ini.sample en settings.ini et le remplir en suivant les instructions  
+`cp ./settings.ini.sample ./settings.ini`
+`nano ./settings.ini`  
+Mettre le fichier de liste rouge de l'UICN correspondant à sa région dans `./data` s'il en existe un, et renseigner le chemin correct vers ce fichier dans `settings.ini`  
+Lancer le script de création de la BDD  
 `./install_db.sh` 
 
 
