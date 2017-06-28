@@ -6,6 +6,8 @@ L'application BDN-WEB Dom-Tom contient plusieurs sous-modules qui peuvent être 
 * Un module d'import de fichiers CSV dans une base PostregreSQL
 * un module de validation des données
 * un module de synthèse pour la visualisation et le téléchargement des données en shapefiles
+* un module de téléchargement des données pour télécharger le modele de données exact de chaque projet
+* un module de gestion des projets (création de nouveau projet/protocole, edition des métadonnées)
 
 
 ### Technologies:
