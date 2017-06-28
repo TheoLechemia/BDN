@@ -13,7 +13,10 @@ Cloner le dépôt
 `./install_app.sh`  
 
 ### Installation de la base de données
-`./install_db.sh`  
+Remplir au préalable le fichier `/home/<USER>/BDN/settings.ini.sample`  
+Mettre le fichier de liste rouge de l'UICN correspondant à sa région dans `./data` s'il en existe un, et renseigner le chemin correct vers ce fichier dans `settings.ini`
+`./install_db.sh` 
+
 
 ### Configuration Apache
 `sudo nano /etc/apache2/sites-available/BDN.conf`  
@@ -33,9 +36,8 @@ Activez le virtualhost puis redémarrez Apache :
 
 ## Configuration de l'application
 
-Ouvrir et éditer les fichiers
-`/home/<USER>/BDN/config.py.sample` et `/home/<USER>/BDN/settings.ini.sample`  
-Mettre le fichier de liste rouge de l'UICN correspondant à sa région dans `./data` s'il en existe un, et renseigner le chemin correct vers ce fichier dans `settings.ini`
+Ouvrir et éditer le fichiers
+`/home/<USER>/BDN/config.py.sample`
 
 `sudo apachectl restart`
 
