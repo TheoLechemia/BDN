@@ -9,11 +9,11 @@ import traceback
 
 
 def csv2PG(file):
+    '''Fonction qui lit chaque ligne d'un fichier CSV pour ajouter l'observation courante dans le BDN '''
     db = getConnexion()
     sql = str()
     generalValues = []
 
-    # try: 
     with open(file) as csvfile:
         reader = csv.DictReader(csvfile, delimiter = ';', quotechar= '|')
         inputProtocole = None
