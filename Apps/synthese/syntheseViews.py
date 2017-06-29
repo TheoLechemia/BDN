@@ -86,7 +86,9 @@ def getObs():
               LEFT JOIN utilisateurs.bib_organismes st ON st.id_organisme = s.id_structure
               LEFT JOIN synthese.bib_projet p ON s.id_projet = p.id_projet"""
         sqlAndParams = utils.buildSQL(sql, "synthese")
-        db.cur.execute(sqlAndParams['sql'], sqlAndParams['params'])
+        finalSql = sqlAndParams['sql']+ ' ORDER BY code_maille ASC'
+        db.cur.execute(finalSql, sqlAndParams['params'])
+        print 'LAAAAAAAAAAAAAAA', db.cur.mogrify(finalSql, sqlAndParams['params'])
         res = db.cur.fetchall()
         myproperties = dict()
         geojsons = utils.buildGeojsonWithParams(res)

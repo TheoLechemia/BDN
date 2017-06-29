@@ -86,6 +86,8 @@ module.exports = function(angularInstance){
 					selectLayer.setStyle(originStyle)
 				}
 				selectLayer = layersDict[id];
+				console.log('selectLayer');
+				console.log(selectLayer);
 
 				styleAndPopup(selectLayer);
 
@@ -117,7 +119,7 @@ module.exports = function(angularInstance){
 					'data' : currentGeojson.point,
 					 pointToLayer: function (feature, latlng) {
 					 	var marker = L.circleMarker(latlng);
-					 	layersDict[feature.properties.id] = marker;
+					 	//layersDict[feature.properties.id] = marker;
 			    		return marker;
 					},
 					'onEachFeature': this.onEachFeature,
@@ -190,13 +192,11 @@ module.exports = function(angularInstance){
 					}
 				var i=0;
 				var copyGeojson = changes.geojson.currentValue.maille.features.slice();
-
-
+				// on boucle sur la liste triée des observations selon l'id maille pour ne construire qu'une feature par maille
 				while(i<copyGeojson.length){
-					currentFeature= copyGeojson[i];
+					currentFeature = copyGeojson[i];
 					currentIdMaille = currentFeature.properties.id;
 					geometry = currentFeature.geometry;
-
 
 					properties = {'code_maille' : currentIdMaille,
 								   'nb_observation' : 1,
@@ -206,32 +206,30 @@ module.exports = function(angularInstance){
 								   'cd_nom': [currentFeature.properties.cd_nom],
 								   'observateurs': [currentFeature.properties.observateur],
 								   'date' : [currentFeature.properties.date]}
-					var j = 0;
-					while(j < copyGeojson.length){
-						if (i != j && copyGeojson[j].properties.id === currentIdMaille){
-
+					var j = i+1;
+					while(j < copyGeojson.length && copyGeojson[j].properties.id == currentIdMaille){
 							properties.nb_observation++;
 							properties.id_synthese.push(copyGeojson[j].properties.id_synthese);
 							properties.lb_nom.push(copyGeojson[j].properties.lb_nom);
 							properties.cd_nom.push(copyGeojson[j].properties.cd_nom); 
 							properties.observateurs.push(copyGeojson[j].properties.observateur);
 							properties.date.push(copyGeojson[j].properties.date);
-							//si il y etait deja on peut le remover
-							copyGeojson.splice(j,1);
-						}
-						j = j+1;
+
+							j = j+1;
+
 					}
 					reduceGeojsonMaille.features.push({
 			          'type' : 'Feature',
 			          'properties' : properties,
 			          'geometry' : geometry   
 					})
-					i = i+1;
+					// on avance jusqu'a j
+					i = j;
 				}
 
 				this.newGeojson = {'point':changes.geojson.currentValue.point, 'maille': reduceGeojsonMaille}
-
 				this.loadGeojsonPoint(this.newGeojson);
+				console.log(this.newGeojson.maille);
 				}
 			}
 			// if change from the list, zoom on the selected layers
