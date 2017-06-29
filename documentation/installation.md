@@ -13,13 +13,19 @@ Cloner le dépôt
 `./install_app.sh`  
 
 ### Installation de la base de données
-`./install_db.sh`  
+Copier le fichier setting.ini.sample en settings.ini et le remplir en suivant les instructions  
+`cp ./settings.ini.sample ./settings.ini`  
+`nano ./settings.ini`  
+Mettre le fichier de liste rouge de l'UICN correspondant à sa région dans `./data` s'il en existe un, et renseigner le chemin correct vers ce fichier dans `settings.ini`  
+Lancer le script de création de la BDD  
+`./install_db.sh` 
+
 
 ### Configuration Apache
 `sudo nano /etc/apache2/sites-available/BDN.conf`  
 Copiez collez   
-```WSGIScriptAlias / /home/MONUSER/atlas/start.wsgi  
- <Directory "/home/MONUSER/bdn">  
+```WSGIScriptAlias / /home/<USER>/atlas/start.wsgi  
+ <Directory "/home/<USER>/bdn">  
    WSGIApplicationGroup %{GLOBAL}  
    WSGIScriptReloading On  
    Require all granted  
@@ -33,9 +39,8 @@ Activez le virtualhost puis redémarrez Apache :
 
 ## Configuration de l'application
 
-Ouvrir et éditer les fichiers
-`/home/MON_USER/BDN/config.py.sample` et `/home/MON_USER/BDN/settings.ini.sample`  
-Mettre le fichier de liste rouge de l'UICN correspondant à sa région dans `./data` s'il en existe un, et renseigner le chemin correct vers ce fichier dans `settings.ini`
+Ouvrir et éditer le fichiers
+`/home/<USER>/BDN/config.py.sample`
 
 `sudo apachectl restart`
 
@@ -43,7 +48,7 @@ Mettre le fichier de liste rouge de l'UICN correspondant à sa région dans `./d
 ## Sauvegarde automatique
 Taper `crontab -e`  
 et ajouter la ligne suivante à la fin du fichier:  
-` 45 23 * * * /home/ubuntu/BDN/cron_pg_backup.sh`  
+` 45 23 * * * /home/<USER>/BDN/cron_pg_backup.sh`  
 Cette commande va ainsi faire des sauvegarde journalière et mensuelles de la BDD
 
 
