@@ -5,11 +5,17 @@ module.exports = function(angularInstance){
 	function mapCtrl($http, $scope, leafletData){
 		mapCtrl = this;
 		var selectLayer;
+
 		layersDict = {};
-		console.log("ohohhhhhhhhhhhhhhhhhh")
 		console.log(configuration.MAP.LAYERS);
 		this.layers = configuration.MAP.LAYERS;
 
+
+		mapCtrl.$onInit = function(){
+			// variable pour le switcher entre point et polygone
+			this.is_point_display = true;
+			this.is_maille_display = true;
+		}
 
 		mapCtrl.center = {
 			'lat': configuration.MAP.COORD_CENTER.Y, 
@@ -53,7 +59,6 @@ module.exports = function(angularInstance){
 		};
 
 		function styleAndPopup(selectLayer){
-				console.log(selectLayer);
 				// set the style
 				selectLayer.setStyle(selectedStyle);
 				//bind the popup
@@ -72,7 +77,7 @@ module.exports = function(angularInstance){
 		      	selectLayer.setStyle(selectedStyle);
 			};
 
-
+	// ZOOM sur l'observation selectionnée depuis la liste
 	function onCurrentObsChange(id){
 		// get the object which contain all the geojson layer
 		leafletData.getMap()
@@ -104,7 +109,9 @@ module.exports = function(angularInstance){
 	    });
 	}
 
+	// Charge le nouveau geojson pour les passer à la directive-angular 'leaflet'
 	mapCtrl.loadGeojsonPoint = function(currentGeojson){
+		 console.log('on load les geojsons')
 			this.geojsonToDirective = {
 				'point' : {
 					'data' : currentGeojson.point,
@@ -121,15 +128,63 @@ module.exports = function(angularInstance){
 					}
 		 	}
 		}
-		 	
 
-			
+	var saveLayersObs;
 
+	// Fonction pour afficher/masquer les points sur la carte
+	mapCtrl.togglePoint = function(){
+		// true on remove les point
+		if (this.is_point_display){
+			this.geojsonToDirective.point.data = null;
+			this.is_point_display = false;
+		}
+		//false on remet les points
+		else {
+			this.geojsonToDirective.point.data = this.newGeojson.point;
+			this.is_point_display = true;
+		}
+	}
+
+	// Fonction pour afficher/masquer les mailles sur la carte
+	mapCtrl.toggleMaille = function(){
+		// true on remove les maille
+		if (this.is_maille_display){
+			this.geojsonToDirective.maille = {};
+			this.is_maille_display = false;
+		}
+		//false on remet les mailles
+		else {
+			// si les points doivent être afficher, on supprime et on raffiche tout
+			if(this.is_point_display){
+				this.geojsonToDirective = null;
+				this.loadGeojsonPoint(this.newGeojson);
+			}
+			// si les points ne doivent pas etre affichés, on supprimme et raffiche tout et on supprime les points
+			// si on ne fait pas cette manip, les popup des mailles ne s'affiche pas.
+			else{
+				this.geojsonToDirective = null;
+				this.loadGeojsonPoint(this.newGeojson);
+				this.geojsonToDirective.point.data = null;
+			}
+		 this.is_maille_display = true;
+		}
+	}
+
+	//initialisation de newGeojson en objet vide
+	this.newGeojson = {};
+	// lifecycle du composant a chaque fois que le bindings est changé
 	mapCtrl.$onChanges = function(changes){
-
 			// charge les geojson à la directive une fois qu'ils sont chargés en AJAX
 			if (changes.geojson){
+				// on remet à true les checkbox de le l'affichage maille / point
+				this.is_maille_display = true;
+				this.is_point_display = true;
+				Array.from(document.getElementsByClassName('layer')).forEach(function(domEl){
+					domEl.classList.add('active');
+				});
+
 				if(changes.geojson.currentValue != undefined){
+
 				reduceGeojsonMaille = {'type': 'FeatureCollection',
 						'features' : []
 					}
@@ -141,8 +196,7 @@ module.exports = function(angularInstance){
 					currentFeature= copyGeojson[i];
 					currentIdMaille = currentFeature.properties.id;
 					geometry = currentFeature.geometry;
-					console.log('current feature');
-					console.log(currentFeature);
+
 
 					properties = {'code_maille' : currentIdMaille,
 								   'nb_observation' : 1,
@@ -175,9 +229,9 @@ module.exports = function(angularInstance){
 					i = i+1;
 				}
 
-				newGeojson = {'point':changes.geojson.currentValue.point, 'maille': reduceGeojsonMaille}
+				this.newGeojson = {'point':changes.geojson.currentValue.point, 'maille': reduceGeojsonMaille}
 
-				this.loadGeojsonPoint(newGeojson);
+				this.loadGeojsonPoint(this.newGeojson);
 				}
 			}
 			// if change from the list, zoom on the selected layers
