@@ -1,20 +1,48 @@
-drop_apps_db=true
+###################################
+###### Instalation de BDN #########
+###################################
 
-db_name=db_name
+## Est ce que le script d'installation doit supprimer la base BDN avant de l'installation ?
+drop_apps_db=false
 
+## Nom de la futur base de données BDN -- laisser bdn par défault
+db_name=bdn
+
+## Nom du proprietaire de la base BDN
 user_bdn=user_name
 
+## Mot de passe de l'administrateur
 user_bdn_pass=password
 
-taxref_path=/home/MY_USER/BDN/TAXREFv10.0.txt
+## Simplement remplacer <USER> par le nom de l'utilisateur Linux ou est installé la BDN
+taxref_path=/home/<USER>/BDN/TAXREFv10.0.txt
 
+## Numero EPSG -- systeme de projection dans lequel seront stocker les champs géomtriques des tables dans BDN -- Necessaire notamment pour l'export en shapefile
 projection=MY_SRID
 
 #specifique DOM
 
+##specifier ici l'emplacement du fichier des taxons sur liste rouge de sa région (si il existe)
 liste_rouge_path=/home/USER/BDN/data/Liste_rouge_Guadeloupe.txt
 
-taxref_protection_path=/home/USER/BDN/PROTECTION_ESPECES_10.txt
+## Simplement remplacer <USER> par le nom de l'utilisateur Linux ou est installé la BDN
+taxref_protection_path=/home/<USER>/BDN/PROTECTION_ESPECES_10.txt
 
-backup_directory=<PATH_TO_BACKUP>
+## Indiquer le chemin vers ou souhaite faire les sauvegardes de la BDD
+backup_directory=/home/<USER>/sauvegarde/
 
+###################################
+###### Instalation de l'atlas #####
+###################################
+
+## Est ce que je veux installer l'atlas
+install_atlas=true
+
+## Nom de las base de données de l'atlas
+db_name_atlas=geonatureatlas
+
+# Nom du propriétaire de la BDD
+user_atlas=geonatatlas
+
+# Mot de passe
+user_atlas_pass=monpass
