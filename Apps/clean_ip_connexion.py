@@ -1,8 +1,8 @@
 #coding: utf-8
 
-from . import database
+from database import getConnexion
 
-db.getConnexion()
-db.cur.execute('DELETE FROM ip_connexion')
+db = getConnexion()
+db.cur.execute('DELETE FROM ip_connexion;')
 db.conn.commit()
 db.closeAll()
