@@ -91,6 +91,7 @@ def getObs():
             sql = psysql.SQL(sql).format(sch=psysql.Identifier(schemaReleve),tbl=psysql.Identifier(t)).as_string(db.cur)
             dictSQL = utils.buildSQL(sql, 'download')
             params = dictSQL['params']
+            firstParam = dictSQL['firstParam']
             sqlTab.append(dictSQL['sql'])
 
         sql_point = db.cur.mogrify(sqlTab[0], params)
