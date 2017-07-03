@@ -35,3 +35,19 @@ sudo ln -s /usr/bin/fromdos /usr/bin/dos2unix
 virtualenv ./venv
 . ./venv/bin/activate
 pip install -r requirements.txt
+
+
+
+
+## Install de usershub
+
+sudo apt-get purge `dpkg -l | grep php| awk '{print $2}' |tr "\n" " "`
+
+sudo add-apt-repository ppa:ondrej/php
+
+sudo apt-get update
+sudo apt-get install php5.6
+
+sudo apt-get install -y libapache2-mod-php5.6
+sudo apt-get install -y libapache2-mod-wsgi
+sudo apt-get install -y php5.6-pgsql

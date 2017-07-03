@@ -1,0 +1,622 @@
+pg_restore: [archiver (db)] Error while PROCESSING TOC:
+pg_restore: [archiver (db)] Error from TOC entry 2355; 2606 72544 FK CONSTRAINT fk_bd_parcellaire_suivi_constat_code_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.suivi_constat DROP CONSTRAINT fk_bd_parcellaire_suivi_constat_code_constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 2353; 2606 72539 FK CONSTRAINT fk_bd_parcellaire_site_commune_n_code_site postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.site_commune_n DROP CONSTRAINT fk_bd_parcellaire_site_commune_n_code_site;
+
+pg_restore: [archiver (db)] Error from TOC entry 2354; 2606 72534 FK CONSTRAINT fk_bd_parcellaire_site_commune_n_code_commune postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.site_commune_n DROP CONSTRAINT fk_bd_parcellaire_site_commune_n_code_commune;
+
+pg_restore: [archiver (db)] Error from TOC entry 2352; 2606 72529 FK CONSTRAINT fk_bd_parcellaire_photo_constat_code_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.photo_constat DROP CONSTRAINT fk_bd_parcellaire_photo_constat_code_constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 2351; 2606 72524 FK CONSTRAINT fk_bd_parcellaire_parcelle_code_ld postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.parcelle DROP CONSTRAINT fk_bd_parcellaire_parcelle_code_ld;
+
+pg_restore: [archiver (db)] Error from TOC entry 2349; 2606 72519 FK CONSTRAINT fk_bd_parcellaire_lieudit_code_site postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.lieudit DROP CONSTRAINT fk_bd_parcellaire_lieudit_code_site;
+
+pg_restore: [archiver (db)] Error from TOC entry 2350; 2606 72514 FK CONSTRAINT fk_bd_parcellaire_lieudit_code_commune postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.lieudit DROP CONSTRAINT fk_bd_parcellaire_lieudit_code_commune;
+
+pg_restore: [archiver (db)] Error from TOC entry 2346; 2606 72509 FK CONSTRAINT fk_bd_parcellaire_equipement_ld_code_type_mobilier postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.equipement_ld DROP CONSTRAINT fk_bd_parcellaire_equipement_ld_code_type_mobilier;
+
+pg_restore: [archiver (db)] Error from TOC entry 2345; 2606 138709 FK CONSTRAINT fk_bd_parcellaire_equipement_ld_code_parcelle postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.equipement_ld DROP CONSTRAINT fk_bd_parcellaire_equipement_ld_code_parcelle;
+
+pg_restore: [archiver (db)] Error from TOC entry 2347; 2606 72499 FK CONSTRAINT fk_bd_parcellaire_equipement_ld_code_ld postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.equipement_ld DROP CONSTRAINT fk_bd_parcellaire_equipement_ld_code_ld;
+
+pg_restore: [archiver (db)] Error from TOC entry 2348; 2606 72494 FK CONSTRAINT fk_bd_parcellaire_equipement_ld_code_etat_mob postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.equipement_ld DROP CONSTRAINT fk_bd_parcellaire_equipement_ld_code_etat_mob;
+
+pg_restore: [archiver (db)] Error from TOC entry 2343; 2606 138724 FK CONSTRAINT fk_bd_parcellaire_constat_parcelle_n_code_parcelle postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.constat_parcelle_n DROP CONSTRAINT fk_bd_parcellaire_constat_parcelle_n_code_parcelle;
+
+pg_restore: [archiver (db)] Error from TOC entry 2344; 2606 72484 FK CONSTRAINT fk_bd_parcellaire_constat_parcelle_n_code_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.constat_parcelle_n DROP CONSTRAINT fk_bd_parcellaire_constat_parcelle_n_code_constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 2342; 2606 72479 FK CONSTRAINT fk_bd_parcellaire_constat_fichier_joint_code_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.constat_fichier_joint DROP CONSTRAINT fk_bd_parcellaire_constat_fichier_joint_code_constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 2336; 2606 72474 FK CONSTRAINT fk_bd_parcellaire_constat_code_urgence postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.constat DROP CONSTRAINT fk_bd_parcellaire_constat_code_urgence;
+
+pg_restore: [archiver (db)] Error from TOC entry 2337; 2606 72469 FK CONSTRAINT fk_bd_parcellaire_constat_code_type_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.constat DROP CONSTRAINT fk_bd_parcellaire_constat_code_type_constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 2338; 2606 72464 FK CONSTRAINT fk_bd_parcellaire_constat_code_ld postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.constat DROP CONSTRAINT fk_bd_parcellaire_constat_code_ld;
+
+pg_restore: [archiver (db)] Error from TOC entry 2339; 2606 72459 FK CONSTRAINT fk_bd_parcellaire_constat_code_detail_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.constat DROP CONSTRAINT fk_bd_parcellaire_constat_code_detail_constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 2340; 2606 72454 FK CONSTRAINT fk_bd_parcellaire_constat_agent_n_code_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.constat_agent_n DROP CONSTRAINT fk_bd_parcellaire_constat_agent_n_code_constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 2341; 2606 72449 FK CONSTRAINT fk_bd_parcellaire_constat_agent_n_code_agent postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.constat_agent_n DROP CONSTRAINT fk_bd_parcellaire_constat_agent_n_code_agent;
+
+pg_restore: [archiver (db)] Error from TOC entry 2356; 2620 72448 TRIGGER xytogeom postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TRIGGER xytogeom ON bd_parcellaire.constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 2311; 1259 138629 INDEX fki_bd_parcellaire_equipement_ld_code_parcelle postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP INDEX bd_parcellaire.fki_bd_parcellaire_equipement_ld_code_parcelle;
+
+pg_restore: [archiver (db)] Error from TOC entry 2306; 1259 138623 INDEX fki_bd_parcellaire_constat_parcelle_n_code_parcelle postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP INDEX bd_parcellaire.fki_bd_parcellaire_constat_parcelle_n_code_parcelle;
+
+pg_restore: [archiver (db)] Error from TOC entry 2335; 2606 72447 CONSTRAINT pk_bd_parcellaire_urgence postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.urgence DROP CONSTRAINT pk_bd_parcellaire_urgence;
+
+pg_restore: [archiver (db)] Error from TOC entry 2333; 2606 72445 CONSTRAINT pk_bd_parcellaire_type_equipement postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.type_equipement DROP CONSTRAINT pk_bd_parcellaire_type_equipement;
+
+pg_restore: [archiver (db)] Error from TOC entry 2331; 2606 72443 CONSTRAINT pk_bd_parcellaire_type_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.type_constat DROP CONSTRAINT pk_bd_parcellaire_type_constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 2329; 2606 72441 CONSTRAINT pk_bd_parcellaire_suivi_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.suivi_constat DROP CONSTRAINT pk_bd_parcellaire_suivi_constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 2327; 2606 72439 CONSTRAINT pk_bd_parcellaire_site_commune_n postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.site_commune_n DROP CONSTRAINT pk_bd_parcellaire_site_commune_n;
+
+pg_restore: [archiver (db)] Error from TOC entry 2325; 2606 72437 CONSTRAINT pk_bd_parcellaire_site postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.site DROP CONSTRAINT pk_bd_parcellaire_site;
+
+pg_restore: [archiver (db)] Error from TOC entry 2323; 2606 72435 CONSTRAINT pk_bd_parcellaire_photo_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.photo_constat DROP CONSTRAINT pk_bd_parcellaire_photo_constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 2321; 2606 72433 CONSTRAINT pk_bd_parcellaire_parcelle postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.parcelle DROP CONSTRAINT pk_bd_parcellaire_parcelle;
+
+pg_restore: [archiver (db)] Error from TOC entry 2317; 2606 72431 CONSTRAINT pk_bd_parcellaire_lieudit postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.lieudit DROP CONSTRAINT pk_bd_parcellaire_lieudit;
+
+pg_restore: [archiver (db)] Error from TOC entry 2315; 2606 72429 CONSTRAINT pk_bd_parcellaire_etat_mob postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.etat_mob DROP CONSTRAINT pk_bd_parcellaire_etat_mob;
+
+pg_restore: [archiver (db)] Error from TOC entry 2313; 2606 72427 CONSTRAINT pk_bd_parcellaire_equipement_ld postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.equipement_ld DROP CONSTRAINT pk_bd_parcellaire_equipement_ld;
+
+pg_restore: [archiver (db)] Error from TOC entry 2310; 2606 72425 CONSTRAINT pk_bd_parcellaire_detail_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.detail_constat DROP CONSTRAINT pk_bd_parcellaire_detail_constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 2308; 2606 72423 CONSTRAINT pk_bd_parcellaire_constat_parcelle_n postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.constat_parcelle_n DROP CONSTRAINT pk_bd_parcellaire_constat_parcelle_n;
+
+pg_restore: [archiver (db)] Error from TOC entry 2305; 2606 72421 CONSTRAINT pk_bd_parcellaire_constat_fichier_joint postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.constat_fichier_joint DROP CONSTRAINT pk_bd_parcellaire_constat_fichier_joint;
+
+pg_restore: [archiver (db)] Error from TOC entry 2303; 2606 72419 CONSTRAINT pk_bd_parcellaire_constat_agent_n postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.constat_agent_n DROP CONSTRAINT pk_bd_parcellaire_constat_agent_n;
+
+pg_restore: [archiver (db)] Error from TOC entry 2301; 2606 72417 CONSTRAINT pk_bd_parcellaire_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.constat DROP CONSTRAINT pk_bd_parcellaire_constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 2299; 2606 72415 CONSTRAINT pk_bd_parcellaire_commune postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.commune DROP CONSTRAINT pk_bd_parcellaire_commune;
+
+pg_restore: [archiver (db)] Error from TOC entry 2297; 2606 72413 CONSTRAINT pk_bd_parcellaire_agent postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.agent DROP CONSTRAINT pk_bd_parcellaire_agent;
+
+pg_restore: [archiver (db)] Error from TOC entry 2319; 2606 72411 CONSTRAINT _login_pkey postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: ALTER TABLE ONLY bd_parcellaire.login DROP CONSTRAINT _login_pkey;
+
+pg_restore: [archiver (db)] Error from TOC entry 147; 1259 72404 TABLE urgence postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.urgence;
+
+pg_restore: [archiver (db)] Error from TOC entry 146; 1259 72402 SEQUENCE urgence_code_urgence_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP SEQUENCE bd_parcellaire.urgence_code_urgence_seq;
+
+pg_restore: [archiver (db)] Error from TOC entry 145; 1259 72396 TABLE type_equipement postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.type_equipement;
+
+pg_restore: [archiver (db)] Error from TOC entry 144; 1259 72394 SEQUENCE type_equipement_code_type_mobilier_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP SEQUENCE bd_parcellaire.type_equipement_code_type_mobilier_seq;
+
+pg_restore: [archiver (db)] Error from TOC entry 143; 1259 72388 TABLE type_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.type_constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 142; 1259 72386 SEQUENCE type_constat_code_type_constat_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP SEQUENCE bd_parcellaire.type_constat_code_type_constat_seq;
+
+pg_restore: [archiver (db)] Error from TOC entry 141; 1259 72380 TABLE suivi_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.suivi_constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 140; 1259 72378 SEQUENCE suivi_constat_code_suivi_constat_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP SEQUENCE bd_parcellaire.suivi_constat_code_suivi_constat_seq;
+
+pg_restore: [archiver (db)] Error from TOC entry 139; 1259 72375 TABLE site_commune_n postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.site_commune_n;
+
+pg_restore: [archiver (db)] Error from TOC entry 138; 1259 72373 SEQUENCE site_commune_n_code_site_commune_n_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP SEQUENCE bd_parcellaire.site_commune_n_code_site_commune_n_seq;
+
+pg_restore: [archiver (db)] Error from TOC entry 137; 1259 72367 TABLE site postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.site;
+
+pg_restore: [archiver (db)] Error from TOC entry 136; 1259 72365 SEQUENCE site_code_site_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP SEQUENCE bd_parcellaire.site_code_site_seq;
+
+pg_restore: [archiver (db)] Error from TOC entry 135; 1259 72359 TABLE photo_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.photo_constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 134; 1259 72357 SEQUENCE photo_constat_code_photo_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP SEQUENCE bd_parcellaire.photo_constat_code_photo_seq;
+
+pg_restore: [archiver (db)] Error from TOC entry 133; 1259 72352 TABLE parcelle postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.parcelle;
+
+pg_restore: [archiver (db)] Error from TOC entry 132; 1259 72346 TABLE login postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.login;
+
+pg_restore: [archiver (db)] Error from TOC entry 130; 1259 72338 TABLE lieudit postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.lieudit;
+
+pg_restore: [archiver (db)] Error from TOC entry 129; 1259 72336 SEQUENCE lieudit_code_ld_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP SEQUENCE bd_parcellaire.lieudit_code_ld_seq;
+
+pg_restore: [archiver (db)] Error from TOC entry 128; 1259 72330 TABLE etat_mob postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.etat_mob;
+
+pg_restore: [archiver (db)] Error from TOC entry 127; 1259 72328 SEQUENCE etat_mob_code_etat_mob_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP SEQUENCE bd_parcellaire.etat_mob_code_etat_mob_seq;
+
+pg_restore: [archiver (db)] Error from TOC entry 126; 1259 72322 TABLE equipement_ld postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.equipement_ld;
+
+pg_restore: [archiver (db)] Error from TOC entry 125; 1259 72320 SEQUENCE equipement_ld_code_equipement_ld_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP SEQUENCE bd_parcellaire.equipement_ld_code_equipement_ld_seq;
+
+pg_restore: [archiver (db)] Error from TOC entry 124; 1259 72314 TABLE detail_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.detail_constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 123; 1259 72312 SEQUENCE detail_constat_code_detail_constat_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP SEQUENCE bd_parcellaire.detail_constat_code_detail_constat_seq;
+
+pg_restore: [archiver (db)] Error from TOC entry 122; 1259 72306 TABLE constat_parcelle_n postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.constat_parcelle_n;
+
+pg_restore: [archiver (db)] Error from TOC entry 121; 1259 72304 SEQUENCE constat_parcelle_n_code_parcelle_n_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP SEQUENCE bd_parcellaire.constat_parcelle_n_code_parcelle_n_seq;
+
+pg_restore: [archiver (db)] Error from TOC entry 120; 1259 72298 TABLE constat_fichier_joint postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.constat_fichier_joint;
+
+pg_restore: [archiver (db)] Error from TOC entry 119; 1259 72296 SEQUENCE constat_fichier_joint_code_fichier_joint_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP SEQUENCE bd_parcellaire.constat_fichier_joint_code_fichier_joint_seq;
+
+pg_restore: [archiver (db)] Error from TOC entry 118; 1259 72293 TABLE constat_agent_n postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.constat_agent_n;
+
+pg_restore: [archiver (db)] Error from TOC entry 117; 1259 72291 SEQUENCE constat_agent_n_code_constat_agent_n_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP SEQUENCE bd_parcellaire.constat_agent_n_code_constat_agent_n_seq;
+
+pg_restore: [archiver (db)] Error from TOC entry 116; 1259 72282 TABLE constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.constat;
+
+pg_restore: [archiver (db)] Error from TOC entry 115; 1259 72280 SEQUENCE constat_code_constat_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP SEQUENCE bd_parcellaire.constat_code_constat_seq;
+
+pg_restore: [archiver (db)] Error from TOC entry 114; 1259 72275 TABLE commune postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.commune;
+
+pg_restore: [archiver (db)] Error from TOC entry 113; 1259 72270 TABLE agent postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP TABLE bd_parcellaire.agent;
+
+pg_restore: [archiver (db)] Error from TOC entry 131; 1259 72344 SEQUENCE _login_code_login_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP SEQUENCE bd_parcellaire._login_code_login_seq;
+
+pg_restore: [archiver (db)] Error from TOC entry 6; 2615 72269 SCHEMA bd_parcellaire postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  schema "bd_parcellaire" does not exist
+    Command was: DROP SCHEMA bd_parcellaire;
+
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER SCHEMA bd_parcellaire OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 131; 1259 72344 SEQUENCE _login_code_login_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE _login_code_login_seq OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 113; 1259 72270 TABLE agent postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE agent OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 114; 1259 72275 TABLE commune postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE commune OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 115; 1259 72280 SEQUENCE constat_code_constat_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE constat_code_constat_seq OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 116; 1259 72282 TABLE constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  type "public.geometry" does not exist
+LINE 16:     the_geom public.geometry,
+                      ^
+    Command was: CREATE TABLE constat (
+    code_constat integer DEFAULT nextval('constat_code_constat_seq'::regclass) NOT NULL,
+    date_ini...
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE constat OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 117; 1259 72291 SEQUENCE constat_agent_n_code_constat_agent_n_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE constat_agent_n_code_constat_agent_n_seq OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 118; 1259 72293 TABLE constat_agent_n postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE constat_agent_n OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 119; 1259 72296 SEQUENCE constat_fichier_joint_code_fichier_joint_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE constat_fichier_joint_code_fichier_joint_seq OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 120; 1259 72298 TABLE constat_fichier_joint postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE constat_fichier_joint OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 121; 1259 72304 SEQUENCE constat_parcelle_n_code_parcelle_n_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE constat_parcelle_n_code_parcelle_n_seq OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 122; 1259 72306 TABLE constat_parcelle_n postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE constat_parcelle_n OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 123; 1259 72312 SEQUENCE detail_constat_code_detail_constat_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE detail_constat_code_detail_constat_seq OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 124; 1259 72314 TABLE detail_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE detail_constat OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 125; 1259 72320 SEQUENCE equipement_ld_code_equipement_ld_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE equipement_ld_code_equipement_ld_seq OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 126; 1259 72322 TABLE equipement_ld postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE equipement_ld OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 127; 1259 72328 SEQUENCE etat_mob_code_etat_mob_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE etat_mob_code_etat_mob_seq OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 128; 1259 72330 TABLE etat_mob postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE etat_mob OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 129; 1259 72336 SEQUENCE lieudit_code_ld_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE lieudit_code_ld_seq OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 130; 1259 72338 TABLE lieudit postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE lieudit OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 132; 1259 72346 TABLE login postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE login OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 133; 1259 72352 TABLE parcelle postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE parcelle OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 134; 1259 72357 SEQUENCE photo_constat_code_photo_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE photo_constat_code_photo_seq OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 135; 1259 72359 TABLE photo_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE photo_constat OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 136; 1259 72365 SEQUENCE site_code_site_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE site_code_site_seq OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 137; 1259 72367 TABLE site postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE site OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 138; 1259 72373 SEQUENCE site_commune_n_code_site_commune_n_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE site_commune_n_code_site_commune_n_seq OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 139; 1259 72375 TABLE site_commune_n postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE site_commune_n OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 140; 1259 72378 SEQUENCE suivi_constat_code_suivi_constat_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE suivi_constat_code_suivi_constat_seq OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 141; 1259 72380 TABLE suivi_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE suivi_constat OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 142; 1259 72386 SEQUENCE type_constat_code_type_constat_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE type_constat_code_type_constat_seq OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 143; 1259 72388 TABLE type_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE type_constat OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 144; 1259 72394 SEQUENCE type_equipement_code_type_mobilier_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE type_equipement_code_type_mobilier_seq OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 145; 1259 72396 TABLE type_equipement postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE type_equipement OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 146; 1259 72402 SEQUENCE urgence_code_urgence_seq postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE urgence_code_urgence_seq OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 147; 1259 72404 TABLE urgence postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  must be member of role "postgres"
+    Command was: ALTER TABLE urgence OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 2425; 0 72282 TABLE DATA constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: COPY constat (code_constat, date_initiale_constat, x, y, superficie_constat, id_contrevenant, proposition_action_curative, r...
+pg_restore: [archiver (db)] Error from TOC entry 2301; 2606 72417 CONSTRAINT pk_bd_parcellaire_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY constat
+    ADD CONSTRAINT pk_bd_parcellaire_constat PRIMARY KEY (code_constat);
+
+
+
+pg_restore: [archiver (db)] Error from TOC entry 2356; 2620 72448 TRIGGER xytogeom postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: CREATE TRIGGER xytogeom
+    BEFORE INSERT OR UPDATE ON constat
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.make_geom();
+
+
+
+pg_restore: [archiver (db)] Error from TOC entry 2340; 2606 72454 FK CONSTRAINT fk_bd_parcellaire_constat_agent_n_code_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY constat_agent_n
+    ADD CONSTRAINT fk_bd_parcellaire_constat_agent_n_code_constat FOREIGN KEY (code_constat...
+pg_restore: [archiver (db)] Error from TOC entry 2339; 2606 72459 FK CONSTRAINT fk_bd_parcellaire_constat_code_detail_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY constat
+    ADD CONSTRAINT fk_bd_parcellaire_constat_code_detail_constat FOREIGN KEY (code_detail_constat) ...
+pg_restore: [archiver (db)] Error from TOC entry 2338; 2606 72464 FK CONSTRAINT fk_bd_parcellaire_constat_code_ld postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY constat
+    ADD CONSTRAINT fk_bd_parcellaire_constat_code_ld FOREIGN KEY (code_ld) REFERENCES lieudit(code_...
+pg_restore: [archiver (db)] Error from TOC entry 2337; 2606 72469 FK CONSTRAINT fk_bd_parcellaire_constat_code_type_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY constat
+    ADD CONSTRAINT fk_bd_parcellaire_constat_code_type_constat FOREIGN KEY (code_type_constat) REFE...
+pg_restore: [archiver (db)] Error from TOC entry 2336; 2606 72474 FK CONSTRAINT fk_bd_parcellaire_constat_code_urgence postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY constat
+    ADD CONSTRAINT fk_bd_parcellaire_constat_code_urgence FOREIGN KEY (code_urgence) REFERENCES urg...
+pg_restore: [archiver (db)] Error from TOC entry 2342; 2606 72479 FK CONSTRAINT fk_bd_parcellaire_constat_fichier_joint_code_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY constat_fichier_joint
+    ADD CONSTRAINT fk_bd_parcellaire_constat_fichier_joint_code_constat FOREIGN KEY (...
+pg_restore: [archiver (db)] Error from TOC entry 2344; 2606 72484 FK CONSTRAINT fk_bd_parcellaire_constat_parcelle_n_code_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY constat_parcelle_n
+    ADD CONSTRAINT fk_bd_parcellaire_constat_parcelle_n_code_constat FOREIGN KEY (code_c...
+pg_restore: [archiver (db)] Error from TOC entry 2352; 2606 72529 FK CONSTRAINT fk_bd_parcellaire_photo_constat_code_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY photo_constat
+    ADD CONSTRAINT fk_bd_parcellaire_photo_constat_code_constat FOREIGN KEY (code_constat) RE...
+pg_restore: [archiver (db)] Error from TOC entry 2355; 2606 72544 FK CONSTRAINT fk_bd_parcellaire_suivi_constat_code_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY suivi_constat
+    ADD CONSTRAINT fk_bd_parcellaire_suivi_constat_code_constat FOREIGN KEY (code_constat) RE...
+WARNING: errors ignored on restore: 127
+pg_restore: [archiver (db)] Error while PROCESSING TOC:
+pg_restore: [archiver (db)] Error from TOC entry 116; 1259 72282 TABLE constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  type "public.geometry" does not exist
+LINE 16:     the_geom public.geometry,
+                      ^
+    Command was: CREATE TABLE constat (
+    code_constat integer DEFAULT nextval('constat_code_constat_seq'::regclass) NOT NULL,
+    date_ini...
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE constat OWNER TO postgres;
+
+
+pg_restore: [archiver (db)] Error from TOC entry 2425; 0 72282 TABLE DATA constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: COPY constat (code_constat, date_initiale_constat, x, y, superficie_constat, id_contrevenant, proposition_action_curative, r...
+pg_restore: [archiver (db)] Error from TOC entry 2301; 2606 72417 CONSTRAINT pk_bd_parcellaire_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY constat
+    ADD CONSTRAINT pk_bd_parcellaire_constat PRIMARY KEY (code_constat);
+
+
+
+pg_restore: [archiver (db)] Error from TOC entry 2356; 2620 72448 TRIGGER xytogeom postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: CREATE TRIGGER xytogeom
+    BEFORE INSERT OR UPDATE ON constat
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.make_geom();
+
+
+
+pg_restore: [archiver (db)] Error from TOC entry 2340; 2606 72454 FK CONSTRAINT fk_bd_parcellaire_constat_agent_n_code_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY constat_agent_n
+    ADD CONSTRAINT fk_bd_parcellaire_constat_agent_n_code_constat FOREIGN KEY (code_constat...
+pg_restore: [archiver (db)] Error from TOC entry 2339; 2606 72459 FK CONSTRAINT fk_bd_parcellaire_constat_code_detail_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY constat
+    ADD CONSTRAINT fk_bd_parcellaire_constat_code_detail_constat FOREIGN KEY (code_detail_constat) ...
+pg_restore: [archiver (db)] Error from TOC entry 2338; 2606 72464 FK CONSTRAINT fk_bd_parcellaire_constat_code_ld postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY constat
+    ADD CONSTRAINT fk_bd_parcellaire_constat_code_ld FOREIGN KEY (code_ld) REFERENCES lieudit(code_...
+pg_restore: [archiver (db)] Error from TOC entry 2337; 2606 72469 FK CONSTRAINT fk_bd_parcellaire_constat_code_type_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY constat
+    ADD CONSTRAINT fk_bd_parcellaire_constat_code_type_constat FOREIGN KEY (code_type_constat) REFE...
+pg_restore: [archiver (db)] Error from TOC entry 2336; 2606 72474 FK CONSTRAINT fk_bd_parcellaire_constat_code_urgence postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY constat
+    ADD CONSTRAINT fk_bd_parcellaire_constat_code_urgence FOREIGN KEY (code_urgence) REFERENCES urg...
+pg_restore: [archiver (db)] Error from TOC entry 2342; 2606 72479 FK CONSTRAINT fk_bd_parcellaire_constat_fichier_joint_code_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY constat_fichier_joint
+    ADD CONSTRAINT fk_bd_parcellaire_constat_fichier_joint_code_constat FOREIGN KEY (...
+pg_restore: [archiver (db)] Error from TOC entry 2344; 2606 72484 FK CONSTRAINT fk_bd_parcellaire_constat_parcelle_n_code_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY constat_parcelle_n
+    ADD CONSTRAINT fk_bd_parcellaire_constat_parcelle_n_code_constat FOREIGN KEY (code_c...
+pg_restore: [archiver (db)] Error from TOC entry 2352; 2606 72529 FK CONSTRAINT fk_bd_parcellaire_photo_constat_code_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY photo_constat
+    ADD CONSTRAINT fk_bd_parcellaire_photo_constat_code_constat FOREIGN KEY (code_constat) RE...
+pg_restore: [archiver (db)] Error from TOC entry 2355; 2606 72544 FK CONSTRAINT fk_bd_parcellaire_suivi_constat_code_constat postgres
+pg_restore: [archiver (db)] could not execute query: ERROR:  relation "constat" does not exist
+    Command was: ALTER TABLE ONLY suivi_constat
+    ADD CONSTRAINT fk_bd_parcellaire_suivi_constat_code_constat FOREIGN KEY (code_constat) RE...
+WARNING: errors ignored on restore: 14

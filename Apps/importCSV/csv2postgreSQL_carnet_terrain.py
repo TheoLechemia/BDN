@@ -6,6 +6,7 @@ from flask import session
 from Apps.database import *
 from ..config import config
 import traceback
+import sys
 
 def csv2PG(file):
     db = getConnexion()
@@ -24,7 +25,9 @@ def csv2PG(file):
             if k.find('ID_releve') != -1:
                 newHeaders.append('ID_releve')
             else:
-                newHeaders.append(k.replace('\n', ''))
+                k = k.replace('\n', '')
+                k = k.replace('\r', '')
+                newHeaders.append(k)
 
         reader = csv.DictReader(csvfile, fieldnames=newHeaders, delimiter = ';')
         inputProtocole = None
