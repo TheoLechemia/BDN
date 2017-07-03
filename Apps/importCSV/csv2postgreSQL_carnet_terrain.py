@@ -17,7 +17,6 @@ def csv2PG(file):
         header = csvfile.readline()
         csvfile.seek(len(header))  # reset read buffer
         #headers = [h.strip('.') for h in header.split()]
-        print 'PREMIERE LIGNE' ,type(header)
         headers = header.split(';')
         newHeaders = list()
         #reecris les headers, car des caracteres speciaux sont insere dans le nom de la 1ere colonne 'ID_releve'...
@@ -35,6 +34,9 @@ def csv2PG(file):
 
         no_ligne = 0
         for row in reader:
+            print 'lAAAAAAAAAAAA', row.keys()
+            print >> sys.stderr, 'LAAAAAAAAAAAAAAAAA'
+            print >> sys.stderr, row.keys()
             ###COMMUN###
             #recupere les infos sur le projet de la ligne
             sql = """SELECT id_projet, nom_schema from synthese.bib_projet
