@@ -95,6 +95,7 @@ def csv2PG(file):
                     ccod_frt = resForet[0]
             except:
                 return traceback.format_exc()
+            #si c est une maille
             if isMaille in ['TRUE', 'True', 'T', 't', 'Oui', 'oui', 'o']:
                 ##rechercher le code maille
                 sql_maille = "SELECT id_maille FROM layers.maille_1_2 WHERE ST_INTERSECTS(geom,(ST_Transform(ST_PointFromText(%s, 32620),"+str(config['MAP']['PROJECTION'])+"))) AND taille_maille = %s"
@@ -110,12 +111,12 @@ def csv2PG(file):
 
                 stringInsert = "INSERT INTO "+fullTableName+"(id_projet, id_sous_projet, id_sous_projet_2, code_maille, cd_nom, precision, comm_loc, observateur, date, diffusable, id_structure, commentaire, insee, ccod_frt, valide, loc_exact "
                 stringValues = " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s"
-                generalValues = [id_projet, id_sous_projet, id_sous_projet_2, code_maille, cd_ref, precision, commentaire_loc, observateur, date, diffusable, id_structure, commentaire, insee, ccod_frt , True, not isMaille]
+                generalValues = [id_projet, id_sous_projet, id_sous_projet_2, code_maille, cd_ref, precision, commentaire_loc, observateur, date, diffusable, id_structure, commentaire, insee, ccod_frt , True, False]
             #Ce n'est pas une maille
             else:
                 stringInsert = "INSERT INTO "+fullTableName+"(id_projet, id_sous_projet, id_sous_projet_2, geom_point, cd_nom, precision, comm_loc, observateur,date, diffusable, id_structure, commentaire, insee, ccod_frt, valide, loc_exact "
                 stringValues = " VALUES (%s, %s, %s, ST_Transform(ST_PointFromText(%s, "+str(config['MAP']['PROJECTION'])+"),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s"
-                generalValues = [id_projet, id_sous_projet, id_sous_projet_2, point, cd_ref, precision, commentaire_loc, observateur, date, diffusable, id_structure, commentaire, insee, ccod_frt, True, isMaille]
+                generalValues = [id_projet, id_sous_projet, id_sous_projet_2, point, cd_ref, precision, commentaire_loc, observateur, date, diffusable, id_structure, commentaire, insee, ccod_frt, True, True]
             if fieldList != None:
                 for field in fieldList:
                     stringInsert += ', '+field
