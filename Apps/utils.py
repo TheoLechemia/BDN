@@ -531,6 +531,7 @@ def createViewsDownload(db, projectForm, fieldForm):
     f.commentaire,
     f.comm_loc,
     f.ccod_frt,
+    m.geom,
     m.id_maille,
     s.nom_organisme,
     f.id_structure,

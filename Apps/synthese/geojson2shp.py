@@ -33,7 +33,7 @@ def export(FileName, geojson, geomType):
         outLayer = outDataSource.CreateLayer(str(FileName), outSpatialRef, geom_type=ogr.wkbMultiPolygon)
 
 
-    fielListName = ['nom_vern', 'lb_nom', 'cd_nom', 'date', 'projet', 'observateur', 'structure', 'id_synthese', 'producteur', 'precision', 'ccod_frt', 'altitude']
+    fielListName = ['nom_vern', 'lb_nom', 'cd_nom', 'date', 'projet', 'observateur', 'id_synthese', 'producteur', 'precision', 'ccod_frt', 'altitude']
 
     #create the field 
     for f in fielListName:

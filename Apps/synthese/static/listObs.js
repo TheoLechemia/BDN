@@ -58,6 +58,9 @@ function listObsCtrl ($uibModal, $http, proxy, toaster){
 	    toaster.clear();
 	    toaster.pop({type: 'success', title: "", body:"Les observations ont bien été téléchargées"});
 	      window.location =configuration.URL_APPLICATION+'synthese/uploads/'+response.data;       
+	    }, function errorCallBack(){
+	    	toaster.clear();
+	    	toaster.pop({type: 'error', title: "", body:"Une erreur s'est produite veuillez faire remonter le gestionnaire de BDD"});
 	    })
   	};
 

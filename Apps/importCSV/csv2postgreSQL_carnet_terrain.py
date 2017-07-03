@@ -16,8 +16,6 @@ def csv2PG(file):
     # try: 
     with open(file) as csvfile:
         header = csvfile.readline()
-        csvfile.seek(len(header))  # reset read buffer
-        #headers = [h.strip('.') for h in header.split()]
         headers = header.split(';')
         newHeaders = list()
         #reecris les headers, car des caracteres speciaux sont insere dans le nom de la 1ere colonne 'ID_releve'...
