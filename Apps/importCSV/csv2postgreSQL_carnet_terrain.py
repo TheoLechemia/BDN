@@ -83,10 +83,6 @@ def csv2PG(file):
                 diffusable = row['Diffusable']
                 id_structure = row['ID_structure']
                 commentaire = row['Commentaire']
-                print 'LAAAAAAAAAAAAAAAAAAAAA'
-                print row.keys()
-                print row['test1']
-                print row['test2']
             except:
                 return "Le nom d'une colonne du CSV est incorect, se réferer au modele \n "+traceback.format_exc()
 
