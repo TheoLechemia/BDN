@@ -25,9 +25,7 @@ def csv2PG(file):
             if k.find('ID_releve') != -1:
                 newHeaders.append('ID_releve')
             else:
-                newHeaders.append(k)
-        for k in newHeaders:
-            print k
+                newHeaders.append(k.replace('\n', ''))
 
         reader = csv.DictReader(csvfile, fieldnames=newHeaders, delimiter = ';')
         inputProtocole = None
@@ -37,10 +35,6 @@ def csv2PG(file):
 
         no_ligne = 0
         for row in reader:
-            print row.keys()
-            print 'ROW IN READER '
-            print 'ID_releveeeeeeeeeeeeeeeee', row['ID_projet']
-            #print row['Observateur']
             ###COMMUN###
             #recupere les infos sur le projet de la ligne
             sql = """SELECT id_projet, nom_schema from synthese.bib_projet
@@ -89,6 +83,10 @@ def csv2PG(file):
                 diffusable = row['Diffusable']
                 id_structure = row['ID_structure']
                 commentaire = row['Commentaire']
+                print 'LAAAAAAAAAAAAAAAAAAAAA'
+                print row.keys()
+                print row['test1']
+                print row['test2']
             except:
                 return "Le nom d'une colonne du CSV est incorect, se réferer au modele \n "+traceback.format_exc()
 
@@ -138,10 +136,13 @@ def csv2PG(file):
                 stringValues = " VALUES (%s, %s, %s, %s, ST_Transform(ST_PointFromText(%s, "+str(config['MAP']['PROJECTION'])+"),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s"
                 generalValues = [id_projet, id_sous_projet, id_sous_projet_2, id_releve, point, cd_ref, precision, commentaire_loc, observateur, date, diffusable, id_structure, commentaire, insee, ccod_frt, True, True]
             if fieldList != None:
-                for field in fieldList:
-                    stringInsert += ', '+field
-                    stringValues += ", %s"
-                    generalValues.append(row[field])
+                try:
+                    for field in fieldList:
+                        stringInsert += ', '+field
+                        stringValues += ", %s"
+                        generalValues.append(row[field])
+                except:
+                    return traceback.format_exc()
 
             stringInsert+=")"
             stringValues+=");"
