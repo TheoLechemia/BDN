@@ -110,12 +110,12 @@ def csv2PG(file):
 
                 stringInsert = "INSERT INTO "+fullTableName+"(id_projet, id_sous_projet, id_sous_projet_2, code_maille, cd_nom, precision, comm_loc, observateur, date, diffusable, id_structure, commentaire, insee, ccod_frt, valide, loc_exact "
                 stringValues = " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s"
-                generalValues = [id_projet, id_sous_projet, id_sous_projet_2, code_maille, cd_ref, precision, commentaire_loc, observateur, date, diffusable, id_structure, commentaire, insee, ccod_frt , True, isMaille]
+                generalValues = [id_projet, id_sous_projet, id_sous_projet_2, code_maille, cd_ref, precision, commentaire_loc, observateur, date, diffusable, id_structure, commentaire, insee, ccod_frt , True, not isMaille]
             #Ce n'est pas une maille
             else:
                 stringInsert = "INSERT INTO "+fullTableName+"(id_projet, id_sous_projet, id_sous_projet_2, geom_point, cd_nom, precision, comm_loc, observateur,date, diffusable, id_structure, commentaire, insee, ccod_frt, valide, loc_exact "
                 stringValues = " VALUES (%s, %s, %s, ST_Transform(ST_PointFromText(%s, "+str(config['MAP']['PROJECTION'])+"),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s"
-                generalValues = [id_projet, id_sous_projet, id_sous_projet_2, point, cd_ref, precision, commentaire_loc, observateur, date, diffusable, id_structure, commentaire, insee, ccod_frt, True, not isMaille]
+                generalValues = [id_projet, id_sous_projet, id_sous_projet_2, point, cd_ref, precision, commentaire_loc, observateur, date, diffusable, id_structure, commentaire, insee, ccod_frt, True, isMaille]
             if fieldList != None:
                 for field in fieldList:
                     stringInsert += ', '+field

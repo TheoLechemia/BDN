@@ -116,7 +116,7 @@ def getObs():
             sql_csv = db.cur.mogrify(sql_csv, [id_projet])
 
         print "LAAAAAAAAA"
-        print sql_point
+        print sql_csv
 
         time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         filename = "Export_"+time
