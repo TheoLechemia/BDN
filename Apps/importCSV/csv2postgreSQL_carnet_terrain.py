@@ -16,7 +16,9 @@ def csv2PG(file):
     with open(file) as csvfile:
         header = csvfile.readline()
         csvfile.seek(len(header))  # reset read buffer
-        headers = headers = [h.strip('.') for h in header.split()]
+        #headers = [h.strip('.') for h in header.split()]
+        print 'PREMIERE LIGNE' ,type(header)
+        headers = header.split(';')
         newHeaders = list()
         #reecris les headers, car des caracteres speciaux sont insere dans le nom de la 1ere colonne 'ID_releve'...
         for k in headers:
@@ -24,6 +26,8 @@ def csv2PG(file):
                 newHeaders.append('ID_releve')
             else:
                 newHeaders.append(k)
+        for k in newHeaders:
+            print k
 
         reader = csv.DictReader(csvfile, fieldnames=newHeaders, delimiter = ';')
         inputProtocole = None
@@ -33,6 +37,10 @@ def csv2PG(file):
 
         no_ligne = 0
         for row in reader:
+            print row.keys()
+            print 'ROW IN READER '
+            print 'ID_releveeeeeeeeeeeeeeeee', row['ID_projet']
+            #print row['Observateur']
             ###COMMUN###
             #recupere les infos sur le projet de la ligne
             sql = """SELECT id_projet, nom_schema from synthese.bib_projet
