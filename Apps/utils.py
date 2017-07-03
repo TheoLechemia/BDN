@@ -650,7 +650,8 @@ def createViewsDownload(db, projectForm, fieldForm):
      JOIN taxonomie.taxref t ON t.cd_nom = f.cd_nom
      LEFT JOIN coord_point cp ON cp.id_obs = f.id_obs
      LEFT JOIN coord_maille cm ON cm.id_obs = f.id_obs
-     LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme AND f.diffusable = TRUE; """
+     LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme 
+     WHERE f.valide = TRUE AND f.diffusable = TRUE; """
     create_csv = psysql.SQL(create_csv).format(sch=psysql.Identifier(schemaName)).as_string(db.cur)
 
     db.cur.execute(create_csv)
