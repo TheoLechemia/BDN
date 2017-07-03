@@ -14,7 +14,18 @@ def csv2PG(file):
 
     # try: 
     with open(file) as csvfile:
-        reader = csv.DictReader(csvfile, delimiter = ';', quotechar= '|')
+        header = csvfile.readline()
+        csvfile.seek(len(header))  # reset read buffer
+        headers = headers = [h.strip('.') for h in header.split()]
+        newHeaders = list()
+        #reecris les headers, car des caracteres speciaux sont insere dans le nom de la 1ere colonne 'ID_releve'...
+        for k in headers:
+            if k.find('ID_releve') != -1:
+                newHeaders.append('ID_releve')
+            else:
+                newHeaders.append(k)
+
+        reader = csv.DictReader(csvfile, fieldnames=newHeaders, delimiter = ';')
         inputProtocole = None
         fieldList = None
         fullTableName = str()
@@ -36,7 +47,7 @@ def csv2PG(file):
                 inputProtocole = res[1]
                 fullTableName = inputProtocole+".releve"
             except:
-                return "L'id_projet de la ligne "+str(no_ligne)+" est incorect"
+                return "L'id_projet de la ligne "+str(no_ligne)+" est incorrect"
 
 
             #recupere les bib champs du protocole de la ligne, si ils existe - si donnee simple la table n'existe pas
@@ -53,10 +64,10 @@ def csv2PG(file):
 
             try:
                 #recupere les champs communs
+                id_releve = row['ID_releve']
                 id_sous_projet = row['ID_sous_projet']
                 id_sous_projet_2 = row['ID_sous_projet_2']
                 observateur = row['Observateur']
-                id_releve = row['ID_releve']
                 lon = row['x']
                 lat = row['y']
                 cd_ref = row['CD_REF']
