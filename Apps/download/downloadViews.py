@@ -98,13 +98,14 @@ def getObs():
         sql_poly = db.cur.mogrify(sqlTab[1], params)
         sql_csv = db.cur.mogrify(sqlTab[2], params)
 
-        print >>sys.stderr, sql_poly
-
-        if schemaReleve == 'synthese':
-            id_projet = request.json['globalForm']['selectedProtocole']['id_projet']
+        id_projet = request.json['globalForm']['selectedProtocole']['id_projet']
+        if schemaReleve == 'synthese' and id_projet != 99999:
+            
             sql_point = utils.askFirstParame(sql_point,firstParam)
             sql_point += " id_projet = %s"
             sql_point = db.cur.mogrify(sql_point, [id_projet])
+            print 'LAAAAAAAAAA'
+            print db.cur.mogrify(sql_point, [id_projet])
 
             sql_poly = utils.askFirstParame(sql_poly,firstParam)
             sql_poly += " id_projet = %s"
@@ -114,7 +115,8 @@ def getObs():
             sql_csv += " id_projet = %s"
             sql_csv = db.cur.mogrify(sql_csv, [id_projet])
 
-
+        print "LAAAAAAAAA"
+        print sql_point
 
         time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         filename = "Export_"+time
