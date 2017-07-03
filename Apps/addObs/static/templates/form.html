@@ -47,15 +47,17 @@
 				<div ng-show="$ctrl.showCoord" class="form-group">
 					  <label> Coordonnées (Long / Lat -  Degrés décimaux) </label>
 					  <div class="form-group" ng-class="{'has-error' : addObsForm.X.$invalid || ($ctrl.validationAttempt && addObsForm.X.$invalid) }">
-					  	<input class="form-control" type="number" step="0.000000000000001" name="X" placeholder="X" ng-model="$ctrl.globalForm.coord.lng" ng-change="$ctrl.changeLng()" >
+					  	<input class="form-control coord" type="number" name="X" placeholder="X" ng-model="$ctrl.globalForm.coord.lng" >
 					  </div>
 					  <p style="color: #a94442;"  ng-show="addObsForm.X.$invalid && !addObsForm.X.$pristine || ($ctrl.validationAttempt && addObsForm.X.$invalid)" class="help-block" >Le format des coordonées n'est pas correct </p>
 					  <div  class="form-group" ng-class="{'has-error' : addObsForm.Y.$invalid || ($ctrl.validationAttempt && addObsForm.Y.$invalid) }">
-					  	<input class="form-control" type="number" step="0.000000000000001" name="Y" placeholder="Y" ng-model="$ctrl.globalForm.coord.lat" ng-change="$ctrl.changeLat()">
+					  	<input class="form-control coord" type="number" name="Y" placeholder="Y" ng-model="$ctrl.globalForm.coord.lat">
 					  </div>
 					  <p style="color: #a94442;"  ng-show="addObsForm.Y.$invalid && !addObsForm.Y.$pristine || ($ctrl.validationAttempt && addObsForm.Y.$invalid)" class="help-block" >Le format des coordonées n'est pas correct </p>
 
 				</div>
+
+				{{$ctrl.globalForm.coord}}
 
 				  
 				<input class="form-control" type="text" placeholder="Commentaire localisation" ng-model="$ctrl.globalForm.comm_loc"  >

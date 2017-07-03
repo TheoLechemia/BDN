@@ -40,7 +40,33 @@ function formController($http, toaster){
     });
   };
 
+  // regex pour ne pas mettre de point dans les input des coordonnées
+/*$('.coord').keypress(function(e){
+  console.log(e)
+  console.log(e.which)
+  if (e.which==46 || e.which < 48 || e.which > 57 || e.wich != 8 ){
+    return false
+  }
+})*/
 
+$('.coord').on('keypress', function(e){
+  console.log(e.which)
+  console.log(e.target.value)
+  return e.metaKey || // cmd/ctrl
+    e.which <= 0 || // arrow keys
+    e.which == 8 || // delete key
+    (e.which == 44 &&  e.target.value.indexOf('.') == -1 ) ||
+    /[0-9]/.test(String.fromCharCode(e.which)); // numbers
+})
+
+/*$('.coord').on('keypress', function(e){
+  console.log(e.which)
+  return //e.metaKey || // cmd/ctrl
+    e.which <= 0 || // arrow keys
+    e.which == 8 || // delete key
+    (e.which == 44 &&  e.target.value.indexOf('.') == -1 ) || // virgule si il y a deja un point dans le chiffre
+    /[0-9]/.test(String.fromCharCode(e.which));
+})*/
 
 
   formCtrl.search_taxon_name = function(expre, selectedProtocole){

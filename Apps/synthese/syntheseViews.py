@@ -88,7 +88,6 @@ def getObs():
         sqlAndParams = utils.buildSQL(sql, "synthese")
         finalSql = sqlAndParams['sql']+ ' ORDER BY code_maille ASC'
         db.cur.execute(finalSql, sqlAndParams['params'])
-        print 'LAAAAAAAAAAAAAAA', db.cur.mogrify(finalSql, sqlAndParams['params'])
         res = db.cur.fetchall()
         myproperties = dict()
         geojsons = utils.buildGeojsonWithParams(res)
