@@ -78,7 +78,7 @@ function appCtrl (proxy, toaster){
     	toaster.pop('success', "Observations exportées avec succès... Les données vont être téléchargées...", null, 'trustedHtml');
     	window.location =CONFIGURATION.URL_APPLICATION+'download/uploads/'+response.data.filename;       
     }, function errorCallBack(){
-    	toaster.pop('error', "Une erreur est survenue, merci de faire remonter le bug au gestionnaire de BDD", null, 'trustedHtml');
+    	toaster.pop('error', " Erreur ! Avez vous séléctionné un projet ? Si oui,  merci de faire remonter le bug au gestionnaire de BDD", null, 'trustedHtml');
     })
   }
 

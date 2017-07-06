@@ -104,8 +104,6 @@ def getObs():
             sql_point = utils.askFirstParame(sql_point,firstParam)
             sql_point += " id_projet = %s"
             sql_point = db.cur.mogrify(sql_point, [id_projet])
-            print 'LAAAAAAAAAA'
-            print db.cur.mogrify(sql_point, [id_projet])
 
             sql_poly = utils.askFirstParame(sql_poly,firstParam)
             sql_poly += " id_projet = %s"

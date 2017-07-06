@@ -4,7 +4,7 @@
 			<form name="addObsForm" ng-submit="$ctrl.onSubmit(addObsForm)" novalidate>
 				<div class="form-group">
 				    <div class="btn-group">
-				    <label> Protocole</label>
+				    <label> Projet </label>
 				    	<select ng-model="$ctrl.selectedProtocole" ng-change="$ctrl.bindNewValues($ctrl.selectedProtocole)" ng-options="row.nom_projet for row in $ctrl.protocole">
 				    		<option value=""> - Selectionner un projet - </option>
 				    	</select>

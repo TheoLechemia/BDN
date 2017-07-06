@@ -177,7 +177,7 @@ $('.coord').on('keypress', function(e){
 
    formCtrl.checkProtocole  = function(){
     if(formCtrl.selectedProtocole == undefined){
-      alert("Selectionner un protocole")
+      alert("Selectionner un projet")
     };
   }
 
