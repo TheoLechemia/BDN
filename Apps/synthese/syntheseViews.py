@@ -30,18 +30,6 @@ from functools import wraps, update_wrapper
 from datetime import datetime
 
 
-def nocache(view):
-    @wraps(view)
-    def no_cache(*args, **kwargs):
-        response = make_response(view(*args, **kwargs))
-        response.headers['Last-Modified'] = datetime.now()
-        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '-1'
-        return response
-    return update_wrapper(no_cache, view)
-
-
 
 @synthese.route("/")
 @check_auth(1)
@@ -52,7 +40,7 @@ def synthese_index():
 
 
 @synthese.route('/lastObs', methods=['GET'])
-@nocache
+@check_auth(2)
 def lastObs():
     db = getConnexion()
     sql = """ SELECT ST_AsGeoJSON(ST_TRANSFORM(s.geom_point, 4326)), s.id_synthese, t.lb_nom, t.cd_nom, t.nom_vern, s.date, p.nom_projet, ST_AsGeoJSON(ST_TRANSFORM(l.geom, 4326)),
@@ -73,6 +61,7 @@ def lastObs():
 
 
 @synthese.route('/getObs', methods=['POST'])
+@check_auth(2)
 def getObs():
     db = getConnexion()    
     if flask.request.method == 'POST':
@@ -122,6 +111,7 @@ def loadTaxons(expr, id_projet):
     return Response(flask.json.dumps(res), mimetype='application/json')
 
 @synthese.route('/loadProtocoles', methods=['GET', 'POST'])
+@check_auth(2)
 def getProtocoles():
     db = getConnexion()
     sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM synthese.bib_projet ORDER BY id_projet DESC) p"
@@ -194,6 +184,7 @@ def loadTaxonHierarchy(rang_fils, rang_pere, rang_grand_pere, value_rang_grand_p
 
 
 @synthese.route('/export', methods=['GET', 'POST'])
+@check_auth(2)
 def export():
     if flask.request.method == 'POST':
         geojsonPoint = flask.request.json['point']
@@ -270,6 +261,7 @@ def uploaded_file(filename):
 
 #Renvoie le detail d'une observation a partir de son ID_SYNTHESE
 @synthese.route('/detailsObs/<id_synthese>/', methods=['GET'])
+@check_auth(2)
 def detailsObs(id_synthese):
     db = getConnexion()
     sql= """SELECT t.nom_vern, t.lb_nom, c.nom AS nom_commune, s.id_synthese, s.observateur, to_char(s.date, 'DD-MM-YYYY') AS date, u.nom_organisme, p.nom_projet

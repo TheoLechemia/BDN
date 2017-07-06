@@ -15,25 +15,10 @@
 
 
 			
-			{% if 'time' in err %}
-			<div class="alert alert-danger">
-				 Le format de la date renseigné n'est pas correct. Il doit être au format AAAA/MM/JJ 
-			</div>
-			{% endif %}
-
-			{% if 'cd_nom' in err %}
-			<div class="alert alert-danger">
-				 Le cd_nom que vous avez renseigné ne correspond à aucun taxon dans la table TAXREF
-			</div>
-			{% endif %}
-
-			
-			<a href="{{url_for('importCSV.indexImport')}}" class="btn btn-info btn-large"><i class="icon-share icon-white"></i> Retour à la page d'importation...</a>
+			<a href="{{url_for('synthese.synthese_index')}}" class="btn btn-info btn-large"><i class="icon-share icon-white"></i> Retour à la page d'accueil...</a>
 
 			<div class="row" style="margin : 100px;"> </div>
-			<div class="alert alert-warning">
-				<strong> Info: </strong> {{err}}
-			</div>
+
 		</div>
 	</div>
 </div>

@@ -44,6 +44,7 @@ def index():
 
 
 @download.route('/loadProtocoles', methods=['GET'])
+@check_auth(2)
 def getProtocoles():
     db = getConnexion()
     sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM synthese.bib_projet ORDER BY id_projet DESC) p"
@@ -78,6 +79,7 @@ def search_taxon_name(id_projet, expr):
 
 
 @download.route('/getObs', methods=['POST'])
+@check_auth(2)
 def getObs():
     db = getConnexion()
     if request.method == 'POST':
@@ -149,6 +151,7 @@ def getObs():
 
 
 @download.route('/uploads/<filename>', methods=['GET'])
+@check_auth(2)
 def uploads(filename):
     filename = filename+".zip"
     return send_from_directory(app.config['UPLOAD_FOLDER'] ,filename)

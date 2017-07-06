@@ -81,6 +81,7 @@ def mapValidation(id_projet):
 
 
 @validation.route('/delete/<id_synt>/<protocole>')
+@check_auth(3)
 def deleteRow(id_synt, protocole):
     db = getConnexion()
     id_synt = str(id_synt)
@@ -93,10 +94,11 @@ def deleteRow(id_synt, protocole):
     db.cur.execute(formatedQuery, param) 
     db.conn.commit()
     db.closeAll()
-    return json.dumps({'success':True, 'id_synthese':id_synt}), 200, {'ContentType':'application/json'}
+    return Response(json.dumps({'success':True, 'id_synthese':id_synt}), 200, {'ContentType':'application/json'})
 
 
 @validation.route('/validate/', methods=['GET', 'POST'])
+@check_auth(3)
 def validate():
     db = getConnexion()
     tab = list()
@@ -126,4 +128,4 @@ def validate():
         
         db.conn.commit()
     db.closeAll()
-    return json.dumps({'success':True, 'id_synthese':id_synt}), 200, {'ContentType':'application/json'}
+    return Response(json.dumps({'success':True, 'id_synthese':id_synt}), 200, {'ContentType':'application/json'})

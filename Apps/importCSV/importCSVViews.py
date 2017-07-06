@@ -66,12 +66,14 @@ def indexImport():
             return redirect(request.url)
 
 @importCSV.route('/uploads/<filename>')
+@check_auth(2)
 def uploaded_fileCSV(filename):
-    return 'fichier bien uploade'
+    return Response(json.dumps('fichier bien uploade'), mimetype='application/json')
     #return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
 
 
 @importCSV.route('/error/<customError>')
+@check_auth(2)
 def handle_custom_error(customError):
         return Response(json.dumps(e), mimetype='application/json')
 

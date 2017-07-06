@@ -39,24 +39,29 @@ def check_auth(level):
                 ## on check si le token de la session et du cookie sont egaux, si oui on regenere un token
                 resp = func(*args, **kwargs)
                 token = None
-                if session['token'] == request.cookies.get('token'):
-                    token = str(random.random())
-                    token = hashlib.md5(token).hexdigest()
-                    resp.set_cookie('token', token)
-                    print 'AUTH LEVEEEEEEEEEEEL'
-                    print session['auth_level']
-                    resp.set_cookie('auth_level', str(session['auth_level']))
-                    session['token'] = token
-                    #on check le niveau d authentification
-                    if session['auth_level']>=level:
-                        return resp
-                    else:
-                        redirect_resp = make_response(redirect(request.referrer))
-                        redirect_resp.set_cookie('token', token)
+                #si le token existe
+                if 'token' in session:
+                    if session['token'] == request.cookies.get('token'):
+                        token = str(random.random())
+                        token = hashlib.md5(token).hexdigest()
+                        resp.set_cookie('token', token)
+                        print 'AUTH LEVEEEEEEEEEEEL'
+                        print session['auth_level']
+                        resp.set_cookie('auth_level', str(session['auth_level']))
                         session['token'] = token
-                        flash("")
-                        return redirect_resp
-                #les tokens ne concorde pas, on revoie a la page de connexion
+                        #on check le niveau d authentification
+                        if session['auth_level']>=level:
+                            return resp
+                        else:
+                            redirect_resp = make_response(redirect(request.referrer))
+                            redirect_resp.set_cookie('token', token)
+                            session['token'] = token
+                            flash("")
+                            return redirect_resp
+                    #les tokens ne concorde pas, on revoie a la page de connexion
+                    else:
+                        return redirect(url_for("main.login"))
+                #il n'a avait pas de token => on redirect
                 else:
                     return redirect(url_for("main.login"))
             else:

@@ -87,6 +87,7 @@ def getboundingMaille(limit):
 
 
 @addObs.route('/loadProtocoles', methods=['GET'])
+@check_auth(2)
 def getProtocoles():
     db = getConnexion()
     sql = "SELECT array_to_json(array_agg(row_to_json(p))) FROM (SELECT * FROM synthese.bib_projet WHERE saisie_possible = TRUE) p"
@@ -125,6 +126,7 @@ def getParmeters():
 
 
 @addObs.route('/submit/', methods=['POST'])
+@check_auth(2)
 def submitObs():
     db = getConnexion()
     if flask.request.method == 'POST':

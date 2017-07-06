@@ -93,8 +93,8 @@ def getStat():
     return Response(json.dumps(stat), mimetype='application/json')
 
 @main.route('/getAllTaxons', methods=['GET'])
+@check_auth(1)
 def getAllTaxons():
-    print 'LAAAAAAAAAAAAAAAAA'
     db = getConnexion()
     sql = """SELECT DISTINCT s.cd_nom, count(s.cd_nom), lb_nom, nom_vern
             FROM synthese.releve s
@@ -111,10 +111,12 @@ def getAllTaxons():
 
 
 @main.route('/deconnexion')
+@check_auth(1)
 def deconnexion():
+    #clear la session redirige automatiquement vers la page d'accueil avec check_auth
     if 'user' in session:
         session.clear()
-    return redirect(url_for("main.login"))
+    return Response(json.dumps('deconnexion'), mimetype='application/json') 
 
 
 
