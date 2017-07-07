@@ -31,15 +31,15 @@ def login():
         db.cur.execute(query, [ip_visitor])
         res = db.cur.fetchall()
         #si cette ip c'est a echoue trop de fois, elle ne peux plus reesayer de se connecter
-        if len(res)>5:
+        if len(res)>= 5:
             flash("Vous avez échoué trop de fois, réssayer demain !")
             return redirect(url_for("main.login"))
         else:
             user_data = request.form
             name = user_data['username']
             inputPassword = user_data['password']
-            #latence d'une seconde pour eviter les attaques
-            time.sleep(1)
+            #latence pour eviter les attaques, augmente a chaque fois
+            time.sleep(len(res))
             try:
                 currentUser = loadCurrentUser(name)
             except:
@@ -47,6 +47,7 @@ def login():
                 return redirect(url_for("main.login")) 
             #checke si le pass est correct
             encode_password = hashlib.md5(inputPassword.encode('utf8')).hexdigest()
+            #si le mdp est OK
             if currentUser.password == encode_password:
                 session['user'] = currentUser.username
                 session['auth_level'] = currentUser.auth_level
@@ -59,6 +60,7 @@ def login():
                 session['token'] = token
 
                 return resp
+            # si le mdp est pas bon, on enregistre l'ip
             else:
                 flash('Identifiant ou mot de passe incorect')
                 query = "INSERT INTO ip_connexion (ip) VALUES(%s)"
