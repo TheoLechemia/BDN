@@ -1,21 +1,16 @@
 # coding: utf-8
 from flask import Flask, request, render_template, url_for, redirect, send_from_directory, flash, session, Blueprint, json, Response, send_file, jsonify, make_response
-
 from ..auth import check_auth
-
-from ..config import database
-from ..config import config
+from ..config import database, config
 from ..database import *
-
 from .. import utils
 from ..initApp import app
-
 from datetime import datetime
 import os
 import csv
-
 from psycopg2 import sql as psysql
 import sys
+import ogr2ogr
 
 
 download = Blueprint('download', __name__, static_url_path="/download", static_folder="static", template_folder="templates")
@@ -146,7 +141,9 @@ def getObs():
         return Response(json.dumps({'filename':filename}), mimetype='application/json')
 
 
-
+def test():
+    path = UPLOAD_FOLDER+'test'
+    ogr2ogr.main(["", "-f", "ESRI Shapefile", path, ])
 
 
 
