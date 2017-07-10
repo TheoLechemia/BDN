@@ -29,6 +29,7 @@
 
   <link rel="stylesheet" href= " {{url_for('static', filename='css/main.css')}} " >
 
+
   
 </head>
 
@@ -45,7 +46,7 @@
      	<i class="fa fa-lock"></i>
        <input type="password" name="password" class="form-control" placeholder="Mot de passe">
      </div>
-
+     <input name=csrf_token type=hidden value="{{csrf_token}}">
      <input type="submit" class="btn btn-success" value="Connexion">
   </form>
      

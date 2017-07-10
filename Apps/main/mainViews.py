@@ -1,5 +1,5 @@
 #coding: utf-8
-from flask import Blueprint, render_template, flash, request, redirect, url_for, session, make_response, json
+from flask import Blueprint, render_template, flash, request, redirect, url_for, session, make_response, json, abort
 from ..config import config
 from ..database import *
 import psycopg2
@@ -13,6 +13,7 @@ from werkzeug.wrappers import Response
 
 
 
+
 main = Blueprint('main', __name__, static_url_path="/main", static_folder="static", template_folder="templates")
 
 
@@ -22,8 +23,15 @@ main = Blueprint('main', __name__, static_url_path="/main", static_folder="stati
 @main.route('/login', methods= ['GET','POST'])
 def login():
     if request.method == 'GET':
-        return render_template('login.html')
+        csrf_token = random.randrange(16**30)
+        session['csrf_token'] = csrf_token
+        return render_template('login.html',csrf_token=csrf_token)
+
     if request.method == 'POST':
+        #csrf check
+        token = session.pop('csrf_token', None)
+        if not token or token != request.form.get('csrf_token'):
+            abort(403)
         db = getConnexion()
         #IP du visiteur:
         ip_visitor = request.remote_addr
