@@ -23,13 +23,16 @@ main = Blueprint('main', __name__, static_url_path="/main", static_folder="stati
 @main.route('/login', methods= ['GET','POST'])
 def login():
     if request.method == 'GET':
-        csrf_token = random.randrange(16**30)
+        csrf_token = str(random.randrange(16**30))
         session['csrf_token'] = csrf_token
         return render_template('login.html',csrf_token=csrf_token)
 
     if request.method == 'POST':
         #csrf check
         token = session.pop('csrf_token', None)
+        print 'le token que lon jeteeeeeeeee ', token
+        print 'le token du formmmmmmmmmm ', request.form['csrf_token']
+        print str(token) != str(request.form.get('csrf_token'))
         if not token or token != request.form.get('csrf_token'):
             abort(403)
         db = getConnexion()
