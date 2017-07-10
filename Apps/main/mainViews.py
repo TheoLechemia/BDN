@@ -37,9 +37,6 @@ def redirect_back(endpoint):
         
 
 
-
-
-
 @main.route('/login', methods= ['GET','POST'])
 def login():
     if request.method == 'GET':
@@ -54,7 +51,8 @@ def login():
         #si cette ip c'est a echoue trop de fois, elle ne peux plus reesayer de se connecter
         if len(res)>= 5:
             flash("Vous avez échoué trop de fois, réssayer demain !")
-            return redirect(url_for("main.login"))
+            return redirect_back("main.login")
+            #return redirect(url_for("main.login"))
         else:
             user_data = request.form
             name = user_data['username']
@@ -65,7 +63,8 @@ def login():
                 currentUser = loadCurrentUser(name)
             except:
                 flash("Identifiant ou mot de passe incorrect")
-                return redirect(url_for("main.login")) 
+                #return redirect(url_for("main.login"))
+                return redirect_back("main.login")
             #checke si le pass est correct
             encode_password = hashlib.md5(inputPassword.encode('utf8')).hexdigest()
             #si le mdp est OK
@@ -88,7 +87,8 @@ def login():
                 query = "INSERT INTO ip_connexion (ip) VALUES(%s)"
                 db.cur.execute(query, [ip_visitor])
                 db.conn.commit()
-                return redirect(url_for("main.login"))
+                return redirect_back("main.login")
+                #return redirect(url_for("main.login"))
 
 
 
