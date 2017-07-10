@@ -9,11 +9,33 @@ import hashlib
 import time
 import random
 from werkzeug.wrappers import Response 
-
+from urlparse import urlparse, urljoin
 
 
 
 main = Blueprint('main', __name__, static_url_path="/main", static_folder="static", template_folder="templates")
+
+
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
+
+
+def get_redirect_target():
+    for target in request.values.get('next'), request.referrer:
+        if not target:
+            continue
+        if is_safe_url(target):
+            return target
+
+def redirect_back(endpoint):
+        if is_safe_url(endpoint):
+            return redirect(url_for(endpoint))
+        else:
+            return 'redirection annulée'
+        
+
 
 
 
@@ -21,7 +43,6 @@ main = Blueprint('main', __name__, static_url_path="/main", static_folder="stati
 @main.route('/login', methods= ['GET','POST'])
 def login():
     if request.method == 'GET':
-
         return render_template('login.html')
     if request.method == 'POST':
         db = getConnexion()
@@ -55,10 +76,11 @@ def login():
                 #ticket dans la session et le cookie
                 token = str(random.random())
                 token = hashlib.md5(token).hexdigest()
-                resp = make_response(redirect(url_for("main.index")))
+                #test = my_self_url(request.form['next'])
+                #resp = make_response(redirect(url_for("main.index")))
+                resp = make_response(redirect_back("main.index"))
                 resp.set_cookie('token', token)
                 session['token'] = token
-
                 return resp
             # si le mdp est pas bon, on enregistre l'ip
             else:
