@@ -10,7 +10,6 @@ import os
 import csv
 from psycopg2 import sql as psysql
 import sys
-import ogr2ogr
 
 
 download = Blueprint('download', __name__, static_url_path="/download", static_folder="static", template_folder="templates")
