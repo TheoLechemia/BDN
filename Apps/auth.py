@@ -1,7 +1,7 @@
 from functools import wraps
 from database import *
 from config import config
-from flask import redirect, url_for, request, flash, request, session, make_response
+from flask import redirect, url_for, request, flash, request, session, make_response, abort
 import hashlib
 import random
 
@@ -38,15 +38,16 @@ def check_auth(level):
         @wraps(func)
         def __check_auth(*args, **kwargs):
             if 'user' in session: 
-                ## on check si le token de la session et du cookie sont egaux, si oui on regenere un token
                 resp = func(*args, **kwargs)
                 token = None
                 #si le token existe
                 if 'token' in session:
-                    if session['token'] == request.cookies.get('token'):
+                    ## on check si le token de la session et du header anti XSRF envoye par angular ou du token sont egaux, si oui on regenere un token
+                    if session['token'] in (request.headers.get('X-XSRF-TOKEN'), request.cookies.get('token')):
                         token = str(random.random())
                         token = hashlib.md5(token).hexdigest()
                         resp.set_cookie('token', token)
+                        resp.set_cookie('XSRF-TOKEN', token)
                         resp.set_cookie('auth_level', str(session['auth_level']))
                         session['token'] = token
                         #on check le niveau d authentification
@@ -54,7 +55,8 @@ def check_auth(level):
                             return resp
                         else:
                             redirect_resp = make_response(utils.redirect_back(request.referrer))
-                            redirect_resp.set_cookie('token', token)
+                            redirect_resp.set_cookie('XSRF-TOKEN', token)
+                            resp.set_cookie('token', token)
                             session['token'] = token
                             flash("")
                             return redirect_resp
@@ -68,5 +70,7 @@ def check_auth(level):
                 return utils.redirect_back("main.login")
         return __check_auth
     return _check_auth
+
+
 
 

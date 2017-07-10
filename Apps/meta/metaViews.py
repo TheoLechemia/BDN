@@ -149,4 +149,4 @@ def addProject():
         db.conn.commit()
         db.closeAll()
 
-        return  Response(flask.json.dumps('success'), mimetype='application/json')
+    return  Response(flask.json.dumps('success'), mimetype='application/json')

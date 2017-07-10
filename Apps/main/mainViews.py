@@ -30,8 +30,6 @@ def login():
     if request.method == 'POST':
         #csrf check
         token = session.pop('csrf_token', None)
-        print 'le token que lon jeteeeeeeeee ', token
-        print 'le token du formmmmmmmmmm ', request.form['csrf_token']
         print str(token) != str(request.form.get('csrf_token'))
         if not token or token != request.form.get('csrf_token'):
             abort(403)

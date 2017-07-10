@@ -20,7 +20,7 @@ angularApp.config([ '$stateProvider', '$urlServiceProvider', function($stateProv
 
 }]);
 
-function metaController ($http, toaster){
+function metaController ($http, toaster, $cookies){
 	metaCtrl = this;
 	var initialForm = {
 		'nom_projet': null,
@@ -34,12 +34,15 @@ function metaController ($http, toaster){
 		'producteur': null,
 		'commentaire': null,
 		'table_independante': false,
-		'saisie_possible': false
+		'saisie_possible': false,
 	};
+
+	metaCtrl.token = $cookies.get('token')
+
 	metaCtrl.projectForm = angular.copy(initialForm);
 
 	metaCtrl.showDataModel = true;
-	dataModelFormIsValid = true;
+	metaCtrl.dataModelFormIsValid = true;
 
 	metaCtrl.regex = new RegExp('^([a-z]+(_*[0-9]*)*)+$')
 
@@ -66,7 +69,8 @@ function metaController ($http, toaster){
 		btn = e.target;
 		btn.classList.add('disabled');
 		data = {'projectForm': this.projectForm, 'fieldForm': this.fieldForm}
-
+		console.log(form);
+		console.log(this.dataModelFormIsValid)
 		if(form.$valid && this.dataModelFormIsValid){
 			toaster.pop({type: 'wait', title: "Création du projet", body:"Cela peut prendre un peu de temps"});
 			$http.post(configuration.URL_APPLICATION+'meta/addProject', data).then(function(response){
@@ -76,6 +80,7 @@ function metaController ($http, toaster){
 			btn.classList.remove('disabled');
 			toaster.success({title: "OK", body:"Projet ajouté avec succès"});
 			}, function errorCallBack(response){
+				console.log(response)
 				toaster.clear();
 				toaster.error({title: "Attention", body:"Un erreur s'est produite, contactez le gestionnaire de base de données"})
 
