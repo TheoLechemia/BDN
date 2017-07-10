@@ -17,9 +17,9 @@ main = Blueprint('main', __name__, static_url_path="/main", static_folder="stati
 
 
 def is_safe_url(target):
-    ref_url = urlparse(request.host_url)
-    test_url = urlparse(urljoin(request.host_url, target))
-    return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
+    test_url = urlparse(request.host_url)
+    origin_url = urlparse(config['URL_APPLICATION'])
+    return test_url.scheme in ('http', 'https') and origin_url.netloc == test_url.netloc
 
 
 def get_redirect_target():
@@ -30,7 +30,7 @@ def get_redirect_target():
             return target
 
 def redirect_back(endpoint):
-        if is_safe_url(endpoint):
+        if is_safe_url(url_for(endpoint)):
             return redirect(url_for(endpoint))
         else:
             return 'redirection annulée'
