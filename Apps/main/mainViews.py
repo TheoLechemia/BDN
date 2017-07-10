@@ -9,32 +9,14 @@ import hashlib
 import time
 import random
 from werkzeug.wrappers import Response 
-from urlparse import urlparse, urljoin
+
 
 
 
 main = Blueprint('main', __name__, static_url_path="/main", static_folder="static", template_folder="templates")
 
 
-def is_safe_url(target):
-    test_url = urlparse(request.host_url)
-    origin_url = urlparse(config['URL_APPLICATION'])
-    return test_url.scheme in ('http', 'https') and origin_url.netloc == test_url.netloc
 
-
-def get_redirect_target():
-    for target in request.values.get('next'), request.referrer:
-        if not target:
-            continue
-        if is_safe_url(target):
-            return target
-
-def redirect_back(endpoint):
-        if is_safe_url(url_for(endpoint)):
-            return redirect(url_for(endpoint))
-        else:
-            return 'redirection annulée'
-        
 
 
 @main.route('/login', methods= ['GET','POST'])
@@ -51,7 +33,7 @@ def login():
         #si cette ip c'est a echoue trop de fois, elle ne peux plus reesayer de se connecter
         if len(res)>= 5:
             flash("Vous avez échoué trop de fois, réssayer demain !")
-            return redirect_back("main.login")
+            return utils.redirect_back("main.login")
             #return redirect(url_for("main.login"))
         else:
             user_data = request.form
@@ -64,7 +46,7 @@ def login():
             except:
                 flash("Identifiant ou mot de passe incorrect")
                 #return redirect(url_for("main.login"))
-                return redirect_back("main.login")
+                return utils.redirect_back("main.login")
             #checke si le pass est correct
             encode_password = hashlib.md5(inputPassword.encode('utf8')).hexdigest()
             #si le mdp est OK
@@ -77,7 +59,7 @@ def login():
                 token = hashlib.md5(token).hexdigest()
                 #test = my_self_url(request.form['next'])
                 #resp = make_response(redirect(url_for("main.index")))
-                resp = make_response(redirect_back("main.index"))
+                resp = make_response(utils.redirect_back("main.index"))
                 resp.set_cookie('token', token)
                 session['token'] = token
                 return resp
@@ -87,7 +69,7 @@ def login():
                 query = "INSERT INTO ip_connexion (ip) VALUES(%s)"
                 db.cur.execute(query, [ip_visitor])
                 db.conn.commit()
-                return redirect_back("main.login")
+                return utils.redirect_back("main.login")
                 #return redirect(url_for("main.login"))
 
 

@@ -5,6 +5,8 @@ from flask import redirect, url_for, request, flash, request, session, make_resp
 import hashlib
 import random
 
+from . import utils
+
 
 
 
@@ -45,27 +47,25 @@ def check_auth(level):
                         token = str(random.random())
                         token = hashlib.md5(token).hexdigest()
                         resp.set_cookie('token', token)
-                        print 'AUTH LEVEEEEEEEEEEEL'
-                        print session['auth_level']
                         resp.set_cookie('auth_level', str(session['auth_level']))
                         session['token'] = token
                         #on check le niveau d authentification
                         if session['auth_level']>=level:
                             return resp
                         else:
-                            redirect_resp = make_response(redirect(request.referrer))
+                            redirect_resp = make_response(utils.redirect_back(request.referrer))
                             redirect_resp.set_cookie('token', token)
                             session['token'] = token
                             flash("")
                             return redirect_resp
                     #les tokens ne concorde pas, on revoie a la page de connexion
                     else:
-                        return redirect(url_for("main.login"))
+                        return utils.redirect_back("main.login")
                 #il n'a avait pas de token => on redirect
                 else:
-                    return redirect(url_for("main.login"))
+                    return utils.redirect_back("main.login")
             else:
-                return redirect(url_for("main.login"))
+                return utils.redirect_back("main.login")
         return __check_auth
     return _check_auth
 

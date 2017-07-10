@@ -9,6 +9,7 @@ import ast
 from database import *
 from psycopg2 import sql as psysql
 from psycopg2.extensions import AsIs
+from urlparse import urlparse, urljoin
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 UPLOAD_FOLDER = CURRENT_DIR+'\uploads'
@@ -658,3 +659,28 @@ def createViewsDownload(db, projectForm, fieldForm):
     db.cur.execute(create_csv)
     db.conn.commit()  
 
+
+
+
+
+### REDIRECT CHECK
+
+
+def is_safe_url(target):
+    test_url = urlparse(flask.request.host_url)
+    origin_url = urlparse(config['URL_APPLICATION'])
+    return test_url.scheme in ('http', 'https') and origin_url.netloc == test_url.netloc
+
+
+def get_redirect_target():
+    for target in flask.request.values.get('next'), flask.request.referrer:
+        if not target:
+            continue
+        if is_safe_url(target):
+            return target
+
+def redirect_back(endpoint):
+        if is_safe_url(flask.url_for(endpoint)):
+            return flask.redirect(flask.url_for(endpoint))
+        else:
+            return 'redirection annulée'
