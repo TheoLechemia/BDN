@@ -10,6 +10,7 @@ import os
 import csv
 from psycopg2 import sql as psysql
 import sys
+import ogrUtils
 
 
 download = Blueprint('download', __name__, static_url_path="/download", static_folder="static", template_folder="templates")
@@ -113,22 +114,30 @@ def getObs():
         time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
         filename = "Export_"+time
         dirPath = UPLOAD_FOLDER+"/"+filename
-        point_path = dirPath+"_point"
-        poly_path = dirPath+"_maille"
+        point_path = dirPath+"_point.shp"
+        poly_path = dirPath+"_maille.shp"
         csv_path = dirPath+"_csv.csv"
         debug = dirPath+"_debug"
 
 
         #construction de la requete a partir du formulaire envoye
         ###POINT###
-        cmd = """ogr2ogr -f "ESRI Shapefile" """+point_path+""".shp PG:"host="""+database['HOST']+""" user="""+database['USER']+""" dbname="""+database['DATABASE_NAME']+""" password="""+database['PASSWORD']+""" " -sql  """
-        cmd = cmd +'"'+sql_point+'"'
-        os.system(cmd)
-        ###MAILLE###
-        cmd = """ogr2ogr -f "ESRI Shapefile" """+poly_path+""".shp PG:"host="""+database['HOST']+""" user="""+database['USER']+""" dbname="""+database['DATABASE_NAME']+""" password="""+database['PASSWORD']+""" " -sql  """
-        cmd = cmd +'"'+sql_poly+'"'
-        os.system(cmd)
-        cmd_poly = cmd +'"'+sql_poly+'"'
+        # cmd = """ogr2ogr -f "ESRI Shapefile" """+point_path+""".shp PG:"host="""+database['HOST']+""" user="""+database['USER']+""" dbname="""+database['DATABASE_NAME']+""" password="""+database['PASSWORD']+""" " -sql  """
+        # cmd = cmd +'"'+sql_point+'"'
+        # os.system(cmd)
+        # ###MAILLE###
+        # cmd = """ogr2ogr -f "ESRI Shapefile" """+poly_path+""".shp PG:"host="""+database['HOST']+""" user="""+database['USER']+""" dbname="""+database['DATABASE_NAME']+""" password="""+database['PASSWORD']+""" " -sql  """
+        # cmd = cmd +'"'+sql_poly+'"'
+        # os.system(cmd)
+        # cmd_poly = cmd +'"'+sql_poly+'"'
+        table_point = schemaReleve+'.layer_point'
+        table_poly = schemaReleve+'.layer_maille'
+        ###POINT###
+        ogrUtils.pg2shp(table_point, point_path, sql_point)
+        # ###MAILLE###
+        ogrUtils.pg2shp(table_poly, poly_path, sql_poly)
+
+
         ###CSV###
         with open(csv_path, 'w') as f:
             outputquery = "COPY ({0}) TO STDOUT WITH CSV HEADER DELIMITER AS ';'".format(sql_csv)
@@ -138,11 +147,6 @@ def getObs():
 
         db.closeAll()
         return Response(json.dumps({'filename':filename}), mimetype='application/json')
-
-
-def test():
-    path = UPLOAD_FOLDER+'test'
-    ogr2ogr.main(["", "-f", "ESRI Shapefile", path, ])
 
 
 
