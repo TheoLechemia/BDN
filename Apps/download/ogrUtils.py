@@ -2,6 +2,7 @@ import ogr
 import osr
 import os
 from ..config import config, database
+import sys
 
 
 
@@ -39,19 +40,26 @@ def pg2shp(table, outputPath, sql=None):
             fields.append(fieldDef.GetName())
             outLayer.CreateField(fieldDef)
 
-        #reset cursor
-        #layer.ResetReading()
 
         outLayerDefn = outLayer.GetLayerDefn()
+        inLayerDefn = layer.GetLayerDefn()
 
-        inLayer = conn.GetLayer()
-        for inFeature in inLayer:
+        for inFeature in layer:
             #create a feature in output
             outFeature = ogr.Feature(outLayerDefn)
             # loop over fields of each feature
-            for i in range(len(fields)):
+            for i in range(0, outLayerDefn.GetFieldCount()):
                 #all regular fields
-                outFeature.SetField(fields[i],inFeature.GetField(i))
+                print >> sys.stderr, "DEBUUUUUUUUUUUUUUUUUUUUUUUUUG"
+                print >> sys.stderr, inLayerDefn.GetFieldDefn(i).GetNameRef()
+                #print >> sys.stderr, inFeature.GetField(i)
+                index = inFeature.GetFieldIndex(inLayerDefn.GetFieldDefn(i).GetNameRef())
+                #print >> sys.stderr, index
+                if index != -1:
+                    print >> sys.stderr, inFeature.GetField(index)
+                else:
+                    print >> sys.stderr, inLayerDefn.GetFieldDefn(i).GetNameRef()
+                #outFeature.SetField(outLayerDefn.GetFieldDefn(i).GetNameRef(),inFeature.GetField(index))
             #geom field
             geom = inFeature.GetGeometryRef()
             outFeature.SetGeometry(geom.Clone())
