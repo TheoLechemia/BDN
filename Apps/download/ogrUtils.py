@@ -40,11 +40,9 @@ def pg2shp(table, outputPath, sql=None):
             fields.append(fieldDef.GetName())
             outLayer.CreateField(fieldDef)
 
-        outLayerDefn = outLayer.GetLayerDefn()
         inLayerDefn = layer.GetLayerDefn()
 
         layer.ResetReading()
-
 
         for i in range(0,layer.GetFeatureCount()):
             inFeature = layer.GetFeature(i)
@@ -52,8 +50,11 @@ def pg2shp(table, outputPath, sql=None):
             for j in range(0, inLayerDefn.GetFieldCount()):
                 outFeature.SetField(inLayerDefn.GetFieldDefn(j).GetNameRef(), inFeature.GetField(j))
 
+            geom = inFeature.GetGeometryRef()
             outFeature.SetGeometry(geom.Clone())
             outLayer.CreateFeature(outFeature)
+
+
 
     conn.Destroy()
     outDs.Destroy()
