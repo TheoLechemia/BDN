@@ -57,7 +57,9 @@ def csv2PG(file):
 
             #recupere les bib champs du protocole de la ligne, si ils existe - si donnee simple la table n'existe pas
             if inputProtocole != "synthese":
-                sql = "SELECT nom_champ FROM "+inputProtocole+".bib_champs_"+inputProtocole
+                bib_champs_table = "bib_champs_"+inputProtocole
+                sql = "SELECT no_spec, nom_champ FROM {sch}.{tbl}"
+                sql = psysql.SQL(sql).format(sch=psysql.Identifier(inputProtocole),tbl=psysql.Identifier(bib_champs_table)).as_string(db.cur)
                 fieldList= list()
                 try:
                     db.cur.execute(sql)

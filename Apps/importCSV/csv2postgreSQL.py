@@ -36,7 +36,10 @@ def csv2PG(file):
                 return traceback.format_exc()
 
             #recupere les bib champs du protocole de la ligne
-            sql = "SELECT no_spec, nom_champ FROM "+inputProtocole+".bib_champs_"+inputProtocole
+            # sql = "SELECT no_spec, nom_champ FROM "+inputProtocole+".bib_champs_"+inputProtocole
+            bib_champs_table = "bib_champs_"+inputProtocole
+            sql = "SELECT no_spec, nom_champ FROM {sch}.{tbl}"
+            sql = psysql.SQL(sql).format(sch=psysql.Identifier(inputProtocole),tbl=psysql.Identifier(bib_champs_table)).as_string(db.cur)
             try:
                 db.cur.execute(sql)
                 res = db.cur.fetchall()
