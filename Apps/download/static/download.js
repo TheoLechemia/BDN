@@ -72,9 +72,9 @@ function appCtrl (proxy, toaster){
 
   ctrl.formSubmit = function(form){
     ctrl.form = form;
-    console.log(form);
-
+    toaster.pop({type: 'wait', title: "", body:"Téléchargement en cours..."});
     proxy.sendData(form).then(function(response){
+    	toaster.clear();
     	toaster.pop('success', "Observations exportées avec succès... Les données vont être téléchargées...", null, 'trustedHtml');
     	window.location =CONFIGURATION.URL_APPLICATION+'download/uploads/'+response.data.filename;       
     }, function errorCallBack(){
@@ -92,7 +92,6 @@ function appCtrl (proxy, toaster){
   	}
 
   }
-
 
 }
 
