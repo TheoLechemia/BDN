@@ -131,7 +131,7 @@ def getObs():
         # os.system(cmd)
         # cmd_poly = cmd +'"'+sql_poly+'"'
         table_point = schemaReleve+'.layer_point'
-        table_poly = schemaReleve+'.layer_maille'
+        table_poly = schemaReleve+'.layer_poly'
         ###POINT###
         ogrUtils.pg2shp(table_point, point_path, sql_point)
         # ###MAILLE###
