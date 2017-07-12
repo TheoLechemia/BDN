@@ -150,7 +150,7 @@ def getObs():
 
 
 
-@download.route('/uploads/<filename>', methods=['GET'])
+@download.route('/uploads/<filename>.zip', methods=['GET'])
 @check_auth(2)
 def uploads(filename):
     filename = filename+".zip"

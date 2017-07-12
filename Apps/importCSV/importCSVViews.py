@@ -27,7 +27,6 @@ PARENT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, os.pardir))
 UPLOAD_FOLDER = PARENT_DIR+'/static/uploads'
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.secret_key = 'Martine50='  # Change this!
 
 
 def allowed_file(filename):

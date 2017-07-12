@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cp ./Apps/config.py.sample ./Apps/config.py
 
 if [ "$(id -u)" == "0" ]; then
    echo -e "\e[91m\e[1mThis script should NOT be run as root\e[0m" >&2
