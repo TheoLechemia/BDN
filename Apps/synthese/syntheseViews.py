@@ -208,53 +208,13 @@ def export():
     return Response(flask.json.dumps("from_get"), mimetype='application/json')
 
 
-@synthese.route('/uploads/<filename>')
+@synthese.route('/uploads/<filename>.zip')
 @check_auth(2)
 def uploaded_file(filename):
     filename = filename+".zip"
     return flask.send_from_directory(UPLOAD_FOLDER ,filename)
 
 
-# @synthese.route('/ficheObs/<protocole>/<id_synthese>')
-# def loadFicheObs(protocole, id_synthese):
-#     db = getConnexion()
-#     if protocole == 'FAUNE':
-#         sql = "SELECT p.*, ST_X(ST_Transform(p.geom_point, 4326)) as x, ST_Y(ST_Transform(p.geom_point, 4326)) as y, t.lb_nom, t.nom_vern FROM bdn.faune p JOIN taxonomie.taxref t ON t.cd_nom = p.cd_nom WHERE id_synthese = %s "
-#     if protocole == 'FLORE':
-#         sql = "SELECT p.*, ST_X(ST_Transform(p.geom_point, 4326)) as x, ST_Y(ST_Transform(p.geom_point, 4326)) as y, t.lb_nom, t.nom_vern FROM bdn.flore p JOIN taxonomie.taxref t ON t.cd_nom = p.cd_nom WHERE id_synthese = %s"
-#     params = [id_synthese]
-#     res = utils.sqltoDictWithParams(sql, params, db.cur)
-#     return Response(flask.json.dumps(res[0]), mimetype='application/json')
-
-# @synthese.route('/modifyObs/<protocole>/<id_synthese>', methods=['GET', 'POST'])
-# def modifyObs(protocole, id_synthese):
-#     db = getConnexion()
-#     print protocole
-#     print id_synthese
-#     observateur = None
-#     if flask.request.method == 'POST':
-#         observateur = flask.request.json['observateur']
-#         sql = """UPDATE bdn."""+protocole+""" SET observateur = %s WHERE id_synthese = %s;
-#                  UPDATE bdn.synthese SET observateur = %s WHERE id_synthese = %s"""
-#         params = [observateur, id_synthese,observateur, id_synthese]
-#         db.cur.execute(sql, params)
-#         cd_nom = flask.request.json['taxon']['cd_nom']
-#         print cd_nom
-#         sql = """UPDATE bdn."""+protocole+""" SET cd_nom = %s WHERE id_synthese = %s;
-#                 UPDATE bdn.synthese SET cd_nom = %s WHERE id_synthese = %s """
-#         params = [cd_nom, id_synthese, cd_nom, id_synthese]
-#         db.cur.execute(sql, params)
-#         loc = flask.request.json['loc']
-#         x = str(loc['x'])
-#         y = str(loc['y'])
-#         point = 'POINT('+x+' '+y+')'
-#         sql = """UPDATE bdn."""+protocole+""" SET geom_point = ST_Transform(ST_PointFromText(%s, 4326),%s) WHERE id_synthese = %s;
-#                 UPDATE bdn.synthese SET geom_point = ST_Transform(ST_PointFromText(%s, 4326),%s) WHERE id_synthese = %s;"""
-#         params = [point, config.PROJECTION, id_synthese, point, config.PROJECTION, id_synthese]
-#         db.cur.execute(sql, params)
-#         db.conn.commit()
-#     db.closeAll()
-#     return Response(flask.json.dumps(loc), mimetype='application/json')
 
 
 ##### DETAIL OBS ########
@@ -279,7 +239,7 @@ def detailsObs(id_synthese):
     return Response(flask.json.dumps(res), mimetype='application/json')
 
 
-
+# Renvoie les infos taxonomie du taxon a partir de son cd_nom
 @synthese.route('/detailsTaxonomie/<cd_nom>/', methods=['GET'])
 def detailsTaxonomie(cd_nom):
     db = getConnexion()
@@ -293,7 +253,7 @@ def detailsTaxonomie(cd_nom):
     db.closeAll()
     return Response(flask.json.dumps(res), mimetype='application/json')
 
-
+# Renvoie les infos de la reglementation du taxon a partir de son cd_nom
 @synthese.route('/detailsReglementation/<cd_nom>/', methods=['GET'])
 def detailsReglementation(cd_nom):
     db = getConnexion()

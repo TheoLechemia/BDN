@@ -6,6 +6,7 @@ from flask import session
 from Apps.database import *
 from ..config import config
 import traceback
+from psycopg2 import sql as psysql
 
 
 def csv2PG(file):

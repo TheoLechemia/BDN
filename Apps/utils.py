@@ -683,4 +683,4 @@ def redirect_back(endpoint):
         if is_safe_url(flask.url_for(endpoint)):
             return flask.redirect(flask.url_for(endpoint))
         else:
-            return 'redirection annulée'
+            return flask.abort(403)

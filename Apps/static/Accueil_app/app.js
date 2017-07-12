@@ -1,5 +1,3 @@
-console.log('yooooo')
-
 var angularApp = angular.module("app", ['ui.router', 'ngTable']);
 
 
