@@ -55,9 +55,9 @@ def csv2PG(file):
             comm_loc = row['loc_nom']
             commentaire = row['comment']
             #on enleve l'heure de la date
-            listDate = row['date'].split(' ')
-            date = listDate[0]
-            dateObject = datetime.strptime(date, "%Y-%M-%d")
+            date = row['date'].split(' ')[0]
+            print 'DATEEEEEEEEEEEE',date
+            dateObject = datetime.strptime(date, "%Y-%m-%d")
             lon = row['loc_x']
             lon = lon.replace(',', '.')
             lat = row['loc_y']
@@ -97,7 +97,7 @@ def csv2PG(file):
             stringInsert = "INSERT INTO "+fullTableName+"(id_projet, observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc, diffusable"
             stringValues = " VALUES (%s, %s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s, %s, %s"
 
-            generalValues = [id_projet, observateur, date, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc, True]
+            generalValues = [id_projet, observateur, dateObject, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc, True]
             try:
                 for field in fieldList:
                     tabInter = row[field['spec_name']].split('#')
