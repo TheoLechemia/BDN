@@ -85,7 +85,7 @@ def csv2PG(file):
                 taille_maille = row['Taille_maille']
                 observateur = row['Observateur']
                 date = row['Date']
-                dateObject = datetime.strptime(date, "%d/%M/%Y")
+                dateObject = datetime.strptime(date, "%d/%m/%Y")
                 diffusable = row['Diffusable']
                 id_structure = row['ID_structure']
                 commentaire = row['Commentaire']
