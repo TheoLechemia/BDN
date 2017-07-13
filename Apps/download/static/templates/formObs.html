@@ -35,6 +35,82 @@
 								<span> {{taxon.name}} </span> <span style="cursor: pointer;" class="glyphicon glyphicon-remove" ng-click="$ctrl.removeTaxonEvent(taxon.cd_nom)"> </span>
 							</div>
 					</div>
+
+			<!-- AJOUT MODAL -->
+				<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg" ng-click="$ctrl.advancedSearch()" > Recherche avancée </button>
+				<div ng-show ="$ctrl.form.regne != null " class="ng-hide">
+					<p> <b> Filtres: </b> </p>
+					<table>
+						<tr><td> <b>Regne</b> : {{$ctrl.form.regne}} </td> </tr>
+						<tr><td> <b>Phylum</b> : {{$ctrl.form.phylum}} </td></tr>
+						<tr><td> <b>Classe </b> : {{$ctrl.form.classe}} </td></tr>
+						<tr><td> <b>Ordre</b> : {{$ctrl.form.ordre}} </td></tr>
+						<tr><td> <b> Famille </b> : {{$ctrl.form.famille}} </td></tr>
+					</table>
+
+				</div>
+								<!-- MODAL research -->
+				<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+				  <div class="modal-dialog modal-lg" role="document">
+				    <div id="formContent" class="modal-content">
+				    <h4>  Hierarchie taxonomique :  </h4>
+				      <div class="form-group">
+					      	<select id="inputRegne" class="form-control" ng-model="$ctrl.form.regne" ng-options="taxon as taxon for taxon in $ctrl.regne" ng-change="$ctrl.loadTaxonomyHierachy('phylum', 'regne', 'null', 'null', $ctrl.form.regne)" >
+						    	<option value=""> - Sélectionner un règne - </option> 
+						    </select>
+					  </div>
+					  <div class="form-group">
+						    <!-- PHYLUM -->
+						    <select class="form-control" ng-model="$ctrl.form.phylum" ng-options="taxon as taxon for taxon in phylum" ng-change="$ctrl.loadTaxonomyHierachy('classe', 'phylum', 'regne', $ctrl.form.regne, $ctrl.form.phylum)"> 
+						    	<option value=""> - Sélectionner un embranchement - </option>
+						    </select>
+					  </div>
+					   <div class="form-group">
+					    <!-- CLASSE -->
+						    <select class="form-control" ng-model="$ctrl.form.classe" ng-options="taxon as taxon for taxon in classe" ng-change="$ctrl.loadTaxonomyHierachy('ordre', 'classe', 'phylum', $ctrl.form.phylum, $ctrl.form.classe)">
+						    	<option value=""> - Sélectionner une classe - </option>
+						     </select>
+						</div>	
+						<div class="form-group">					     
+						    <!-- ORDRE -->
+						    <select class="form-control" ng-model="$ctrl.form.ordre" ng-options="taxon as taxon for taxon in ordre" ng-change="$ctrl.loadTaxonomyHierachy('famille', 'ordre', 'classe', $ctrl.form.classe, $ctrl.form.ordre)">
+						    	<option value=""> - Sélectionner un ordre - </option>
+						     </select>
+						</div>
+						<div class="form-group">
+						    <!-- FAMILLE -->
+						    <select class="form-control" ng-model="$ctrl.form.famille" ng-options="taxon as taxon for taxon in famille">
+						    <option value=""> - Sélectionner une famille - </option>	
+						     </select>
+						</div>
+
+					<h3> Autres filtres: </h3>
+						<label> Groupe d'espèces:  </label>
+						<select  class="form-control" ng-model="$ctrl.form.group2_inpn" ng-options="group.group2_inpn for group in $ctrl.typologie.group2_inpn">
+							<option value="" > - Sélectionner un groupe - </option> 
+						</select>
+						<label> Habitat:  </label>
+						<select  class="form-control" ng-model="$ctrl.form.habitat" ng-options="habitat.type for habitat in $ctrl.typologie.habitat">
+							  <option value=""> - Sélectionner un habitat - </option> 
+						
+						</select>
+						<label> Protection:  </label>
+						<select id="inputGroupINPN" class="form-control" ng-model="$ctrl.form.protection">
+							  <option value=""> Aucune </option> 
+							  <option value="Espèce protégée">Espèce protégée</option> 
+						</select>
+						<label> Menaces - Listes rouges régionales: </label>
+						<select class="form-control" ng-model="$ctrl.form.lr" ng-options="lr.type_statut for lr in $ctrl.typologie.listeRouge">
+							  <option value=""> - Sélectionner un type de menace - </option> 
+
+						</select>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-success" data-dismiss="modal" ng-click="$ctrl.onTaxonomieChange()">Valider</button>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+			<!-- FIN AJOUT MODAL -->
 			</div>
 
 			<div class="section">
