@@ -54,8 +54,10 @@ def indexImport():
             file_type = request.form['inputFile']
             trace = str()
             if file_type == 'observnat':
+                print 'OBSERVNAAAAAAAAAAAAAAT'
                 trace = csv2postgreSQL.csv2PG(UPLOAD_FOLDER+'/'+filename)
-            if file_type == "excel":  
+            if file_type == "excel": 
+                print 'EXCEEEEEEEEEEEEEL'
                 trace = csv2postgreSQL_carnet_terrain.csv2PG(UPLOAD_FOLDER+'/'+filename)
             flash(trace)
             return redirect(request.url)

@@ -66,7 +66,7 @@ def csv2PG(file):
                     db.cur.execute(sql)
                     res = db.cur.fetchall()
                     for r in res:
-                        fieldList.append(r[0])
+                        fieldList.append(r[1])
                 except:
                     print "il n'y a pas d table bib_champ"
 
@@ -140,6 +140,7 @@ def csv2PG(file):
             if fieldList != None:
                 try:
                     for field in fieldList:
+                        print 'fieldList', fieldList
                         stringInsert += ', '+field
                         stringValues += ", %s"
                         generalValues.append(row[field])
