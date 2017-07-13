@@ -164,7 +164,9 @@ def getFormParameters(app):
     classe = data['classe']
     ordre = data['ordre']
     famille = data['famille']
-    group2_inpn = data['group2_inpn']
+    group2_inpn = None
+    if data['group2_inpn']:
+        group2_inpn = data['group2_inpn']['group2_inpn']
     habitat = data['habitat']['id']
     protection = data['protection']
     lr = data['lr']['id_statut']
@@ -227,7 +229,7 @@ def buildSQL(sql, app):
     if formParameters['habitat']:
         sql = askFirstParame(sql, firstParam)
         firstParam = False
-        sql += 't.habitat = %s'
+        sql += 't.id_habitat = %s'
         params.append(str(formParameters['habitat']))
     if formParameters['protection']:
         sql = askFirstParame(sql, firstParam)
