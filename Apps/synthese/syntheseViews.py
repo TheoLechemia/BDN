@@ -3,7 +3,7 @@ import os
 import flask
 from werkzeug.wrappers import Response 
 import psycopg2
-from ..config import config, secret_key
+from ..config import config
 import ast
 from .. import utils
 from ..database import *
@@ -23,7 +23,6 @@ PARENT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, os.pardir))
 UPLOAD_FOLDER = PARENT_DIR+'/static/uploads'
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.secret_key = secret_key
 
 from flask import make_response
 from functools import wraps, update_wrapper
