@@ -84,7 +84,7 @@ def getObs():
         params = list()
         #on construit trois fois le SQL pour chacune des tables (meme si les parametres ne changent pas, le nom de la table change...)
         for t in tables:
-            sql = " SELECT * FROM {sch}.{tbl} s "
+            sql = " SELECT s.* FROM {sch}.{tbl} s JOIN taxonomie.taxref t ON s.cd_nom = t.cd_nom"
             sql = psysql.SQL(sql).format(sch=psysql.Identifier(schemaReleve),tbl=psysql.Identifier(t)).as_string(db.cur)
             dictSQL = utils.buildSQL(sql, 'download')
             params = dictSQL['params']
@@ -120,25 +120,18 @@ def getObs():
         debug = dirPath+"_debug"
 
 
-        #construction de la requete a partir du formulaire envoye
-        ###POINT###
-        # cmd = """ogr2ogr -f "ESRI Shapefile" """+point_path+""".shp PG:"host="""+database['HOST']+""" user="""+database['USER']+""" dbname="""+database['DATABASE_NAME']+""" password="""+database['PASSWORD']+""" " -sql  """
-        # cmd = cmd +'"'+sql_point+'"'
-        # os.system(cmd)
-        # ###MAILLE###
-        # cmd = """ogr2ogr -f "ESRI Shapefile" """+poly_path+""".shp PG:"host="""+database['HOST']+""" user="""+database['USER']+""" dbname="""+database['DATABASE_NAME']+""" password="""+database['PASSWORD']+""" " -sql  """
-        # cmd = cmd +'"'+sql_poly+'"'
-        # os.system(cmd)
-        # cmd_poly = cmd +'"'+sql_poly+'"'
+
         table_point = schemaReleve+'.layer_point'
         table_poly = schemaReleve+'.layer_poly'
-        ###POINT###
+        ##POINT###
         ogrUtils.pg2shp(table_point, point_path, sql_point)
-        # ###MAILLE###
+        ###MAILLE###
         ogrUtils.pg2shp(table_poly, poly_path, sql_poly)
+        print 'LAAAAAAAAAAAAAA'
+        print 'SQL POINTTTTTT', sql_point
 
 
-        ###CSV###
+        ##CSV###
         with open(csv_path, 'w') as f:
             outputquery = "COPY ({0}) TO STDOUT WITH CSV HEADER DELIMITER AS ';'".format(sql_csv)
             db.cur.copy_expert(outputquery, f)
