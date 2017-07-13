@@ -316,7 +316,7 @@ def buildGeojsonWithParams(res):
 
 
 def createTemplate(schemaName, fieldForm):
-    htmlFileName = config['APP_DIR']+"/addObs/static/"+schemaName+'.html'
+    htmlFileName = config['APP_DIR']+"addObs/static/"+schemaName+'.html'
     htmlFile = open(htmlFileName, "w")
     
 

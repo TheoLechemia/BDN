@@ -20,6 +20,8 @@ database = {
 }
 
 config = {
+    #NE PAS TOUCHER APP_DIR
+    'APP_DIR': os.path.abspath(os.path.dirname(__file__)),
 	#Bien finir l'URL par un /
     'URL_APPLICATION': 'MY URL',
     #ID de l'application dans usershub
