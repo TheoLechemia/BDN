@@ -37,19 +37,28 @@ def check_auth(level):
     def _check_auth(func):
         @wraps(func)
         def __check_auth(*args, **kwargs):
+            print '--------------------------NOUVELLE REQUETE -------------------------------------'
+            print ' NOM REQUETE', func.__name__
             if 'user' in session: 
                 resp = func(*args, **kwargs)
                 token = None
                 #si le token existe
                 if 'token' in session:
+                    print 'LES ANCIEEEEEEEEENS'
+                    print 'la session', session['token']
+                    print 'le cookie', request.cookies.get('token')
                     ## on check si le token de la session et du header anti XSRF envoye par angular ou du token sont egaux, si oui on regenere un token
                     if session['token'] in (request.headers.get('X-XSRF-TOKEN'), request.cookies.get('token')):
+                        print 'le header', request.headers.get('X-XSRF-TOKEN')
                         token = str(random.random())
                         token = hashlib.md5(token).hexdigest()
                         resp.set_cookie('token', token)
                         resp.set_cookie('XSRF-TOKEN', token)
                         resp.set_cookie('auth_level', str(session['auth_level']))
                         session['token'] = token
+                        print 'LES NOUVEAUUUUUUUUUUX'
+                        print 'la session', session['token']
+                        print 'le cookie', request.cookies.get('token')
                         #on check le niveau d authentification
                         if session['auth_level']>=level:
                             return resp
@@ -62,11 +71,17 @@ def check_auth(level):
                             return redirect_resp
                     #les tokens ne concorde pas, on revoie a la page de connexion
                     else:
+                        print 'LES TOKEN SONT PAS BOOOOOOON'
+                        print 'la session', session['token']
+                        print 'le cookie', request.cookies.get('token')
+                        print 'le header', request.headers.get('X-XSRF-TOKEN')
                         return utils.redirect_back("main.login")
                 #il n'a avait pas de token => on redirect
                 else:
+                    print 'PAS DE TOKEEEEEEEEEEEN'
                     return utils.redirect_back("main.login")
             else:
+                print 'PAS DE USER DANS LA SESSIOOOOOOOOOON'
                 return utils.redirect_back("main.login")
         return __check_auth
     return _check_auth

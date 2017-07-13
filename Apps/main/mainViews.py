@@ -63,7 +63,7 @@ def login():
                 session['user'] = currentUser.username
                 session['auth_level'] = currentUser.auth_level
                 session['id_structure'] = currentUser.id_structure
-                session.permanent = True
+                #session.permanent = True
                 #ticket dans la session et le cookie
                 token = str(random.random())
                 token = hashlib.md5(token).hexdigest()
