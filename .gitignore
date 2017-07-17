@@ -6,6 +6,7 @@ Apps/validation/*.pyc
 Apps/importCSV/*.pyc
 Apps/main/*.pyc
 Apps/static/uploads/*
+Apps/static/node_modules/*
 venv/*
 settings.ini
 node_modules/*
