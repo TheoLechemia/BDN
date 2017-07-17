@@ -11,11 +11,11 @@
 		</div>
 
 		<div class="col-md-3 bloc-synthese" style="height: 77vh; overflow-y: auto; padding-right: 5px;" >
-			<list-obs  current-list-obs="$ctrl.currentListObs" current-leaflet-obs = "$ctrl.currentLeafletObs" geojson="$ctrl.geojson"> </list-obs>
+			<list-obs  current-list-obs="$ctrl.currentListObs" current-leaflet-obs = "$ctrl.currentLeafletObs" geojson="$ctrl.geojson" on-handle-csv="$ctrl.onCsvDowload()"> </list-obs>
 		</div>	
 	</div>
 
 	<div class="row">
-		<detail-obs id-synthese="$ctrl.currentIdSynthese" cd-nom="$ctrl.currentCd_nom"> </detail-obs>
+		<detail-obs id-synthese="$ctrl.currentIdSynthese" cd-nom="$ctrl.currentCd_nom" > </detail-obs>
 	</div>
 </div>

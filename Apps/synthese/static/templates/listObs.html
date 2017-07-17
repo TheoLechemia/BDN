@@ -5,7 +5,8 @@
 		  <button type="button" class="btn btn-xs " ng-click="$ctrl.changeList('point')" ng-class="{ 'btn-primary' : $ctrl.isSelected('point')}" >Point</button>
 		  <button type="button" class="btn btn-xs " ng-click="$ctrl.changeList('maille')" ng-class="{'btn-primary' : $ctrl.isSelected('maille')}">Maille</button>
 		</div>
-		&nbsp;&nbsp; <button ng-click="$ctrl.exportShape($ctrl.geojson)" type="button" class="btn btn-xs btn-primary">shp <span class="glyphicon glyphicon-download-alt"> </span> </button>
+		&nbsp;&nbsp; <button ng-click="$ctrl.exportShape($ctrl.geojson)" type="button" class="btn btn-xs btn-primary">SHP <span class="glyphicon glyphicon-download-alt"> </span> </button>
+		<button ng-click="$ctrl.onHandleCsv()" type="button" class="btn btn-xs btn-primary">CSV <span class="glyphicon glyphicon-download-alt"> </span> </button>
 	</div>
 
 		<table class="table last-obs">
@@ -29,4 +30,3 @@
 			</tbody>
 		</table>
 </div>
-

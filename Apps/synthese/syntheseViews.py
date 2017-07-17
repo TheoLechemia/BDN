@@ -214,6 +214,38 @@ def uploaded_file(filename):
     return flask.send_from_directory(UPLOAD_FOLDER ,filename)
 
 
+@synthese.route('/downloadCSV', methods=['POST'])
+@check_auth(2)
+def downloadCSV():
+    if flask.request.method == 'POST':
+        db = getConnexion()
+        sql = sql = " SELECT s.* FROM synthese.to_csv s JOIN taxonomie.taxref t ON s.cd_nom = t.cd_nom"
+        sqlAndParams = utils.buildSQL(sql, "synthese")
+        sql = db.cur.mogrify(sqlAndParams['sql'], sqlAndParams['params'])
+        res = utils.sqltoDict(sql, db.cur)
+        time = datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
+        filename = "Export_csv_"+time+".csv"
+        completePath = UPLOAD_FOLDER+"/"+filename
+        #changer le nom des colonnes en dur: les recuperer a partir du res
+        columns = ['id_projet', 'nom_projet', 'nom_vern', 'lb_nom', 'observateur', 'date', 'x', 'y', 'precision', 'loc_exact', 'cd_nom', 'insee', 'ccod_frt', 'altitude', 'geom_point', 'nom_organisme', 'id_structure', 'id_synthese']
+        outData = [';'.join(columns)]
+        for t in res:
+            outData.append(';'.join([str(t[k]) for k in columns]))
+        finalOut = '\n'.join(outData)
+        csvFile = open(completePath, 'w')
+        csvFile.write(finalOut.encode('utf-8'))
+        csvFile.close()
+        db.closeAll()
+        return Response(flask.json.dumps(filename), mimetype='application/json')
+
+@synthese.route('/uploadscsv/<filename>')
+@check_auth(2)
+def uploaded_file_csv(filename):
+    filename = filename
+    return flask.send_from_directory(UPLOAD_FOLDER ,filename)
+
+
+
 
 
 ##### DETAIL OBS ########

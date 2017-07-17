@@ -146,7 +146,7 @@ def getFormParameters(app):
         data = flask.request.json
     if app == "download":
         data = flask.request.json['globalForm']
-
+        
     protocole = data['selectedProtocole']
     listTaxons = data['listTaxons']
     firstDate = data['when']['first']
@@ -172,11 +172,6 @@ def getFormParameters(app):
     lr = data['lr']['id_statut']
     structure = data['structure']['id_organisme']
     observateur = data['observateur']['observateur']
-
-
-
-
-
 
     return {'listTaxons':listTaxons, 'firstDate':firstDate, 'lastDate':lastDate, 'commune':commune, 'foret':foret, 'regne':regne, 'phylum': phylum, 'classe':classe, 'ordre':ordre, 'famille': famille, 'group2_inpn':group2_inpn,
             'habitat': habitat, 'protection': protection, 'lr': lr, 'structure': structure, 'observateur':observateur, 'protocole':protocole }
@@ -250,7 +245,6 @@ def buildSQL(sql, app):
         firstParam = False
         sql += 's.observateur = %s'
         params.append(formParameters['observateur'])
-
 
     #recherche geographique
     if formParameters['commune']:

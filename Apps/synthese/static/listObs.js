@@ -64,6 +64,7 @@ function listObsCtrl ($uibModal, $http, proxy, toaster){
 	    })
   	};
 
+
 }// END CONTROLLER
 
 templateLastObs = 'synthese/templates/listObs.html';
@@ -79,6 +80,7 @@ angularInstance.component('listObs', {
   	'geojson' : '<',
   	'currentListObs' : '<',
   	'currentLeafletObs': '<',
+  	'onHandleCsv': '&',
   }
 
 });

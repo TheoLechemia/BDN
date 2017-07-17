@@ -66,6 +66,16 @@ function appCtrl (proxy, toaster){
     ctrl.currentIdSynthese = geojsonProperties.id_synthese instanceof Array ? geojsonProperties.id_synthese[0]:geojsonProperties.id_synthese
   }
 
+  ctrl.onCsvDowload = function(){
+    console.log(this.form);
+    proxy.downloadCSV(this.form).then(function(response){
+      window.location =configuration.URL_APPLICATION+'synthese/uploadscsv/'+response.data;   
+    }, function errorCallBack(){
+        toaster.pop({ 'type': 'error', title: "", body:"Veuillez effectuer une recherche avant d'exporter en CSV"});
+    })
+
+  }
+
 
 }
 

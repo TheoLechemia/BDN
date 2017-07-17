@@ -29,6 +29,9 @@ proxy = angularInstance.factory('proxy', function proxy($http) {
 			},
 			loadProtocole: function(){
 				return $http.get(configuration.URL_APPLICATION+"synthese/loadProtocoles")
+			},
+			downloadCSV: function(form){
+				return $http.post(configuration.URL_APPLICATION+'synthese/downloadCSV', form)
 			}			
 		}
 	  });
