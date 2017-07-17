@@ -6,11 +6,14 @@ cp settings.ini.sample settings.ini
 
 nano settings.ini
 
+. ./settings.ini
+
 if [ "$(id -u)" == "0" ]; then
    echo -e "\e[91m\e[1mThis script should NOT be run as root\e[0m" >&2
    echo -e "\e[91m\e[1mLancez ce script avec l'utilisateur courant : '$monuser'\e[0m" >&2
    exit 1
 fi
+
 
 
 
@@ -22,7 +25,7 @@ sudo add-apt-repository ppa:ondrej/php
 
 sudo apt-get update
 sudo apt-get -y upgrade
-sudo apt-get install php5.6
+sudo apt-get install -y php5.6
 
 sudo apt-get install -y libapache2-mod-php5.6
 sudo apt-get install -y libapache2-mod-wsgi
@@ -50,7 +53,7 @@ sudo apt-get install -y gdal-bin
 
 sudo apt-get install -y python-virtualenv
 
-sudo apt-get install tofrodos
+sudo apt-get install -y tofrodos
 sudo ln -s /usr/bin/fromdos /usr/bin/dos2unix 
 
 
