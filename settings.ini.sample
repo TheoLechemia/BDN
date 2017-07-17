@@ -1,48 +1,46 @@
-###################################
-###### Instalation de BDN #########
-###################################
+##config LINUX
+monuser=monuser
+mondomaine=mondomaine
 
-## Est ce que le script d'installation doit supprimer la base BDN avant de l'installation ?
-drop_apps_db=false
+### CONFIGURATION APACHE ###
+# Répertoire de publication web
+apache_document_root="\/var\/www\/html"
 
-## Nom de la futur base de donnÃ©es BDN -- laisser bdn par dÃ©fault
-db_name=bdn
-
-## Nom du proprietaire de la base BDN
-user_bdn=user_name
-
-## Mot de passe de l'administrateur
-user_bdn_pass=password
-
-## Simplement remplacer <USER> par le nom de l'utilisateur Linux ou est installÃ© la BDN
-taxref_path=/home/<USER>/BDN/TAXREFv10.0.txt
-
-## Numero EPSG -- systeme de projection dans lequel seront stocker les champs gÃ©omtriques des tables dans BDN -- Necessaire notamment pour l'export en shapefile
-projection=MY_SRID
-
-#specifique DOM
-
-##specifier ici l'emplacement du fichier des taxons sur liste rouge de sa rÃ©gion (si il existe)
-liste_rouge_path=/home/USER/BDN/data/Liste_rouge_Guadeloupe.txt
-
-## Simplement remplacer <USER> par le nom de l'utilisateur Linux ou est installÃ© la BDN
-taxref_protection_path=/home/<USER>/BDN/PROTECTION_ESPECES_10.txt
-
-## Indiquer le chemin vers ou souhaite faire les sauvegardes de la BDD
-backup_directory=/home/<USER>/sauvegarde/
-
-###################################
-###### Instalation de l'atlas #####
-###################################
-
-## Est ce que je veux installer l'atlas
-install_atlas=true
-
-## Nom de las base de donnÃ©es de l'atlas
-db_name_atlas=geonatureatlas
-
-# Nom du propriÃ©taire de la BDD
-user_atlas=geonatatlas
-
-# Mot de passe
+### CONFIGURATION PostgreSQL ###
+# Localisation du server PostgreSQL
+pg_host=localhost
+# Port sur lequel PostgreSQL ecoute
+pg_port=5432
+# Nom de l'utilisateur propriétaire des bases UsersHub, GeoNature, TaxHub
+user_pg=monuser
+# Nom de l'utilisateur lecteur de la base GeoNature-atlas
+user_atlas=monuser
+# Pass de l'utilisateur propriétaire des bases UsersHub, GeoNature, TaxHub
+user_pg_pass=monpass
+# Pass de l'utilisateur lecteur de la base GeoNature-atlas
 user_atlas_pass=monpass
+
+
+### CONFIGURATION USERSHUB ###
+usershub_release=1.2.2
+# Effacer la base de données UsersHub existante lors de l'installation
+drop_usershubdb=false
+# Nom de la base de données de UsersHub
+usershubdb_name=usershubdb
+
+### CONFIGURATION BDN ###
+geonature_release=1.0.0
+# Effacer la base de données BDN existante lors de l'installation
+drop_geonaturedb=false
+# Nom de la base de données bdn
+bdn_db_name=bdn
+# SRID de la projection locale 
+projection=32620
+
+### CONFIGURATION TAXHUB ###
+taxhub_release=1.2.1
+taxref_path=/home/ubuntu/BDN/TAXREFv10.0.txt
+#fichier des listes rouges regionales
+liste_rouge_path=/home/ubuntu/BDN/data/Liste_rouge_Guadeloupe.txt
+# Pour des questions de performances de GeoNature, il n'y a pas de base de données spécifique pour taxHub 
+# On utilise la base de données de GeoNature afin que les requêtes de GeoNature en lien avec le schéma taxonomie ne soient pas trop pénalisées par un accès distant.

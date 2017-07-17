@@ -229,7 +229,7 @@ def buildSQL(sql, app):
     if formParameters['protection']:
         sql = askFirstParame(sql, firstParam)
         firstParam = False
-        sql += 's.cd_nom IN (SELECT cd_nom from taxonomie.protection)'
+        sql += 's.cd_nom IN (SELECT cd_nom from taxonomie.taxref_protection_especes)'
     if formParameters['lr']:
         sql = askFirstParame(sql,firstParam)
         firstParam = False
