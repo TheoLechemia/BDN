@@ -10,8 +10,6 @@ dos2unix settings.ini
 
 
 
-unzip ./data/taxref.zip
-
 function database_exists () {
     # /!\ Will return false if psql can't list database. Edit your pg_hba.conf as appropriate.
     if [ -z $1 ]
@@ -47,9 +45,7 @@ then
 echo "Création de la BDD..."
 
   sudo -u postgres psql -c "CREATE USER $user_pg WITH PASSWORD '$user_pg_pass'"
-  sudo -u postgres psql -c "CREATE USER bdn_superuser WITH PASSWORD 'super_userMartine50=';"
 
-  sudo -u postgres psql -c "ALTER ROLE bdn_superuser Superuser;"
 
   sudo -n -u postgres -s createdb -O $user_pg $bdn_db_name
 
@@ -62,7 +58,6 @@ echo "Création de la BDD..."
   sudo -n -u postgres -s psql -d $bdn_db_name -c "CREATE SCHEMA taxonomie AUTHORIZATION $user_pg;"
   sudo -n -u postgres -s psql -d $bdn_db_name -c "CREATE SCHEMA layers AUTHORIZATION $user_pg;"
   sudo -n -u postgres -s psql -d $bdn_db_name -c "CREATE SCHEMA fdw AUTHORIZATION $user_pg;"
-  sudo -n -u postgres -s psql -d $bdn_db_name -c "CREATE SCHEMA utilisateur AUTHORIZATION $user_pg;"
 
 
 
@@ -123,7 +118,6 @@ echo "Creation de de la base ..."
 sudo -n -u postgres -s psql -d $bdn_db_name -f /tmp/create_table_bdn.sql &>> log/install_db.log
 
 rm /tmp/create_table_bdn.sql
-rm ./TAXREFv10.0.txt
 sudo -n -u postgres -s psql -d $bdn_db_name -c "DROP FOREIGN TABLE fdw.taxref_v10;"
 
 

@@ -10,7 +10,7 @@ CREATE FOREIGN TABLE utilisateurs.bib_organismes
    )
    SERVER server_usershubdb;
 ALTER FOREIGN TABLE utilisateurs.bib_organismes
-  OWNER TO onf_admin
+  OWNER TO onf_admin;
 
 
 
@@ -67,29 +67,4 @@ CREATE FOREIGN TABLE utilisateurs.v_userslist_forall_applications
     id_application integer )
    SERVER server_usershubdb;
 ALTER FOREIGN TABLE utilisateurs.v_userslist_forall_applications
-  OWNER TO onf_admin;
-
-
-CREATE FOREIGN TABLE utilisateurs.v_userslist_forall_menu
-   (groupe boolean ,
-    id_role integer ,
-    identifiant character varying(100) ,
-    nom_role character varying(50) ,
-    prenom_role character varying(50) ,
-    nom_complet text ,
-    desc_role text ,
-    pass character varying(100) ,
-    email character varying(250) ,
-    id_organisme integer ,
-    organisme character varying(32) ,
-    id_unite integer ,
-    remarques text ,
-    pn boolean ,
-    session_appli character varying(50) ,
-    date_insert timestamp without time zone ,
-    date_update timestamp without time zone ,
-    id_droit_max integer ,
-    id_application integer )
-   SERVER server_usershubdb;
-ALTER FOREIGN TABLE utilisateurs.v_userslist_forall_menu
   OWNER TO onf_admin;

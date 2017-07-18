@@ -215,8 +215,6 @@ CREATE TABLE synthese.bib_projet
 ALTER TABLE synthese.bib_projet
     OWNER TO onfuser;
 
-INSERT INTO synthese.bib_projet(id_projet, nom_projet, table_independante, saisie_possible, nom_schema, nom_table, nom_bdd )
-VALUES (99999, 'Tous les projets', FALSE, FALSE, 'synthese', 'releve', 'synthese');
 
 --trigger pur raffraichir la vm taxonomie.taxons_synthese;
 CREATE OR REPLACE FUNCTION synthese.refresh_taxons_synthese() RETURNS TRIGGER AS $refresh_taxons_synthese$
@@ -234,9 +232,12 @@ AFTER INSERT ON synthese.releve
     FOR EACH ROW EXECUTE PROCEDURE synthese.refresh_taxons_synthese();
 
 
-INSERT INTO synthese.bib_protocole VALUES
- ('Contact Flore', 'contact_flore', 'releve', 'contact_flore.releve', 'addObs/contactFlore.html', 'contact_flore.bib_champs_contact_flore'),
-  ('Contact Faune','contact_faune', 'releve', 'contact_faune.releve', 'addObs/contactFaune.html', 'contact_faune.bib_champs_contact_faune');
+INSERT INTO synthese.bib_projet(id_projet, nom_projet, table_independante, saisie_possible, nom_schema, nom_table, nom_bdd )
+VALUES (99999, 'Tous les projets', FALSE, FALSE, 'synthese', 'releve', 'synthese');
+
+INSERT INTO synthese.bib_projet (nom_projet, saisie_possible, table_independante, service_onf, producteur, nom_schema, nom_table, template, nom_bdd, bib_champs ) VALUES 
+  ('Contact Flore', TRUE, TRUE, 'Tous', 'ONF', 'contact_flore', 'releve', 'addObs/contactFlore.html', 'contact_flore', 'contact_flore.bib_champs_contact_flore'),
+  ('Contact Faune', TRUE, TRUE, 'Tous', 'ONF', 'contact_faune', 'releve', 'addObs/contactFaune.html', 'contact_faune', 'contact_flore.bib_champs_contact_faune');
 
 CREATE TABLE contact_faune.bib_champs_contact_faune(
 id_champ integer CONSTRAINT bib_fa_primary_key PRIMARY KEY,
@@ -259,7 +260,7 @@ INSERT INTO contact_faune.bib_champs_contact_faune (id_champ, nom_champ, valeur,
 (5, 'nb_femelle', '{"values":[]}', 'spec_5', 'Nombre de femelle', 'number'),
 (6, 'nb_jeune', '{"values":[]}', 'spec_6', 'Nombre de jeune', 'number'),
 (7, 'nb_non_identife', '{"values":[]}', 'spec_7', 'Nombre non identifie', 'number'),
-(8,'trace', '{"values":["Crottes ou crottier", "Ecorçage ou frottis", "Empreintes", "Epiderme", "Guano", "Nid", "Oeufs", "Pelage", "Pelotes de réjection", "Restes alimentaires", "Restes de l''animal", "Terrier", "Larves", "Exuvie"]}' ,'spec_8', 'Trace', 'select')
+(8,'trace', '{"values":["Crottes ou crottier", "Ecorçage ou frottis", "Empreintes", "Epiderme", "Guano", "Nid", "Oeufs", "Pelage", "Pelotes de réjection", "Restes alimentaires", "Restes de l''animal", "Terrier", "Larves", "Exuvie"]}' ,'spec_8', 'Trace', 'select');
 
 
 
@@ -285,218 +286,6 @@ INSERT INTO contact_flore.bib_champs_contact_flore (id_champ, nom_champ, valeur,
 (6,'fruit_maturation','{"values":[]}', 'spec_6', 'Fruit mature', 'checkbox' ),
 (7,'dissemination', '{"values":[]}', 'spec_7' ,'Dissémination', 'checkbox' );
 
-
-
-
-
-
--- Taxonomie
-
---habitat du taxref
-CREATE TABLE taxonomie.bib_habitat (
-id integer,
-type character varying
-);
-
-ALTER TABLE taxonomie.bib_habitat
-  OWNER TO onfuser;
-
-CREATE OR REPLACE FUNCTION taxonomie.find_cdref(id integer)
-  RETURNS integer AS
-$BODY$
---fonction permettant de renvoyer le cd_ref d'un taxon à partir de son cd_nom
---
---Gil DELUERMOZ septembre 2011
-
-  DECLARE ref integer;
-  BEGIN
-  SELECT INTO ref cd_ref FROM taxonomie.taxref WHERE cd_nom = id;
-  return ref;
-  END;
-$BODY$
-  LANGUAGE plpgsql IMMUTABLE;
-
-INSERT INTO taxonomie.bib_habitat 
-VALUES (1, 'Marin'), (2, 'Eau douce'), (3, 'Terrestre'), (4,'Marin et eau douce' ), (5, 'Marin et Terrestre' ), (6,'Eau saumâtre'), (7, 'Continental (terrestre et/ou eau douce)'), (8,'Continental (terrestre et eau douce)' );
-
-
-
-
-
--- Creation des vues de la liste des taxons personnalisée pour la structure: ICI la liste des taxons antillais / faune et flore
---CREATE VIEW taxonomie.taxons_contact_flore AS(
---SELECT taxonomie.find_cdref(cd_nom) AS cd_ref, nom_vern, lb_nom
---FROM taxonomie.import_taxref
---WHERE (mar != 'A' OR gua != 'A' OR sm != 'A' OR sb != 'A') AND regne = 'Plantae'
---);
-
-CREATE MATERIALIZED VIEW taxonomie.taxons_contact_faune AS (
-
-SELECT taxonomie.find_cdref(t3.cd_nom) AS cd_ref, t3.cd_nom, nom_valide, lb_nom, CONCAT(t3.lb_nom, ' = ', t3.nom_complet_html) AS search_name
-from taxonomie.cor_nom_liste t1
-JOIN taxonomie.bib_noms t2 ON t1.id_nom = t2.id_nom
-JOIN taxonomie.taxref t3 ON t3.cd_nom = t2.cd_nom
-WHERE t1.id_liste = 1001
-
-UNION
-SELECT taxonomie.find_cdref(t3.cd_nom),t3.cd_nom, nom_valide,  lb_nom, CONCAT(t3.nom_vern, ' = ', t3.nom_complet_html) AS search_name
-from taxonomie.cor_nom_liste t1
-JOIN taxonomie.bib_noms t2 ON t1.id_nom = t2.id_nom
-JOIN taxonomie.taxref t3 ON t3.cd_nom = t2.cd_nom
-WHERE t1.id_liste = 1001 AND t3.nom_vern IS NOT NULL
-);
-
-ALTER TABLE taxonomie.taxons_contact_faune
-  OWNER TO onfuser;
-
---CREATE VIEW taxonomie.taxons_contact_faune AS(
---SELECT taxonomie.find_cdref(cd_nom) AS cd_ref, nom_vern, lb_nom
---FROM taxonomie.import_taxref
---WHERE (mar != 'A' OR gua != 'A' OR sm != 'A' OR sb != 'A') AND regne = 'Animalia'
---);
-CREATE MATERIALIZED VIEW taxonomie.taxons_contact_flore AS (
-
-SELECT taxonomie.find_cdref(t3.cd_nom) AS cd_ref, t3.cd_nom, nom_valide, lb_nom, CONCAT(t3.lb_nom, ' = ', t3.nom_complet_html) AS search_name
-from taxonomie.cor_nom_liste t1
-JOIN taxonomie.bib_noms t2 ON t1.id_nom = t2.id_nom
-JOIN taxonomie.taxref t3 ON t3.cd_nom = t2.cd_nom
-WHERE t1.id_liste = 1002
-
-UNION
-SELECT taxonomie.find_cdref(t3.cd_nom), t3.cd_nom, nom_valide,lb_nom, CONCAT(t3.nom_vern, ' = ', t3.nom_complet_html) AS search_name
-from taxonomie.cor_nom_liste t1
-JOIN taxonomie.bib_noms t2 ON t1.id_nom = t2.id_nom
-JOIN taxonomie.taxref t3 ON t3.cd_nom = t2.cd_nom
-WHERE t1.id_liste = 1002 AND t3.nom_vern IS NOT NULL
-);
-
-ALTER TABLE taxonomie.taxons_contact_flore
-  OWNER TO onfuser;
-
-CREATE TABLE taxonomie.bib_liste_rouge (
-id_statut character varying,
-type_statut character varying
-);
-
-INSERT INTO taxonomie.bib_liste_rouge 
-VALUES('NE', 'Non évalué'),
-('NA', 'Non applicable'),
-('DD', 'Données insuffisante'),
-('LC', 'Préoccupation mineure'),
-('QT', 'Quasi menacée'),
-('VU', 'Vulnérable'),
-('EN', 'En danger'),
-('CR', 'En danger critique'),
-('RE', 'Disparu au niveau régional'),
-('EW', 'Eteinte à l''état sauvage'),
-('EX', 'Eteinte') ;
-
-ALTER TABLE taxonomie.bib_liste_rouge
-  OWNER TO onfuser;
-
-
-
-
--- schema utilisateur
-
-
-CREATE TABLE utilisateur.login
-(
-  id serial NOT NULL,
-  nom character varying,
-  mpd character varying,
-  auth_role integer,
-  id_structure integer,
-  CONSTRAINT primary_key PRIMARY KEY (id)
-);
-
-ALTER TABLE utilisateur.login
-  OWNER TO onfuser;
-
-INSERT INTO utilisateur.login
-VALUES(1, 'admin', 'admin', 3, 1 );
-
-
-
-CREATE TABLE utilisateurs.bib_organismes(
-id_structure integer,
-nom_structure character varying,
-CONSTRAINT bib_structure_PK PRIMARY KEY (id_structure)
-);
-
-ALTER TABLE utilisateurs.bib_organismes
-  OWNER TO onfuser;
-
-INSERT INTO utilisateurs.bib_organismes
-VALUES(1, 'ONF'), (2, 'Réserves');
-
-CREATE TABLE utilisateur.bib_role(
-auth_role integer,
-descritption character varying,
-CONSTRAINT bib_role_PK PRIMARY KEY (auth_role)
-);
-
-ALTER TABLE utilisateur.bib_role
-  OWNER TO onfuser;
-
-
-INSERT INTO utilisateur.bib_role
-VALUES(1, 'lecteur'), (2, 'contributeur'), (3, 'administrateur');
-
-
---SPECIFIQUE DOM
-
---liste rouge
-CREATE TABLE taxonomie.liste_rouge(
-ordre integer,
-cd_ref integer,
-cd_nom integer ,
-nom_cite character varying,
-auteur character varying,
-nom_communs character varying,
-population character varying,
-rang character varying,
-famille character varying,
-endemisme character varying,
-commentaire character varying,
-statut character varying,
-criteres character varying,
-tendance character varying,
-version integer,
-statut_i character varying,
-statut_eu character varying,
-anneeval character varying,
-nom_liste character varying,
-type_liste character varying,
-groupe_grand_public character varying
-);
-
-ALTER TABLE taxonomie.liste_rouge
-  OWNER TO onfuser;
-
-COPY taxonomie.liste_rouge
-FROM E'/home/ubuntu/BDN/data/Liste_rouge_Guadeloupe.txt'
-WITH (format 'csv', header 'true', delimiter E';');
-
---espece protege taxref
-CREATE TABLE taxonomie.protection (
-cd_nom integer,
-cd_protection character varying,
-nom_cite character varying,
-syn_cite character varying,
-nom_francais_cite character varying,
-precisions character varying,
-cd_nom_cite integer
-);
-
-ALTER TABLE taxonomie.protection
-  OWNER TO onfuser;
-
-
-
-COPY taxonomie.protection
-FROM E'/home/ubuntu/BDN/data/PROTECTION_ESPECES_10.txt'
-WITH (format 'csv', header 'true', delimiter E';');
 
 
 
@@ -915,7 +704,7 @@ phenologie character varying,
 nombre integer,
 commentaire character varying,
 CONSTRAINT unique_id_pk PRIMARY KEY (unique_id)
-)
+);
 
 
 CREATE TABLE ip_connexion(
@@ -927,58 +716,6 @@ ALTER TABLE ip_connexion
 OWNER TO onfuser;
 
 
---POINT
-INSERT INTO synthese.releve (id_lot, id_projet, id_sous_projet, id_sous_projet_2, geom_point, cd_nom, precision, observateur, date, nombre, loc_exact, insee, ccod_frt, valide, diffusable, id_structure)
-SELECT i.id_obs,i.id_projet, i.id_sous_projet, i.id_sous_projet_2, ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), i.cd_ref, i.precision, i.observateur,i.date, i.nombre, TRUE, c.code_insee, f.ccod_frt, TRUE, TRUE, 2
-FROM import i
-LEFT JOIN layers.commune c ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), c.geom)
-LEFT JOIN layers.perimetre_forets f ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), f.geom)
-
--- MAILLE
-WITH code_maille_j AS(
-SELECT id_maille, unique_id
-FROM import i
-JOIN layers.maille_1_2 l ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620),l.geom )
-WHERE l.taille_maille = '2'
-)
-INSERT INTO synthese.releve (id_lot, id_projet, id_sous_projet, id_sous_projet_2, cd_nom, code_maille, precision, observateur, date, nombre, loc_exact, insee, ccod_frt, valide, diffusable, id_structure)
-SELECT i.id_obs,i.id_projet, i.id_sous_projet, i.id_sous_projet_2,  i.cd_ref, j.id_maille, i.precision, i.observateur,i.date, i.nombre, FALSE, c.code_insee, f.ccod_frt, TRUE, TRUE, 2
-FROM import i
-LEFT JOIN layers.commune c ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), c.geom)
-LEFT JOIN layers.perimetre_forets f ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), f.geom)
-JOIN code_maille_j j ON j.unique_id = i.unique_id
-
-
-
--- import foret humide
-INSERT INTO pp_foret_humide.releve (id_releve, id_projet, id_sous_projet, id_sous_projet_2, geom_point, cd_nom, precision, observateur, date, loc_exact, insee, ccod_frt, valide, diffusable, id_structure, placeau, no_arbre, x_placeau, y_placeau, x_placette, y_placette )
-SELECT i.id_obs,i.id_projet, i.id_sous_projet, i.id_sous_projet_2, ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), i.cd_ref, i.precision, i.observateur,i.date, TRUE, c.code_insee, f.ccod_frt, TRUE, TRUE, 2, placeau, i.no_arbre, i.x_placeau, i.y_placeau, i.x_placette, i.y_placette
-FROM import_pp_foret_humide i
-LEFT JOIN layers.commune c ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), c.geom)
-LEFT JOIN layers.perimetre_forets f ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), f.geom)
-
--- import enclos_reg
-INSERT INTO enclos_rg_fl.releve (id_releve, id_projet, id_sous_projet, id_sous_projet_2, geom_point, cd_nom, precision, observateur, date, loc_exact, insee, ccod_frt, valide, diffusable, id_structure, strate, nom_taxon_orig )
-SELECT i.id_obs,i.id_projet, i.id_sous_projet, i.id_sous_projet_2, ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), i.cd_ref, i.precision, i.observateur,i.date, TRUE, c.code_insee, f.ccod_frt, TRUE, TRUE, 2, i.strate, i.nom_taxon_orig
-FROM import_enclos_reg i
-LEFT JOIN layers.commune c ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), c.geom)
-LEFT JOIN layers.perimetre_forets f ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), f.geom)
-
--- import p_eee_cd
-INSERT INTO parcelle_lutte_eee_marche_cd.releve (id_releve, id_projet, id_sous_projet, id_sous_projet_2, geom_point, cd_nom, precision, observateur, date, loc_exact, insee, ccod_frt, valide, diffusable, id_structure,site, parcelle, "A_inf_10cm", "B_10cm_1m", "C_1m_10cm", "D_sup_10cm", type_bio, plante)
-SELECT i.id_releve, i.id_projet, i.id_sous_projet, i.id_sous_projet_2, ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), i.cd_ref, i.precision, i.observateur,i.date, TRUE, c.code_insee, f.ccod_frt, TRUE, TRUE, 2, i.site, i.parcelle, i."A_inf_10cm", i."B_10cm_1m", i."C_1m_10cm", i."D_sup_10cm", i.type_bio, i.plante
-FROM parcelle_eee_cd i
-LEFT JOIN layers.commune c ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), c.geom)
-LEFT JOIN layers.perimetre_forets f ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), f.geom)
-
-
--- import pp foret_seche
-
-INSERT INTO pp_foret_seche.releve (id_releve, id_projet, id_sous_projet, id_sous_projet_2, geom_point, cd_nom, precision, observateur, date, loc_exact, insee, ccod_frt, valide, diffusable, id_structure, placeau, no_tige, circ, surface, "C_10_15", "C_15_20", "C_20_25", "C_25_30", "C_30_35", "C_35_40", "C_40_45", "C_45_50", "C_50_plus", "Souche", redondance_souche, "Observations", probleme)
-SELECT i.id_releve, i.id_projet, i.id_sous_projet, i.id_sous_projet_2, ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), i.cd_ref, i.precision, i.observateur,i.date, TRUE, c.code_insee, f.ccod_frt, TRUE, TRUE, 2, i.placeau, i.no_tige, i.circ, i.surface, i."C_10_15", i."C_15_20", i."C_20_25", i."C_25_30", i."C_30_35", i."C_35_40", i."C_40_45", i."C_45_50", i."C_50_plus", i."Souche", i.redondance_souche, i."Observations", i.probleme
-FROM pp_foret_seche i
-LEFT JOIN layers.commune c ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), c.geom)
-LEFT JOIN layers.perimetre_forets f ON ST_INTERSECTS(ST_SETSRID(ST_GeomFromText(CONCAT('POINT (',i.x,' ',i.y, ')')),32620), f.geom)
 
 
 
