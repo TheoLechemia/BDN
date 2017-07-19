@@ -282,5 +282,5 @@ groupe_grand_public character varying
 
 
 COPY taxonomie.liste_rouge_reg
-FROM E'/tmp/Liste_rouge_Guadeloupe.txt'
+FROM E'/tmp/Liste_rouge_regionale.csv'
 WITH (format 'csv', header 'true', delimiter E';');

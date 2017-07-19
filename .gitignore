@@ -12,5 +12,4 @@ settings.ini
 node_modules/*
 *.pyc
 *.csv
-log/*
 cron_pg_backup.sh

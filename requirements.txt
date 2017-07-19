@@ -7,4 +7,4 @@ argparse==1.2.1
 click==6.6
 itsdangerous==0.24
 wsgiref==0.1.2
-psycopg2==2.6.2
+psycopg2==2.7.1

@@ -1,6 +1,7 @@
 ##config LINUX
 monuser=monuser
 mondomaine=mondomaine
+monurl=monurl
 
 ### CONFIGURATION APACHE ###
 # Répertoire de publication web
@@ -36,12 +37,17 @@ drop_bdn_db=false
 bdn_db_name=bdn
 # SRID de la projection locale 
 projection=32620
+## Coordonnées de centrage des cartes
+xcoord=-61.5361400
+ycoord=16.2412500
+#numero de l'application dans usershub
+no_application=3
 ## fichier de sauvegarde de la BDD
 backup_directory=/home/ubuntu/sauvegarde_bdn
 
 ### CONFIGURATION TAXHUB ###
 taxhub_release=1.2.1
 # fichier des listes rouges regionales
-liste_rouge_path=/home/ubuntu/BDN/data/Liste_rouge_Guadeloupe.txt
-# Pour des questions de performances de GeoNature, il n'y a pas de base de données spécifique pour taxHub 
-# On utilise la base de données de GeoNature afin que les requêtes de GeoNature en lien avec le schéma taxonomie ne soient pas trop pénalisées par un accès distant.
+liste_rouge_path=/home/ubuntu/BDN/data/Liste_rouge_regionale.csv
+# Pour des questions de performances de BDN, il n'y a pas de base de données spécifique pour taxHub 
+# On utilise la base de données de BDN afin que les requêtes de BDN en lien avec le schéma taxonomie ne soient pas trop pénalisées par un accès distant.

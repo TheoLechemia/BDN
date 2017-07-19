@@ -2,17 +2,17 @@
 
 # ## Install de usershub
 
-# #cp settings.ini.sample settings.ini
+#cp settings.ini.sample settings.ini
 
 nano settings.ini
 
 . ./settings.ini
 
-# if [ "$(id -u)" == "0" ]; then
-#    echo -e "\e[91m\e[1mThis script should NOT be run as root\e[0m" >&2
-#    echo -e "\e[91m\e[1mLancez ce script avec l'utilisateur courant : '$monuser'\e[0m" >&2
-#    exit 1
-# fi
+if [ "$(id -u)" == "0" ]; then
+   echo -e "\e[91m\e[1mThis script should NOT be run as root\e[0m" >&2
+   echo -e "\e[91m\e[1mLancez ce script avec l'utilisateur courant : '$monuser'\e[0m" >&2
+   exit 1
+fi
 
 function database_exists () {
     # /!\ Will return false if psql can't list database. Edit your pg_hba.conf
@@ -75,8 +75,6 @@ function database_exists () {
 # echo "Création des utilisateurs postgreSQL..."
 # sudo -n -u postgres -s psql -c "CREATE ROLE $user_pg WITH LOGIN PASSWORD '$user_pg_pass';"
 # sudo -n -u postgres -s psql -c "CREATE ROLE $user_atlas WITH LOGIN PASSWORD '$user_atlas_pass';"
-# #sudo -n -u postgres -s psql -c "CREATE ROLE $admin_pg WITH SUPERUSER LOGIN PASSWORD '$admin_pg_pass';" 
-
 
 
 
@@ -135,36 +133,37 @@ function database_exists () {
 # echo "}" >> config/dbconnexions.json
 
 
-# ## creation de la vue pour utilisation des utiliateurs dans toutes les applications
+# # ## creation de la vue pour utilisation des utiliateurs dans toutes les applications
 
-# # export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/usershub.sql  &>> log/install_db.log
-# # export PGPASSWORD=$user_pg_pass;psql -h $db_host -U $user_pg -d $db_name -f data/create_view_utilisateurs.sql  &>> log/install_db.log
+#   sudo -n -u postgres -s psql -d $usershubdb_name -c "CREATE OR REPLACE VIEW utilisateurs.v_userslist_forall_applications AS 
+#  SELECT r.groupe,
+#     r.id_role,
+#     r.identifiant,
+#     r.nom_role,
+#     r.prenom_role,
+#     r.desc_role,
+#     r.pass,
+#     r.email,
+#     r.id_organisme,
+#     r.organisme,
+#     r.id_unite,
+#     r.remarques,
+#     r.pn,
+#     r.session_appli,
+#     r.date_insert,
+#     r.date_update,
+#     cor.id_droit AS id_droit_max,
+#     cor.id_application
+#    FROM utilisateurs.cor_role_droit_application cor
+#      JOIN utilisateurs.t_roles r ON r.id_role = cor.id_role;
 
-  sudo -n -u postgres -s psql -d $usershubdb_name -c "CREATE OR REPLACE VIEW utilisateurs.v_userslist_forall_applications AS 
- SELECT r.groupe,
-    r.id_role,
-    r.identifiant,
-    r.nom_role,
-    r.prenom_role,
-    r.desc_role,
-    r.pass,
-    r.email,
-    r.id_organisme,
-    r.organisme,
-    r.id_unite,
-    r.remarques,
-    r.pn,
-    r.session_appli,
-    r.date_insert,
-    r.date_update,
-    cor.id_droit AS id_droit_max,
-    cor.id_application
-   FROM utilisateurs.cor_role_droit_application cor
-     JOIN utilisateurs.t_roles r ON r.id_role = cor.id_role;
+# ALTER TABLE utilisateurs.v_userslist_forall_applications
+#   OWNER TO $user_pg;"
 
-ALTER TABLE utilisateurs.v_userslist_forall_applications
-  OWNER TO $user_pg;"
+cd /home/$monuser/BDN
 
+# création de l'application BDN et d'un compte admin pour BDN dans usershub
+export PGPASSWORD=$user_pg_pass;psql -h $pg_host -U $user_pg -d $usershubdb_name -f data/usershub/usershub_data.sql  &>> log/install_db.log
 
 ######################################################################################################
 ######################################################################################################
@@ -172,10 +171,37 @@ ALTER TABLE utilisateurs.v_userslist_forall_applications
 ######################################################################################################
 ######################################################################################################
 
-# ##INSTAL des dependances python
-# # virtualenv ./venv
-# # . ./venv/bin/activate
-# # pip install -r requirements.txt
+
+
+#Instalation des dependances python
+virtualenv ./venv
+. ./venv/bin/activate
+pip install -r requirements.txt
+deactivate
+# Instalation dépendance npm
+cd ./Apps/static
+npm install
+cd ../../
+
+#creation du dossier de telechargement
+mkdir Apps/static/uploads
+chmod 0777 Apps/static/uploads
+
+# remplissage du config.py a partir des données du settings.ini
+cp Apps/config.py.sample Apps/config.py
+sed -i -e "s/database_name/$bdn_db_name/g" Apps/config.py
+sed -i -e "s/user_name/$user_pg/g" Apps/config.py
+sed -i -e "s/my_pass/$user_pg_pass/g" Apps/config.py
+sed -i -e "s/localhost/$pg_host/g" Apps/config.py
+sed -i -e "s/myport/$pg_port/g" Apps/config.py
+sed -i -e "s:MY_URL/$monurl:g" Apps/config.py
+sed -i -e "s/-61.5361400/$xcoord/g" Apps/config.py
+sed -i -e "s/16.2412500/$ycoord/g" Apps/config.py
+sed -i -e "s/32620/$projection/g" Apps/config.py
+sed -i -e "s/999999999/$no_application/g" Apps/config.py
+
+
+nano Apps/config.py
 
 if database_exists $bdn_db_name
 then
@@ -211,7 +237,7 @@ fi
 
 ## FDW pour usershubdb
 sudo -u postgres -s psql -d $bdn_db_name -c "CREATE EXTENSION IF NOT EXISTS postgres_fdw;"
-sudo -u postgres -s psql -d $bdn_db_name -c "CREATE SERVER server_usershubdb FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host '$db_host', dbname '$usershubdb_name', port '$pg_port');"
+sudo -u postgres -s psql -d $bdn_db_name -c "CREATE SERVER server_usershubdb FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host '$pg_host', dbname '$usershubdb_name', port '$pg_port');"
 sudo -u postgres -s psql -d $bdn_db_name -c "GRANT USAGE ON FOREIGN SERVER server_usershubdb to $user_pg;"
 export PGPASSWORD=$user_pg_pass;psql -d bdn -U $user_pg -h $pg_host -c "CREATE USER MAPPING FOR $user_pg SERVER server_usershubdb OPTIONS (user '$user_pg', password '$user_pg_pass');"
 
@@ -305,7 +331,7 @@ cd /home/$monuser/BDN
 
 unzip -o ./data/taxref.zip -d /tmp
 cp ./data/PROTECTION_ESPECES_10.txt /tmp
-cp ./data/Liste_rouge_Guadeloupe.txt /tmp
+cp ./data/Liste_rouge_regionale.csv /tmp
 cp ./data/PROTECTION_ESPECES_TYPES_10.txt /tmp
 
 echo "Création du schéma taxonomie..."
@@ -392,19 +418,19 @@ sudo -n -u postgres -s psql -d $bdn_db_name -c "ALTER TABLE layers.perimetre_for
 
 sudo -n -u postgres -s shp2pgsql -W "LATIN1" -s $projection -D -I ./data/layers/mailles_1_2.shp layers.maille_1_2 | sudo -n -u postgres -s psql -d $bdn_db_name
 sudo -n -u postgres -s psql -d $bdn_db_name -c "ALTER TABLE layers.maille_1_2 OWNER TO $user_pg;"
-sudo -n -u postgres -s psql -d $bdn_db_name -c "ALTER TABLE layers.maille_1_2 DROP CONSTRAINT maille_1_2_pkey; ALTER TABLE layers.maille_1_2 ADD CONSTRAINT maille_1_2_pkey PRIMARY KEY (id_maille);"
+sudo -n -u postgres -s psql -d $bdn_db_name -c "ALTER TABLE layers.maille_1_2 DROP CONSTRAINT maille_1_2_pkey; ALTER TABLE layers.maille_1_2 ADD CONSTRAINT maille_1_2_pkey PRIMARY KEY (id_maille);
+ALTER TABLE layers.maille_1_2 RENAME COLUMN taille_mai to taille_maille;"
 
 
 sudo sed -i -e "s/onfuser/$user_pg/g" /tmp/create_table_bdn.sql
 sudo sed -i -e "s/32620/$projection/g" /tmp/create_table_bdn.sql
-# sudo sed -i -e "s/listerougepath/$liste_rouge_path/g" /tmp/create_table_bdn.sql
-# sudo sed -i -e "s/taxrefprotectionpath/$taxref_protection_path/g" /tmp/create_table_bdn.sql
+
 
 echo "Creation de de la base ..."
 sudo -n -u postgres -s psql -d $bdn_db_name -f /tmp/create_table_bdn.sql &>> log/install_db.log
 
-rm /tmp/create_table_bdn.sql
-sudo -n -u postgres -s psql -d $bdn_db_name -c "DROP FOREIGN TABLE fdw.taxref_v10;"
+#rm /tmp/create_table_bdn.sql
+
 
 
 #Sauvegarde de la BDD
@@ -415,4 +441,16 @@ mkdir $backup_directory/MONTHLY
 
 
 ##### CONFIG APACHE FINALE ####
+sudo a2enmod headers
+sudo rm /etc/apache2/sites-available/000-default.conf
+sudo rm /etc/apache2/sites-available/taxhub.conf
+sudo a2dissite taxhub.conf
 
+cp data/apache/apache.conf /tmp
+sed -i -e "s/monuser/$monuser/g" /tmp/apache.conf
+sed -i -e "s:mydomaine/$mondomaine:g" /tmp/apache.conf
+
+sudo cp /tmp/apache.conf /etc/apache2/sites-available/000-default.conf
+
+
+sudo apache2ctl restart

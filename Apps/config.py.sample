@@ -1,5 +1,14 @@
 # coding: utf-8
 
+
+
+######################################################################################################
+######################################################################################################
+###################################### CONFIGURATION DE BDN  #########################################
+######################################################################################################
+######################################################################################################
+
+
 import os
 
 #cle de chiffrement des cookis, a changer par une chaine aleatoire
@@ -8,24 +17,23 @@ secret_key = 'cle secrete a changer'
 #parametre de connexion a la base de donnnes: meme parametres que le settings.ini
 database = {
 
-'DATABASE_NAME' : "database_name",
+'DATABASE_NAME' : 'database_name',
 
-'USER' : "user_name",
+'USER' : 'user_name',
 
-'PASSWORD' : "my_pass",
+'PASSWORD' : 'my_pass',
 
-'HOST' : "localhost",
+'HOST' : 'localhost',
 
-'PORT' : "5432",
+'PORT' : 'myport',
 }
 
 config = {
-    #NE PAS TOUCHER APP_DIR
     'APP_DIR': os.path.abspath(os.path.dirname(__file__)),
 	#Bien finir l'URL par un /
-    'URL_APPLICATION': 'MY URL',
+    'URL_APPLICATION': 'MY_URL',
     #ID de l'application dans usershub
-    'ID_APPLICATION': 3,
+    'ID_APPLICATION': 999999999,
     ##MAP CONFIG
     'MAP' : {
         #coordonnees du centrage de la carte

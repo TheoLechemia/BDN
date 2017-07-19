@@ -3,7 +3,8 @@ CREATE TABLE synthese.releve
   id_synthese serial,
   id_lot integer,
   id_projet integer,
-  id_sous_projet integer,
+  id_sous_projet character varying(50),
+  id_sous_projet_2 character varying(50),
   observateur text NOT NULL,
   date date NOT NULL,
   cd_nom integer NOT NULL,
@@ -43,7 +44,8 @@ CREATE TABLE contact_faune.releve
   id_lot integer,
   id_synthese integer,
   id_projet integer,
-  id_sous_projet integer,
+  id_sous_projet character varying(50),
+  id_sous_projet_2 character varying(50),
   observateur character varying(100) NOT NULL,
   date date NOT NULL,
   cd_nom integer NOT NULL,
@@ -95,7 +97,8 @@ CREATE TABLE contact_flore.releve
   id_lot integer,
   id_synthese integer,
   id_projet integer,
-  id_sous_projet character varying,
+  id_sous_projet character varying(50),
+  id_sous_projet_2 character varying(50),
   observateur character varying(100) NOT NULL,
   date date NOT NULL,
   cd_nom integer NOT NULL,
@@ -146,8 +149,8 @@ CREATE OR REPLACE FUNCTION synthese.tr_protocole_to_synthese() RETURNS TRIGGER A
     DECLARE protocoleid INTEGER;
     BEGIN
  
-    INSERT INTO synthese.releve (id_projet, id_sous_projet, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, precision, loc_exact, code_maille, id_structure, diffusable) 
-    VALUES( new.id_projet, new.id_sous_projet, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.precision, new.loc_exact, new.code_maille, new.id_structure, new.diffusable) RETURNING new.id_obs INTO protocoleid;
+    INSERT INTO synthese.releve (id_projet, id_sous_projet, id_sous_projet_2, observateur, date, cd_nom, insee, ccod_frt, altitude, valide,geom_point, precision, loc_exact, code_maille, id_structure, diffusable) 
+    VALUES( new.id_projet, new.id_sous_projet, new.id_sous_projet_2, new.observateur, new.date, new.cd_nom, new.insee, new.ccod_frt, new.altitude, new.valide, new.geom_point, new.precision, new.loc_exact, new.code_maille, new.id_structure, new.diffusable) RETURNING new.id_obs INTO protocoleid;
     SELECT INTO newid currval('synthese.releve_id_synthese_seq');
     EXECUTE format('
     UPDATE %s.%s SET id_synthese = %s WHERE id_obs=%s;', TG_TABLE_SCHEMA, TG_TABLE_NAME, newid, protocoleid);
@@ -597,7 +600,7 @@ CREATE OR REPLACE VIEW synthese.layer_poly AS
     LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
      WHERE f.valide = TRUE AND f.loc_exact = FALSE;
 
-    ALTER VIEW contact_flore.layer_poly
+    ALTER VIEW synthese.layer_poly
     OWNER TO onfuser;
 
   CREATE OR REPLACE VIEW synthese.layer_point AS 
@@ -625,7 +628,7 @@ CREATE OR REPLACE VIEW synthese.layer_poly AS
    LEFT JOIN utilisateurs.bib_organismes s ON f.id_structure = s.id_organisme
   WHERE f.loc_exact = TRUE AND f.valide = TRUE;
 
-  ALTER VIEW contact_flore.layer_point
+  ALTER VIEW synthese.layer_point
   OWNER TO onfuser;
 
 
