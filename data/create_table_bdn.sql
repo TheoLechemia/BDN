@@ -239,8 +239,8 @@ INSERT INTO synthese.bib_projet(id_projet, nom_projet, table_independante, saisi
 VALUES (99999, 'Tous les projets', FALSE, FALSE, 'synthese', 'releve', 'synthese');
 
 INSERT INTO synthese.bib_projet (nom_projet, saisie_possible, table_independante, service_onf, producteur, nom_schema, nom_table, template, nom_bdd, bib_champs ) VALUES 
-  ('Contact Flore', TRUE, TRUE, 'Tous', 'ONF', 'contact_flore', 'releve', 'addObs/contactFlore.html', 'contact_flore', 'contact_flore.bib_champs_contact_flore'),
-  ('Contact Faune', TRUE, TRUE, 'Tous', 'ONF', 'contact_faune', 'releve', 'addObs/contactFaune.html', 'contact_faune', 'contact_flore.bib_champs_contact_faune');
+  ('Contact Flore', TRUE, TRUE, 'Tous', 'ONF', 'contact_flore', 'releve', 'addObs/contact_flore.html', 'contact_flore', 'contact_flore.bib_champs_contact_flore'),
+  ('Contact Faune', TRUE, TRUE, 'Tous', 'ONF', 'contact_faune', 'releve', 'addObs/contact_faune.html', 'contact_faune', 'contact_faune.bib_champs_contact_faune');
 
 CREATE TABLE contact_faune.bib_champs_contact_faune(
 id_champ integer CONSTRAINT bib_fa_primary_key PRIMARY KEY,
