@@ -30,135 +30,135 @@ function database_exists () {
 
 
 
-# echo "####################################################################
-#       ######## Instalation de l'environnement logiciel... ################
-#       #################################################################### " 
-# #Instalation environnement PHP 
-# sudo apt-get -y purge `dpkg -l | grep php| awk '{print $2}' |tr "\n" " "`
+echo "####################################################################
+      ######## Instalation de l'environnement logiciel... ################
+      #################################################################### " 
+#Instalation environnement PHP 
+sudo apt-get -y purge `dpkg -l | grep php| awk '{print $2}' |tr "\n" " "`
 
-# sudo add-apt-repository ppa:ondrej/php
+sudo add-apt-repository ppa:ondrej/php
 
-# sudo apt-get update
-# sudo apt-get -y upgrade
-# sudo apt-get install -y php5.6
+sudo apt-get update
+sudo apt-get -y upgrade
+sudo apt-get install -y php5.6
 
-# sudo apt-get install -y libapache2-mod-php5.6
-# sudo apt-get install -y libapache2-mod-wsgi
-# sudo apt-get install -y php5.6-pgsql
-
-
-# #Instalation environnement Python 
-
-# sudo apt-get update
+sudo apt-get install -y libapache2-mod-php5.6
+sudo apt-get install -y libapache2-mod-wsgi
+sudo apt-get install -y php5.6-pgsql
 
 
-# sudo apt-get install -y unzip
-# sudo apt-get install -y apache2
-# sudo apt-get install -y libapache2-mod-wsgi
-# sudo apachectl restart
+#Instalation environnement Python 
 
-# sudo apt-get install -y postgresql postgis
-# sudo apt-get install -y python-setuptools
-# sudo apt-get install -y libpq-dev python-dev
-
-# sudo apt-get install -y npm
-# sudo apt-get install -y python python-pip
-# sudo apt-get install -y python-gdal
-# sudo apt-get install -y gdal-bin
-
-# sudo apt-get install -y python-virtualenv
-
-# sudo apt-get install -y tofrodos
-# sudo ln -s /usr/bin/fromdos /usr/bin/dos2unix 
+sudo apt-get update
 
 
-# echo "Création des utilisateurs postgreSQL..."
-# sudo -n -u postgres -s psql -c "CREATE ROLE $user_pg WITH LOGIN PASSWORD '$user_pg_pass';"
-# sudo -n -u postgres -s psql -c "CREATE ROLE $user_atlas WITH LOGIN PASSWORD '$user_atlas_pass';"
+sudo apt-get install -y unzip
+sudo apt-get install -y apache2
+sudo apt-get install -y libapache2-mod-wsgi
+sudo apachectl restart
+
+sudo apt-get install -y postgresql postgis
+sudo apt-get install -y python-setuptools
+sudo apt-get install -y libpq-dev python-dev
+
+sudo apt-get install -y npm
+sudo apt-get install -y python python-pip
+sudo apt-get install -y python-gdal
+sudo apt-get install -y gdal-bin
+
+sudo apt-get install -y python-virtualenv
+
+sudo apt-get install -y tofrodos
+sudo ln -s /usr/bin/fromdos /usr/bin/dos2unix 
 
 
-
-# ######################################################################################################
-# ######################################################################################################
-# ###################################### INSTALATION DE USERSHUB  ######################################
-# ######################################################################################################
-# ######################################################################################################
+echo "Création des utilisateurs postgreSQL..."
+sudo -n -u postgres -s psql -c "CREATE ROLE $user_pg WITH LOGIN PASSWORD '$user_pg_pass';"
+sudo -n -u postgres -s psql -c "CREATE ROLE $user_atlas WITH LOGIN PASSWORD '$user_atlas_pass';"
 
 
 
-
-# echo "téléchargement et installation de UsersHub ..."
-# cd /tmp
-# wget https://github.com/PnEcrins/UsersHub/archive/$usershub_release.zip
-# unzip $usershub_release.zip
-# rm $usershub_release.zip
-# mv UsersHub-$usershub_release /home/$monuser/usershub/
-# cd /home/$monuser/usershub
-
-# # Configuration des settings de UsersHub
-# echo "Installation de la base de données et configuration de l'application UsersHub ..."
-# cp config/settings.ini.sample config/settings.ini
-# sed -i "s/drop_apps_db=.*$/drop_apps_db=$drop_usershubdb/g" config/settings.ini
-# sed -i "s/db_host=.*$/db_host=$pg_host/g" config/settings.ini
-# sed -i "s/db_name=.*$/db_name=$usershubdb_name/g" config/settings.ini
-# sed -i "s/user_pg=.*$/user_pg=$user_pg/g" config/settings.ini
-# sed -i "s/user_pg_pass=.*$/user_pg_pass=$user_pg_pass/g" config/settings.ini
-# # Installation de la base de données UsersHub en root
-# sudo ./install_db.sh
-# # Installation et configuration de l'application UsersHub
-# ./install_app.sh
-# # Configuration de la connexion à la base de données GeoNature
-# rm config/dbconnexions.json
-# touch config/dbconnexions.json
-# echo "{" >> config/dbconnexions.json
-# echo "    \"databases\":" >> config/dbconnexions.json
-# echo "    [" >> config/dbconnexions.json
-# echo "        {" >> config/dbconnexions.json  
-# echo "            \"dbfunname\":\"Utilisateurs\"" >> config/dbconnexions.json 
-# echo "            ,\"host\":\"$pg_host\"" >> config/dbconnexions.json 
-# echo "            ,\"dbname\":\"$usershubdb_name\"" >> config/dbconnexions.json 
-# echo "            ,\"user\":\"$user_pg\"" >> config/dbconnexions.json 
-# echo "            ,\"pass\":\"$user_pg_pass\"" >> config/dbconnexions.json 
-# echo "            ,\"port\":\"$pg_port\"" >> config/dbconnexions.json 
-# echo "        }" >> config/dbconnexions.json
-# echo "        ,{" >> config/dbconnexions.json
-# echo "            \"dbfunname\":\"BDN\"" >> config/dbconnexions.json 
-# echo "            ,\"host\":\"$pg_host\"" >> config/dbconnexions.json 
-# echo "            ,\"dbname\":\"$bdn_db_name\"" >> config/dbconnexions.json 
-# echo "            ,\"user\":\"$user_pg\"" >> config/dbconnexions.json 
-# echo "            ,\"pass\":\"$user_pg_pass\"" >> config/dbconnexions.json 
-# echo "            ,\"port\":\"$pg_port\"" >> config/dbconnexions.json 
-# echo "        }" >> config/dbconnexions.json  
-# echo "    ]" >> config/dbconnexions.json
-# echo "}" >> config/dbconnexions.json
+######################################################################################################
+######################################################################################################
+###################################### INSTALATION DE USERSHUB  ######################################
+######################################################################################################
+######################################################################################################
 
 
-# # ## creation de la vue pour utilisation des utiliateurs dans toutes les applications
 
-#   sudo -n -u postgres -s psql -d $usershubdb_name -c "CREATE OR REPLACE VIEW utilisateurs.v_userslist_forall_applications AS 
-#  SELECT r.groupe,
-#     r.id_role,
-#     r.identifiant,
-#     r.nom_role,
-#     r.prenom_role,
-#     r.desc_role,
-#     r.pass,
-#     r.email,
-#     r.id_organisme,
-#     r.organisme,
-#     r.id_unite,
-#     r.remarques,
-#     r.pn,
-#     r.session_appli,
-#     r.date_insert,
-#     r.date_update,
-#     cor.id_droit AS id_droit_max,
-#     cor.id_application
-#    FROM utilisateurs.cor_role_droit_application cor
-#      JOIN utilisateurs.t_roles r ON r.id_role = cor.id_role;
 
-# ALTER TABLE utilisateurs.v_userslist_forall_applications
-#   OWNER TO $user_pg;"
+echo "téléchargement et installation de UsersHub ..."
+cd /tmp
+wget https://github.com/PnEcrins/UsersHub/archive/$usershub_release.zip
+unzip $usershub_release.zip
+rm $usershub_release.zip
+mv UsersHub-$usershub_release /home/$monuser/usershub/
+cd /home/$monuser/usershub
+
+# Configuration des settings de UsersHub
+echo "Installation de la base de données et configuration de l'application UsersHub ..."
+cp config/settings.ini.sample config/settings.ini
+sed -i "s/drop_apps_db=.*$/drop_apps_db=$drop_usershubdb/g" config/settings.ini
+sed -i "s/db_host=.*$/db_host=$pg_host/g" config/settings.ini
+sed -i "s/db_name=.*$/db_name=$usershubdb_name/g" config/settings.ini
+sed -i "s/user_pg=.*$/user_pg=$user_pg/g" config/settings.ini
+sed -i "s/user_pg_pass=.*$/user_pg_pass=$user_pg_pass/g" config/settings.ini
+# Installation de la base de données UsersHub en root
+sudo ./install_db.sh
+# Installation et configuration de l'application UsersHub
+./install_app.sh
+# Configuration de la connexion à la base de données GeoNature
+rm config/dbconnexions.json
+touch config/dbconnexions.json
+echo "{" >> config/dbconnexions.json
+echo "    \"databases\":" >> config/dbconnexions.json
+echo "    [" >> config/dbconnexions.json
+echo "        {" >> config/dbconnexions.json  
+echo "            \"dbfunname\":\"Utilisateurs\"" >> config/dbconnexions.json 
+echo "            ,\"host\":\"$pg_host\"" >> config/dbconnexions.json 
+echo "            ,\"dbname\":\"$usershubdb_name\"" >> config/dbconnexions.json 
+echo "            ,\"user\":\"$user_pg\"" >> config/dbconnexions.json 
+echo "            ,\"pass\":\"$user_pg_pass\"" >> config/dbconnexions.json 
+echo "            ,\"port\":\"$pg_port\"" >> config/dbconnexions.json 
+echo "        }" >> config/dbconnexions.json
+echo "        ,{" >> config/dbconnexions.json
+echo "            \"dbfunname\":\"BDN\"" >> config/dbconnexions.json 
+echo "            ,\"host\":\"$pg_host\"" >> config/dbconnexions.json 
+echo "            ,\"dbname\":\"$bdn_db_name\"" >> config/dbconnexions.json 
+echo "            ,\"user\":\"$user_pg\"" >> config/dbconnexions.json 
+echo "            ,\"pass\":\"$user_pg_pass\"" >> config/dbconnexions.json 
+echo "            ,\"port\":\"$pg_port\"" >> config/dbconnexions.json 
+echo "        }" >> config/dbconnexions.json  
+echo "    ]" >> config/dbconnexions.json
+echo "}" >> config/dbconnexions.json
+
+
+# ## creation de la vue pour utilisation des utiliateurs dans toutes les applications
+
+  sudo -n -u postgres -s psql -d $usershubdb_name -c "CREATE OR REPLACE VIEW utilisateurs.v_userslist_forall_applications AS 
+ SELECT r.groupe,
+    r.id_role,
+    r.identifiant,
+    r.nom_role,
+    r.prenom_role,
+    r.desc_role,
+    r.pass,
+    r.email,
+    r.id_organisme,
+    r.organisme,
+    r.id_unite,
+    r.remarques,
+    r.pn,
+    r.session_appli,
+    r.date_insert,
+    r.date_update,
+    cor.id_droit AS id_droit_max,
+    cor.id_application
+   FROM utilisateurs.cor_role_droit_application cor
+     JOIN utilisateurs.t_roles r ON r.id_role = cor.id_role;
+
+ALTER TABLE utilisateurs.v_userslist_forall_applications
+  OWNER TO $user_pg;"
 
 cd /home/$monuser/BDN
 
@@ -183,9 +183,11 @@ cd ./Apps/static
 npm install
 cd ../../
 
-#creation du dossier de telechargement
+#creation du dossier de telechargement et des droits associés
 mkdir Apps/static/uploads
 chmod 0777 Apps/static/uploads
+chown -R www-data:www-data Apps/addObs/static
+chmod -R 775 Apps/addObs/static
 
 # remplissage du config.py a partir des données du settings.ini
 cp Apps/config.py.sample Apps/config.py

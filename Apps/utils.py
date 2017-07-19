@@ -233,7 +233,7 @@ def buildSQL(sql, app):
     if formParameters['lr']:
         sql = askFirstParame(sql,firstParam)
         firstParam = False
-        sql += 's.cd_nom IN (SELECT cd_nom from taxonomie.liste_rouge WHERE statut = %s)'
+        sql += 's.cd_nom IN (SELECT cd_nom from taxonomie.liste_rouge_reg WHERE statut = %s)'
         params.append(formParameters['lr'])
     if formParameters['structure']:
         sql = askFirstParame(sql,firstParam)
@@ -461,14 +461,14 @@ def createProject(db, projectForm, fieldForm):
 
 def create_taxonomie_view(db, projectForm, fieldForm):
     #ajoute la liste des taxons de ce protocole dans taxhub
+    #recupere le last id_liste
+    db.cur.execute("SELECT MAX(id_liste) FROM taxonomie.bib_listes")
+    last_id_liste = db.cur.fetchone()[0]+1
     #ajout dans bib_liste
     schemaName = projectForm['nom_bdd']
-    query = "INSERT INTO taxonomie.bib_listes (nom_liste, picto) VALUES (%s, %s)"
-    db.cur.execute(query, [projectForm['nom_projet'],'images/pictos/nopicto.gif' ])
+    query = "INSERT INTO taxonomie.bib_listes (id_liste, nom_liste, picto) VALUES (%s, %s, %s)"
+    db.cur.execute(query, [last_id_liste, projectForm['nom_projet'],'images/pictos/nopicto.gif' ])
     db.conn.commit()
-    #prend le last id_liste
-    db.cur.execute("SELECT MAX(id_liste) FROM taxonomie.bib_listes")
-    last_id_liste = db.cur.fetchone()[0]
     #peuple la table cor_nom_liste avec tous les taxons par defaults de bib_nom = donc que les taxons antillais
     query = """INSERT INTO taxonomie.cor_nom_liste (id_liste,id_nom)
     SELECT %s,n.id_nom FROM taxonomie.bib_noms n """

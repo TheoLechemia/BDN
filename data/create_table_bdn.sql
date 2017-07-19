@@ -291,6 +291,42 @@ INSERT INTO contact_flore.bib_champs_contact_flore (id_champ, nom_champ, valeur,
 
 
 
+--SPECIFIQUE DOM
+
+--liste rouge regionale
+CREATE TABLE taxonomie.liste_rouge_reg(
+ordre integer,
+cd_ref integer,
+cd_nom integer ,
+nom_cite character varying,
+auteur character varying,
+nom_communs character varying,
+population character varying,
+rang character varying,
+famille character varying,
+endemisme character varying,
+commentaire character varying,
+statut character varying,
+criteres character varying,
+tendance character varying,
+version integer,
+statut_i character varying,
+statut_eu character varying,
+anneeval character varying,
+nom_liste character varying,
+type_liste character varying,
+groupe_grand_public character varying
+);
+
+ALTER TABLE taxonomie.liste_rouge_reg
+OWNER TO onfuser;
+
+
+COPY taxonomie.liste_rouge_reg
+FROM E'/tmp/Liste_rouge_regionale.csv'
+WITH (format 'csv', header 'true', delimiter E';');
+
+
 
   -- Creation des vues pour les exports en shapefile
 

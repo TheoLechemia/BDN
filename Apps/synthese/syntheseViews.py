@@ -141,9 +141,9 @@ def loadTypologgie():
     db = getConnexion()
     sql = "SELECT DISTINCT group2_inpn FROM taxonomie.taxref ORDER BY group2_inpn ASC"
     group2_inpn = utils.sqltoDict(sql, db.cur)
-    sql = "SELECT * FROM taxonomie.bib_habitat"
+    sql = "SELECT id_habitat as id, nom_habitat as type FROM taxonomie.bib_taxref_habitats"
     habitat = utils.sqltoDict(sql, db.cur)
-    sql = "SELECT * FROM taxonomie.bib_liste_rouge"
+    sql = "SELECT id_categorie_france as id_statut, nom_categorie_lr as type_statut FROM taxonomie.bib_taxref_categories_lr"
     listeRouge = utils.sqltoDict(sql, db.cur)
     sql = "SELECT array_agg(row_to_json (r)) FROM (SELECT DISTINCT observateur FROM synthese.releve ORDER BY observateur ASC)r"
     db.cur.execute(sql)
