@@ -26,7 +26,7 @@ Avant de lancer le script d'installation il est nécessaire de préparer ses don
 - La liste rouge régionale de l'UICN (si elle existe)  
 
 Par défault, ce sont les fichiers paramétrés pour la Guadeloupe qui sont fournis. Remplacer par les fichiers existants par les votres dans le dossier `data/layers` de l'application.  
-:warning::warning: Veiller à bien garder les noms originaux des fichiers
+:warning::warning: Veiller à bien garder les noms originaux des fichiers :warning::warning:  
 
 #### Le shape des communes
 Le shape doit à minima comporter les champs:
