@@ -74,7 +74,7 @@ L'installation prend un certain temps... Cliquer sur 'ENTER' lorsque cela vous e
 Un second fichier de configuration apparait: celui de BDN: renseigner le champs `URL_APPLICATION` avec l'URL de votre serveur 
 `Ctrl-O ` pour sauvegarder les modifications
 `Ctrl-X ` pour continuer l'installation  
-Deux autres fichiers de configuration de taxhub apparaissent ensuite. Modifier les en fonction de vos paramètres.  
+Deux autres fichiers de configuration de taxhub apparaissent ensuite. Modifiez les en fonction de vos paramètres.  
 
 :clap: DONE !! :clap:
 
@@ -89,6 +89,6 @@ Dans un terminalde commande, tapez:
 `crontab -e`  
 et ajouter la ligne suivante à la fin du fichier:  
 ` 45 23 * * * /home/<USER>/BDN/cron_pg_backup.sh`  
-Cette commande va ainsi faire des sauvegarde journalière et mensuelles de la BDD
+Cette commande va ainsi faire des sauvegardes journalières et mensuelles de la BDD
 
 
