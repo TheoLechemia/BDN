@@ -11,5 +11,4 @@ venv/*
 settings.ini
 node_modules/*
 *.pyc
-*.csv
 cron_pg_backup.sh
