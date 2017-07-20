@@ -66,7 +66,7 @@ Une fois les fichiers remplacés, vous pouvez lancer l'installation
 
 L'application BDN est fourni avec un script d'installation qui installe:
 - UsersHub v1.2.2: une application pour la gestion centralisée des utilisateur https://github.com/PnEcrins/UsersHub
-- Taxhub v1.2.1: une application pour la gestion des taxons https://github.com/PnEcrins/UsersHub
+- Taxhub v1.2.1: une application pour la gestion des taxons https://github.com/PnX-SI/TaxHub
 - L'application BDN-DOM elle même  
 
 En lançant ce scrit les dépendances suivantes sont installées:
