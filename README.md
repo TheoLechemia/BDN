@@ -16,16 +16,27 @@ L'application s'appuie sur des application connexes développées par les parc n
 L'application BDN-DOM est un projet open-source: elle peut être deployée dans d'autres structures que l'ONF:  
 :arrow_forward: [Installer l'application](https://github.com/TheoLechemia/BDN/blob/master/documentation/installation.md)
 
-
 ### Technologies:
 * Base de données: PostgreSQL - PostGIS
 * Back-end: Python Flask
 * Front-End : Angular 1.5, Leaflet
 
-
 ### Documentation
 ##### [Installer l'application](https://github.com/TheoLechemia/BDN/blob/master/documentation/installation.md)
-##### [Ajouter des nouveaux protocoles](https://github.com/TheoLechemia/BDN/blob/master/documentation/ajout_protocole.md)
+
+### Aperçu
+#### Le tableau de bord:  
+![modele_protocole](https://github.com/TheoLechemia/BDN/blob/master/documentation/images/accueil.PNG)  
+
+#### Le module de synthèse:
+![modele_protocole](https://github.com/TheoLechemia/BDN/blob/master/documentation/images/synthese.PNG)
+
+#### Le module de saisie des observations:  
+![modele_protocole](https://github.com/TheoLechemia/BDN/blob/master/documentation/images/addObs_bis.PNG)
+
+
+
+
 
 
 
