@@ -1,8 +1,6 @@
 # #!/bin/bash
 
-# ## Install de usershub
-
-#cp settings.ini.sample settings.ini
+cp settings.ini.sample settings.ini
 
 nano settings.ini
 
@@ -186,8 +184,8 @@ cd ../../
 #creation du dossier de telechargement et des droits associés
 mkdir Apps/static/uploads
 chmod 0777 Apps/static/uploads
-chown -R www-data:www-data Apps/addObs/static
-chmod -R 775 Apps/addObs/static
+sudo chown -R www-data:www-data Apps/addObs/static
+sudo chmod -R 775 Apps/addObs/static
 
 # remplissage du config.py a partir des données du settings.ini
 cp Apps/config.py.sample Apps/config.py
@@ -444,6 +442,7 @@ mkdir $backup_directory/MONTHLY
 
 ##### CONFIG APACHE FINALE ####
 sudo a2enmod headers
+sudo a2enmod wsgi
 sudo rm /etc/apache2/sites-available/000-default.conf
 sudo rm /etc/apache2/sites-available/taxhub.conf
 sudo a2dissite taxhub.conf
