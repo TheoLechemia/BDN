@@ -1,4 +1,4 @@
-# Instalation de BDN-DOM
+# Installation de BDN-DOM
 
 Télécharger le projet depuis le dépôt Github
 
@@ -18,7 +18,7 @@ Placer vous ensuite dans le dossier qui contient l'application
 `cd BDN`  
 
 
-### Préparation des données avant l'instalation  
+### Préparation des données avant l'installation  
 Avant de lancer le script d'installation il est nécessaire de préparer ses données pour l'application BDN. L'application a besoin de 3 fichiers personnalisés pour fonctionner:
 - Une shapefile de ses communes
 - Un shapefile des mailles de son territoire (1 ou 2km)
@@ -48,12 +48,12 @@ Selon le modèle ONF du shape des périmètre forestier. Celui-ci doit contenir 
 - LIB_FRT: le nom de la forêt
 - CCOD_FRT: le code de la forêt. :warning: Aucune ligne ne doit pas être NULL
 
-Une fois les fichiers remplacer, vous pouvez lancer l'installation
+Une fois les fichiers remplacés, vous pouvez lancer l'installation
 ## Installation des applications et des bases de données
 
 L'application BDN est fourni avec un script d'installation qui installe:
-- UsersHub: une application pour la gestion centralisée des utilisateur
-- Taxhub: une application pour la gestion des taxons
+- UsersHub v1.2.2: une application pour la gestion centralisée des utilisateur https://github.com/PnEcrins/UsersHub
+- Taxhub v1.2.1: une application pour la gestion des taxons https://github.com/PnEcrins/UsersHub
 - L'application BDN elle même  
 
 En lançant ce scrit les dépendances suivantes sont installées:
@@ -63,12 +63,30 @@ En lançant ce scrit les dépendances suivantes sont installées:
 * PostgreSQL / PostGIS
 * PHP 5.6
 
+Depuis la racine de l'application, lancer le script d'installation:  
+
+`./install_app.sh`
+
+Le fichiers `settings.ini` s'ouvre: remplissez le avec vos paramètres.
+`Ctrl-O ` pour sauvegarder les modifications
+`Ctrl-X ` pour continuer l'installation  
+L'installation prend un certain temps... Cliquer sur 'ENTER' lorsque cela vous est demandé.  
+Un second fichier de configuration apparait: celui de BDN: renseigner le champs `URL_APPLICATION` avec l'URL de votre serveur 
+`Ctrl-O ` pour sauvegarder les modifications
+`Ctrl-X ` pour continuer l'installation  
+Deux autres fichiers de configuration de taxhub apparaissent ensuite. Modifier les en fonction de vos paramètres.  
+
+:clap: DONE !! :clap:
+
+
 
 
 
 
 ## Sauvegarde automatique
-Taper `crontab -e`  
+Pour effectuer des sauvegardes automatiques des bases de données (BDN et UsersHub + l'atlas s'il est installé)  
+Dans un terminalde commande, tapez:  
+`crontab -e`  
 et ajouter la ligne suivante à la fin du fichier:  
 ` 45 23 * * * /home/<USER>/BDN/cron_pg_backup.sh`  
 Cette commande va ainsi faire des sauvegarde journalière et mensuelles de la BDD
