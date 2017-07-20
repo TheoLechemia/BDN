@@ -3,7 +3,7 @@
 ### Infrastructure
 
 L'application BDN-DOM peut être installée sur un serveur Linux (Ubuntu, Debian). Elle necessite au minimum 3Go de RAM et 20-25 Go d'espace disque.  
-L'installation ci-dessous à été tester sur un Ubuntu 16.04
+L'installation ci-dessous à été testée sur un serveur Ubuntu 16.04
 
 ### Téléchargement
 
