@@ -1,48 +1,70 @@
 # Instalation de BDN-DOM
 
-Cloner le dépôt  
-`git clone https://github.com/TheoLechemia/BDN.git `  
-`cd ./BDN`
+Télécharger le projet depuis le dépôt Github
 
-### Instalation de l'environnement et de l'application
+`cd /home/monuser`  
+`wget https://github.com/TheoLechemia/BDN//archive/X.Y.Z.zip `  
+
+Dézipper l'archive  
+
+`unzip X.Y.Z.zip`  
+
+Vous pouvez renommer le dossier qui contient l'application (dans un dossier /home/monuser/BDN/ par exemple)  
+
+`mv BDN-X.Y.Z BDN`  
+
+Placer vous ensuite dans le dossier qui contient l'application  
+
+`cd BDN`  
+
+
+### Préparation des données avant l'instalation  
+Avant de lancer le script d'installation il est nécessaire de préparer ses données pour l'application BDN. L'application a besoin de 3 fichiers personnalisés pour fonctionner:
+- Une shapefile de ses communes
+- Un shapefile des mailles de son territoire (1 ou 2km)
+- Un shape du périmètre des forêts
+- La liste rouge régionale de l'UICN (si elle existe)  
+
+Par défault, ce sont les fichiers paramétrés pour la Guadeloupe qui sont fournis. Remplacer par les fichiers existants par les votres dans le dossier `data/layers` de l'application.  
+:warning::warning: Veiller à bien garder les noms originaux des fichiers
+
+#### Le shape des communes
+Le shape doit à minima comporter les champs:
+- 'NOM' pour le nom de la commune
+- 'CODE_INSEE' pour le code insee.  
+
+Nom du shape: COMMUNE.shp
+#### Le shape des mailles
+Ce shape de maille doit couvrir l'intégraliter de votre territoire. L'application fonctionne avec des mailles de 1 et/ou 2 km
+Il doit contenir les champs:
+- TAILLE_MAI: la taille de ses mailles en KM
+- ID_SERIAL : un serial...
+- ID_MAILLE: l'identifiant unique de la maille     
+
+Nom du shape: mailles_1_2.shp
+
+#### Le shape du périmètre des forêts
+Selon le modèle ONF du shape des périmètre forestier. Celui-ci doit contenir à minima:  
+- LIB_FRT: le nom de la forêt
+- CCOD_FRT: le code de la forêt. :warning: Aucune ligne ne doit pas être NULL
+
+Une fois les fichiers remplacer, vous pouvez lancer l'installation
+## Installation des applications et des bases de données
+
+L'application BDN est fourni avec un script d'installation qui installe:
+- UsersHub: une application pour la gestion centralisée des utilisateur
+- Taxhub: une application pour la gestion des taxons
+- L'application BDN elle même  
+
+En lançant ce scrit les dépendances suivantes sont installées:
 * Python 2.7
 * Flask
 * Apache
 * PostgreSQL / PostGIS
-
-`./install_app.sh`  
-
-### Installation de la base de données
-Copier le fichier setting.ini.sample en settings.ini et le remplir en suivant les instructions  
-`cp ./settings.ini.sample ./settings.ini`  
-`nano ./settings.ini`  
-Mettre le fichier de liste rouge de l'UICN correspondant à sa région dans `./data` s'il en existe un, et renseigner le chemin correct vers ce fichier dans `settings.ini`  
-Lancer le script de création de la BDD  
-`./install_db.sh` 
+* PHP 5.6
 
 
-### Configuration Apache
-`sudo nano /etc/apache2/sites-available/BDN.conf`  
-Copiez collez   
-```WSGIScriptAlias / /home/<USER>/atlas/start.wsgi  
- <Directory "/home/<USER>/bdn">  
-   WSGIApplicationGroup %{GLOBAL}  
-   WSGIScriptReloading On  
-   Require all granted  
- </Directory>
- ```  
- 
-Activez le virtualhost puis redémarrez Apache :  
 
-`sudo a2ensite bdn`
-`sudo apachectl restart`  
-
-## Configuration de l'application
-
-Ouvrir et éditer le fichiers
-`/home/<USER>/BDN/config.py.sample`
-
-`sudo apachectl restart`
 
 
 ## Sauvegarde automatique
