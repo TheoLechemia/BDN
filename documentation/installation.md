@@ -1,12 +1,19 @@
-# Installation de BDN-DOM
+# Documentation d'installation de BDN-DOM
 
-Télécharger le projet depuis le dépôt Github
+### Infrastructure
+
+L'application BDN-DOM peut être installée sur un serveur Linux (Ubuntu, Debian). Elle necessite au minimum 3Go de RAM et 20-25 Go d'espace disque.  
+L'installation ci-dessous à été tester sur un Ubuntu 16.04
+
+### Téléchargement
+
+Télécharger le projet depuis le dépôt Github:
 
 `cd /home/monuser`  
 `wget https://github.com/TheoLechemia/BDN//archive/X.Y.Z.zip `  
 
 Dézipper l'archive  
-
+`sudo apt-get install unzip`  
 `unzip X.Y.Z.zip`  
 
 Vous pouvez renommer le dossier qui contient l'application (dans un dossier /home/monuser/BDN/ par exemple)  
@@ -25,7 +32,7 @@ Avant de lancer le script d'installation il est nécessaire de préparer ses don
 - Un shape du périmètre des forêts
 - La liste rouge régionale de l'UICN (si elle existe)  
 
-Par défault, ce sont les fichiers paramétrés pour la Guadeloupe qui sont fournis. Remplacer par les fichiers existants par les votres dans le dossier `data/layers` de l'application.  
+Par défault, ce sont les fichiers paramétrés pour la Guadeloupe qui sont fournis. Remplacer par les fichiers existants par les votres dans le dossier `data/layers` `data` ou  de l'application.  
 :warning::warning: Veiller à bien garder les noms originaux des fichiers :warning::warning:  
 
 #### Le shape des communes
@@ -39,7 +46,7 @@ Ce shape de maille doit couvrir l'intégraliter de votre territoire. L'applicati
 Il doit contenir les champs:
 - TAILLE_MAI: la taille de ses mailles en KM
 - ID_SERIAL : un serial...
-- ID_MAILLE: l'identifiant unique de la maille     
+- ID_MAILLE: l'identifiant unique de la maille  
 
 Nom du shape: mailles_1_2.shp
 
@@ -47,6 +54,12 @@ Nom du shape: mailles_1_2.shp
 Selon le modèle ONF du shape des périmètre forestier. Celui-ci doit contenir à minima:  
 - LIB_FRT: le nom de la forêt
 - CCOD_FRT: le code de la forêt. :warning: Aucune ligne ne doit pas être NULL
+Si vous ne disposez pas de couche de périmètre de forêt (hors ONF), laisser ce fichier par défault
+Nom du shape: COMMUNE.shp
+
+#### La liste rouge régionale
+Le fichier se trouve à la racine du dossier data: `Liste_rouge_regionale.csv`    
+Voir http://uicn.fr/listes-rouges-regionales/ pour trouver celui de sa région
 
 Une fois les fichiers remplacés, vous pouvez lancer l'installation
 ## Installation des applications et des bases de données
@@ -54,7 +67,7 @@ Une fois les fichiers remplacés, vous pouvez lancer l'installation
 L'application BDN est fourni avec un script d'installation qui installe:
 - UsersHub v1.2.2: une application pour la gestion centralisée des utilisateur https://github.com/PnEcrins/UsersHub
 - Taxhub v1.2.1: une application pour la gestion des taxons https://github.com/PnEcrins/UsersHub
-- L'application BDN elle même  
+- L'application BDN-DOM elle même  
 
 En lançant ce scrit les dépendances suivantes sont installées:
 * Python 2.7
