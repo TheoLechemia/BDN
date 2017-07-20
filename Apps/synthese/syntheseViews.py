@@ -295,10 +295,18 @@ def detailsReglementation(cd_nom):
     param = [cd_nom]
     protection = None
     protection = utils.sqltoDictWithParams(sql, param, db.cur)
-    sql = """SELECT r.id_categorie_france, br.type_statut, r.liste_rouge_source
-            FROM taxonomie.taxref_liste_rouge_fr r
-            JOIN taxonomie.bib_liste_rouge br ON br.id_statut = r.id_categorie_france
-            WHERE r.cd_nom = %s"""
+    sql = """SELECT r.id_categorie_france, r.liste_rouge_source, r.cd_nom, br.nom_categorie_lr as type_statut
+             FROM taxonomie.taxref_liste_rouge_fr r
+             JOIN taxonomie.bib_taxref_categories_lr br ON br.id_categorie_france = r.id_categorie_france
+             WHERE r.cd_nom = %s
+             UNION
+             SELECT reg.statut, reg.nom_liste, reg.cd_nom, br.nom_categorie_lr
+             FROM taxonomie.liste_rouge_reg reg
+             JOIN taxonomie.bib_taxref_categories_lr br ON br.id_categorie_france = reg.statut
+             WHERE reg.cd_nom = %s
+
+            """
+    param = [cd_nom, cd_nom]
     lr = utils.sqltoDictWithParams(sql, param, db.cur)
     db.closeAll()
     return Response(flask.json.dumps({'lr': lr, 'protection': protection}), mimetype='application/json')
