@@ -30,7 +30,7 @@ database = {
 
 config = {
     'APP_DIR': os.path.abspath(os.path.dirname(__file__)),
-	#Bien finir l'URL par un /
+	#Bien commencer par http:// et finir l'URL par un /
     'URL_APPLICATION': 'MY_URL',
     #ID de l'application dans usershub
     'ID_APPLICATION': 999999999,
@@ -48,7 +48,7 @@ config = {
                 'cycle': {
                     'name': "OpenStreetMap",
                     'type': "xyz",
-                    'url': "http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png",
+                    'url': "https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=ce90728c5bcf4a0f90ef4b634d0de092",
                     'layerOptions': {
                         'subdomains': ["a", "b", "c"],
                         'attribution': "&copy; <a href=\"http://www.opencyclemap.org/copyright\">OpenCycleMap</a> contributors - &copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
