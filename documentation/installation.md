@@ -10,11 +10,11 @@ L'installation ci-dessous à été testée sur un serveur Ubuntu 16.04
 Télécharger le projet depuis le dépôt Github:
 
 `cd /home/monuser`  
-`wget https://github.com/TheoLechemia/BDN//archive/X.Y.Z.zip `  
+`wget https://github.com/TheoLechemia/BDN/archive/X.Y.Z.zip `  
 
 Dézipper l'archive  
 `sudo apt-get install unzip`  
-`unzip X.Y.Z.zip`  
+`unzip BDN-X.Y.Z.zip`  
 
 Vous pouvez renommer le dossier qui contient l'application (dans un dossier /home/monuser/BDN/ par exemple)  
 
@@ -92,6 +92,15 @@ Un second fichier de configuration apparait: celui de BDN: renseigner le champ `
 Deux autres fichiers de configuration de taxhub apparaissent ensuite. Modifiez les en fonction de vos paramètres.  
 
 :clap: DONE !! :clap:
+
+Les applications sont disponibles aux addresses suivantes:
+- BDN: http://url_serveur/
+- UsersHub: http://url_serveur/usershub
+- Taxhub: http://url_serveur/usershub
+
+Un compte administrateur est créé par défaut: ID: admin MDP: admin
+
+Les logs de l'instalation sont disponibles dans le dossier log pour vérifier d'éventuelles erreurs.
 
 
 
