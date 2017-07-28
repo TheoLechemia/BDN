@@ -52,7 +52,7 @@
 								<!-- MODAL research -->
 				<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
 				  <div class="modal-dialog modal-lg" role="document">
-				    <div id="formContent" class="modal-content">
+				    <div id="formContent" class="modal-content" style="padding:15px">
 				    <h4>  Hierarchie taxonomique :  </h4>
 				      <div class="form-group">
 					      	<select id="inputRegne" class="form-control" ng-model="$ctrl.form.regne" ng-options="taxon as taxon for taxon in $ctrl.regne" ng-change="$ctrl.loadTaxonomyHierachy('phylum', 'regne', 'null', 'null', $ctrl.form.regne)" >

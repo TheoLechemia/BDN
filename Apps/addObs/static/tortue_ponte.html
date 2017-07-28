@@ -1,0 +1,94 @@
+<div class='form-group'> 
+<input class='form-control' type='number' placeholder='Id secteur' ng-model='$ctrl.child.protocoleForm.id_secteur'  name='id_secteur' > 
+
+ </div><div class='form-group'> 
+<input class='form-control' type='text' placeholder='plage' ng-model='$ctrl.child.protocoleForm.plage'  name='plage' > 
+
+ </div><div class='form-group'> 
+<div> <select class='form-control' type='text' placeholder='Activité scientifique' ng-model='$ctrl.child.protocoleForm.activite_scientifique' name='activite_scientifique' ng-options='choice as choice for choice in $ctrl.fields.activite_scientifique' > <option value=> - Activité scientifique - </option> </select>  </div> 
+
+ </div><div class='form-group'> 
+<input class='form-control' type='number' placeholder='Heure début suivi' ng-model='$ctrl.child.protocoleForm.heure_debut'  name='heure_debut' > 
+
+ </div><div class='form-group'> 
+<input class='form-control' type='number' placeholder='Heure fin suivi' ng-model='$ctrl.child.protocoleForm.heure_fin'  name='heure_fin' > 
+
+ </div><div class='form-group'> 
+<input class='form-control' type='number' placeholder='Heure de contact' ng-model='$ctrl.child.protocoleForm.heure_contact'  name='heure_contact' > 
+
+ </div><div class='form-group'> 
+<input class='form-control' type='number' placeholder='Heure de ponte' ng-model='$ctrl.child.protocoleForm.heure_ponte'  name='heure_ponte' > 
+
+ </div><div class='form-group'> 
+<!-- <input class='form-control' type='number' placeholder='ID activité ponte' ng-model='$ctrl.child.protocoleForm.id_acti_ponte'  name='id_acti_ponte' >  -->
+<select class='form-control' type='text' placeholder='trace' ng-model='$ctrl.child.protocoleForm.activite_ponte'>
+	<option value=""> -- Activite de ponte --</option>
+	<option value="RAS"> RAS </option>
+	<option value="Ponte"> Ponte </option>
+	<option value="Ponte ?"> Ponte ? </option>
+	<option value="Pas Ponte ?"> Pas Ponte ? </option>
+	<option value="Pas Ponte"> Pas Ponte </option>
+	<option value="?"> ? </option>
+</select>
+
+ </div><div class='form-group'> 
+<!-- <input class='form-control' type='number' placeholder='ID estimation date ponte' ng-model='$ctrl.child.protocoleForm.id_estim_date_ponte'  name='id_estim_date_ponte' >  -->
+<select class='form-control' type='text' placeholder='trace' ng-model='$ctrl.child.protocoleForm.estim_date_ponte'>
+<option value=""> -- Estimation date ponte --</option>
+<option value="nuit"> nuit </option>
+<option value="pas nuit"> pas nuit </option>
+</select>
+
+ </div><div class='form-group'> 
+<input class='form-control' type='text' placeholder='Localisation' ng-model='$ctrl.child.protocoleForm.localisation'  name='localisation' > 
+
+ </div><div class='form-group'> 
+<!-- <input class='form-control' type='number' placeholder='ID milieu' ng-model='$ctrl.child.protocoleForm.id_milieu'  name='id_milieu' >  -->
+<select class='form-control' type='text' placeholder='trace' ng-model='$ctrl.child.protocoleForm.milieu'>
+	<option value=""> -- Selectionner un milieu -- </option>
+	<option value="Sable nu"> Sable nu </option>
+	<option value="Végétation basse"> Végétation basse</option>
+	<option value="Lisière"> Lisière </option>
+	<option value="Sous un arbre isolé"> Sous un arbre isolé </option>
+
+</select>
+
+ </div><div class='form-group'> 
+<input class='form-control' type='text' placeholder='Nom tortue' ng-model='$ctrl.child.protocoleForm.nom_tortue'  name='nom_tortue' > 
+
+ </div><div class='form-group'> 
+<!-- <input class='form-control' type='number' placeholder='ID bague gauche' ng-model='$ctrl.child.protocoleForm.id_bague_gauche'  name='id_bague_gauche' >  -->
+<select class='form-control' type='text' placeholder='trace' ng-model='$ctrl.child.protocoleForm.bague_gauche'>
+	<option value=""> -- Bague gauche --</option>
+	<option value="Pose"> Pose</option>
+	<option value="Repose"> Repose</option>
+	<option value="Contrôle"> Contrôle</option>
+</select>
+
+ </div><div class='form-group'> 
+<input class='form-control' type='text' placeholder='Numéro bague gauche' ng-model='$ctrl.child.protocoleForm.no_bague_gauche'  name='no_bague_gauche' > 
+
+ </div><div class='form-group'> 
+<!-- <input class='form-control' type='number' placeholder='ID bague droite' ng-model='$ctrl.child.protocoleForm.id_bague_droite'  name='id_bague_droite' >  -->
+<select class='form-control' type='text' placeholder='trace' ng-model='$ctrl.child.protocoleForm.bague_droite'>
+	<option value=""> -- Bague droite --</option>
+	<option value="Pose"> Pose</option>
+	<option value="Repose"> Repose</option>
+	<option value="Contrôle"> Contrôle</option>
+</select>
+
+ </div><div class='form-group'> 
+<input class='form-control' type='text' placeholder='Numéro bague droite' ng-model='$ctrl.child.protocoleForm.no_bague_droite'  name='no_bague_droite' > 
+
+ </div><div class='form-group'> 
+<input class='form-control' type='number' placeholder='CCL' ng-model='$ctrl.child.protocoleForm.ccl'  name='ccl' > 
+
+ </div><div class='form-group'> 
+<label> Prélevement peau : </label> 
+
+                        <select class='form-control' ng-model = "$ctrl.child.protocoleForm.prelevement_peau" name='prelevement_peau' >
+                            <option value=""> </option>
+                            <option ng-value="true"> Oui</option>
+                            <option ng-value="false"> Non</option>
+                        </select>
+ </div>

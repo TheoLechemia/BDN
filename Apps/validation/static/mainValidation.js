@@ -92,7 +92,7 @@ function bindMarkers(feature, layer){
 
 
 var baseMaps = {
-            OpenStreetMap: L.tileLayer('http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png', {
+            OpenStreetMap: L.tileLayer("https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=ce90728c5bcf4a0f90ef4b634d0de092", {
                 // tslint:disable-next-line:max-line-length
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
             }),
@@ -105,6 +105,7 @@ var baseMaps = {
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
             })
 };
+
 
 var currentGeoJson;
 var map = L.map('map', {
