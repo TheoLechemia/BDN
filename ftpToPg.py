@@ -32,7 +32,7 @@ class DatabaseInterface:
 
 def getConnexion():
     conn = psycopg2.connect(
-        DATABASE_NAME,
+        database=DATABASE_NAME,
         user=DATABASE_USER,
         password=DATABASE_PASS,
         host=DATABASE_HOST,
