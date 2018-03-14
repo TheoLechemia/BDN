@@ -102,7 +102,7 @@ def csv2PG(file):
             point = 'POINT('+lon+' '+lat+')'
             valide = "FALSE"
             # recuperation du code insee
-            sql_insee = " SELECT code_insee FROM layers.commune WHERE ST_INTERSECTS(geom,(ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+")))"
+            sql_insee = " SELECT code_insee FROM layers.commune WHERE ST_INTERSECTS(geom,(ST_Transform(ST_PointFromText(%s, 4326),"+str(PROJECTION)+")))"
             param = [point]
             try:
                 db.cur.execute(sql_insee, param)
@@ -114,7 +114,7 @@ def csv2PG(file):
                 return traceback.format_exc()
 
             #recuperation du code foret
-            sql_foret = " SELECT ccod_frt FROM layers.perimetre_forets WHERE ST_INTERSECTS(geom,(ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"))) "
+            sql_foret = " SELECT ccod_frt FROM layers.perimetre_forets WHERE ST_INTERSECTS(geom,(ST_Transform(ST_PointFromText(%s, 4326),"+str(PROJECTION)+"))) "
             try:
                 db.cur.execute(sql_foret, param)
                 ccod_frt = None 
@@ -129,7 +129,7 @@ def csv2PG(file):
             code_maille = None
 
             stringInsert = "INSERT INTO "+fullTableName+"(id_projet, observateur, date, cd_nom, geom_point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc, diffusable"
-            stringValues = " VALUES (%s, %s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(config['MAP']['PROJECTION'])+"), %s, %s, %s, %s, %s, %s, %s, %s, %s"
+            stringValues = " VALUES (%s, %s, %s, %s,  ST_Transform(ST_PointFromText(%s, 4326),"+str(PROJECTION)+"), %s, %s, %s, %s, %s, %s, %s, %s, %s"
 
             generalValues = [id_projet, observateur, dateObject, cd_nom, point, insee, commentaire, valide, ccod_frt, loc_exact, code_maille, id_structure, comm_loc, True]
             try:
